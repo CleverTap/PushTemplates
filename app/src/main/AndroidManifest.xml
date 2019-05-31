@@ -22,6 +22,11 @@
             android:name="CLEVERTAP_TOKEN"
             android:value="TEST-311-ba2"/>
 
+        <meta-data
+            android:name="CLEVERTAP_NOTIFICATION_ICON"
+            android:value="ic_launcher"/> <!-- name of your file in the drawable directory without the file extension. -->
+
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,9 +43,23 @@
         </service>
 
         <service
-            android:name="com.clevertap.android.sdk.FcmMessageListenerService">
+            android:name="com.clevertap.pushtemplates.PushTemplateMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name="com.clevertap.android.sdk.CTPushNotificationReceiver"
+            android:exported="false"
+            android:enabled="true">
+        </receiver>
+
+        <service
+            android:name="com.clevertap.android.sdk.CTNotificationIntentService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.clevertap.PUSH_EVENT"/>
             </intent-filter>
         </service>
 
