@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.widget.RelativeLayout;
 import android.widget.RemoteViews;
 
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
@@ -98,7 +97,7 @@ class TemplateRenderer {
         }
 
         switch (templateType){
-            case IMAGE_ONLY:
+            case DUAL_IMAGE_WITH_TEXT:
                 renderImageOnlyNotification(context, extras, notificationId);
                 break;
             case AUTO_CAROUSEL:
