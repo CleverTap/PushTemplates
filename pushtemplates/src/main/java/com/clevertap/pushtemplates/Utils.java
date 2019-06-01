@@ -13,8 +13,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class Utils {
+
     static boolean isPNFromCleverTap(Bundle extras){
         if(extras == null) return false;
 
@@ -108,5 +110,35 @@ public class Utils {
     static int getAppIconAsIntId(final Context context) {
         ApplicationInfo ai = context.getApplicationInfo();
         return ai.icon;
+    }
+
+    static ArrayList<String> getImageListFromExtras(Bundle extras){
+        ArrayList<String> imageList = new ArrayList<>();
+        for(String key : extras.keySet()){
+            if(key.contains("pt_img")){
+                imageList.add(extras.getString(key));
+            }
+        }
+        return imageList;
+    }
+
+    static ArrayList<String> getCTAListFromExtras(Bundle extras){
+        ArrayList<String> ctaList = new ArrayList<>();
+        for(String key : extras.keySet()){
+            if(key.contains("pt_cta")){
+                ctaList.add(extras.getString(key));
+            }
+        }
+        return ctaList;
+    }
+
+    static ArrayList<String> getDeepLinkListFromExtras(Bundle extras){
+        ArrayList<String> dlList = new ArrayList<>();
+        for(String key : extras.keySet()){
+            if(key.contains("pt_dl")){
+                dlList.add(extras.getString(key));
+            }
+        }
+        return dlList;
     }
 }

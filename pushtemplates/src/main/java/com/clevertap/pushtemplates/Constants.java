@@ -21,7 +21,14 @@ public class Constants {
     static final String WZRK_SOUND = "wzrk_sound";
     static final String WZRK_TIME_TO_LIVE = "wzrk_ttl";
     static final String WZRK_RNV = "wzrk_rnv";
+    static final int EMPTY_NOTIFICATION_ID = -1000;
     static final String NOTIF_TAG = "wzrk_pn";
     static final String ICON_BASE_URL = "http://static.wizrocket.com/android/ico/";
     static final String LABEL_NOTIFICATION_ICON = "CLEVERTAP_NOTIFICATION_ICON";
+    static final String PT_ID = "pt_id";
+    static final String PT_TITLE = "pt_title";
+    static final String PT_MSG = "pt_msg";
+    static final String PT_BG = "pt_bg";
+    static final String PT_IMG_BIG = "pt_img_big";
+    static final String PT_IMG_SMALL = "pt_img_small";
 }
