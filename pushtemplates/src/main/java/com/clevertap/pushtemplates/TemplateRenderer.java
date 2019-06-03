@@ -33,8 +33,9 @@ class TemplateRenderer {
     private ArrayList<String> ctaList = new ArrayList<>();
     private ArrayList<String> deepLinkList = new ArrayList<>();
     private String pt_bg;
+    private String pt_img1,pt_img2,pt_img3;
 
-    private RemoteViews contentViewBig, contentViewSmall;
+    private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel;
     private String channelId;
     private int smallIcon = 0;
     private boolean requiresChannelId;
@@ -53,6 +54,9 @@ class TemplateRenderer {
         imageList = Utils.getImageListFromExtras(extras);
         ctaList = Utils.getCTAListFromExtras(extras);
         deepLinkList = Utils.getDeepLinkListFromExtras(extras);
+        pt_img1 = extras.getString("pt_img1");
+        pt_img2 = extras.getString("pt_img2");
+        pt_img3 = extras.getString("pt_img3");
     }
 
     static void createNotification(Context context, Bundle extras){
@@ -101,11 +105,93 @@ class TemplateRenderer {
                 renderImageOnlyNotification(context, extras, notificationId);
                 break;
             case AUTO_CAROUSEL:
+                renderAutoCarouselNotification(context, extras, notificationId);
                 break;
             case RATING:
+                renderRatingCarouselNotification(context,extras,notificationId);
                 break;
             case FIVE_ICONS:
                 break;
+        }
+    }
+
+    private void renderRatingCarouselNotification(Context context, Bundle extras, int notificationId){
+        
+    }
+
+    private void renderAutoCarouselNotification(Context context, Bundle extras, int notificationId){
+        try{
+            contentViewCarousel = new RemoteViews(context.getPackageName(),R.layout.auto_carousel);
+            contentViewSmall = new RemoteViews(context.getPackageName(),R.layout.image_only_small);
+
+            if(pt_img1!=null && !pt_img1.isEmpty()) {
+                URL bigImgUrl = new URL(pt_img1);
+                contentViewCarousel.setImageViewBitmap(R.id.flipper_img1, BitmapFactory.decodeStream(bigImgUrl.openConnection().getInputStream()));
+            }
+            if(pt_img2!=null && !pt_img2.isEmpty()) {
+                URL bigImgUrl = new URL(pt_img2);
+                contentViewCarousel.setImageViewBitmap(R.id.flipper_img2, BitmapFactory.decodeStream(bigImgUrl.openConnection().getInputStream()));
+            }
+            if(pt_img3!=null && !pt_img3.isEmpty()) {
+                URL bigImgUrl = new URL(pt_img3);
+                contentViewCarousel.setImageViewBitmap(R.id.flipper_img3, BitmapFactory.decodeStream(bigImgUrl.openConnection().getInputStream()));
+            }
+
+            if(pt_title!=null && !pt_title.isEmpty()) {
+                contentViewCarousel.setTextViewText(R.id.title, pt_title);
+                contentViewSmall.setTextViewText(R.id.title, pt_title);
+            }
+
+            if(pt_msg!=null && !pt_msg.isEmpty()) {
+                contentViewCarousel.setTextViewText(R.id.msg, pt_msg);
+                contentViewSmall.setTextViewText(R.id.msg, pt_msg);
+            }
+
+            if(pt_bg!=null && !pt_bg.isEmpty()){
+                contentViewCarousel.setInt(R.id.carousel_relative_layout,"setBackgroundColor", Color.parseColor(pt_bg));
+                contentViewSmall.setInt(R.id.image_only_small_relative_layout,"setBackgroundColor", Color.parseColor(pt_bg));
+            }
+
+            if(pt_img_small!=null && !pt_img_small.isEmpty()) {
+                URL smallImgUrl = new URL(pt_img_small);
+                contentViewSmall.setImageViewBitmap(R.id.small_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
+                contentViewCarousel.setImageViewBitmap(R.id.big_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
+            }
+
+            contentViewCarousel.setInt(R.id.view_flipper,"setFlipInterval",4000);
+
+            if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
+                notificationId = (int) (Math.random() * 100);
+            }
+
+            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            launchIntent.putExtras(extras);
+            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder notificationBuilder;
+            if(requiresChannelId) {
+                notificationBuilder = new NotificationCompat.Builder(context, channelId);
+            }else{
+                notificationBuilder = new NotificationCompat.Builder(context);
+            }
+
+            notificationBuilder.setSmallIcon(smallIcon)
+                    .setCustomContentView(contentViewSmall)
+                    .setCustomBigContentView(contentViewCarousel)
+                    .setContentTitle("Custom Notification")
+                    .setContentIntent(pIntent)
+                    .setAutoCancel(true);
+
+            notificationManager.notify(notificationId, notificationBuilder.build());
+            CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
+            if (instance != null) {
+                instance.pushNotificationViewedEvent(extras);
+            }
+        }catch (Throwable t){
+            PTLog.error("Error creating auto carousel notification ",t);
         }
     }
 

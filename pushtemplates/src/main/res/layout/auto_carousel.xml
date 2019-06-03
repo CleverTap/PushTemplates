@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:id="@+id/carousel_relative_layout"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/big_relative_layout">
+        <ImageView android:id="@+id/big_image_app"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="10dp" />
+        <TextView android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/big_image_app"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textColor="@android:color/white"
+            android:layout_toEndOf="@+id/big_image_app" />
+        <TextView android:id="@+id/msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:layout_toRightOf="@+id/big_image_app"
+            android:layout_below="@id/title"
+            android:layout_toEndOf="@+id/big_image_app" />
+
+    </RelativeLayout>
+        <ViewFlipper
+            android:id="@+id/view_flipper"
+            android:layout_below="@id/big_relative_layout"
+            android:layout_width="match_parent"
+            android:autoStart="true"
+            android:layout_height="232dp">
+            <ImageView
+                android:id="@+id/flipper_img1"
+                android:layout_width="match_parent"
+                android:layout_height="232dp" />
+            <ImageView
+                android:id="@+id/flipper_img2"
+                android:layout_width="match_parent"
+                android:layout_height="232dp" />
+            <ImageView
+                android:id="@+id/flipper_img3"
+                android:layout_width="match_parent"
+                android:layout_height="232dp" />
+        </ViewFlipper>
+</RelativeLayout>
