@@ -28,7 +28,9 @@ public class Constants {
     static final String PT_ID = "pt_id";
     static final String PT_TITLE = "pt_title";
     static final String PT_MSG = "pt_msg";
+    static final String PT_TITLE_COLOR = "pt_title_clr";
+    static final String PT_MSG_COLOR = "pt_msg_clr";
     static final String PT_BG = "pt_bg";
-    static final String PT_IMG_BIG = "pt_img_big";
-    static final String PT_IMG_SMALL = "pt_img_small";
+    static final String PT_BIG_IMG = "pt_big_img";
+    static final String PT_SMALL_IMG = "pt_small_img";
 }
