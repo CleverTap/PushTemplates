@@ -35,7 +35,7 @@ class TemplateRenderer {
     private ArrayList<String> deepLinkList = new ArrayList<>();
     private String pt_bg;
 
-    private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel;
+    private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating;
     private String channelId;
     private int smallIcon = 0;
     private boolean requiresChannelId;
@@ -115,7 +115,114 @@ class TemplateRenderer {
     }
 
     private void renderRatingCarouselNotification(Context context, Bundle extras, int notificationId){
+        try{
+            contentViewRating = new RemoteViews(context.getPackageName(),R.layout.rating);
+            contentViewSmall = new RemoteViews(context.getPackageName(),R.layout.image_only_small);
 
+            if(pt_title!=null && !pt_title.isEmpty()) {
+                contentViewRating.setTextViewText(R.id.title, pt_title);
+                contentViewSmall.setTextViewText(R.id.title, pt_title);
+            }
+
+            if(pt_msg!=null && !pt_msg.isEmpty()) {
+                contentViewRating.setTextViewText(R.id.msg, pt_msg);
+                contentViewSmall.setTextViewText(R.id.msg, pt_msg);
+            }
+
+            if(pt_title_clr != null && !pt_title_clr.isEmpty()){
+                contentViewRating.setTextColor(R.id.title,Color.parseColor(pt_title_clr));
+                contentViewSmall.setTextColor(R.id.title,Color.parseColor(pt_title_clr));
+            }
+
+            if(pt_msg_clr != null && !pt_msg_clr.isEmpty()){
+                contentViewRating.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
+                contentViewSmall.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
+            }
+
+            if(pt_img_small!=null && !pt_img_small.isEmpty()) {
+                URL smallImgUrl = new URL(pt_img_small);
+                contentViewSmall.setImageViewBitmap(R.id.small_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
+                contentViewRating.setImageViewBitmap(R.id.big_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
+            }
+
+            //Set the rating stars
+            contentViewRating.setImageViewResource(R.id.star1,R.drawable.outline_star_1);
+            contentViewRating.setImageViewResource(R.id.star2,R.drawable.outline_star_1);
+            contentViewRating.setImageViewResource(R.id.star3,R.drawable.outline_star_1);
+            contentViewRating.setImageViewResource(R.id.star4,R.drawable.outline_star_1);
+            contentViewRating.setImageViewResource(R.id.star5,R.drawable.outline_star_1);
+
+            if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
+                notificationId = 1;
+            }
+
+            //Set Pending Intents for each star to listen to click
+
+            Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent1.putExtra("click1",true);
+            notificationIntent1.putExtra("notif_id",notificationId);
+            notificationIntent1.putExtras(extras);
+            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, 1, notificationIntent1, 0);
+            contentViewRating.setOnClickPendingIntent(R.id.star1, contentIntent1);
+
+            Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent2.putExtra("click2",true);
+            notificationIntent2.putExtra("notif_id",notificationId);
+            notificationIntent2.putExtras(extras);
+            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, 2, notificationIntent2, 0);
+            contentViewRating.setOnClickPendingIntent(R.id.star2, contentIntent2);
+
+            Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent3.putExtra("click3",true);
+            notificationIntent3.putExtra("notif_id",notificationId);
+            notificationIntent3.putExtras(extras);
+            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, 3, notificationIntent3, 0);
+            contentViewRating.setOnClickPendingIntent(R.id.star3, contentIntent3);
+
+            Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent4.putExtra("click4",true);
+            notificationIntent4.putExtra("notif_id",notificationId);
+            notificationIntent4.putExtras(extras);
+            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, 4, notificationIntent4, 0);
+            contentViewRating.setOnClickPendingIntent(R.id.star4, contentIntent4);
+
+            Intent notificationIntent5 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent5.putExtra("click5",true);
+            notificationIntent5.putExtra("notif_id",notificationId);
+            notificationIntent5.putExtras(extras);
+            PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, 5, notificationIntent5, 0);
+            contentViewRating.setOnClickPendingIntent(R.id.star5, contentIntent5);
+
+            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            launchIntent.putExtras(extras);
+            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder notificationBuilder;
+            if(requiresChannelId) {
+                notificationBuilder = new NotificationCompat.Builder(context, channelId);
+            }else{
+                notificationBuilder = new NotificationCompat.Builder(context);
+            }
+
+            notificationBuilder.setSmallIcon(smallIcon)
+                    .setCustomContentView(contentViewSmall)
+                    .setCustomBigContentView(contentViewRating)
+                    .setContentTitle("Custom Notification")
+                    .setContentIntent(pIntent)
+                    .setAutoCancel(true);
+
+            notificationManager.notify(notificationId, notificationBuilder.build());
+            CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
+            if (instance != null) {
+                instance.pushNotificationViewedEvent(extras);
+            }
+
+        }catch (Throwable t){
+            PTLog.error("Error creating rating notification ",t);
+        }
     }
 
     private void renderAutoCarouselNotification(Context context, Bundle extras, int notificationId){

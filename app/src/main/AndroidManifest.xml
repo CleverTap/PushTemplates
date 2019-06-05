@@ -55,6 +55,12 @@
             android:enabled="true">
         </receiver>
 
+        <receiver
+            android:name="com.clevertap.pushtemplates.PushTemplateReceiver"
+            android:exported="false"
+            android:enabled="true">
+        </receiver>
+
         <service
             android:name="com.clevertap.android.sdk.CTNotificationIntentService"
             android:exported="false">
