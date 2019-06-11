@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:id="@+id/carousel_relative_layout"
+    android:layout_height="250dp"
+    android:weightSum="1">
+
+    <ImageView
+        android:id="@+id/big_image"
+        android:layout_weight="0.5"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:inAnimation="@anim/slide_in_left"
+        android:outAnimation="@anim/slide_out_right"
+        android:src="@drawable/ct_image"
+        />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_weight="0.4"
+            android:layout_height="match_parent"
+            android:paddingBottom="4dp"
+            android:weightSum="3">
+            <TextView
+                android:id="@+id/big_text"
+                android:layout_width="match_parent"
+                android:autoSizeMinTextSize="50dip"
+                android:layout_weight="1"
+                android:layout_height="0dp"
+                android:paddingTop="2dip"
+                android:layout_marginTop="20dip"
+                android:layout_marginLeft="20dip"
+                android:textColor="@android:color/black"
+                android:layout_marginRight="31dip"
+                android:text="Product Name 123131"
+                android:textSize="15dp"
+                android:gravity="center"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_weight="1.5"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/small_text"
+                    android:layout_width="4dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dip"
+                    android:layout_marginTop="10dip"
+                    android:layout_marginBottom="10dip"
+                    android:layout_weight="0.3"
+                    android:gravity="center"
+                    android:text="Rs: 5,000,000"
+                    android:textColor="@android:color/black"
+                    android:textSize="8dp" />
+                    <Button
+                        android:id="@+id/action_button"
+                        android:layout_width="0dp"
+                        android:layout_marginLeft="20dip"
+                        android:layout_weight="0.5"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="15dip"
+                        android:background="@android:color/holo_orange_light"
+                        android:textColor="@android:color/black"
+                        android:textSize="10dp"
+                        android:text="Buy Now"
+                        android:layout_marginBottom="15dip"
+                        android:gravity="center"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_weight="0.6"
+            android:layout_height="match_parent"
+            android:weightSum="3"
+            >
+            <ImageView
+                android:id="@+id/small_image1"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:src="@drawable/ct_image"
+                />
+            <ImageView
+                android:id="@+id/small_image2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:src="@drawable/ct_image"
+                />
+            <ImageView
+                android:id="@+id/small_image3"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:src="@drawable/ct_image"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
+

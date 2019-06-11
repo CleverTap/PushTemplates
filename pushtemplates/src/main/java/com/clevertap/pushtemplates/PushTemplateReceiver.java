@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,13 +18,14 @@ import android.widget.Toast;
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class PushTemplateReceiver extends BroadcastReceiver {
-    boolean clicked1=true,clicked2=true,clicked3=true,clicked4=true,clicked5 = true;
+    boolean clicked1=true,clicked2=true,clicked3=true,clicked4=true,clicked5 = true, left=true, right=true;
     private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating;
     private String pt_id;
     private TemplateType templateType;
@@ -86,6 +88,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 switch (templateType){
                     case RATING:
                         handleRatingNotification(context, extras);
+                    case MANUAL_CAROUSEL:
+                        handleManualCarouselNotification(context,extras);
                     break;
                 }
             }
@@ -222,5 +226,70 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         }
 
 
+    }
+
+    private void handleManualCarouselNotification(Context context, Bundle extras){
+        try {
+            //Set RemoteViews again
+            contentViewRating = new RemoteViews(context.getPackageName(), R.layout.manual_carousel);
+            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.image_only_small);
+
+            for (String image : imageList) {
+                URL imageURL = new URL(image);
+                RemoteViews imageView = new RemoteViews(context.getPackageName(), R.layout.carousel_image);
+                contentViewCarousel.addView(R.id.view_flipper, imageView);
+                imageView.setImageViewBitmap(R.id.flipper_img, BitmapFactory.decodeStream(imageURL.openConnection().getInputStream()));
+            }
+
+            if (pt_title != null && !pt_title.isEmpty()) {
+                contentViewCarousel.setTextViewText(R.id.title, pt_title);
+                contentViewSmall.setTextViewText(R.id.title, pt_title);
+            }
+
+            if (pt_msg != null && !pt_msg.isEmpty()) {
+                contentViewCarousel.setTextViewText(R.id.msg, pt_msg);
+                contentViewSmall.setTextViewText(R.id.msg, pt_msg);
+            }
+
+            if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
+                contentViewCarousel.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+                contentViewSmall.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+            }
+
+            if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
+                contentViewCarousel.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
+                contentViewSmall.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
+            }
+
+            if (pt_bg != null && !pt_bg.isEmpty()) {
+                contentViewCarousel.setInt(R.id.carousel_relative_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+                contentViewSmall.setInt(R.id.image_only_small_relative_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+            }
+
+            if (pt_img_small != null && !pt_img_small.isEmpty()) {
+                URL smallImgUrl = new URL(pt_img_small);
+                contentViewSmall.setImageViewBitmap(R.id.small_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
+                contentViewCarousel.setImageViewBitmap(R.id.big_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
+            }
+
+
+            if (left == extras.getBoolean("left", false)) {
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
+                clicked1 = false;
+            } else {
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.outline_star_1);
+            }
+            if (right == extras.getBoolean("right", false)) {
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
+                clicked2 = false;
+            } else {
+                contentViewRating.setImageViewResource(R.id.star2, R.drawable.outline_star_1);
+
+
+            }
+        }
+        catch (Throwable t){
+            PTLog.error("Error creating rating notification ",t);
+        }
     }
 }
