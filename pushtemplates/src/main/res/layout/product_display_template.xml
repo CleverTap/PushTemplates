@@ -12,7 +12,6 @@
         android:layout_height="match_parent"
         android:inAnimation="@anim/slide_in_left"
         android:outAnimation="@anim/slide_out_right"
-        android:src="@drawable/ct_image"
         />
     <LinearLayout
         android:orientation="vertical"
@@ -88,21 +87,18 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:src="@drawable/ct_image"
                 />
             <ImageView
                 android:id="@+id/small_image2"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:src="@drawable/ct_image"
                 />
             <ImageView
                 android:id="@+id/small_image3"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:src="@drawable/ct_image"
                 />
         </LinearLayout>
 

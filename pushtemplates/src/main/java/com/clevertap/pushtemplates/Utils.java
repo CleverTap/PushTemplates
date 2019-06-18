@@ -8,6 +8,9 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.LruCache;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +27,8 @@ public class Utils {
         boolean shouldRender = fromCleverTap && extras.containsKey("nm");
         return fromCleverTap && shouldRender;
     }
+
+
 
     static Bitmap getNotificationBitmap(String icoPath, boolean fallbackToAppIcon, final Context context)
             throws NullPointerException {
@@ -140,5 +145,24 @@ public class Utils {
             }
         }
         return dlList;
+    }
+
+    static ArrayList<String> getBigTextFromExtras(Bundle extras){
+        ArrayList<String> btList = new ArrayList<>();
+        for(String key : extras.keySet()){
+            if(key.contains("pt_bt")){
+                btList.add(extras.getString(key));
+            }
+        }
+        return btList;
+    }
+    static ArrayList<String> getSmallTextFromExtras(Bundle extras){
+        ArrayList<String> stList = new ArrayList<>();
+        for(String key : extras.keySet()){
+            if(key.contains("pt_st")){
+                stList.add(extras.getString(key));
+            }
+        }
+        return stList;
     }
 }

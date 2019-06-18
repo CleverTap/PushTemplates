@@ -33,4 +33,7 @@ public class Constants {
     static final String PT_BG = "pt_bg";
     static final String PT_BIG_IMG = "pt_big_img";
     static final String PT_SMALL_IMG = "pt_small_img";
+    static final String PT_BIG_TEXT = "btlist";
+    static final String PT_SMALL_TEXT = "stlist";
+
 }
