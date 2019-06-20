@@ -52,8 +52,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
         if(intent.getExtras()!=null) {
             Bundle extras = intent.getExtras();
-            bigTextList = extras.getStringArrayList(Constants.PT_BIG_TEXT);
-            smallTextList = extras.getStringArrayList(Constants.PT_SMALL_TEXT);
             pt_id = intent.getStringExtra(Constants.PT_ID);
             pt_msg = extras.getString(Constants.PT_MSG);
             pt_msg_clr = extras.getString(Constants.PT_MSG_COLOR);
@@ -65,6 +63,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             imageList = Utils.getImageListFromExtras(extras);
             ctaList = Utils.getCTAListFromExtras(extras);
             deepLinkList = Utils.getDeepLinkListFromExtras(extras);
+            bigTextList = Utils.getBigTextFromExtras(extras);
+            smallTextList = Utils.getSmallTextFromExtras(extras);
 
             notificationManager =(NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
             cleverTapAPI = CleverTapAPI.getDefaultInstance(context);
@@ -234,6 +234,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
     private void handleProductDisplayNotification(Context context, Bundle extras) {
         try {
+
+
             //Set RemoteViews again
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.image_only_small);
@@ -270,22 +272,26 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             if (img1 != extras.getBoolean("img1", false)) {
                 contentViewBig.setImageViewBitmap(R.id.big_image, ImageCache.getBitmap("0"));
-                contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(0));
-                contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(0));
-
+                if (!bigTextList.isEmpty()) {
+                    contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(0));
+                    contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(0));
+                }
                 img1 = false;
             }
             if (img2 != extras.getBoolean("img2", false)) {
                 contentViewBig.setImageViewBitmap(R.id.big_image, ImageCache.getBitmap("1"));
-                contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(1));
-                contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(1));
-
+                if (!bigTextList.isEmpty()) {
+                    contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(1));
+                    contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(1));
+                }
                 img2 = false;
             }
             if (img3 != extras.getBoolean("img3", false)) {
                 contentViewBig.setImageViewBitmap(R.id.big_image, ImageCache.getBitmap("2"));
-                contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(2));
-                contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(2));
+                if (!bigTextList.isEmpty()) {
+                    contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(2));
+                    contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(2));
+                }
 
                 img3 = false;
             }
@@ -313,7 +319,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             notificationIntent2.putExtra("notif_id",notificationId);
             notificationIntent1.putExtra("pt_dl",deepLinkList.get(1));
             notificationIntent2.putExtras(extras);
-            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, 2, notificationIntent2, 0);
+            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, 7, notificationIntent2, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image2, contentIntent2);
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
@@ -321,7 +327,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             notificationIntent3.putExtra("notif_id",notificationId);
             notificationIntent1.putExtra("pt_dl",deepLinkList.get(2));
             notificationIntent3.putExtras(extras);
-            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, 3, notificationIntent3, 0);
+            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, 8, notificationIntent3, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image3, contentIntent3);
 
 

@@ -118,11 +118,15 @@ class TemplateRenderer {
                 renderRatingCarouselNotification(context,extras,notificationId);
                 break;
             case FIVE_ICONS:
+                renderFiveIconNotification(context,extras,notificationId);
                 break;
             case PRODUCT_DISPLAY:
                 renderProductDisplayNotification(context, extras, notificationId);
                 break;
         }
+    }
+
+    private void renderFiveIconNotification(Context context, Bundle extras, int notificationId) {
     }
 
     private void renderRatingCarouselNotification(Context context, Bundle extras, int notificationId){
@@ -403,7 +407,6 @@ class TemplateRenderer {
             contentViewSmall = new RemoteViews(context.getPackageName(),R.layout.image_only_small);
 
             int imageKey = 0;
-
             for(String image : imageList){
                 URL imageURL = new URL(image);
                 Bitmap img = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
@@ -468,8 +471,6 @@ class TemplateRenderer {
 
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("img1",true);
-            notificationIntent1.putExtra("btlist",bigTextList);
-            notificationIntent1.putExtra("stlist",smallTextList);
             notificationIntent1.putExtra("notif_id",notificationId);
             notificationIntent1.putExtra("dl",deepLinkList.get(0));
             notificationIntent1.putExtras(extras);
@@ -479,21 +480,17 @@ class TemplateRenderer {
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("img2",true);
             notificationIntent2.putExtra("notif_id",notificationId);
-            notificationIntent2.putExtra("btlist",bigTextList);
-            notificationIntent2.putExtra("stlist",smallTextList);
             notificationIntent2.putExtra("dl",deepLinkList.get(1));
             notificationIntent2.putExtras(extras);
-            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, 2, notificationIntent2, 0);
+            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, 7, notificationIntent2, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image2, contentIntent2);
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("img3",true);
             notificationIntent3.putExtra("notif_id",notificationId);
-            notificationIntent3.putExtra("btlist",bigTextList);
-            notificationIntent3.putExtra("stlist",smallTextList);
             notificationIntent3.putExtra("dl",deepLinkList.get(2));
             notificationIntent3.putExtras(extras);
-            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, 3, notificationIntent3, 0);
+            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, 8, notificationIntent3, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image3, contentIntent3);
 
 
@@ -503,7 +500,6 @@ class TemplateRenderer {
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
             launchIntent.putExtras(extras);
             launchIntent.putExtra("wzrk_dl", deepLinkList.get(0));
-            launchIntent.putExtras(extras);
             launchIntent.removeExtra(Constants.WZRK_ACTIONS);
             launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
@@ -532,4 +528,5 @@ class TemplateRenderer {
             PTLog.error("Error creating Product Display Notification ",t);
         }
     }
+
 }
