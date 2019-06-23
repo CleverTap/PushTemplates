@@ -9,6 +9,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -25,8 +26,8 @@ import java.util.HashMap;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class PushTemplateReceiver extends BroadcastReceiver {
-    boolean clicked1=true,clicked2=true,clicked3=true,clicked4=true,clicked5 = true, img1=false,img2=false,img3=false, buynow=true, bigimage=true;
-    private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating;
+    boolean clicked1=true,clicked2=true,clicked3=true,clicked4=true,clicked5 = true, img1=false,img2=false,img3=false, buynow=true, bigimage=true, cta1=true,cta2=true,cta3=true,cta4=true,cta5=true,close=true;
+    private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating,contentFiveCTAs;
     private String pt_id;
     private TemplateType templateType;
     private String pt_title;
@@ -92,6 +93,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 switch (templateType){
                     case RATING:
                         handleRatingNotification(context, extras);
+                    case FIVE_ICONS:
+                        handleFiveCTANotification(context,extras);
                     case PRODUCT_DISPLAY:
                         handleProductDisplayNotification(context,extras);
                     break;
@@ -99,6 +102,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             }
         }
     }
+
+
     private void handleRatingNotification(Context context, Bundle extras){
 
         try{
@@ -378,5 +383,32 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             PTLog.error("Error creating rating notification ", t);
         }
     }
+
+    private void handleFiveCTANotification(Context context, Bundle extras) {
+        String dl = null;
+        Intent actionLaunchIntent;
+
+        if (cta1 == extras.getBoolean("cta1")){
+            dl = deepLinkList.get(0);
+        }
+        if (cta2 == extras.getBoolean("cta2")){
+            dl = deepLinkList.get(1);
+        }
+        if (cta3 == extras.getBoolean("cta3")){
+            dl = deepLinkList.get(2);
+        }
+        if (cta4 == extras.getBoolean("cta4")){
+            dl = deepLinkList.get(3);
+        }
+        if (cta5 == extras.getBoolean("cta5")){
+            dl = deepLinkList.get(4);
+        }
+        if (close == extras.getBoolean("close")){
+            notificationManager.cancel(9986);
+
+        }
+
+    }
+
 
 }

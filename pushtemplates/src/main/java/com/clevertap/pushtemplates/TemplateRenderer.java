@@ -38,9 +38,9 @@ class TemplateRenderer {
     private ArrayList<String> bigTextList = new ArrayList<>();
     private ArrayList<String> smallTextList = new ArrayList<>();
     private String pt_bg;
-    private int current_index=0;
+    private String pt_close;
 
-    private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating, contentViewProductDisplay;
+    private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating, contentViewProductDisplay, contentFiveCTAs;
     private String channelId;
     private int smallIcon = 0;
     private boolean requiresChannelId;
@@ -64,6 +64,7 @@ class TemplateRenderer {
         deepLinkList = Utils.getDeepLinkListFromExtras(extras);
         bigTextList = Utils.getBigTextFromExtras(extras);
         smallTextList = Utils.getSmallTextFromExtras(extras);
+        pt_close = extras.getString(Constants.PT_CLOSE);
     }
 
     static void createNotification(Context context, Bundle extras){
@@ -126,8 +127,7 @@ class TemplateRenderer {
         }
     }
 
-    private void renderFiveIconNotification(Context context, Bundle extras, int notificationId) {
-    }
+
 
     private void renderRatingCarouselNotification(Context context, Bundle extras, int notificationId){
         try{
@@ -527,6 +527,115 @@ class TemplateRenderer {
         }catch (Throwable t){
             PTLog.error("Error creating Product Display Notification ",t);
         }
+    }
+
+    private void renderFiveIconNotification(Context context, Bundle extras, int notificationId) {
+        try{
+            contentFiveCTAs = new RemoteViews(context.getPackageName(), R.layout.five_cta);
+
+            int imageKey = 0;
+
+            for(String image : imageList){
+                URL imageURL = new URL(image);
+                Bitmap img = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
+
+
+                if (imageKey == 0){
+
+                    contentFiveCTAs.setImageViewBitmap(R.id.cta1, img);
+                }
+                else if(imageKey == 1){
+                    contentFiveCTAs.setImageViewBitmap(R.id.cta2, img);
+                }
+                else if(imageKey == 2){
+                    contentFiveCTAs.setImageViewBitmap(R.id.cta3, img);
+                }
+                else if(imageKey == 3){
+                    contentFiveCTAs.setImageViewBitmap(R.id.cta4, img);
+                }
+                else if(imageKey == 4){
+                    contentFiveCTAs.setImageViewBitmap(R.id.cta5, img);
+                }
+                imageKey ++;
+
+            }
+
+            URL imageURL = new URL(pt_close);
+
+            contentFiveCTAs.setImageViewBitmap(R.id.close,BitmapFactory.decodeStream(imageURL.openConnection().getInputStream()));
+
+            if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
+                notificationId = 9986;
+            }
+
+            Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent1.putExtra("cta1",true);
+            notificationIntent1.putExtras(extras);
+            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 1, notificationIntent1, 0);
+            contentFiveCTAs.setOnClickPendingIntent(R.id.cta1, contentIntent1);
+
+            Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent2.putExtra("cta2",true);
+            notificationIntent2.putExtras(extras);
+            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 2, notificationIntent2, 0);
+            contentFiveCTAs.setOnClickPendingIntent(R.id.cta2, contentIntent2);
+
+            Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent3.putExtra("cta3",true);
+            notificationIntent3.putExtras(extras);
+            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 3, notificationIntent3, 0);
+            contentFiveCTAs.setOnClickPendingIntent(R.id.cta3, contentIntent3);
+
+            Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent4.putExtra("cta4",true);
+            notificationIntent4.putExtras(extras);
+            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 4, notificationIntent4, 0);
+            contentFiveCTAs.setOnClickPendingIntent(R.id.cta4, contentIntent4);
+
+            Intent notificationIntent5 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent5.putExtra("cta5",true);
+            notificationIntent5.putExtras(extras);
+            PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 5, notificationIntent5, 0);
+            contentFiveCTAs.setOnClickPendingIntent(R.id.cta5, contentIntent5);
+
+            Intent notificationIntent6 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent6.putExtra("close",true);
+            notificationIntent6.putExtras(extras);
+            PendingIntent contentIntent6 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 6, notificationIntent6, 0);
+            contentFiveCTAs.setOnClickPendingIntent(R.id.close, contentIntent6);
+
+            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            launchIntent.putExtras(extras);
+            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder notificationBuilder;
+            if(requiresChannelId) {
+                notificationBuilder = new NotificationCompat.Builder(context, channelId);
+            }else{
+                notificationBuilder = new NotificationCompat.Builder(context);
+            }
+
+
+            notificationBuilder.setSmallIcon(smallIcon)
+                    .setCustomContentView(contentFiveCTAs)
+                    .setCustomBigContentView(contentFiveCTAs)
+                    .setContentTitle("Custom Notification")
+                    .setContentIntent(pIntent)
+                    .setOngoing(true)
+                    .setAutoCancel(true);
+
+            notificationManager.notify(notificationId, notificationBuilder.build());
+            CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
+            if (instance != null) {
+                instance.pushNotificationViewedEvent(extras);
+            }
+        }catch (Throwable t){
+            PTLog.error("Error creating image only notification", t);
+        }
+
     }
 
 }

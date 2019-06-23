@@ -11,7 +11,7 @@ import com.clevertap.android.sdk.CleverTapAPI;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button sendBasicPush, sendCarouselPush, sendRatingPush, sendProductDisplayNotificaiton;
+    Button sendBasicPush, sendCarouselPush, sendRatingPush, sendProductDisplayNotification, sendCTANotification;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,12 +52,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        sendProductDisplayNotificaiton = findViewById(R.id.productDisplay);
-        sendProductDisplayNotificaiton.setOnClickListener(new View.OnClickListener() {
+        sendProductDisplayNotification = findViewById(R.id.productDisplay);
+        sendProductDisplayNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (cleverTapAPI != null) {
                     cleverTapAPI.pushEvent("Send Product Display Notification");
+                }
+            }
+        });
+
+        sendCTANotification = findViewById(R.id.cta);
+        sendCTANotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cleverTapAPI != null) {
+                    cleverTapAPI.pushEvent("Send CTA Notification");
                 }
             }
         });
