@@ -1,4 +1,31 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+ext {
+
+    bintrayRepo = "ct-ancillary"
+    bintrayName = "ct-ancillary"
+
+    publishedGroupId = 'com.clevertap.android'
+    libraryName = 'ct-ancillary'
+    artifact = 'ct-ancillary'
+
+    libraryDescription = 'Ancillary SDK for CleverTap with push templates etc.'
+
+    siteUrl = 'https://github.com/darshanclevertap/PushTemplates'
+    gitUrl = 'https://github.com/darshanclevertap/PushTemplates.git'
+
+    libraryVersion = '0.0.1'
+
+    developerId = 'darshanclevertap'
+    developerName = 'Darshan'
+    developerEmail = 'darshan@clevertap.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
 
 android {
     compileSdkVersion 28
@@ -32,4 +59,17 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+repositories {
+    mavenCentral()
+}
+
+//Add these lines to publish library to bintray. This is the readymade scripts made by github user nuuneoi to make uploading to bintray easy.
+//Place it at the end of the file
+if (project.rootProject.file('local.properties').exists()) {
+    //install.gradle
+    apply from: 'install.gradle'
+    //bintray.gradle
+    apply from: 'bintray.gradle'
 }

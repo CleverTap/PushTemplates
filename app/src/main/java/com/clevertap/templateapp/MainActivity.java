@@ -9,6 +9,8 @@ import android.widget.Button;
 
 import com.clevertap.android.sdk.CleverTapAPI;
 
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity {
 
     Button sendBasicPush, sendCarouselPush, sendRatingPush, sendProductDisplayNotification, sendCTANotification;
@@ -16,11 +18,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        CleverTapAPI.setDebugLevel(3);
+        CleverTapAPI.setDebugLevel(CleverTapAPI.LogLevel.DEBUG);
         final CleverTapAPI cleverTapAPI = CleverTapAPI.getDefaultInstance(getApplicationContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            CleverTapAPI.createNotificationChannel(this,"PTTesting","Push Template App Channel","Channel for Push Template App", NotificationManager.IMPORTANCE_HIGH,true);
+            CleverTapAPI.createNotificationChannel(this,"Test","Push Template App Channel","Channel for Push Template App", NotificationManager.IMPORTANCE_HIGH,true);
         }
+        HashMap<String, Object> profileUpdate = new HashMap<String, Object>();
+        profileUpdate.put("Email", "vijay.agnihotri@clevertap.com");
+        cleverTapAPI.onUserLogin(profileUpdate);
 
         sendBasicPush = findViewById(R.id.basicPush);
         sendBasicPush.setOnClickListener(new View.OnClickListener() {

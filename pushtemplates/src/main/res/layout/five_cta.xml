@@ -10,14 +10,14 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_margin="8dip"
-        android:src="@drawable/ct_image"/>
+        android:src="@drawable/pt_image"/>
 
     <ImageView
         android:id="@+id/cta2"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_margin="8dip"
-        android:src="@drawable/ct_image" />
+        android:src="@drawable/pt_image" />
 
     <ImageView
         android:id="@+id/cta3"
@@ -25,7 +25,7 @@
         android:layout_height="50dp"
         android:layout_margin="8dip"
 
-        android:src="@drawable/ct_image" />
+        android:src="@drawable/pt_image" />
 
     <ImageView
         android:id="@+id/cta4"
@@ -34,7 +34,7 @@
 
         android:layout_margin="8dip"
 
-        android:src="@drawable/ct_image" />
+        android:src="@drawable/pt_image" />
 
     <ImageView
         android:id="@+id/cta5"
@@ -43,7 +43,7 @@
         android:layout_margin="8dip"
 
 
-        android:src="@drawable/ct_image" />
+        android:src="@drawable/pt_image" />
 
     <ImageView
         android:id="@+id/close"
@@ -51,7 +51,7 @@
         android:layout_height="50dp"
         android:layout_margin="8dip"
 
-        android:src="@drawable/ct_close" />
+        android:src="@drawable/pt_close" />
 
 
 </LinearLayout>

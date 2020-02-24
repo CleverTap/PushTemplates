@@ -17,10 +17,13 @@
         tools:ignore="GoogleAppIndexingWarning">
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
-            android:value="TEST-R78-ZZK-955Z"/>
+            android:value="W67-774-7Z5Z"/>
         <meta-data
             android:name="CLEVERTAP_TOKEN"
-            android:value="TEST-311-ba2"/>
+            android:value="4aa-a60"/>
+        <meta-data
+            android:name="FCM_SENDER_ID"
+            android:value="id:84372680640"/>
 
         <meta-data
             android:name="CLEVERTAP_NOTIFICATION_ICON"
