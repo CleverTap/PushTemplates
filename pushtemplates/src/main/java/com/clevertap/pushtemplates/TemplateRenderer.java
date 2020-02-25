@@ -510,25 +510,30 @@ class TemplateRenderer {
             contentViewBig = new RemoteViews(context.getPackageName(),R.layout.product_display_template);
             contentViewSmall = new RemoteViews(context.getPackageName(),R.layout.image_only_small);
 
-            int imageKey = 0;
-            for(String image : imageList){
-                URL imageURL = new URL(image);
-                Bitmap img = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
-                ImageCache.addBitmap(""+imageKey,img);
 
+            for(int index = 0; index < imageList.size(); index++){
+                final int finalIndex = index;
+                Glide.with(context.getApplicationContext())
+                        .asBitmap()
+                        .load(imageList.get(index))
+                        .into(new CustomTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                if (finalIndex == 0){
+                                    contentViewBig.setImageViewBitmap(R.id.small_image1, resource);
+                                }
+                                else if(finalIndex == 1){
+                                    contentViewBig.setImageViewBitmap(R.id.small_image2, resource);
+                                }
+                                else if(finalIndex == 2){
+                                    contentViewBig.setImageViewBitmap(R.id.small_image3, resource);
+                                }
+                            }
 
-
-                if (imageKey == 0){
-
-                    contentViewBig.setImageViewBitmap(R.id.small_image1, ImageCache.getBitmap("0"));
-                }
-                else if(imageKey == 1){
-                    contentViewBig.setImageViewBitmap(R.id.small_image2, ImageCache.getBitmap("1"));
-                }
-                else if(imageKey == 2){
-                    contentViewBig.setImageViewBitmap(R.id.small_image3, ImageCache.getBitmap("2"));
-                }
-                imageKey ++;
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                            }
+                        });
 
             }
 
@@ -563,10 +568,19 @@ class TemplateRenderer {
                 contentViewSmall.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
             }
 
+            Glide.with(context.getApplicationContext())
+                    .asBitmap()
+                    .load(imageList.get(0))
+                    .into(new CustomTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            contentViewBig.setImageViewBitmap(R.id.big_image, resource);
+                        }
 
-
-            contentViewBig.setImageViewBitmap(R.id.big_image,ImageCache.getBitmap("0"));
-
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                        }
+                    });
 
 
             if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {

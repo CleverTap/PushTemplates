@@ -7,13 +7,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
 
@@ -243,12 +251,31 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.image_only_small);
 
 
-            contentViewBig.setImageViewBitmap(R.id.small_image1, ImageCache.getBitmap("0"));
+            for(int index = 0; index < imageList.size(); index++){
+                final int finalIndex = index;
+                Glide.with(context.getApplicationContext())
+                        .asBitmap()
+                        .load(imageList.get(index))
+                        .into(new CustomTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                if (finalIndex == 0){
+                                    contentViewBig.setImageViewBitmap(R.id.small_image1, resource);
+                                }
+                                else if(finalIndex == 1){
+                                    contentViewBig.setImageViewBitmap(R.id.small_image2, resource);
+                                }
+                                else if(finalIndex == 2){
+                                    contentViewBig.setImageViewBitmap(R.id.small_image3, resource);
+                                }
+                            }
 
-            contentViewBig.setImageViewBitmap(R.id.small_image2, ImageCache.getBitmap("1"));
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                            }
+                        });
 
-            contentViewBig.setImageViewBitmap(R.id.small_image3, ImageCache.getBitmap("2"));
-
+            }
 
 
             if (pt_title != null && !pt_title.isEmpty()) {
@@ -273,7 +300,19 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
 
             if (img1 != extras.getBoolean("img1", false)) {
-                contentViewBig.setImageViewBitmap(R.id.big_image, ImageCache.getBitmap("0"));
+                Glide.with(context.getApplicationContext())
+                        .asBitmap()
+                        .load(imageList.get(0))
+                        .into(new CustomTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                contentViewBig.setImageViewBitmap(R.id.big_image, resource);
+                            }
+
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                            }
+                        });
                 if (!bigTextList.isEmpty()) {
                     contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(0));
                     contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(0));
@@ -281,7 +320,19 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 img1 = false;
             }
             if (img2 != extras.getBoolean("img2", false)) {
-                contentViewBig.setImageViewBitmap(R.id.big_image, ImageCache.getBitmap("1"));
+                Glide.with(context.getApplicationContext())
+                        .asBitmap()
+                        .load(imageList.get(1))
+                        .into(new CustomTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                contentViewBig.setImageViewBitmap(R.id.big_image, resource);
+                            }
+
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                            }
+                        });
                 if (!bigTextList.isEmpty()) {
                     contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(1));
                     contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(1));
@@ -289,7 +340,19 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 img2 = false;
             }
             if (img3 != extras.getBoolean("img3", false)) {
-                contentViewBig.setImageViewBitmap(R.id.big_image, ImageCache.getBitmap("2"));
+                Glide.with(context.getApplicationContext())
+                        .asBitmap()
+                        .load(imageList.get(2))
+                        .into(new CustomTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                contentViewBig.setImageViewBitmap(R.id.big_image, resource);
+                            }
+
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                            }
+                        });
                 if (!bigTextList.isEmpty()) {
                     contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(2));
                     contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(2));
