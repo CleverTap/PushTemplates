@@ -11,8 +11,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.view.View;
+import androidx.core.app.NotificationCompat;
+
 import android.widget.RemoteViews;
 
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
@@ -387,6 +387,7 @@ class TemplateRenderer {
                     .setAutoCancel(true);
 
             notificationManager.notify(notificationId, notificationBuilder.build());
+
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
                 instance.pushNotificationViewedEvent(extras);
