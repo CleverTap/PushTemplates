@@ -1,5 +1,6 @@
 package com.clevertap.pushtemplates;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -9,12 +10,20 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import android.widget.RemoteViews;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.NotificationTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
 
@@ -245,11 +254,23 @@ class TemplateRenderer {
             contentViewCarousel = new RemoteViews(context.getPackageName(),R.layout.auto_carousel);
             contentViewSmall = new RemoteViews(context.getPackageName(),R.layout.image_only_small);
 
+            ArrayList<Integer> layoutIds = new ArrayList<>();
             for(String image : imageList){
-                URL imageURL = new URL(image);
-                RemoteViews imageView =  new RemoteViews(context.getPackageName(),R.layout.carousel_image);
+                final RemoteViews imageView =  new RemoteViews(context.getPackageName(),R.layout.carousel_image);
                 contentViewCarousel.addView(R.id.view_flipper,imageView);
-                imageView.setImageViewBitmap(R.id.flipper_img, BitmapFactory.decodeStream(imageURL.openConnection().getInputStream()));
+                Glide.with(context.getApplicationContext())
+                        .asBitmap()
+                        .load(image)
+                        .into(new CustomTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                imageView.setImageViewBitmap(R.id.flipper_img, resource);
+                            }
+
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                            }
+                        });
             }
 
             if(pt_title!=null && !pt_title.isEmpty()) {
@@ -278,9 +299,9 @@ class TemplateRenderer {
             }
 
             if(pt_img_small!=null && !pt_img_small.isEmpty()) {
-                URL smallImgUrl = new URL(pt_img_small);
-                contentViewSmall.setImageViewBitmap(R.id.small_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
-                contentViewCarousel.setImageViewBitmap(R.id.big_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
+                //URL smallImgUrl = new URL(pt_img_small);
+                //contentViewSmall.setImageViewBitmap(R.id.small_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
+                //contentViewCarousel.setImageViewBitmap(R.id.big_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
             }
 
             contentViewCarousel.setInt(R.id.view_flipper,"setFlipInterval",4000);
@@ -310,7 +331,52 @@ class TemplateRenderer {
                     .setContentIntent(pIntent)
                     .setAutoCancel(true);
 
-            notificationManager.notify(notificationId, notificationBuilder.build());
+            Notification notification = notificationBuilder.build();
+            notificationManager.notify(notificationId, notification);
+
+            NotificationTarget smallNotifTarget = new NotificationTarget(
+                    context,
+                    R.id.small_image_app,
+                    contentViewSmall,
+                    notification,
+                    notificationId);
+            Glide
+                    .with(context.getApplicationContext())
+                    .asBitmap()
+                    .load(pt_img_small)
+                    .into(smallNotifTarget);
+            NotificationTarget bigNotifTargetIcon = new NotificationTarget(
+                    context,
+                    R.id.big_image_app,
+                    contentViewCarousel,
+                    notification,
+                    notificationId);
+            Glide
+                    .with(context.getApplicationContext())
+                    .asBitmap()
+                    .load(pt_img_small)
+                    .into(bigNotifTargetIcon);
+
+
+
+            for(int index = 0; index < imageList.size(); index++){
+                //URL imageURL = new URL(image);
+                //RemoteViews imageView =  new RemoteViews(context.getPackageName(),R.layout.carousel_image);
+                //contentViewCarousel.addView(R.id.view_flipper,imageView);
+                //imageView.setImageViewBitmap(R.id.flipper_img, BitmapFactory.decodeStream(imageURL.openConnection().getInputStream()));
+                NotificationTarget bigNotifCarouselTarget = new NotificationTarget(
+                        context,
+                        layoutIds.get(index),
+                        contentViewCarousel,
+                        notification,
+                        notificationId);
+                Glide
+                        .with(context.getApplicationContext())
+                        .asBitmap()
+                        .load(imageList.get(index))
+                        .into(bigNotifCarouselTarget);
+            }
+
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
                 instance.pushNotificationViewedEvent(extras);
@@ -325,15 +391,15 @@ class TemplateRenderer {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
             contentViewSmall = new RemoteViews(context.getPackageName(),R.layout.image_only_small);
             if(pt_img_big!=null && !pt_img_big.isEmpty()) {
-                URL bigImgUrl = new URL(pt_img_big);
-                contentViewBig.setImageViewBitmap(R.id.image_pic, BitmapFactory.decodeStream(bigImgUrl.openConnection().getInputStream()));
+                //URL bigImgUrl = new URL(pt_img_big);
+                //contentViewBig.setImageViewBitmap(R.id.image_pic, BitmapFactory.decodeStream(bigImgUrl.openConnection().getInputStream()));
 
             }
 
             if(pt_img_small!=null && !pt_img_small.isEmpty()) {
-                URL smallImgUrl = new URL(pt_img_small);
-                contentViewSmall.setImageViewBitmap(R.id.small_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
-                contentViewBig.setImageViewBitmap(R.id.big_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
+                //URL smallImgUrl = new URL(pt_img_small);
+                //contentViewSmall.setImageViewBitmap(R.id.small_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
+                //contentViewBig.setImageViewBitmap(R.id.big_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
             }
 
             if(pt_title!=null && !pt_title.isEmpty()) {
@@ -386,7 +452,44 @@ class TemplateRenderer {
                     .setContentIntent(pIntent)
                     .setAutoCancel(true);
 
-            notificationManager.notify(notificationId, notificationBuilder.build());
+            Notification notification = notificationBuilder.build();
+            notificationManager.notify(notificationId, notification);
+
+            NotificationTarget bigNotifTarget = new NotificationTarget(
+                    context,
+                    R.id.image_pic,
+                    contentViewBig,
+                    notification,
+                    notificationId);
+            Glide
+                    .with(context.getApplicationContext())
+                    .asBitmap()
+                    .load(pt_img_big)
+                    .into(bigNotifTarget);
+
+            NotificationTarget smallNotifTarget = new NotificationTarget(
+                    context,
+                    R.id.small_image_app,
+                    contentViewSmall,
+                    notification,
+                    notificationId);
+            Glide
+                    .with(context.getApplicationContext())
+                    .asBitmap()
+                    .load(pt_img_small)
+                    .into(smallNotifTarget);
+            NotificationTarget bigNotifTargetIcon = new NotificationTarget(
+                    context,
+                    R.id.big_image_app,
+                    contentViewBig,
+                    notification,
+                    notificationId);
+            Glide
+                    .with(context.getApplicationContext())
+                    .asBitmap()
+                    .load(pt_img_small)
+                    .into(bigNotifTargetIcon);
+
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
