@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import android.text.Html;
 import android.widget.RemoteViews;
 
 import com.bumptech.glide.Glide;
@@ -403,13 +404,24 @@ class TemplateRenderer {
             }
 
             if(pt_title!=null && !pt_title.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.title, pt_title);
-                contentViewSmall.setTextViewText(R.id.title, pt_title);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_title,Html.FROM_HTML_MODE_LEGACY));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title,Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                }
+
             }
 
             if(pt_msg!=null && !pt_msg.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.msg, pt_msg);
-                contentViewSmall.setTextViewText(R.id.msg, pt_msg);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_msg));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_msg));
+                }
             }
 
             if(pt_bg!=null && !pt_bg.isEmpty()){
