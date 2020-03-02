@@ -259,19 +259,7 @@ class TemplateRenderer {
             for(String image : imageList){
                 final RemoteViews imageView =  new RemoteViews(context.getPackageName(),R.layout.carousel_image);
                 contentViewCarousel.addView(R.id.view_flipper,imageView);
-                Glide.with(context.getApplicationContext())
-                        .asBitmap()
-                        .load(image)
-                        .into(new CustomTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                imageView.setImageViewBitmap(R.id.flipper_img, resource);
-                            }
-
-                            @Override
-                            public void onLoadCleared(@Nullable Drawable placeholder) {
-                            }
-                        });
+                setImageDrawable(context, image, R.id.flipper_img, imageView);
             }
 
             if(pt_title!=null && !pt_title.isEmpty()) {
@@ -579,21 +567,7 @@ class TemplateRenderer {
                 contentViewBig.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
                 contentViewSmall.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
             }
-
-            Glide.with(context.getApplicationContext())
-                    .asBitmap()
-                    .load(imageList.get(0))
-                    .into(new CustomTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                            contentViewBig.setImageViewBitmap(R.id.big_image, resource);
-                        }
-
-                        @Override
-                        public void onLoadCleared(@Nullable Drawable placeholder) {
-                        }
-                    });
-
+            setImageDrawable(context, imageList.get(0), R.id.big_image, contentViewBig);
 
             if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
                 notificationId = 9987;
@@ -666,33 +640,25 @@ class TemplateRenderer {
             int imageKey = 0;
 
             for(String image : imageList){
-                URL imageURL = new URL(image);
-                Bitmap img = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
-
-
                 if (imageKey == 0){
-
-                    contentFiveCTAs.setImageViewBitmap(R.id.cta1, img);
+                    setImageDrawable(context, image, R.id.cta1, contentFiveCTAs);
                 }
                 else if(imageKey == 1){
-                    contentFiveCTAs.setImageViewBitmap(R.id.cta2, img);
+                    setImageDrawable(context, image, R.id.cta2, contentFiveCTAs);
                 }
                 else if(imageKey == 2){
-                    contentFiveCTAs.setImageViewBitmap(R.id.cta3, img);
+                    setImageDrawable(context, image, R.id.cta3, contentFiveCTAs);
                 }
                 else if(imageKey == 3){
-                    contentFiveCTAs.setImageViewBitmap(R.id.cta4, img);
+                    setImageDrawable(context, image, R.id.cta4, contentFiveCTAs);
                 }
                 else if(imageKey == 4){
-                    contentFiveCTAs.setImageViewBitmap(R.id.cta5, img);
+                    setImageDrawable(context, image, R.id.cta5, contentFiveCTAs);
                 }
                 imageKey ++;
 
             }
-
-            URL imageURL = new URL(pt_close);
-
-            contentFiveCTAs.setImageViewBitmap(R.id.close,BitmapFactory.decodeStream(imageURL.openConnection().getInputStream()));
+            setImageDrawable(context, pt_close, R.id.close, contentFiveCTAs);
 
             if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
                 notificationId = 9986;
@@ -766,6 +732,22 @@ class TemplateRenderer {
             PTLog.error("Error creating image only notification", t);
         }
 
+    }
+
+    private void setImageDrawable(Context context, String image, final int resourceId, final RemoteViews remoteView) {
+        Glide.with(context.getApplicationContext())
+                .asBitmap()
+                .load(image)
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        remoteView.setImageViewBitmap(resourceId, resource);
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                    }
+                });
     }
 
 }
