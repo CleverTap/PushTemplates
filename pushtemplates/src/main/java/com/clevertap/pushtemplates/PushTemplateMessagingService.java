@@ -6,6 +6,8 @@ import com.clevertap.android.sdk.CleverTapAPI;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONObject;
+
 import java.util.Map;
 
 public class PushTemplateMessagingService extends FirebaseMessagingService {
@@ -29,7 +31,14 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
                 boolean processCleverTapPN = Utils.isPNFromCleverTap(extras);
 
                 if(processCleverTapPN){
+                    String pt_json = extras.getString(Constants.PT_JSON);
+                    if(pt_json != null && !pt_json.isEmpty()) {
+                        JSONObject json = new JSONObject(pt_json);
+                        extras = Utils.fromJson(json);
+                    }
+
                     String pt_id = extras.getString(Constants.PT_ID);
+
                     if(("0").equals(pt_id) || pt_id == null || pt_id.isEmpty()){
                         CleverTapAPI.createNotification(context,extras);
                     }else{

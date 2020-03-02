@@ -259,7 +259,7 @@ class TemplateRenderer {
             for(String image : imageList){
                 final RemoteViews imageView =  new RemoteViews(context.getPackageName(),R.layout.carousel_image);
                 contentViewCarousel.addView(R.id.view_flipper,imageView);
-                setImageDrawable(context, image, R.id.flipper_img, imageView);
+                setGlideImage(context, image, R.id.flipper_img, imageView);
             }
 
             if(pt_title!=null && !pt_title.isEmpty()) {
@@ -404,11 +404,11 @@ class TemplateRenderer {
 
             if(pt_msg!=null && !pt_msg.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
-                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
+                    contentViewBig.setTextViewText(R.id.msg, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
                 } else {
-                    contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_msg));
-                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_msg));
+                    contentViewBig.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
                 }
             }
 
@@ -567,7 +567,7 @@ class TemplateRenderer {
                 contentViewBig.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
                 contentViewSmall.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
             }
-            setImageDrawable(context, imageList.get(0), R.id.big_image, contentViewBig);
+            setGlideImage(context, imageList.get(0), R.id.big_image, contentViewBig);
 
             if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
                 notificationId = 9987;
@@ -641,24 +641,24 @@ class TemplateRenderer {
 
             for(String image : imageList){
                 if (imageKey == 0){
-                    setImageDrawable(context, image, R.id.cta1, contentFiveCTAs);
+                    setGlideImage(context, image, R.id.cta1, contentFiveCTAs);
                 }
                 else if(imageKey == 1){
-                    setImageDrawable(context, image, R.id.cta2, contentFiveCTAs);
+                    setGlideImage(context, image, R.id.cta2, contentFiveCTAs);
                 }
                 else if(imageKey == 2){
-                    setImageDrawable(context, image, R.id.cta3, contentFiveCTAs);
+                    setGlideImage(context, image, R.id.cta3, contentFiveCTAs);
                 }
                 else if(imageKey == 3){
-                    setImageDrawable(context, image, R.id.cta4, contentFiveCTAs);
+                    setGlideImage(context, image, R.id.cta4, contentFiveCTAs);
                 }
                 else if(imageKey == 4){
-                    setImageDrawable(context, image, R.id.cta5, contentFiveCTAs);
+                    setGlideImage(context, image, R.id.cta5, contentFiveCTAs);
                 }
                 imageKey ++;
 
             }
-            setImageDrawable(context, pt_close, R.id.close, contentFiveCTAs);
+            setGlideImage(context, pt_close, R.id.close, contentFiveCTAs);
 
             if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
                 notificationId = 9986;
@@ -734,7 +734,7 @@ class TemplateRenderer {
 
     }
 
-    private void setImageDrawable(Context context, String image, final int resourceId, final RemoteViews remoteView) {
+    private void setGlideImage(Context context, String image, final int resourceId, final RemoteViews remoteView) {
         Glide.with(context.getApplicationContext())
                 .asBitmap()
                 .load(image)

@@ -12,22 +12,25 @@ import android.util.Log;
 import android.util.LruCache;
 
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Utils {
 
-    static boolean isPNFromCleverTap(Bundle extras){
-        if(extras == null) return false;
+    static boolean isPNFromCleverTap(Bundle extras) {
+        if (extras == null) return false;
 
         boolean fromCleverTap = extras.containsKey(Constants.NOTIF_TAG);
         boolean shouldRender = fromCleverTap && extras.containsKey("nm");
         return fromCleverTap && shouldRender;
     }
-
 
 
     static Bitmap getNotificationBitmap(String icoPath, boolean fallbackToAppIcon, final Context context)
@@ -117,52 +120,82 @@ public class Utils {
         return ai.icon;
     }
 
-    static ArrayList<String> getImageListFromExtras(Bundle extras){
+    static ArrayList<String> getImageListFromExtras(Bundle extras) {
         ArrayList<String> imageList = new ArrayList<>();
-        for(String key : extras.keySet()){
-            if(key.contains("pt_img")){
+        for (String key : extras.keySet()) {
+            if (key.contains("pt_img")) {
                 imageList.add(extras.getString(key));
             }
         }
         return imageList;
     }
 
-    static ArrayList<String> getCTAListFromExtras(Bundle extras){
+    static ArrayList<String> getCTAListFromExtras(Bundle extras) {
         ArrayList<String> ctaList = new ArrayList<>();
-        for(String key : extras.keySet()){
-            if(key.contains("pt_cta")){
+        for (String key : extras.keySet()) {
+            if (key.contains("pt_cta")) {
                 ctaList.add(extras.getString(key));
             }
         }
         return ctaList;
     }
 
-    static ArrayList<String> getDeepLinkListFromExtras(Bundle extras){
+    static ArrayList<String> getDeepLinkListFromExtras(Bundle extras) {
         ArrayList<String> dlList = new ArrayList<>();
-        for(String key : extras.keySet()){
-            if(key.contains("pt_dl")){
+        for (String key : extras.keySet()) {
+            if (key.contains("pt_dl")) {
                 dlList.add(extras.getString(key));
             }
         }
         return dlList;
     }
 
-    static ArrayList<String> getBigTextFromExtras(Bundle extras){
+    static ArrayList<String> getBigTextFromExtras(Bundle extras) {
         ArrayList<String> btList = new ArrayList<>();
-        for(String key : extras.keySet()){
-            if(key.contains("pt_bt")){
+        for (String key : extras.keySet()) {
+            if (key.contains("pt_bt")) {
                 btList.add(extras.getString(key));
             }
         }
         return btList;
     }
-    static ArrayList<String> getSmallTextFromExtras(Bundle extras){
+
+    static ArrayList<String> getSmallTextFromExtras(Bundle extras) {
         ArrayList<String> stList = new ArrayList<>();
-        for(String key : extras.keySet()){
-            if(key.contains("pt_st")){
+        for (String key : extras.keySet()) {
+            if (key.contains("pt_st")) {
                 stList.add(extras.getString(key));
             }
         }
         return stList;
     }
+
+    static Bundle fromJson(JSONObject s) {
+        Bundle bundle = new Bundle();
+
+        for (Iterator<String> it = s.keys(); it.hasNext(); ) {
+            String key = it.next();
+            JSONArray arr = s.optJSONArray(key);
+            String str = s.optString(key);
+
+            if (arr != null && arr.length() <= 0)
+                bundle.putStringArray(key, new String[]{});
+
+            else if (arr != null && arr.optString(0) != null) {
+                String[] newarr = new String[arr.length()];
+                for (int i = 0; i < arr.length(); i++)
+                    newarr[i] = arr.optString(i);
+                bundle.putStringArray(key, newarr);
+            }
+
+            else if (str != null)
+                bundle.putString(key, str);
+
+            else
+                System.err.println("unable to transform json to bundle " + key);
+        }
+
+        return bundle;
+    }
+
 }

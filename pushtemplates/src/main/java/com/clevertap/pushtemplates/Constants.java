@@ -36,5 +36,5 @@ public class Constants {
     static final String PT_BIG_TEXT = "btlist";
     static final String PT_SMALL_TEXT = "stlist";
     static final String PT_CLOSE = "pt_close";
-
+    static final String PT_JSON = "pt_json";
 }
