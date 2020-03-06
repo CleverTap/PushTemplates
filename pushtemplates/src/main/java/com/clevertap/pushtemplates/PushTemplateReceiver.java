@@ -1,5 +1,6 @@
 package com.clevertap.pushtemplates;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -21,12 +22,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.NotificationTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -47,7 +50,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private ArrayList<String> smallTextList = new ArrayList<>();
     private String pt_bg;
     private String channelId;
-    private int smallIcon = 0;
+    private int smallIcon = 0, requestCode = -1;
     private boolean requiresChannelId;
     private NotificationManager notificationManager ;
     private CleverTapAPI cleverTapAPI;
@@ -66,6 +69,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             pt_bg = extras.getString(Constants.PT_BG);
             pt_img_big = extras.getString(Constants.PT_BIG_IMG);
             pt_img_small = extras.getString(Constants.PT_SMALL_IMG);
+            requestCode = extras.getInt(Constants.PT_REQ_CODE);
             imageList = Utils.getImageListFromExtras(extras);
             ctaList = Utils.getCTAListFromExtras(extras);
             deepLinkList = Utils.getDeepLinkListFromExtras(extras);
@@ -250,34 +254,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.image_only_small);
 
-
-            for(int index = 0; index < imageList.size(); index++){
-                final int finalIndex = index;
-                Glide.with(context.getApplicationContext())
-                        .asBitmap()
-                        .load(imageList.get(index))
-                        .into(new CustomTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                if (finalIndex == 0){
-                                    contentViewBig.setImageViewBitmap(R.id.small_image1, resource);
-                                }
-                                else if(finalIndex == 1){
-                                    contentViewBig.setImageViewBitmap(R.id.small_image2, resource);
-                                }
-                                else if(finalIndex == 2){
-                                    contentViewBig.setImageViewBitmap(R.id.small_image3, resource);
-                                }
-                            }
-
-                            @Override
-                            public void onLoadCleared(@Nullable Drawable placeholder) {
-                            }
-                        });
-
-            }
-
-
             if (pt_title != null && !pt_title.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.title, pt_title);
                 contentViewSmall.setTextViewText(R.id.title, pt_title);
@@ -298,21 +274,9 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewSmall.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
             }
 
-
+            String imageUrl = "";
             if (img1 != extras.getBoolean("img1", false)) {
-                Glide.with(context.getApplicationContext())
-                        .asBitmap()
-                        .load(imageList.get(0))
-                        .into(new CustomTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                contentViewBig.setImageViewBitmap(R.id.big_image, resource);
-                            }
-
-                            @Override
-                            public void onLoadCleared(@Nullable Drawable placeholder) {
-                            }
-                        });
+                imageUrl = imageList.get(0);
                 if (!bigTextList.isEmpty()) {
                     contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(0));
                     contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(0));
@@ -320,19 +284,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 img1 = false;
             }
             if (img2 != extras.getBoolean("img2", false)) {
-                Glide.with(context.getApplicationContext())
-                        .asBitmap()
-                        .load(imageList.get(1))
-                        .into(new CustomTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                contentViewBig.setImageViewBitmap(R.id.big_image, resource);
-                            }
-
-                            @Override
-                            public void onLoadCleared(@Nullable Drawable placeholder) {
-                            }
-                        });
+                imageUrl = imageList.get(1);
                 if (!bigTextList.isEmpty()) {
                     contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(1));
                     contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(1));
@@ -340,19 +292,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 img2 = false;
             }
             if (img3 != extras.getBoolean("img3", false)) {
-                Glide.with(context.getApplicationContext())
-                        .asBitmap()
-                        .load(imageList.get(2))
-                        .into(new CustomTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                contentViewBig.setImageViewBitmap(R.id.big_image, resource);
-                            }
-
-                            @Override
-                            public void onLoadCleared(@Nullable Drawable placeholder) {
-                            }
-                        });
+                imageUrl = imageList.get(2);
                 if (!bigTextList.isEmpty()) {
                     contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(2));
                     contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(2));
@@ -369,30 +309,43 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
 
 
-            int notificationId = 9987;
+            int notificationId = extras.getInt("notif_id");
+
+            int requestCode1 = extras.getInt("pt_reqcode1");
+            int requestCode2 = extras.getInt("pt_reqcode2");
+            int requestCode3 = extras.getInt("pt_reqcode3");
 
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("img1",true);
             notificationIntent1.putExtra("notif_id",notificationId);
             notificationIntent1.putExtra("pt_dl",deepLinkList.get(0));
+            notificationIntent1.putExtra("pt_reqcode1",requestCode1);
+            notificationIntent1.putExtra("pt_reqcode2",requestCode2);
+            notificationIntent1.putExtra("pt_reqcode3",requestCode3);
             notificationIntent1.putExtras(extras);
-            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, 6, notificationIntent1, 0);
+            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, requestCode1, notificationIntent1, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image1, contentIntent1);
 
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("img2",true);
             notificationIntent2.putExtra("notif_id",notificationId);
-            notificationIntent1.putExtra("pt_dl",deepLinkList.get(1));
+            notificationIntent2.putExtra("pt_dl",deepLinkList.get(1));
+            notificationIntent2.putExtra("pt_reqcode1",requestCode1);
+            notificationIntent2.putExtra("pt_reqcode2",requestCode2);
+            notificationIntent2.putExtra("pt_reqcode3",requestCode3);
             notificationIntent2.putExtras(extras);
-            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, 7, notificationIntent2, 0);
+            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, requestCode2, notificationIntent2, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image2, contentIntent2);
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("img3",true);
             notificationIntent3.putExtra("notif_id",notificationId);
-            notificationIntent1.putExtra("pt_dl",deepLinkList.get(2));
+            notificationIntent3.putExtra("pt_dl",deepLinkList.get(2));
+            notificationIntent3.putExtra("pt_reqcode1",requestCode1);
+            notificationIntent3.putExtra("pt_reqcode2",requestCode2);
+            notificationIntent3.putExtra("pt_reqcode3",requestCode3);
             notificationIntent3.putExtras(extras);
-            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, 8, notificationIntent3, 0);
+            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, requestCode3, notificationIntent3, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image3, contentIntent3);
 
 
@@ -436,7 +389,20 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                         .setContentIntent(pIntent)
                         .setAutoCancel(true);
 
-                notificationManager.notify(notificationId, notificationBuilder.build());
+                Notification notification = notificationBuilder.build();
+                notificationManager.notify(notificationId, notification);
+                for(int index = 0; index < imageList.size(); index++){
+                    if (index == 0){
+                        loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
+                    }
+                    else if(index == 1){
+                        loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewBig, notification, notificationId);
+                    }
+                    else if(index == 2){
+                        loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewBig, notification, notificationId);
+                    }
+                }
+                loadIntoGlide(context, R.id.big_image, imageUrl, contentViewBig, notification, notificationId);
             }
 
         }catch(Throwable t){
@@ -468,6 +434,20 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
         }
 
+    }
+
+    private void loadIntoGlide(Context context, int imageResource, String imageURL, RemoteViews remoteViews, Notification notification, int notificationId) {
+        NotificationTarget bigNotifTarget = new NotificationTarget(
+                context,
+                imageResource,
+                remoteViews,
+                notification,
+                notificationId);
+        Glide
+                .with(context.getApplicationContext())
+                .asBitmap()
+                .load(imageURL)
+                .into(bigNotifTarget);
     }
 
 

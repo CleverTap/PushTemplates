@@ -28,14 +28,25 @@ import com.bumptech.glide.request.transition.Transition;
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 class TemplateRenderer {
 
-    private String pt_id;
+    private String pt_id,pt_json;
     private TemplateType templateType;
     private String pt_title;
     private String pt_msg;
@@ -56,11 +67,16 @@ class TemplateRenderer {
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
 
-    private TemplateRenderer(Bundle extras) {
+    private TemplateRenderer(Context context, Bundle extras) {
         pt_id = extras.getString(Constants.PT_ID);
+        pt_json = extras.getString(Constants.PT_JSON);
         if (pt_id != null) {
             templateType = TemplateType.fromString(pt_id);
             ImageCache.init();
+            if("5".equalsIgnoreCase(pt_id)) {
+                Bundle newExtras = fromJson(fromTest(context, pt_json));
+                extras.putAll(newExtras);
+            }
         }
         pt_msg = extras.getString(Constants.PT_MSG);
         pt_msg_clr = extras.getString(Constants.PT_MSG_COLOR);
@@ -78,7 +94,7 @@ class TemplateRenderer {
     }
 
     static void createNotification(Context context, Bundle extras){
-        TemplateRenderer templateRenderer = new TemplateRenderer(extras);
+        TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
         templateRenderer._createNotification(context,extras,Constants.EMPTY_NOTIFICATION_ID);
     }
 
@@ -416,11 +432,11 @@ class TemplateRenderer {
 
             if(pt_msg!=null && !pt_msg.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
-                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
+                    contentViewBig.setTextViewText(R.id.msg, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
                 } else {
-                    contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_msg));
-                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_msg));
+                    contentViewBig.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
                 }
             }
 
@@ -523,7 +539,7 @@ class TemplateRenderer {
             contentViewSmall = new RemoteViews(context.getPackageName(),R.layout.image_only_small);
 
 
-            for(int index = 0; index < imageList.size(); index++){
+            /*for(int index = 0; index < imageList.size(); index++){
                 final int finalIndex = index;
                 Glide.with(context.getApplicationContext())
                         .asBitmap()
@@ -547,7 +563,7 @@ class TemplateRenderer {
                             }
                         });
 
-            }
+            }*/
 
             if(!bigTextList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(0));
@@ -580,7 +596,7 @@ class TemplateRenderer {
                 contentViewSmall.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
             }
 
-            Glide.with(context.getApplicationContext())
+            /*Glide.with(context.getApplicationContext())
                     .asBitmap()
                     .load(imageList.get(0))
                     .into(new CustomTarget<Bitmap>() {
@@ -592,39 +608,47 @@ class TemplateRenderer {
                         @Override
                         public void onLoadCleared(@Nullable Drawable placeholder) {
                         }
-                    });
+                    });*/
 
 
-            if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
-                notificationId = 9987;
-            }
+            notificationId = new Random().nextInt();
+
+            int requestCode1 = new Random().nextInt();
+            int requestCode2 = new Random().nextInt();
+            int requestCode3 = new Random().nextInt();
 
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("img1",true);
             notificationIntent1.putExtra("notif_id",notificationId);
-            notificationIntent1.putExtra("dl",deepLinkList.get(0));
+            notificationIntent1.putExtra("pt_dl",deepLinkList.get(0));
+            notificationIntent1.putExtra("pt_reqcode1",requestCode1);
+            notificationIntent1.putExtra("pt_reqcode2",requestCode2);
+            notificationIntent1.putExtra("pt_reqcode3",requestCode3);
             notificationIntent1.putExtras(extras);
-            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, 6, notificationIntent1, 0);
+            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, requestCode1, notificationIntent1, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image1, contentIntent1);
 
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("img2",true);
             notificationIntent2.putExtra("notif_id",notificationId);
-            notificationIntent2.putExtra("dl",deepLinkList.get(1));
+            notificationIntent2.putExtra("pt_dl",deepLinkList.get(1));
+            notificationIntent2.putExtra("pt_reqcode1",requestCode1);
+            notificationIntent2.putExtra("pt_reqcode2",requestCode2);
+            notificationIntent2.putExtra("pt_reqcode3",requestCode3);
             notificationIntent2.putExtras(extras);
-            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, 7, notificationIntent2, 0);
+            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, requestCode2, notificationIntent2, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image2, contentIntent2);
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("img3",true);
             notificationIntent3.putExtra("notif_id",notificationId);
-            notificationIntent3.putExtra("dl",deepLinkList.get(2));
+            notificationIntent3.putExtra("pt_dl",deepLinkList.get(2));
+            notificationIntent3.putExtra("pt_reqcode1",requestCode1);
+            notificationIntent3.putExtra("pt_reqcode2",requestCode2);
+            notificationIntent3.putExtra("pt_reqcode3",requestCode3);
             notificationIntent3.putExtras(extras);
-            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, 8, notificationIntent3, 0);
+            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, requestCode3, notificationIntent3, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image3, contentIntent3);
-
-
-
 
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
@@ -649,7 +673,21 @@ class TemplateRenderer {
                     .setContentIntent(pIntent)
                     .setAutoCancel(true);
 
-            notificationManager.notify(notificationId, notificationBuilder.build());
+            Notification notification = notificationBuilder.build();
+            notificationManager.notify(notificationId, notification);
+            loadIntoGlide(context, R.id.small_image_app, pt_img_small, contentViewSmall, notification, notificationId);
+            for(int index = 0; index < imageList.size(); index++){
+                if (index == 0){
+                    loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
+                }
+                else if(index == 1){
+                    loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewBig, notification, notificationId);
+                }
+                else if(index == 2){
+                    loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewBig, notification, notificationId);
+                }
+            }
+            loadIntoGlide(context, R.id.big_image, imageList.get(0), contentViewBig, notification, notificationId);
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
                 instance.pushNotificationViewedEvent(extras);
@@ -768,4 +806,78 @@ class TemplateRenderer {
 
     }
 
+    Bundle fromJson(JSONObject s) {
+        Bundle bundle = new Bundle();
+
+        for (Iterator<String> it = s.keys(); it.hasNext(); ) {
+            String key = it.next();
+            JSONArray arr = s.optJSONArray(key);
+            String str = s.optString(key);
+
+            if (arr != null && arr.length() <= 0)
+                bundle.putStringArray(key, new String[]{});
+
+            else if (arr != null && arr.optString(0) != null) {
+                String[] newarr = new String[arr.length()];
+                for (int i = 0; i < arr.length(); i++)
+                    newarr[i] = arr.optString(i);
+                bundle.putStringArray(key, newarr);
+            }
+
+            else if (str != null)
+                bundle.putString(key, str);
+
+            else
+                System.err.println("unable to transform json to bundle " + key);
+        }
+
+        return bundle;
+    }
+
+    private JSONObject fromTest(Context context, String jsonString) {
+        JSONObject jsonObject = null;
+        if(jsonString == null) {
+            jsonString = readRawTextFile(context, R.raw.test);
+        }
+        try {
+            jsonObject = new JSONObject(jsonString);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
+    private String readRawTextFile(Context ctx, int resId)
+    {
+        InputStream inputStream = ctx.getResources().openRawResource(resId);
+
+        InputStreamReader inputreader = new InputStreamReader(inputStream);
+        BufferedReader buffreader = new BufferedReader(inputreader);
+        String line;
+        StringBuilder text = new StringBuilder();
+
+        try {
+            while (( line = buffreader.readLine()) != null) {
+                text.append(line);
+                text.append('\n');
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return text.toString();
+    }
+
+    private void loadIntoGlide(Context context, int imageResource, String imageURL, RemoteViews remoteViews, Notification notification, int notificationId) {
+        NotificationTarget bigNotifTarget = new NotificationTarget(
+                context,
+                imageResource,
+                remoteViews,
+                notification,
+                notificationId);
+        Glide
+                .with(context.getApplicationContext())
+                .asBitmap()
+                .load(imageURL)
+                .into(bigNotifTarget);
+    }
 }

@@ -29,6 +29,10 @@
             android:name="CLEVERTAP_NOTIFICATION_ICON"
             android:value="ic_launcher"/> <!-- name of your file in the drawable directory without the file extension. -->
 
+        <meta-data
+            android:name="CLEVERTAP_INAPP_EXCLUDE"
+            android:value="MainActivity" />
+
 
         <activity android:name=".MainActivity">
             <intent-filter>
