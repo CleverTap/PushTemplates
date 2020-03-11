@@ -72,11 +72,8 @@ class TemplateRenderer {
         pt_json = extras.getString(Constants.PT_JSON);
         if (pt_id != null) {
             templateType = TemplateType.fromString(pt_id);
-            ImageCache.init();
-            if("5".equalsIgnoreCase(pt_id)) {
-                Bundle newExtras = fromJson(fromTest(context, pt_json));
-                extras.putAll(newExtras);
-            }
+            Bundle newExtras = fromJson(fromTest(context, pt_json));
+            extras.putAll(newExtras);
         }
         pt_msg = extras.getString(Constants.PT_MSG);
         pt_msg_clr = extras.getString(Constants.PT_MSG_COLOR);
@@ -193,9 +190,7 @@ class TemplateRenderer {
             contentViewRating.setImageViewResource(R.id.star4,R.drawable.outline_star_1);
             contentViewRating.setImageViewResource(R.id.star5,R.drawable.outline_star_1);
 
-            if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
-                notificationId = 1;
-            }
+            notificationId = new Random().nextInt();
 
             //Set Pending Intents for each star to listen to click
 
@@ -203,43 +198,43 @@ class TemplateRenderer {
             notificationIntent1.putExtra("click1",true);
             notificationIntent1.putExtra("notif_id",notificationId);
             notificationIntent1.putExtras(extras);
-            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, 1, notificationIntent1, 0);
+            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent1, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star1, contentIntent1);
 
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("click2",true);
             notificationIntent2.putExtra("notif_id",notificationId);
             notificationIntent2.putExtras(extras);
-            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, 2, notificationIntent2, 0);
+            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent2, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star2, contentIntent2);
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("click3",true);
             notificationIntent3.putExtra("notif_id",notificationId);
             notificationIntent3.putExtras(extras);
-            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, 3, notificationIntent3, 0);
+            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent3, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star3, contentIntent3);
 
             Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent4.putExtra("click4",true);
             notificationIntent4.putExtra("notif_id",notificationId);
             notificationIntent4.putExtras(extras);
-            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, 4, notificationIntent4, 0);
+            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star4, contentIntent4);
 
             Intent notificationIntent5 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent5.putExtra("click5",true);
             notificationIntent5.putExtra("notif_id",notificationId);
             notificationIntent5.putExtras(extras);
-            PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, 5, notificationIntent5, 0);
+            PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent5, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star5, contentIntent5);
 
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            /*Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
             launchIntent.putExtras(extras);
             launchIntent.removeExtra(Constants.WZRK_ACTIONS);
             launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
-                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);*/
 
             NotificationCompat.Builder notificationBuilder;
             if(requiresChannelId) {
@@ -252,10 +247,14 @@ class TemplateRenderer {
                     .setCustomContentView(contentViewSmall)
                     .setCustomBigContentView(contentViewRating)
                     .setContentTitle("Custom Notification")
-                    .setContentIntent(pIntent)
+                    //.setContentIntent(pIntent)
                     .setAutoCancel(true);
 
-            notificationManager.notify(notificationId, notificationBuilder.build());
+            Notification notification = notificationBuilder.build();
+            notificationManager.notify(notificationId, notification);
+            loadIntoGlide(context, R.id.big_image_app, imageList.get(0), contentViewSmall, notification, notificationId);
+            loadIntoGlide(context, R.id.big_image_app, imageList.get(0), contentViewRating, notification, notificationId);
+
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
                 instance.pushNotificationViewedEvent(extras);
@@ -531,10 +530,6 @@ class TemplateRenderer {
     private void renderProductDisplayNotification(Context context, Bundle extras, int notificationId){
         try{
 
-            if(!(ImageCache.isEmpty())){
-                ImageCache.cleanup();
-            }
-
             contentViewBig = new RemoteViews(context.getPackageName(),R.layout.product_display_template);
             contentViewSmall = new RemoteViews(context.getPackageName(),R.layout.image_only_small);
 
@@ -701,40 +696,7 @@ class TemplateRenderer {
         try{
             contentFiveCTAs = new RemoteViews(context.getPackageName(), R.layout.five_cta);
 
-            int imageKey = 0;
-
-            for(String image : imageList){
-                URL imageURL = new URL(image);
-                Bitmap img = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
-
-
-                if (imageKey == 0){
-
-                    contentFiveCTAs.setImageViewBitmap(R.id.cta1, img);
-                }
-                else if(imageKey == 1){
-                    contentFiveCTAs.setImageViewBitmap(R.id.cta2, img);
-                }
-                else if(imageKey == 2){
-                    contentFiveCTAs.setImageViewBitmap(R.id.cta3, img);
-                }
-                else if(imageKey == 3){
-                    contentFiveCTAs.setImageViewBitmap(R.id.cta4, img);
-                }
-                else if(imageKey == 4){
-                    contentFiveCTAs.setImageViewBitmap(R.id.cta5, img);
-                }
-                imageKey ++;
-
-            }
-
-            URL imageURL = new URL(pt_close);
-
-            contentFiveCTAs.setImageViewBitmap(R.id.close,BitmapFactory.decodeStream(imageURL.openConnection().getInputStream()));
-
-            if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
-                notificationId = 9986;
-            }
+            notificationId = new Random().nextInt();
 
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("cta1",true);
@@ -795,7 +757,31 @@ class TemplateRenderer {
                     .setOngoing(true)
                     .setAutoCancel(true);
 
-            notificationManager.notify(notificationId, notificationBuilder.build());
+            Notification notification = notificationBuilder.build();
+            notificationManager.notify(notificationId, notification);
+
+
+
+            for(int imageKey = 0; imageKey < imageList.size(); imageKey ++){
+                if (imageKey == 0){
+                    loadIntoGlide(context, R.id.cta1, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                }
+                else if(imageKey == 1){
+                    loadIntoGlide(context, R.id.cta2, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                }
+                else if(imageKey == 2){
+                    loadIntoGlide(context, R.id.cta3, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                }
+                else if(imageKey == 3){
+                    loadIntoGlide(context, R.id.cta4, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                }
+                else if(imageKey == 4) {
+                    loadIntoGlide(context, R.id.cta5, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                }
+
+            }
+            loadIntoGlide(context, R.id.close, imageList.get(5), contentFiveCTAs, notification, notificationId);
+
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
                 instance.pushNotificationViewedEvent(extras);
@@ -806,7 +792,7 @@ class TemplateRenderer {
 
     }
 
-    Bundle fromJson(JSONObject s) {
+    private Bundle fromJson(JSONObject s) {
         Bundle bundle = new Bundle();
 
         for (Iterator<String> it = s.keys(); it.hasNext(); ) {

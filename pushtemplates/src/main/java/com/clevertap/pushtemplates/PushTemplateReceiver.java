@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -139,12 +140,14 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
                 contentViewSmall.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
             }
+            String pt_dl_clicked = "";
             HashMap<String,Object> map = new HashMap<String,Object>();
             if(clicked1 == extras.getBoolean("click1",false)) {
                 contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating",1);
                 cleverTapAPI.pushEvent("Rated",map);
+                pt_dl_clicked = deepLinkList.get(0);
                 clicked1 = false;
             }else{
                 contentViewRating.setImageViewResource(R.id.star1, R.drawable.outline_star_1);
@@ -154,6 +157,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star2, R.drawable.filled_star_1);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating",2);
+                pt_dl_clicked = deepLinkList.get(1);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked2 = false;
             }else{
@@ -165,6 +169,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star3, R.drawable.filled_star_1);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating",3);
+                pt_dl_clicked = deepLinkList.get(2);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked3 = false;
             }else{
@@ -177,6 +182,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star4, R.drawable.filled_star_1);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating",4);
+                pt_dl_clicked = deepLinkList.get(3);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked4 = false;
             }else{
@@ -190,18 +196,12 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star5, R.drawable.filled_star_1);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating",5);
+                pt_dl_clicked = deepLinkList.get(4);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked5 = false;
             }else{
                 contentViewRating.setImageViewResource(R.id.star5, R.drawable.outline_star_1);
             }
-
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
-            launchIntent.putExtras(extras);
-            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
-                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             Bundle metaData;
             try {
@@ -229,13 +229,26 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                         .setCustomContentView(contentViewSmall)
                         .setCustomBigContentView(contentViewRating)
                         .setContentTitle("Custom Notification")
-                        .setContentIntent(pIntent)
+                        //.setContentIntent(pIntent)
                         .setAutoCancel(true);
 
-                notificationManager.notify(1, notificationBuilder.build());
+                int notificationId = extras.getInt("notif_id");
+                Notification notification = notificationBuilder.build();
+                notificationManager.notify(notificationId, notification);
+                loadIntoGlide(context, R.id.small_image_app, imageList.get(0), contentViewSmall, notification, notificationId);
+                loadIntoGlide(context, R.id.big_image_app, imageList.get(0), contentViewRating, notification, notificationId);
                 Thread.sleep(1000);
-                notificationManager.cancel(1);
+                notificationManager.cancel(notificationId);
                 Toast.makeText(context,"Thank you for your feedback",Toast.LENGTH_SHORT).show();
+
+                Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(pt_dl_clicked));
+                launchIntent.putExtras(extras);
+                //CleverTapAPI.getDefaultInstance(context).pushNotificationClickedEvent(extras);
+                //launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+                launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                //launchIntent.putExtra("wzrk_from","CTPushNotificationReceiver");
+
+                context.startActivity(launchIntent);
             }
 
         }catch (Throwable t){
