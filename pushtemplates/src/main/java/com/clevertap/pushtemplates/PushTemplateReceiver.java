@@ -103,11 +103,13 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 switch (templateType){
                     case RATING:
                         handleRatingNotification(context, extras);
+                        break;
                     case FIVE_ICONS:
                         handleFiveCTANotification(context,extras);
+                        break;
                     case PRODUCT_DISPLAY:
                         handleProductDisplayNotification(context,extras);
-                    break;
+                        break;
                 }
             }
         }
