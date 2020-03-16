@@ -45,5 +45,17 @@
             android:outAnimation="@anim/slide_out_right"
             android:inAnimation="@anim/slide_in_left"
             android:layout_height="232dp">
+            <ImageView
+                android:id="@+id/flipper_img1"
+                android:layout_width="match_parent"
+                android:layout_height="232dp" />
+            <ImageView
+                android:id="@+id/flipper_img2"
+                android:layout_width="match_parent"
+                android:layout_height="232dp" />
+            <ImageView
+                android:id="@+id/flipper_img3"
+                android:layout_width="match_parent"
+                android:layout_height="232dp" />
         </ViewFlipper>
 </RelativeLayout>

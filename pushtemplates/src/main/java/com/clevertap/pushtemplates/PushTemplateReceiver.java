@@ -205,6 +205,14 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star5, R.drawable.outline_star_1);
             }
 
+            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            launchIntent.putExtras(extras);
+            launchIntent.putExtra("wzrk_dl", pt_dl_clicked);
+            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
             Bundle metaData;
             try {
                 PackageManager pm = context.getPackageManager();
@@ -231,7 +239,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                         .setCustomContentView(contentViewSmall)
                         .setCustomBigContentView(contentViewRating)
                         .setContentTitle("Custom Notification")
-                        //.setContentIntent(pIntent)
+                        .setContentIntent(pIntent)
                         .setAutoCancel(true);
 
                 int notificationId = extras.getInt("notif_id");
@@ -242,15 +250,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 Thread.sleep(1000);
                 notificationManager.cancel(notificationId);
                 Toast.makeText(context,"Thank you for your feedback",Toast.LENGTH_SHORT).show();
-
-                Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(pt_dl_clicked));
-                launchIntent.putExtras(extras);
-                //CleverTapAPI.getDefaultInstance(context).pushNotificationClickedEvent(extras);
-                //launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-                launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                //launchIntent.putExtra("wzrk_from","CTPushNotificationReceiver");
-
-                context.startActivity(launchIntent);
             }
 
         }catch (Throwable t){
@@ -427,7 +426,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
     private void handleFiveCTANotification(Context context, Bundle extras) {
         String dl = null;
-        Intent actionLaunchIntent;
 
         if (cta1 == extras.getBoolean("cta1")){
             dl = deepLinkList.get(0);
@@ -449,6 +447,12 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
         }
 
+        Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+        launchIntent.putExtras(extras);
+        launchIntent.putExtra("wzrk_dl", dl);
+        launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+        launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        context.startActivity(launchIntent);
     }
 
     private void loadIntoGlide(Context context, int imageResource, String imageURL, RemoteViews remoteViews, Notification notification, int notificationId) {

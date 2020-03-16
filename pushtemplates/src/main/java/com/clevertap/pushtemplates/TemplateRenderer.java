@@ -229,12 +229,12 @@ class TemplateRenderer {
             PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent5, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star5, contentIntent5);
 
-            /*Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
             launchIntent.putExtras(extras);
             launchIntent.removeExtra(Constants.WZRK_ACTIONS);
             launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
-                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);*/
+                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationCompat.Builder notificationBuilder;
             if(requiresChannelId) {
@@ -247,12 +247,12 @@ class TemplateRenderer {
                     .setCustomContentView(contentViewSmall)
                     .setCustomBigContentView(contentViewRating)
                     .setContentTitle("Custom Notification")
-                    //.setContentIntent(pIntent)
+                    .setContentIntent(pIntent)
                     .setAutoCancel(true);
 
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
-            loadIntoGlide(context, R.id.big_image_app, imageList.get(0), contentViewSmall, notification, notificationId);
+            loadIntoGlide(context, R.id.small_image_app, imageList.get(0), contentViewSmall, notification, notificationId);
             loadIntoGlide(context, R.id.big_image_app, imageList.get(0), contentViewRating, notification, notificationId);
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
@@ -269,25 +269,6 @@ class TemplateRenderer {
         try{
             contentViewCarousel = new RemoteViews(context.getPackageName(),R.layout.auto_carousel);
             contentViewSmall = new RemoteViews(context.getPackageName(),R.layout.image_only_small);
-
-            ArrayList<Integer> layoutIds = new ArrayList<>();
-            for(String image : imageList){
-                final RemoteViews imageView =  new RemoteViews(context.getPackageName(),R.layout.carousel_image);
-                contentViewCarousel.addView(R.id.view_flipper,imageView);
-                Glide.with(context.getApplicationContext())
-                        .asBitmap()
-                        .load(image)
-                        .into(new CustomTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                imageView.setImageViewBitmap(R.id.flipper_img, resource);
-                            }
-
-                            @Override
-                            public void onLoadCleared(@Nullable Drawable placeholder) {
-                            }
-                        });
-            }
 
             if(pt_title!=null && !pt_title.isEmpty()) {
                 contentViewCarousel.setTextViewText(R.id.title, pt_title);
@@ -374,13 +355,20 @@ class TemplateRenderer {
                     .into(bigNotifTargetIcon);
 
 
+            ArrayList<Integer> layoutIds = new ArrayList<>();
+            layoutIds.add(0, R.id.flipper_img1);
+            layoutIds.add(1, R.id.flipper_img2);
+            layoutIds.add(2, R.id.flipper_img3);
+
 
             for(int index = 0; index < imageList.size(); index++){
                 //URL imageURL = new URL(image);
                 //RemoteViews imageView =  new RemoteViews(context.getPackageName(),R.layout.carousel_image);
                 //contentViewCarousel.addView(R.id.view_flipper,imageView);
                 //imageView.setImageViewBitmap(R.id.flipper_img, BitmapFactory.decodeStream(imageURL.openConnection().getInputStream()));
-                NotificationTarget bigNotifCarouselTarget = new NotificationTarget(
+
+                loadIntoGlide(context, layoutIds.get(index),imageList.get(index),contentViewCarousel, notification, notificationId);
+                /*NotificationTarget bigNotifCarouselTarget = new NotificationTarget(
                         context,
                         layoutIds.get(index),
                         contentViewCarousel,
@@ -390,7 +378,7 @@ class TemplateRenderer {
                         .with(context.getApplicationContext())
                         .asBitmap()
                         .load(imageList.get(index))
-                        .into(bigNotifCarouselTarget);
+                        .into(bigNotifCarouselTarget);*/
             }
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
