@@ -21,6 +21,7 @@ public class Constants {
     static final String WZRK_SOUND = "wzrk_sound";
     static final String WZRK_TIME_TO_LIVE = "wzrk_ttl";
     static final String WZRK_RNV = "wzrk_rnv";
+    static final String WZRK_DL = "wzrk_dl";
     static final int EMPTY_NOTIFICATION_ID = -1000;
     static final String NOTIF_TAG = "wzrk_pn";
     static final String ICON_BASE_URL = "http://static.wizrocket.com/android/ico/";

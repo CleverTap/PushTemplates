@@ -14,6 +14,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity {
 
     Button sendBasicPush, sendCarouselPush, sendRatingPush, sendProductDisplayNotification, sendCTANotification;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,9 +24,14 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             CleverTapAPI.createNotificationChannel(this,"Test","Push Template App Channel","Channel for Push Template App", NotificationManager.IMPORTANCE_HIGH,true);
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            CleverTapAPI.createNotificationChannel(this,"PTTesting","Push Template App Channel","Channel for Push Template App", NotificationManager.IMPORTANCE_HIGH,true);
+        }
         HashMap<String, Object> profileUpdate = new HashMap<String, Object>();
-        profileUpdate.put("Email", "vijay.agnihotri@clevertap.com");
-        cleverTapAPI.onUserLogin(profileUpdate);
+        profileUpdate.put("Email", "darshan@clevertap.com");
+        if (cleverTapAPI != null) {
+            cleverTapAPI.onUserLogin(profileUpdate);
+        }
 
         sendBasicPush = findViewById(R.id.basicPush);
         sendBasicPush.setOnClickListener(new View.OnClickListener() {

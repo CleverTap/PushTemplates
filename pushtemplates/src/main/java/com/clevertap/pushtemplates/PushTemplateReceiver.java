@@ -8,29 +8,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.NotificationTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -142,14 +134,14 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
                 contentViewSmall.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
             }
-            String pt_dl_clicked = "";
+            String pt_dl_clicked = deepLinkList.get(0);
+
             HashMap<String,Object> map = new HashMap<String,Object>();
             if(clicked1 == extras.getBoolean("click1",false)) {
                 contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating",1);
                 cleverTapAPI.pushEvent("Rated",map);
-                pt_dl_clicked = deepLinkList.get(0);
                 clicked1 = false;
             }else{
                 contentViewRating.setImageViewResource(R.id.star1, R.drawable.outline_star_1);
@@ -159,7 +151,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star2, R.drawable.filled_star_1);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating",2);
-                pt_dl_clicked = deepLinkList.get(1);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked2 = false;
             }else{
@@ -171,7 +162,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star3, R.drawable.filled_star_1);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating",3);
-                pt_dl_clicked = deepLinkList.get(2);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked3 = false;
             }else{
@@ -184,7 +174,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star4, R.drawable.filled_star_1);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating",4);
-                pt_dl_clicked = deepLinkList.get(3);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked4 = false;
             }else{
@@ -198,7 +187,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star5, R.drawable.filled_star_1);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating",5);
-                pt_dl_clicked = deepLinkList.get(4);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked5 = false;
             }else{
@@ -207,7 +195,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
             launchIntent.putExtras(extras);
-            launchIntent.putExtra("wzrk_dl", pt_dl_clicked);
+            launchIntent.putExtra(Constants.WZRK_DL, pt_dl_clicked);
             launchIntent.removeExtra(Constants.WZRK_ACTIONS);
             launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
@@ -245,8 +233,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 int notificationId = extras.getInt("notif_id");
                 Notification notification = notificationBuilder.build();
                 notificationManager.notify(notificationId, notification);
-                loadIntoGlide(context, R.id.small_image_app, imageList.get(0), contentViewSmall, notification, notificationId);
-                loadIntoGlide(context, R.id.big_image_app, imageList.get(0), contentViewRating, notification, notificationId);
+                Utils.loadIntoGlide(context, R.id.small_image_app, imageList.get(0), contentViewSmall, notification, notificationId);
                 Thread.sleep(1000);
                 notificationManager.cancel(notificationId);
                 Toast.makeText(context,"Thank you for your feedback",Toast.LENGTH_SHORT).show();
@@ -262,8 +249,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
     private void handleProductDisplayNotification(Context context, Bundle extras) {
         try {
-
-
             //Set RemoteViews again
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.image_only_small);
@@ -314,14 +299,23 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 img3 = false;
             }
+            PendingIntent pIntent = null;
+
             if (buynow == extras.getBoolean("buynow", false)) {
+                Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+                launchIntent.putExtra(Constants.WZRK_DL, extras.getString("pt_dl"));
+                launchIntent.putExtras(extras);
+
+                launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+                launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+                        launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 buynow = false;
             }
+
             if (bigimage == extras.getBoolean("bigimage", false)) {
                 bigimage = false;
             }
-
-
 
             int notificationId = extras.getInt("notif_id");
 
@@ -362,17 +356,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, requestCode3, notificationIntent3, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image3, contentIntent3);
 
-
-
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
-            launchIntent.putExtra("wzrk_dl", extras.getString("pt_dl"));
-            launchIntent.putExtras(extras);
-
-            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
-                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
             Bundle metaData;
             try {
                 PackageManager pm = context.getPackageManager();
@@ -385,7 +368,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             } catch (Throwable t) {
                 smallIcon = Utils.getAppIconAsIntId(context);
             }
-
 
             NotificationCompat.Builder notificationBuilder;
             if (requiresChannelId) {
@@ -407,16 +389,16 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 notificationManager.notify(notificationId, notification);
                 for(int index = 0; index < imageList.size(); index++){
                     if (index == 0){
-                        loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
+                        Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
                     }
                     else if(index == 1){
-                        loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewBig, notification, notificationId);
+                        Utils.loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewBig, notification, notificationId);
                     }
                     else if(index == 2){
-                        loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewBig, notification, notificationId);
+                        Utils.loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewBig, notification, notificationId);
                     }
                 }
-                loadIntoGlide(context, R.id.big_image, imageUrl, contentViewBig, notification, notificationId);
+                Utils.loadIntoGlide(context, R.id.big_image, imageUrl, contentViewBig, notification, notificationId);
             }
 
         }catch(Throwable t){
@@ -449,25 +431,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
         Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
         launchIntent.putExtras(extras);
-        launchIntent.putExtra("wzrk_dl", dl);
+        launchIntent.putExtra(Constants.WZRK_DL, dl);
         launchIntent.removeExtra(Constants.WZRK_ACTIONS);
         launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         context.startActivity(launchIntent);
     }
-
-    private void loadIntoGlide(Context context, int imageResource, String imageURL, RemoteViews remoteViews, Notification notification, int notificationId) {
-        NotificationTarget bigNotifTarget = new NotificationTarget(
-                context,
-                imageResource,
-                remoteViews,
-                notification,
-                notificationId);
-        Glide
-                .with(context.getApplicationContext())
-                .asBitmap()
-                .load(imageURL)
-                .into(bigNotifTarget);
-    }
-
 
 }

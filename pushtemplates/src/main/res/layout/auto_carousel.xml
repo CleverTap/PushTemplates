@@ -42,8 +42,8 @@
             android:layout_below="@id/big_relative_layout"
             android:layout_width="match_parent"
             android:autoStart="true"
-            android:outAnimation="@anim/slide_out_right"
-            android:inAnimation="@anim/slide_in_left"
+            android:outAnimation="@anim/slide_out_left"
+            android:inAnimation="@anim/slide_in_right"
             android:layout_height="232dp">
             <ImageView
                 android:id="@+id/flipper_img1"

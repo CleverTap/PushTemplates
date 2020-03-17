@@ -1,5 +1,6 @@
 package com.clevertap.pushtemplates;
 
+import android.app.Notification;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
@@ -10,7 +11,11 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.LruCache;
+import android.widget.RemoteViews;
 
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.NotificationTarget;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -164,5 +169,19 @@ public class Utils {
             }
         }
         return stList;
+    }
+
+    static void loadIntoGlide(Context context, int imageResource, String imageURL, RemoteViews remoteViews, Notification notification, int notificationId) {
+        NotificationTarget bigNotifTarget = new NotificationTarget(
+                context,
+                imageResource,
+                remoteViews,
+                notification,
+                notificationId);
+        Glide
+                .with(context.getApplicationContext())
+                .asBitmap()
+                .load(imageURL)
+                .into(bigNotifTarget);
     }
 }

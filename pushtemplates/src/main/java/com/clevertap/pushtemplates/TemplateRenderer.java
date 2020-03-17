@@ -1,5 +1,6 @@
 package com.clevertap.pushtemplates;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,31 +8,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import android.text.Html;
 import android.widget.RemoteViews;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.NotificationTarget;
-import com.bumptech.glide.request.transition.Transition;
+import com.bumptech.glide.util.Util;
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,7 +68,12 @@ class TemplateRenderer {
         pt_json = extras.getString(Constants.PT_JSON);
         if (pt_id != null) {
             templateType = TemplateType.fromString(pt_id);
-            Bundle newExtras = fromJson(fromTest(context, pt_json));
+            Bundle newExtras = null;
+            try {
+                newExtras = fromJson(new JSONObject(pt_json));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             extras.putAll(newExtras);
         }
         pt_msg = extras.getString(Constants.PT_MSG);
@@ -90,11 +91,13 @@ class TemplateRenderer {
         pt_close = extras.getString(Constants.PT_CLOSE);
     }
 
+    @SuppressLint("NewApi")
     static void createNotification(Context context, Bundle extras){
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
         templateRenderer._createNotification(context,extras,Constants.EMPTY_NOTIFICATION_ID);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void _createNotification(Context context, Bundle extras, int notificationId){
         if(pt_id == null){
             PTLog.error("Template ID not provided. Cannot create the notification");
@@ -105,7 +108,7 @@ class TemplateRenderer {
         channelId = extras.getString(Constants.WZRK_CHANNEL_ID, "");
         requiresChannelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (requiresChannelId) {
             String channelIdError = null;
             if (channelId.isEmpty()) {
                 channelIdError = "Unable to render notification, channelId is required but not provided in the notification payload: " + extras.toString();
@@ -158,13 +161,23 @@ class TemplateRenderer {
             contentViewSmall = new RemoteViews(context.getPackageName(),R.layout.image_only_small);
 
             if(pt_title!=null && !pt_title.isEmpty()) {
-                contentViewRating.setTextViewText(R.id.title, pt_title);
-                contentViewSmall.setTextViewText(R.id.title, pt_title);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewRating.setTextViewText(R.id.title, Html.fromHtml(pt_title,Html.FROM_HTML_MODE_LEGACY));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title,Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewRating.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                }
             }
 
             if(pt_msg!=null && !pt_msg.isEmpty()) {
-                contentViewRating.setTextViewText(R.id.msg, pt_msg);
-                contentViewSmall.setTextViewText(R.id.msg, pt_msg);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                }
             }
 
             if(pt_title_clr != null && !pt_title_clr.isEmpty()){
@@ -252,8 +265,8 @@ class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
-            loadIntoGlide(context, R.id.small_image_app, imageList.get(0), contentViewSmall, notification, notificationId);
-            loadIntoGlide(context, R.id.big_image_app, imageList.get(0), contentViewRating, notification, notificationId);
+
+            Utils.loadIntoGlide(context, R.id.small_image_app, pt_img_small, contentViewSmall, notification, notificationId);
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
@@ -271,13 +284,23 @@ class TemplateRenderer {
             contentViewSmall = new RemoteViews(context.getPackageName(),R.layout.image_only_small);
 
             if(pt_title!=null && !pt_title.isEmpty()) {
-                contentViewCarousel.setTextViewText(R.id.title, pt_title);
-                contentViewSmall.setTextViewText(R.id.title, pt_title);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewCarousel.setTextViewText(R.id.title, Html.fromHtml(pt_title,Html.FROM_HTML_MODE_LEGACY));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title,Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewCarousel.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                }
             }
 
             if(pt_msg!=null && !pt_msg.isEmpty()) {
-                contentViewCarousel.setTextViewText(R.id.msg, pt_msg);
-                contentViewSmall.setTextViewText(R.id.msg, pt_msg);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg,Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                }
             }
 
             if(pt_title_clr != null && !pt_title_clr.isEmpty()){
@@ -295,12 +318,6 @@ class TemplateRenderer {
                 contentViewSmall.setInt(R.id.image_only_small_relative_layout,"setBackgroundColor", Color.parseColor(pt_bg));
             }
 
-            if(pt_img_small!=null && !pt_img_small.isEmpty()) {
-                //URL smallImgUrl = new URL(pt_img_small);
-                //contentViewSmall.setImageViewBitmap(R.id.small_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
-                //contentViewCarousel.setImageViewBitmap(R.id.big_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
-            }
-
             contentViewCarousel.setInt(R.id.view_flipper,"setFlipInterval",4000);
 
             if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
@@ -309,6 +326,9 @@ class TemplateRenderer {
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
             launchIntent.putExtras(extras);
+            if(deepLinkList != null) {
+                launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
+            }
             launchIntent.removeExtra(Constants.WZRK_ACTIONS);
             launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
@@ -331,29 +351,9 @@ class TemplateRenderer {
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
 
-            NotificationTarget smallNotifTarget = new NotificationTarget(
-                    context,
-                    R.id.small_image_app,
-                    contentViewSmall,
-                    notification,
-                    notificationId);
-            Glide
-                    .with(context.getApplicationContext())
-                    .asBitmap()
-                    .load(pt_img_small)
-                    .into(smallNotifTarget);
-            NotificationTarget bigNotifTargetIcon = new NotificationTarget(
-                    context,
-                    R.id.big_image_app,
-                    contentViewCarousel,
-                    notification,
-                    notificationId);
-            Glide
-                    .with(context.getApplicationContext())
-                    .asBitmap()
-                    .load(pt_img_small)
-                    .into(bigNotifTargetIcon);
+            Utils.loadIntoGlide(context,R.id.small_image_app,pt_img_small,contentViewSmall,notification,notificationId);
 
+            Utils.loadIntoGlide(context,R.id.big_image_app,pt_img_small,contentViewCarousel,notification,notificationId);
 
             ArrayList<Integer> layoutIds = new ArrayList<>();
             layoutIds.add(0, R.id.flipper_img1);
@@ -362,23 +362,7 @@ class TemplateRenderer {
 
 
             for(int index = 0; index < imageList.size(); index++){
-                //URL imageURL = new URL(image);
-                //RemoteViews imageView =  new RemoteViews(context.getPackageName(),R.layout.carousel_image);
-                //contentViewCarousel.addView(R.id.view_flipper,imageView);
-                //imageView.setImageViewBitmap(R.id.flipper_img, BitmapFactory.decodeStream(imageURL.openConnection().getInputStream()));
-
-                loadIntoGlide(context, layoutIds.get(index),imageList.get(index),contentViewCarousel, notification, notificationId);
-                /*NotificationTarget bigNotifCarouselTarget = new NotificationTarget(
-                        context,
-                        layoutIds.get(index),
-                        contentViewCarousel,
-                        notification,
-                        notificationId);
-                Glide
-                        .with(context.getApplicationContext())
-                        .asBitmap()
-                        .load(imageList.get(index))
-                        .into(bigNotifCarouselTarget);*/
+                Utils.loadIntoGlide(context, layoutIds.get(index),imageList.get(index),contentViewCarousel, notification, notificationId);
             }
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
@@ -394,17 +378,6 @@ class TemplateRenderer {
         try{
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
             contentViewSmall = new RemoteViews(context.getPackageName(),R.layout.image_only_small);
-            if(pt_img_big!=null && !pt_img_big.isEmpty()) {
-                //URL bigImgUrl = new URL(pt_img_big);
-                //contentViewBig.setImageViewBitmap(R.id.image_pic, BitmapFactory.decodeStream(bigImgUrl.openConnection().getInputStream()));
-
-            }
-
-            if(pt_img_small!=null && !pt_img_small.isEmpty()) {
-                //URL smallImgUrl = new URL(pt_img_small);
-                //contentViewSmall.setImageViewBitmap(R.id.small_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
-                //contentViewBig.setImageViewBitmap(R.id.big_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
-            }
 
             if(pt_title!=null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -414,7 +387,6 @@ class TemplateRenderer {
                     contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_title));
                     contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title));
                 }
-
             }
 
             if(pt_msg!=null && !pt_msg.isEmpty()) {
@@ -448,6 +420,9 @@ class TemplateRenderer {
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
             launchIntent.putExtras(extras);
+            if(deepLinkList != null) {
+                launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
+            }
             launchIntent.removeExtra(Constants.WZRK_ACTIONS);
             launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
@@ -465,46 +440,15 @@ class TemplateRenderer {
                     .setCustomBigContentView(contentViewBig)
                     .setContentTitle("Custom Notification")
                     .setContentIntent(pIntent)
+                    .setVibrate(new long[]{0L})
                     .setAutoCancel(true);
 
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
 
-            NotificationTarget bigNotifTarget = new NotificationTarget(
-                    context,
-                    R.id.image_pic,
-                    contentViewBig,
-                    notification,
-                    notificationId);
-            Glide
-                    .with(context.getApplicationContext())
-                    .asBitmap()
-                    .load(pt_img_big)
-                    .into(bigNotifTarget);
-
-            NotificationTarget smallNotifTarget = new NotificationTarget(
-                    context,
-                    R.id.small_image_app,
-                    contentViewSmall,
-                    notification,
-                    notificationId);
-            Glide
-                    .with(context.getApplicationContext())
-                    .asBitmap()
-                    .load(pt_img_small)
-                    .into(smallNotifTarget);
-            NotificationTarget bigNotifTargetIcon = new NotificationTarget(
-                    context,
-                    R.id.big_image_app,
-                    contentViewBig,
-                    notification,
-                    notificationId);
-            Glide
-                    .with(context.getApplicationContext())
-                    .asBitmap()
-                    .load(pt_img_small)
-                    .into(bigNotifTargetIcon);
-
+            Utils.loadIntoGlide(context,R.id.image_pic,pt_img_big,contentViewBig,notification,notificationId);
+            Utils.loadIntoGlide(context,R.id.big_image_app,pt_img_small,contentViewBig,notification,notificationId);
+            Utils.loadIntoGlide(context,R.id.small_image_app,pt_img_small,contentViewSmall,notification,notificationId);
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
@@ -521,33 +465,6 @@ class TemplateRenderer {
             contentViewBig = new RemoteViews(context.getPackageName(),R.layout.product_display_template);
             contentViewSmall = new RemoteViews(context.getPackageName(),R.layout.image_only_small);
 
-
-            /*for(int index = 0; index < imageList.size(); index++){
-                final int finalIndex = index;
-                Glide.with(context.getApplicationContext())
-                        .asBitmap()
-                        .load(imageList.get(index))
-                        .into(new CustomTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                if (finalIndex == 0){
-                                    contentViewBig.setImageViewBitmap(R.id.small_image1, resource);
-                                }
-                                else if(finalIndex == 1){
-                                    contentViewBig.setImageViewBitmap(R.id.small_image2, resource);
-                                }
-                                else if(finalIndex == 2){
-                                    contentViewBig.setImageViewBitmap(R.id.small_image3, resource);
-                                }
-                            }
-
-                            @Override
-                            public void onLoadCleared(@Nullable Drawable placeholder) {
-                            }
-                        });
-
-            }*/
-
             if(!bigTextList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(0));
 
@@ -557,7 +474,6 @@ class TemplateRenderer {
                 contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(0));
 
             }
-
 
             if(pt_title!=null && !pt_title.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.title, pt_title);
@@ -578,21 +494,6 @@ class TemplateRenderer {
                 contentViewBig.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
                 contentViewSmall.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
             }
-
-            /*Glide.with(context.getApplicationContext())
-                    .asBitmap()
-                    .load(imageList.get(0))
-                    .into(new CustomTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                            contentViewBig.setImageViewBitmap(R.id.big_image, resource);
-                        }
-
-                        @Override
-                        public void onLoadCleared(@Nullable Drawable placeholder) {
-                        }
-                    });*/
-
 
             notificationId = new Random().nextInt();
 
@@ -633,10 +534,22 @@ class TemplateRenderer {
             PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, requestCode3, notificationIntent3, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image3, contentIntent3);
 
+            Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent1.putExtra("img1",true);
+            notificationIntent4.putExtra("notif_id",notificationId);
+            notificationIntent4.putExtra("pt_dl",deepLinkList.get(0));
+            notificationIntent4.putExtra("pt_reqcode1",requestCode1);
+            notificationIntent4.putExtra("pt_reqcode2",requestCode2);
+            notificationIntent4.putExtra("pt_reqcode3",requestCode3);
+            notificationIntent4.putExtra("buynow",true);
+            notificationIntent4.putExtras(extras);
+            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, requestCode3, notificationIntent4, 0);
+            contentViewBig.setOnClickPendingIntent(R.id.action_button, contentIntent4);
+
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
             launchIntent.putExtras(extras);
-            launchIntent.putExtra("wzrk_dl", deepLinkList.get(0));
+            launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
             launchIntent.removeExtra(Constants.WZRK_ACTIONS);
             launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
@@ -654,23 +567,24 @@ class TemplateRenderer {
                     .setCustomBigContentView(contentViewBig)
                     .setContentTitle("Custom Notification")
                     .setContentIntent(pIntent)
+                    .setVibrate(new long[]{0L})
                     .setAutoCancel(true);
 
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
-            loadIntoGlide(context, R.id.small_image_app, pt_img_small, contentViewSmall, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.small_image_app, pt_img_small, contentViewSmall, notification, notificationId);
             for(int index = 0; index < imageList.size(); index++){
                 if (index == 0){
-                    loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
+                    Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
                 }
                 else if(index == 1){
-                    loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewBig, notification, notificationId);
+                    Utils.loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewBig, notification, notificationId);
                 }
                 else if(index == 2){
-                    loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewBig, notification, notificationId);
+                    Utils.loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewBig, notification, notificationId);
                 }
             }
-            loadIntoGlide(context, R.id.big_image, imageList.get(0), contentViewBig, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.big_image, imageList.get(0), contentViewBig, notification, notificationId);
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
                 instance.pushNotificationViewedEvent(extras);
@@ -743,6 +657,7 @@ class TemplateRenderer {
                     .setContentTitle("Custom Notification")
                     .setContentIntent(pIntent)
                     .setOngoing(true)
+                    .setVibrate(new long[]{0L})
                     .setAutoCancel(true);
 
             Notification notification = notificationBuilder.build();
@@ -752,23 +667,23 @@ class TemplateRenderer {
 
             for(int imageKey = 0; imageKey < imageList.size(); imageKey ++){
                 if (imageKey == 0){
-                    loadIntoGlide(context, R.id.cta1, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                    Utils.loadIntoGlide(context, R.id.cta1, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
                 }
                 else if(imageKey == 1){
-                    loadIntoGlide(context, R.id.cta2, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                    Utils.loadIntoGlide(context, R.id.cta2, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
                 }
                 else if(imageKey == 2){
-                    loadIntoGlide(context, R.id.cta3, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                    Utils.loadIntoGlide(context, R.id.cta3, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
                 }
                 else if(imageKey == 3){
-                    loadIntoGlide(context, R.id.cta4, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                    Utils.loadIntoGlide(context, R.id.cta4, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
                 }
                 else if(imageKey == 4) {
-                    loadIntoGlide(context, R.id.cta5, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                    Utils.loadIntoGlide(context, R.id.cta5, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
                 }
 
             }
-            loadIntoGlide(context, R.id.close, imageList.get(5), contentFiveCTAs, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.close, imageList.get(5), contentFiveCTAs, notification, notificationId);
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
@@ -839,19 +754,5 @@ class TemplateRenderer {
             return null;
         }
         return text.toString();
-    }
-
-    private void loadIntoGlide(Context context, int imageResource, String imageURL, RemoteViews remoteViews, Notification notification, int notificationId) {
-        NotificationTarget bigNotifTarget = new NotificationTarget(
-                context,
-                imageResource,
-                remoteViews,
-                notification,
-                notificationId);
-        Glide
-                .with(context.getApplicationContext())
-                .asBitmap()
-                .load(imageURL)
-                .into(bigNotifTarget);
     }
 }
