@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -153,6 +154,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 map.put("Rating",2);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked2 = false;
+                pt_dl_clicked = deepLinkList.get(1);
             }else{
                 contentViewRating.setImageViewResource(R.id.star2, R.drawable.outline_star_1);
             }
@@ -164,6 +166,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 map.put("Rating",3);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked3 = false;
+                pt_dl_clicked = deepLinkList.get(2);
             }else{
                 contentViewRating.setImageViewResource(R.id.star3, R.drawable.outline_star_1);
             }
@@ -176,6 +179,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 map.put("Rating",4);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked4 = false;
+                pt_dl_clicked = deepLinkList.get(3);
             }else{
                 contentViewRating.setImageViewResource(R.id.star4, R.drawable.outline_star_1);
             }
@@ -189,17 +193,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 map.put("Rating",5);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked5 = false;
+                pt_dl_clicked = deepLinkList.get(4);
             }else{
                 contentViewRating.setImageViewResource(R.id.star5, R.drawable.outline_star_1);
             }
-
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
-            launchIntent.putExtras(extras);
-            launchIntent.putExtra(Constants.WZRK_DL, pt_dl_clicked);
-            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
-                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             Bundle metaData;
             try {
@@ -227,16 +224,24 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                         .setCustomContentView(contentViewSmall)
                         .setCustomBigContentView(contentViewRating)
                         .setContentTitle("Custom Notification")
-                        .setContentIntent(pIntent)
                         .setAutoCancel(true);
 
                 int notificationId = extras.getInt("notif_id");
                 Notification notification = notificationBuilder.build();
                 notificationManager.notify(notificationId, notification);
-                Utils.loadIntoGlide(context, R.id.small_image_app, imageList.get(0), contentViewSmall, notification, notificationId);
+                Utils.loadIntoGlide(context, R.id.small_image_app, pt_img_small, contentViewSmall, notification, notificationId);
+                Utils.loadIntoGlide(context, R.id.big_image_app, pt_img_small, contentViewRating, notification, notificationId);
                 Thread.sleep(1000);
                 notificationManager.cancel(notificationId);
                 Toast.makeText(context,"Thank you for your feedback",Toast.LENGTH_SHORT).show();
+
+                Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(pt_dl_clicked));
+                launchIntent.putExtras(extras);
+                launchIntent.putExtra(Constants.WZRK_DL, pt_dl_clicked);
+                launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+                launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
+                launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(launchIntent);
             }
 
         }catch (Throwable t){

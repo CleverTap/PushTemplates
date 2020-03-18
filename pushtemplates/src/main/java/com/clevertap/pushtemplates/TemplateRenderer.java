@@ -267,6 +267,7 @@ class TemplateRenderer {
             notificationManager.notify(notificationId, notification);
 
             Utils.loadIntoGlide(context, R.id.small_image_app, pt_img_small, contentViewSmall, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.big_image_app, pt_img_small, contentViewSmall, notification, notificationId);
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
