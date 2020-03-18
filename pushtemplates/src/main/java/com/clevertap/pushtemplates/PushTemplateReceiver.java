@@ -24,6 +24,7 @@ import com.clevertap.android.sdk.CleverTapAPI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -254,7 +255,19 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
     private void handleProductDisplayNotification(Context context, Bundle extras) {
         try {
-            //Set RemoteViews again
+            int notificationId = extras.getInt("notif_id");
+            if (buynow == extras.getBoolean("buynow", false)) {
+                notificationManager.cancel(notificationId);
+                String dl = extras.getString(Constants.PT_BUY_NOW_DL, deepLinkList.get(0));
+                Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dl));
+                launchIntent.putExtras(extras);
+                launchIntent.putExtra(Constants.WZRK_DL, dl);
+                launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+                launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
+                launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(launchIntent);
+                return;
+            }
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.image_only_small);
 
@@ -278,7 +291,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewSmall.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
             }
 
-            String imageUrl = "";
+            String imageUrl = "", dl = "";
             if (img1 != extras.getBoolean("img1", false)) {
                 imageUrl = imageList.get(0);
                 if (!bigTextList.isEmpty()) {
@@ -286,6 +299,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(0));
                 }
                 img1 = false;
+                dl = deepLinkList.get(0);
             }
             if (img2 != extras.getBoolean("img2", false)) {
                 imageUrl = imageList.get(1);
@@ -294,6 +308,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(1));
                 }
                 img2 = false;
+                dl = deepLinkList.get(1);
             }
             if (img3 != extras.getBoolean("img3", false)) {
                 imageUrl = imageList.get(2);
@@ -301,28 +316,16 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(2));
                     contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(2));
                 }
-
                 img3 = false;
+                dl = deepLinkList.get(2);
             }
             PendingIntent pIntent = null;
-
-            if (buynow == extras.getBoolean("buynow", false)) {
-                Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
-                launchIntent.putExtra(Constants.WZRK_DL, extras.getString("pt_dl"));
-                launchIntent.putExtras(extras);
-
-                launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-                launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
-                        launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                buynow = false;
-            }
 
             if (bigimage == extras.getBoolean("bigimage", false)) {
                 bigimage = false;
             }
 
-            int notificationId = extras.getInt("notif_id");
+
 
             int requestCode1 = extras.getInt("pt_reqcode1");
             int requestCode2 = extras.getInt("pt_reqcode2");
@@ -331,7 +334,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("img1",true);
             notificationIntent1.putExtra("notif_id",notificationId);
-            notificationIntent1.putExtra("pt_dl",deepLinkList.get(0));
+            notificationIntent1.putExtra(Constants.PT_BUY_NOW_DL,deepLinkList.get(0));
             notificationIntent1.putExtra("pt_reqcode1",requestCode1);
             notificationIntent1.putExtra("pt_reqcode2",requestCode2);
             notificationIntent1.putExtra("pt_reqcode3",requestCode3);
@@ -342,7 +345,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("img2",true);
             notificationIntent2.putExtra("notif_id",notificationId);
-            notificationIntent2.putExtra("pt_dl",deepLinkList.get(1));
+            notificationIntent2.putExtra(Constants.PT_BUY_NOW_DL,deepLinkList.get(1));
             notificationIntent2.putExtra("pt_reqcode1",requestCode1);
             notificationIntent2.putExtra("pt_reqcode2",requestCode2);
             notificationIntent2.putExtra("pt_reqcode3",requestCode3);
@@ -353,13 +356,25 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("img3",true);
             notificationIntent3.putExtra("notif_id",notificationId);
-            notificationIntent3.putExtra("pt_dl",deepLinkList.get(2));
+            notificationIntent3.putExtra(Constants.PT_BUY_NOW_DL,deepLinkList.get(2));
             notificationIntent3.putExtra("pt_reqcode1",requestCode1);
             notificationIntent3.putExtra("pt_reqcode2",requestCode2);
             notificationIntent3.putExtra("pt_reqcode3",requestCode3);
             notificationIntent3.putExtras(extras);
             PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, requestCode3, notificationIntent3, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image3, contentIntent3);
+
+            Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent4.putExtra("img1",true);
+            notificationIntent4.putExtra("notif_id",notificationId);
+            notificationIntent4.putExtra(Constants.PT_BUY_NOW_DL,dl);
+            notificationIntent4.putExtra("pt_reqcode1",requestCode1);
+            notificationIntent4.putExtra("pt_reqcode2",requestCode2);
+            notificationIntent4.putExtra("pt_reqcode3",requestCode3);
+            notificationIntent4.putExtra("buynow",true);
+            notificationIntent4.putExtras(extras);
+            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
+            contentViewBig.setOnClickPendingIntent(R.id.action_button, contentIntent4);
 
             Bundle metaData;
             try {
@@ -434,11 +449,12 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
         }
 
-        Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+        Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dl));
         launchIntent.putExtras(extras);
         launchIntent.putExtra(Constants.WZRK_DL, dl);
         launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-        launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
+        launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(launchIntent);
     }
 

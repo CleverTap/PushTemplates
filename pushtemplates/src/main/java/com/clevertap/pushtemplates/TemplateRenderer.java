@@ -505,7 +505,7 @@ class TemplateRenderer {
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("img1",true);
             notificationIntent1.putExtra("notif_id",notificationId);
-            notificationIntent1.putExtra("pt_dl",deepLinkList.get(0));
+            notificationIntent1.putExtra(Constants.PT_BUY_NOW_DL,deepLinkList.get(0));
             notificationIntent1.putExtra("pt_reqcode1",requestCode1);
             notificationIntent1.putExtra("pt_reqcode2",requestCode2);
             notificationIntent1.putExtra("pt_reqcode3",requestCode3);
@@ -516,7 +516,7 @@ class TemplateRenderer {
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("img2",true);
             notificationIntent2.putExtra("notif_id",notificationId);
-            notificationIntent2.putExtra("pt_dl",deepLinkList.get(1));
+            notificationIntent2.putExtra(Constants.PT_BUY_NOW_DL,deepLinkList.get(1));
             notificationIntent2.putExtra("pt_reqcode1",requestCode1);
             notificationIntent2.putExtra("pt_reqcode2",requestCode2);
             notificationIntent2.putExtra("pt_reqcode3",requestCode3);
@@ -527,7 +527,7 @@ class TemplateRenderer {
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("img3",true);
             notificationIntent3.putExtra("notif_id",notificationId);
-            notificationIntent3.putExtra("pt_dl",deepLinkList.get(2));
+            notificationIntent3.putExtra(Constants.PT_BUY_NOW_DL,deepLinkList.get(2));
             notificationIntent3.putExtra("pt_reqcode1",requestCode1);
             notificationIntent3.putExtra("pt_reqcode2",requestCode2);
             notificationIntent3.putExtra("pt_reqcode3",requestCode3);
@@ -538,13 +538,13 @@ class TemplateRenderer {
             Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("img1",true);
             notificationIntent4.putExtra("notif_id",notificationId);
-            notificationIntent4.putExtra("pt_dl",deepLinkList.get(0));
+            notificationIntent4.putExtra(Constants.PT_BUY_NOW_DL,deepLinkList.get(0));
             notificationIntent4.putExtra("pt_reqcode1",requestCode1);
             notificationIntent4.putExtra("pt_reqcode2",requestCode2);
             notificationIntent4.putExtra("pt_reqcode3",requestCode3);
             notificationIntent4.putExtra("buynow",true);
             notificationIntent4.putExtras(extras);
-            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, requestCode3, notificationIntent4, 0);
+            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
             contentViewBig.setOnClickPendingIntent(R.id.action_button, contentIntent4);
 
 
