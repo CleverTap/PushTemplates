@@ -70,11 +70,13 @@ class TemplateRenderer {
             templateType = TemplateType.fromString(pt_id);
             Bundle newExtras = null;
             try {
-                newExtras = fromJson(new JSONObject(pt_json));
+                if(pt_json != null && !pt_json.isEmpty())  {
+                    newExtras = fromJson(new JSONObject(pt_json));
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            extras.putAll(newExtras);
+            if(newExtras != null) extras.putAll(newExtras);
         }
         pt_msg = extras.getString(Constants.PT_MSG);
         pt_msg_clr = extras.getString(Constants.PT_MSG_COLOR);
@@ -136,23 +138,124 @@ class TemplateRenderer {
 
         switch (templateType){
             case BASIC:
-                renderBasicTemplateNotification(context, extras, notificationId);
+                if(hasAllBasicNotifKeys()) renderBasicTemplateNotification(context, extras, notificationId);
                 break;
             case AUTO_CAROUSEL:
-                renderAutoCarouselNotification(context, extras, notificationId);
+                if(hasAllCarouselNotifKeys()) renderAutoCarouselNotification(context, extras, notificationId);
                 break;
             case RATING:
-                renderRatingCarouselNotification(context,extras,notificationId);
+                if(hasAllRatingNotifKeys()) renderRatingCarouselNotification(context,extras,notificationId);
                 break;
             case FIVE_ICONS:
-                renderFiveIconNotification(context,extras,notificationId);
+                if(hasAll5IconNotifKeys()) renderFiveIconNotification(context,extras,notificationId);
                 break;
             case PRODUCT_DISPLAY:
-                renderProductDisplayNotification(context, extras, notificationId);
+                if(hasAllProdDispNotifKeys()) renderProductDisplayNotification(context, extras, notificationId);
                 break;
         }
     }
 
+    private boolean hasAllBasicNotifKeys() {
+        boolean result = true;
+        if(pt_title==null || pt_title.isEmpty()) {
+            PTLog.error("Title is missing or empty. Not showing notification");
+            result = false;
+        }
+        if(pt_msg==null || pt_msg.isEmpty()) {
+            PTLog.error("Message is missing or empty. Not showing notification");
+            result = false;
+        }
+        if(pt_img_big==null || pt_img_big.isEmpty()) {
+            PTLog.error("Display Image is missing or empty. Not showing notification");
+            result = false;
+        }
+        if(pt_img_small==null || pt_img_small.isEmpty()) {
+            PTLog.error("Icon Image is missing or empty. Not showing notification");
+            result = false;
+        }
+        return result;
+    }
+
+    private boolean hasAllCarouselNotifKeys() {
+        boolean result = true;
+        if(pt_title==null || pt_title.isEmpty()) {
+            PTLog.error("Title is missing or empty. Not showing notification");
+            result = false;
+        }
+        if(pt_msg==null || pt_msg.isEmpty()) {
+            PTLog.error("Message is missing or empty. Not showing notification");
+            result = false;
+        }
+        if(deepLinkList == null || deepLinkList.size() == 0) {
+            PTLog.error("Deeplink is missing or empty. Not showing notification");
+            result = false;
+        }
+        if(imageList == null || imageList.size() < 3) {
+            PTLog.error("Three required images not present. Not showing notification");
+            result = false;
+        }
+        return result;
+    }
+
+    private boolean hasAllRatingNotifKeys() {
+        boolean result = true;
+        if(pt_title==null || pt_title.isEmpty()) {
+            PTLog.error("Title is missing or empty. Not showing notification");
+            result = false;
+        }
+        if(pt_msg==null || pt_msg.isEmpty()) {
+            PTLog.error("Message is missing or empty. Not showing notification");
+            result = false;
+        }
+        //TO DO: Check if we wish to enforce this
+        if(deepLinkList == null || deepLinkList.size() == 0) {
+            PTLog.error("At least one deeplink is required. Not showing notification");
+            result = false;
+        }
+        return result;
+    }
+
+    private boolean hasAll5IconNotifKeys() {
+        boolean result = true;
+        if(deepLinkList == null || deepLinkList.size() < 5) {
+            PTLog.error("Five required deeplinks not present. Not showing notification");
+            result = false;
+        }
+        if(imageList == null || imageList.size() < 5) {
+            PTLog.error("Five required images not present. Not showing notification");
+            result = false;
+        }
+        return result;
+    }
+
+    private boolean hasAllProdDispNotifKeys() {
+        boolean result = true;
+        if(pt_title==null || pt_title.isEmpty()) {
+            PTLog.error("Title is missing or empty. Not showing notification");
+            result = false;
+        }
+        if(pt_msg==null || pt_msg.isEmpty()) {
+            PTLog.error("Message is missing or empty. Not showing notification");
+            result = false;
+        }
+        if(bigTextList == null || bigTextList.size() < 3) {
+            PTLog.error("Three required product titles not present. Not showing notification");
+            result = false;
+        }
+        if(smallTextList == null || smallTextList.size() < 3) {
+            PTLog.error("Three required product descriptions not present. Not showing notification");
+            result = false;
+        }
+        if(deepLinkList == null || deepLinkList.size() < 3) {
+            PTLog.error("Three required deeplinks not present. Not showing notification");
+            result = false;
+        }
+        if(imageList == null || imageList.size() < 3) {
+            PTLog.error("Three required images not present. Not showing notification");
+            result = false;
+        }
+        return result;
+    }
 
 
     private void renderRatingCarouselNotification(Context context, Bundle extras, int notificationId){
@@ -188,12 +291,6 @@ class TemplateRenderer {
             if(pt_msg_clr != null && !pt_msg_clr.isEmpty()){
                 contentViewRating.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
                 contentViewSmall.setTextColor(R.id.msg,Color.parseColor(pt_msg_clr));
-            }
-
-            if(pt_img_small!=null && !pt_img_small.isEmpty()) {
-                URL smallImgUrl = new URL(pt_img_small);
-                contentViewSmall.setImageViewBitmap(R.id.small_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
-                contentViewRating.setImageViewBitmap(R.id.big_image_app, BitmapFactory.decodeStream(smallImgUrl.openConnection().getInputStream()));
             }
 
             //Set the rating stars
