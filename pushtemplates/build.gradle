@@ -55,7 +55,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.firebase:firebase-messaging:17.3.3'
-    compileOnly 'com.clevertap.android:clevertap-android-sdk:3.7.0'
+    compileOnly 'com.clevertap.android:clevertap-android-sdk:3.7.1'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     testImplementation 'junit:junit:4.12'

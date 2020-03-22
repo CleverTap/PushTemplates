@@ -155,7 +155,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 map.put("Rating",2);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked2 = false;
-                pt_dl_clicked = deepLinkList.get(1);
             }else{
                 contentViewRating.setImageViewResource(R.id.star2, R.drawable.outline_star_1);
             }
@@ -167,7 +166,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 map.put("Rating",3);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked3 = false;
-                pt_dl_clicked = deepLinkList.get(2);
             }else{
                 contentViewRating.setImageViewResource(R.id.star3, R.drawable.outline_star_1);
             }
@@ -180,7 +178,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 map.put("Rating",4);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked4 = false;
-                pt_dl_clicked = deepLinkList.get(3);
             }else{
                 contentViewRating.setImageViewResource(R.id.star4, R.drawable.outline_star_1);
             }
@@ -194,7 +191,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 map.put("Rating",5);
                 cleverTapAPI.pushEvent("Rated",map);
                 clicked5 = false;
-                pt_dl_clicked = deepLinkList.get(4);
             }else{
                 contentViewRating.setImageViewResource(R.id.star5, R.drawable.outline_star_1);
             }
@@ -235,6 +231,9 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 Thread.sleep(1000);
                 notificationManager.cancel(notificationId);
                 Toast.makeText(context,"Thank you for your feedback",Toast.LENGTH_SHORT).show();
+
+                Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+                context.sendBroadcast(it);
 
                 Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(pt_dl_clicked));
                 launchIntent.putExtras(extras);
