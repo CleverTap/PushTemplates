@@ -9,8 +9,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.LruCache;
 import android.widget.RemoteViews;
 
 
@@ -23,7 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class Utils {
+class Utils {
 
     static boolean isPNFromCleverTap(Bundle extras){
         if(extras == null) return false;
@@ -64,7 +62,7 @@ public class Utils {
         }
     }
 
-    static Bitmap drawableToBitmap(Drawable drawable)
+    private static Bitmap drawableToBitmap(Drawable drawable)
             throws NullPointerException {
         if (drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable) drawable).getBitmap();
@@ -79,7 +77,7 @@ public class Utils {
         return bitmap;
     }
 
-    static Bitmap getBitmapFromURL(String srcUrl) {
+    private static Bitmap getBitmapFromURL(String srcUrl) {
         // Safe bet, won't have more than three /s
         srcUrl = srcUrl.replace("///", "/");
         srcUrl = srcUrl.replace("//", "/");

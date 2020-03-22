@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,9 +18,6 @@ import androidx.core.app.NotificationCompat;
 import android.text.Html;
 import android.widget.RemoteViews;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.NotificationTarget;
-import com.bumptech.glide.util.Util;
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
 
@@ -33,7 +29,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;

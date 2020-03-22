@@ -17,9 +17,6 @@ import androidx.core.app.NotificationCompat;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.NotificationTarget;
-import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
 
 import java.util.ArrayList;
