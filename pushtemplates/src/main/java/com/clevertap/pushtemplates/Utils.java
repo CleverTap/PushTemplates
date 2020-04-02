@@ -180,6 +180,7 @@ class Utils {
                 .with(context.getApplicationContext())
                 .asBitmap()
                 .load(imageURL)
+                .centerCrop()
                 .into(bigNotifTarget);
     }
 }
