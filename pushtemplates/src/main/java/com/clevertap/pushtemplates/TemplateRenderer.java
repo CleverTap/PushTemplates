@@ -37,8 +37,7 @@ import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-//TODO remove public
-public class TemplateRenderer {
+class TemplateRenderer {
 
     private String pt_id, pt_json;
     private TemplateType templateType;
@@ -97,8 +96,7 @@ public class TemplateRenderer {
     }
 
     @SuppressLint("NewApi")
-    //TODO remove public
-    public static void createNotification(Context context, Bundle extras) {
+    static void createNotification(Context context, Bundle extras) {
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
         templateRenderer._createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
@@ -459,7 +457,7 @@ public class TemplateRenderer {
 
             if (pt_bg != null && !pt_bg.isEmpty()) {
                 contentViewCarousel.setInt(R.id.carousel_relative_layout, "setBackgroundColor", Color.parseColor(pt_bg));
-                contentViewSmall.setInt(R.id.image_only_small_relative_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+                contentViewSmall.setInt(R.id.content_view_small, "setBackgroundColor", Color.parseColor(pt_bg));
             }
 
             contentViewCarousel.setInt(R.id.view_flipper, "setFlipInterval", 4000);
@@ -531,7 +529,12 @@ public class TemplateRenderer {
     private void renderBasicTemplateNotification(Context context, Bundle extras, int notificationId) {
         try {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
+            contentViewBig.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewBig.setTextViewText(R.id.timestamp, getTimeStamp(context));
+
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewSmall.setTextViewText(R.id.timestamp, getTimeStamp(context));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -554,8 +557,8 @@ public class TemplateRenderer {
             }
 
             if (pt_bg != null && !pt_bg.isEmpty()) {
-                contentViewBig.setInt(R.id.image_only_big_relative_layout, "setBackgroundColor", Color.parseColor(pt_bg));
-                contentViewSmall.setInt(R.id.image_only_small_relative_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+                contentViewBig.setInt(R.id.image_only_big_linear_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+                contentViewSmall.setInt(R.id.content_view_small, "setBackgroundColor", Color.parseColor(pt_bg));
             }
 
             if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
@@ -574,7 +577,7 @@ public class TemplateRenderer {
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
             launchIntent.putExtras(extras);
-            if (deepLinkList != null) {
+            if (deepLinkList != null && deepLinkList.size()>0) {
                 launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
             }
             launchIntent.removeExtra(Constants.WZRK_ACTIONS);
@@ -599,10 +602,21 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
+            if (pt_big_img != null && !pt_big_img.isEmpty()) {
+                Utils.loadIntoGlide(context, R.id.big_image, pt_big_img, contentViewBig, notification, notificationId);
+            } else {
+                contentViewRating.setViewVisibility(R.id.big_image, View.GONE);
+            }
 
-            Utils.loadIntoGlide(context, R.id.image_pic, pt_big_img, contentViewBig, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.big_image_app, pt_large_icon, contentViewBig, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
+            if (pt_large_icon != null && !pt_large_icon.isEmpty()) {
+                Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
+            } else {
+                contentViewSmall.setViewVisibility(R.id.large_icon, View.GONE);
+            }
+
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.big_image_app, pt_large_icon, contentViewSmall, notification, notificationId);
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {

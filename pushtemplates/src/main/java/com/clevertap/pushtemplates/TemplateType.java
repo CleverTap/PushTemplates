@@ -2,7 +2,7 @@ package com.clevertap.pushtemplates;
 
 enum TemplateType {
 
-    BASIC("1"),
+    BASIC("pt_basic"),
     AUTO_CAROUSEL("pt_carousel"),
     RATING("pt_rating"),
     FIVE_ICONS("4"),
@@ -16,7 +16,7 @@ enum TemplateType {
 
     static TemplateType fromString(String type){
         switch (type){
-            case "1" : return BASIC; //ignore
+            case "pt_basic" : return BASIC; //ignore
             case "pt_carousel" : return AUTO_CAROUSEL;
             case "pt_rating" : return RATING;
             case "4" : return FIVE_ICONS; //ignore
