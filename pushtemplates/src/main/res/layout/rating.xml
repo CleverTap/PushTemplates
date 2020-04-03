@@ -16,17 +16,16 @@
             android:layout_height="16dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginRight="8dp"
-            android:layout_marginEnd="8dp"/>
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"/>
         <TextView
             android:id="@+id/app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:layout_toRightOf="@id/small_icon"
+            android:layout_toEndOf="@id/small_icon"
             android:text="app name"
             android:textSize="12sp"
             />
@@ -35,11 +34,10 @@
             android:id="@+id/timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
-            android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:layout_toRightOf="@id/app_name"
+            android:layout_toEndOf="@id/app_name"
             android:text="app name"
             android:textSize="12sp"
             />
@@ -70,7 +68,6 @@
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_marginTop="8dp"
-        android:layout_weight="1"
         android:scaleType="centerCrop"
         />
 
@@ -79,8 +76,7 @@
         android:orientation="horizontal"
         android:gravity="center_horizontal"
         android:id="@+id/rating_lyt"
-        android:visibility="visible"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_height="wrap_content">
 
         <ImageView

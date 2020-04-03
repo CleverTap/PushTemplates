@@ -17,7 +17,6 @@ import androidx.core.app.NotificationCompat;
 
 import android.text.Html;
 import android.text.format.DateUtils;
-import android.transition.Visibility;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -33,27 +32,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-class TemplateRenderer {
+//TODO remove public
+public class TemplateRenderer {
 
     private String pt_id, pt_json;
     private TemplateType templateType;
     private String pt_title;
     private String pt_msg;
-    private String pt_img_small;
-    private String pt_img_big;
+    private String pt_msg_summary;
+    private String pt_large_icon;
+    private String pt_big_img;
     private String pt_title_clr, pt_msg_clr;
     private ArrayList<String> imageList = new ArrayList<>();
     private ArrayList<String> ctaList = new ArrayList<>();
     private ArrayList<String> deepLinkList = new ArrayList<>();
     private ArrayList<String> bigTextList = new ArrayList<>();
     private ArrayList<String> smallTextList = new ArrayList<>();
+    private ArrayList<String> priceList = new ArrayList<>();
     private String pt_bg;
     private String pt_close;
 
@@ -80,22 +80,25 @@ class TemplateRenderer {
             if (newExtras != null) extras.putAll(newExtras);
         }
         pt_msg = extras.getString(Constants.PT_MSG);
+        pt_msg_summary = extras.getString(Constants.PT_MSG_SUMMARY);
         pt_msg_clr = extras.getString(Constants.PT_MSG_COLOR);
         pt_title = extras.getString(Constants.PT_TITLE);
         pt_title_clr = extras.getString(Constants.PT_TITLE_COLOR);
         pt_bg = extras.getString(Constants.PT_BG);
-        pt_img_big = extras.getString(Constants.PT_BIG_IMG);
-        pt_img_small = extras.getString(Constants.PT_SMALL_IMG);
+        pt_big_img = extras.getString(Constants.PT_BIG_IMG);
+        pt_large_icon = extras.getString(Constants.PT_NOTIF_ICON);
         imageList = Utils.getImageListFromExtras(extras);
         ctaList = Utils.getCTAListFromExtras(extras);
         deepLinkList = Utils.getDeepLinkListFromExtras(extras);
         bigTextList = Utils.getBigTextFromExtras(extras);
         smallTextList = Utils.getSmallTextFromExtras(extras);
+        priceList = Utils.getPriceFromExtras(extras);
         pt_close = extras.getString(Constants.PT_CLOSE);
     }
 
     @SuppressLint("NewApi")
-    static void createNotification(Context context, Bundle extras) {
+    //TODO remove public
+    public static void createNotification(Context context, Bundle extras) {
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
         templateRenderer._createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
@@ -148,7 +151,7 @@ class TemplateRenderer {
                 break;
             case RATING:
                 if (hasAllRatingNotifKeys())
-                    renderRatingCarouselNotification(context, extras, notificationId);
+                    renderRatingNotification(context, extras, notificationId);
                 break;
             case FIVE_ICONS:
                 if (hasAll5IconNotifKeys())
@@ -171,11 +174,11 @@ class TemplateRenderer {
             PTLog.error("Message is missing or empty. Not showing notification");
             result = false;
         }
-        if (pt_img_big == null || pt_img_big.isEmpty()) {
+        if (pt_big_img == null || pt_big_img.isEmpty()) {
             PTLog.error("Display Image is missing or empty. Not showing notification");
             result = false;
         }
-        if (pt_img_small == null || pt_img_small.isEmpty()) {
+        if (pt_large_icon == null || pt_large_icon.isEmpty()) {
             PTLog.error("Icon Image is missing or empty. Not showing notification");
             result = false;
         }
@@ -267,13 +270,15 @@ class TemplateRenderer {
         return DateUtils.formatDateTime(context, System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME);
     }
 
-    private void renderRatingCarouselNotification(Context context, Bundle extras, int notificationId) {
+    private void renderRatingNotification(Context context, Bundle extras, int notificationId) {
         try {
             contentViewRating = new RemoteViews(context.getPackageName(), R.layout.rating);
-            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.image_only_small);
-
             contentViewRating.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewRating.setTextViewText(R.id.timestamp, getTimeStamp(context));
+
+            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewSmall.setTextViewText(R.id.timestamp, getTimeStamp(context));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -287,11 +292,16 @@ class TemplateRenderer {
 
             if (pt_msg != null && !pt_msg.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
                     contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
                 } else {
-                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
                     contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                }
+            }
+            if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary));
                 }
             }
 
@@ -375,15 +385,21 @@ class TemplateRenderer {
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
 
-            if (pt_img_big != null && !pt_img_big.isEmpty()) {
-                Utils.loadIntoGlide(context, R.id.big_image, pt_img_big, contentViewRating, notification, notificationId);
+            if (pt_big_img != null && !pt_big_img.isEmpty()) {
+                Utils.loadIntoGlide(context, R.id.big_image, pt_big_img, contentViewRating, notification, notificationId);
             } else {
                 contentViewRating.setViewVisibility(R.id.big_image, View.GONE);
             }
 
-            Utils.loadIntoGlide(context, R.id.small_icon, pt_img_small, contentViewRating, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.small_image_app, pt_img_small, contentViewSmall, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.big_image_app, pt_img_small, contentViewSmall, notification, notificationId);
+            if (pt_large_icon != null && !pt_large_icon.isEmpty()) {
+                Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
+            } else {
+                contentViewSmall.setViewVisibility(R.id.large_icon, View.GONE);
+            }
+
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewRating, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.big_image_app, pt_large_icon, contentViewSmall, notification, notificationId);
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
@@ -398,7 +414,12 @@ class TemplateRenderer {
     private void renderAutoCarouselNotification(Context context, Bundle extras, int notificationId) {
         try {
             contentViewCarousel = new RemoteViews(context.getPackageName(), R.layout.auto_carousel);
-            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.image_only_small);
+            contentViewCarousel.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewCarousel.setTextViewText(R.id.timestamp, getTimeStamp(context));
+
+            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewSmall.setTextViewText(R.id.timestamp, getTimeStamp(context));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -412,11 +433,17 @@ class TemplateRenderer {
 
             if (pt_msg != null && !pt_msg.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    contentViewCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
                     contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
                 } else {
-                    contentViewCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
                     contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                }
+            }
+
+            if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary));
                 }
             }
 
@@ -468,9 +495,9 @@ class TemplateRenderer {
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
 
-            Utils.loadIntoGlide(context, R.id.small_image_app, pt_img_small, contentViewSmall, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
 
-            Utils.loadIntoGlide(context, R.id.big_image_app, pt_img_small, contentViewCarousel, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.big_image_app, pt_large_icon, contentViewCarousel, notification, notificationId);
 
             ArrayList<Integer> layoutIds = new ArrayList<>();
             layoutIds.add(0, R.id.flipper_img1);
@@ -481,6 +508,16 @@ class TemplateRenderer {
             for (int index = 0; index < imageList.size(); index++) {
                 Utils.loadIntoGlide(context, layoutIds.get(index), imageList.get(index), contentViewCarousel, notification, notificationId);
             }
+
+            if (pt_large_icon != null && !pt_large_icon.isEmpty()) {
+                Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
+            } else {
+                contentViewSmall.setViewVisibility(R.id.large_icon, View.GONE);
+            }
+
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewCarousel, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
@@ -494,7 +531,7 @@ class TemplateRenderer {
     private void renderBasicTemplateNotification(Context context, Bundle extras, int notificationId) {
         try {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
-            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.image_only_small);
+            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -563,9 +600,9 @@ class TemplateRenderer {
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
 
-            Utils.loadIntoGlide(context, R.id.image_pic, pt_img_big, contentViewBig, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.big_image_app, pt_img_small, contentViewBig, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.small_image_app, pt_img_small, contentViewSmall, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.image_pic, pt_big_img, contentViewBig, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.big_image_app, pt_large_icon, contentViewBig, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
@@ -580,15 +617,25 @@ class TemplateRenderer {
         try {
 
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
-            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.image_only_small);
+            contentViewBig.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewBig.setTextViewText(R.id.timestamp, getTimeStamp(context));
+
+            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewSmall.setTextViewText(R.id.timestamp, getTimeStamp(context));
 
             if (!bigTextList.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.big_text, bigTextList.get(0));
+                contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
 
             }
 
             if (!smallTextList.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.small_text, smallTextList.get(0));
+                contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(0));
+
+            }
+
+            if (!priceList.isEmpty()) {
+                contentViewBig.setTextViewText(R.id.product_price, priceList.get(0));
 
             }
 
@@ -689,7 +736,7 @@ class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
-            Utils.loadIntoGlide(context, R.id.small_image_app, pt_img_small, contentViewSmall, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
             for (int index = 0; index < imageList.size(); index++) {
                 if (index == 0) {
                     Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
@@ -699,6 +746,9 @@ class TemplateRenderer {
                     Utils.loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewBig, notification, notificationId);
                 }
             }
+
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.big_image, imageList.get(0), contentViewBig, notification, notificationId);
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {

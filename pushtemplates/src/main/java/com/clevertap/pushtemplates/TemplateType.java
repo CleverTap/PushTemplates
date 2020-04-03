@@ -3,10 +3,10 @@ package com.clevertap.pushtemplates;
 enum TemplateType {
 
     BASIC("1"),
-    AUTO_CAROUSEL("2"),
-    RATING("3"),
+    AUTO_CAROUSEL("pt_carousel"),
+    RATING("pt_rating"),
     FIVE_ICONS("4"),
-    PRODUCT_DISPLAY("5");
+    PRODUCT_DISPLAY("pt_product_display");
 
     private final String templateType;
 
@@ -16,11 +16,11 @@ enum TemplateType {
 
     static TemplateType fromString(String type){
         switch (type){
-            case "1" : return BASIC;
-            case "2" : return AUTO_CAROUSEL;
-            case "3" : return RATING;
-            case "4" : return FIVE_ICONS;
-            case "5" : return PRODUCT_DISPLAY;
+            case "1" : return BASIC; //ignore
+            case "pt_carousel" : return AUTO_CAROUSEL;
+            case "pt_rating" : return RATING;
+            case "4" : return FIVE_ICONS; //ignore
+            case "pt_product_display" : return PRODUCT_DISPLAY;
             default: return null;
         }
     }
