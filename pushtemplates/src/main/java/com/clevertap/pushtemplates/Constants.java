@@ -29,8 +29,10 @@ public class Constants {
     static final String ICON_BASE_URL = "http://static.wizrocket.com/android/ico/";
     static final String LABEL_NOTIFICATION_ICON = "CLEVERTAP_NOTIFICATION_ICON";
     static final String PT_ID = "pt_id";
+    static final String PT_NOTIF_ICON = "pt_ico";
     static final String PT_TITLE = "pt_title";
     static final String PT_MSG = "pt_msg";
+    static final String PT_MSG_SUMMARY = "pt_msg_summary";
     static final String PT_TITLE_COLOR = "pt_title_clr";
     static final String PT_MSG_COLOR = "pt_msg_clr";
     static final String PT_BG = "pt_bg";

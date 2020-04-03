@@ -2,10 +2,11 @@ package com.clevertap.templateapp;
 
 import android.app.NotificationManager;
 import android.os.Build;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.clevertap.android.sdk.CleverTapAPI;
 
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 if (cleverTapAPI != null) {
                     cleverTapAPI.pushEvent("Send Carousel Push");
                 }
+
             }
         });
 
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 if (cleverTapAPI != null) {
                     cleverTapAPI.pushEvent("Send Product Display Notification");
                 }
+
             }
         });
 
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 if (cleverTapAPI != null) {
                     cleverTapAPI.pushEvent("Send CTA Notification");
                 }
+
             }
         });
 

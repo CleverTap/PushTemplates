@@ -169,6 +169,16 @@ class Utils {
         return stList;
     }
 
+    static ArrayList<String> getPriceFromExtras(Bundle extras){
+        ArrayList<String> stList = new ArrayList<>();
+        for(String key : extras.keySet()){
+            if(key.contains("pt_price")){
+                stList.add(extras.getString(key));
+            }
+        }
+        return stList;
+    }
+
     static void loadIntoGlide(Context context, int imageResource, String imageURL, RemoteViews remoteViews, Notification notification, int notificationId) {
         NotificationTarget bigNotifTarget = new NotificationTarget(
                 context,
@@ -180,6 +190,22 @@ class Utils {
                 .with(context.getApplicationContext())
                 .asBitmap()
                 .load(imageURL)
+                .centerCrop()
+                .into(bigNotifTarget);
+    }
+
+    static void loadIntoGlide(Context context, int imageResource, int identifier, RemoteViews remoteViews, Notification notification, int notificationId) {
+        NotificationTarget bigNotifTarget = new NotificationTarget(
+                context,
+                imageResource,
+                remoteViews,
+                notification,
+                notificationId);
+        Glide
+                .with(context.getApplicationContext())
+                .asBitmap()
+                .load(identifier)
+                .centerCrop()
                 .into(bigNotifTarget);
     }
 }
