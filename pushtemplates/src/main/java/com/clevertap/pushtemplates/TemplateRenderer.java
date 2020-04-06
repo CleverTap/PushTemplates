@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -55,6 +56,7 @@ class TemplateRenderer {
     private ArrayList<String> priceList = new ArrayList<>();
     private String pt_bg;
     private String pt_close;
+    private String pt_rating_default_dl;
 
     private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating,
             contentViewProductDisplay, contentFiveCTAs;
@@ -93,6 +95,7 @@ class TemplateRenderer {
         smallTextList = Utils.getSmallTextFromExtras(extras);
         priceList = Utils.getPriceFromExtras(extras);
         pt_close = extras.getString(Constants.PT_CLOSE);
+        pt_rating_default_dl = extras.getString(Constants.PT_DEFAULT_DL);
     }
 
     @SuppressLint("NewApi")
@@ -212,6 +215,10 @@ class TemplateRenderer {
         }
         if (pt_msg == null || pt_msg.isEmpty()) {
             PTLog.error("Message is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_rating_default_dl == null || pt_rating_default_dl.isEmpty()) {
+            PTLog.error("Default deeplink is missing or empty. Not showing notification");
             result = false;
         }
         //TO DO: Check if we wish to enforce this
@@ -355,10 +362,12 @@ class TemplateRenderer {
             PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent5, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star5, contentIntent5);
 
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(pt_rating_default_dl));
             launchIntent.putExtras(extras);
+            launchIntent.putExtra(Constants.WZRK_DL, pt_rating_default_dl);
             launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
                     launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
