@@ -15,6 +15,7 @@ import android.os.Bundle;
 
 import androidx.core.app.NotificationCompat;
 
+import android.text.Html;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private TemplateType templateType;
     private String pt_title;
     private String pt_msg;
+    private String pt_msg_summary;
     private String pt_img_small;
     private String pt_img_big;
     private String pt_title_clr, pt_msg_clr;
@@ -57,6 +59,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             Bundle extras = intent.getExtras();
             pt_id = intent.getStringExtra(Constants.PT_ID);
             pt_msg = extras.getString(Constants.PT_MSG);
+            pt_msg_summary = extras.getString(Constants.PT_MSG_SUMMARY);
             pt_msg_clr = extras.getString(Constants.PT_MSG_COLOR);
             pt_title = extras.getString(Constants.PT_TITLE);
             pt_title_clr = extras.getString(Constants.PT_TITLE_COLOR);
@@ -115,16 +118,36 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         try {
             //Set RemoteViews again
             contentViewRating = new RemoteViews(context.getPackageName(), R.layout.rating);
+            contentViewRating.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewRating.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             if (pt_title != null && !pt_title.isEmpty()) {
-                contentViewRating.setTextViewText(R.id.title, pt_title);
-                contentViewSmall.setTextViewText(R.id.title, pt_title);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewRating.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewRating.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                }
             }
 
             if (pt_msg != null && !pt_msg.isEmpty()) {
-                contentViewRating.setTextViewText(R.id.msg, pt_msg);
-                contentViewSmall.setTextViewText(R.id.msg, pt_msg);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                }
+            }
+            if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary));
+                }
             }
 
             if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
@@ -284,7 +307,27 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 return;
             }
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
+            contentViewBig.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewBig.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+            if (!bigTextList.isEmpty()) {
+                contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
+
+            }
+
+            if (!smallTextList.isEmpty()) {
+                contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(0));
+
+            }
+
+            if (!priceList.isEmpty()) {
+                contentViewBig.setTextViewText(R.id.product_price, priceList.get(0));
+
+            }
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.title, pt_title);

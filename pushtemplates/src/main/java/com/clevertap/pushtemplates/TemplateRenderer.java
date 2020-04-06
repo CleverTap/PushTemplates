@@ -264,19 +264,15 @@ class TemplateRenderer {
         return result;
     }
 
-    private String getTimeStamp(Context context) {
-        return DateUtils.formatDateTime(context, System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME);
-    }
-
     private void renderRatingNotification(Context context, Bundle extras, int notificationId) {
         try {
             contentViewRating = new RemoteViews(context.getPackageName(), R.layout.rating);
             contentViewRating.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewRating.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewRating.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewSmall.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -413,11 +409,11 @@ class TemplateRenderer {
         try {
             contentViewCarousel = new RemoteViews(context.getPackageName(), R.layout.auto_carousel);
             contentViewCarousel.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewCarousel.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewCarousel.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewSmall.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -530,11 +526,11 @@ class TemplateRenderer {
         try {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
             contentViewBig.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewBig.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewBig.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewSmall.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -632,11 +628,11 @@ class TemplateRenderer {
 
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
             contentViewBig.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewBig.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewBig.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewSmall.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             if (!bigTextList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
