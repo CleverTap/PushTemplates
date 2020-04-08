@@ -5,15 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="4dp">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/rel_lyt">
 
         <ImageView android:id="@+id/small_icon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginRight="4dp"
@@ -27,7 +27,7 @@
             android:layout_toRightOf="@id/small_icon"
             android:layout_toEndOf="@id/small_icon"
             android:text="app name"
-            android:textSize="12sp"
+            android:textSize="10sp"
             />
 
         <TextView
@@ -39,7 +39,7 @@
             android:layout_toRightOf="@id/app_name"
             android:layout_toEndOf="@id/app_name"
             android:text="app name"
-            android:textSize="12sp"
+            android:textSize="10sp"
             />
         <TextView android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -50,6 +50,7 @@
             android:layout_alignLeft="@id/small_icon"
             android:layout_marginRight="8dp"
             android:layout_marginEnd="8dp"
+            android:textSize="10sp"
             android:text="title"/>
         <TextView android:id="@+id/msg"
             android:layout_width="wrap_content"
@@ -59,6 +60,7 @@
             android:layout_alignLeft="@id/title"
             android:layout_marginRight="8dp"
             android:layout_marginEnd="8dp"
+            android:textSize="10sp"
             android:text="message"/>
 
     </RelativeLayout>
@@ -66,7 +68,7 @@
     <ImageView
         android:id="@+id/big_image"
         android:layout_width="match_parent"
-        android:layout_height="144dp"
+        android:layout_height="128dp"
         android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
         />
