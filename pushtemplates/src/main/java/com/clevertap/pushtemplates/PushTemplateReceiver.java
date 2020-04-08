@@ -500,6 +500,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private void handleFiveCTANotification(Context context, Bundle extras) {
         String dl = null;
 
+        int notificationId = extras.getInt("notif_id");
         if (cta1 == extras.getBoolean("cta1")) {
             dl = deepLinkList.get(0);
         }
@@ -516,7 +517,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             dl = deepLinkList.get(4);
         }
         if (close == extras.getBoolean("close")) {
-            notificationManager.cancel(9986);
+            notificationManager.cancel(notificationId);
+            return;
 
         }
 

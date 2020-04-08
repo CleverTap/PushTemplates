@@ -786,40 +786,54 @@ class TemplateRenderer {
 
             notificationId = new Random().nextInt();
 
+            int reqCode1 = new Random().nextInt();
+            int reqCode2 = new Random().nextInt();
+            int reqCode3 = new Random().nextInt();
+            int reqCode4 = new Random().nextInt();
+            int reqCode5 = new Random().nextInt();
+            int reqCode6 = new Random().nextInt();
+
+
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("cta1", true);
+            notificationIntent1.putExtra("notif_id",notificationId);
             notificationIntent1.putExtras(extras);
-            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 1, notificationIntent1, 0);
+            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, reqCode1, notificationIntent1, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta1, contentIntent1);
 
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("cta2", true);
+            notificationIntent2.putExtra("notif_id",notificationId);
             notificationIntent2.putExtras(extras);
-            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 2, notificationIntent2, 0);
+            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, reqCode2, notificationIntent2, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta2, contentIntent2);
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("cta3", true);
+            notificationIntent3.putExtra("notif_id",notificationId);
             notificationIntent3.putExtras(extras);
-            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 3, notificationIntent3, 0);
+            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, reqCode3, notificationIntent3, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta3, contentIntent3);
 
             Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent4.putExtra("cta4", true);
+            notificationIntent4.putExtra("notif_id",notificationId);
             notificationIntent4.putExtras(extras);
-            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 4, notificationIntent4, 0);
+            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context,  reqCode4, notificationIntent4, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta4, contentIntent4);
 
             Intent notificationIntent5 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent5.putExtra("cta5", true);
+            notificationIntent5.putExtra("notif_id",notificationId);
             notificationIntent5.putExtras(extras);
-            PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 5, notificationIntent5, 0);
+            PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, reqCode5, notificationIntent5, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta5, contentIntent5);
 
             Intent notificationIntent6 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent6.putExtra("close", true);
+            notificationIntent6.putExtra("notif_id",notificationId);
             notificationIntent6.putExtras(extras);
-            PendingIntent contentIntent6 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 6, notificationIntent6, 0);
+            PendingIntent contentIntent6 = PendingIntent.getBroadcast(context, reqCode6, notificationIntent6, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.close, contentIntent6);
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
