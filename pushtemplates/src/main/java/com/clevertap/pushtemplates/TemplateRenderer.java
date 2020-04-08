@@ -362,8 +362,10 @@ class TemplateRenderer {
             PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent5, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star5, contentIntent5);
 
-            Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(pt_rating_default_dl));
+            Intent launchIntent = new Intent(context, PushTemplateReceiver.class);
             launchIntent.putExtras(extras);
+            launchIntent.putExtra("notif_id", notificationId);
+            launchIntent.putExtra("default_dl",true);
             launchIntent.putExtra(Constants.WZRK_DL, pt_rating_default_dl);
             launchIntent.removeExtra(Constants.WZRK_ACTIONS);
             launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
