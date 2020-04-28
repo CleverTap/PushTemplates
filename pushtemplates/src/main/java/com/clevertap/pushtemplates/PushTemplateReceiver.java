@@ -15,6 +15,7 @@ import android.os.Bundle;
 
 import androidx.core.app.NotificationCompat;
 
+import android.text.Html;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -33,8 +34,9 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private TemplateType templateType;
     private String pt_title;
     private String pt_msg;
+    private String pt_msg_summary;
     private String pt_img_small;
-    private String pt_img_big;
+    private String pt_img_big, pt_rating_default_dl;
     private String pt_title_clr, pt_msg_clr;
     private ArrayList<String> imageList = new ArrayList<>();
     private ArrayList<String> ctaList = new ArrayList<>();
@@ -57,12 +59,14 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             Bundle extras = intent.getExtras();
             pt_id = intent.getStringExtra(Constants.PT_ID);
             pt_msg = extras.getString(Constants.PT_MSG);
+            pt_msg_summary = extras.getString(Constants.PT_MSG_SUMMARY);
             pt_msg_clr = extras.getString(Constants.PT_MSG_COLOR);
             pt_title = extras.getString(Constants.PT_TITLE);
             pt_title_clr = extras.getString(Constants.PT_TITLE_COLOR);
             pt_bg = extras.getString(Constants.PT_BG);
             pt_img_big = extras.getString(Constants.PT_BIG_IMG);
             pt_img_small = extras.getString(Constants.PT_SMALL_IMG);
+            pt_rating_default_dl = extras.getString(Constants.PT_DEFAULT_DL);
             requestCode = extras.getInt(Constants.PT_REQ_CODE);
             imageList = Utils.getImageListFromExtras(extras);
             ctaList = Utils.getCTAListFromExtras(extras);
@@ -113,18 +117,51 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private void handleRatingNotification(Context context, Bundle extras) {
 
         try {
+            int notificationId = extras.getInt("notif_id");
+            if (extras.getBoolean("default_dl", false)) {
+                notificationManager.cancel(notificationId);
+
+                Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(pt_rating_default_dl));
+                launchIntent.putExtras(extras);
+                launchIntent.putExtra(Constants.WZRK_DL, pt_rating_default_dl);
+                launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+                launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
+                launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(launchIntent);
+                return;
+            }
             //Set RemoteViews again
             contentViewRating = new RemoteViews(context.getPackageName(), R.layout.rating);
+            contentViewRating.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewRating.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             if (pt_title != null && !pt_title.isEmpty()) {
-                contentViewRating.setTextViewText(R.id.title, pt_title);
-                contentViewSmall.setTextViewText(R.id.title, pt_title);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewRating.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewRating.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                }
             }
 
             if (pt_msg != null && !pt_msg.isEmpty()) {
-                contentViewRating.setTextViewText(R.id.msg, pt_msg);
-                contentViewSmall.setTextViewText(R.id.msg, pt_msg);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                }
+            }
+            if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary));
+                }
             }
 
             if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
@@ -239,11 +276,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                         .setContentTitle("Custom Notification")
                         .setAutoCancel(true);
 
-                int notificationId = extras.getInt("notif_id");
                 Notification notification = notificationBuilder.build();
                 notificationManager.notify(notificationId, notification);
                 Utils.loadIntoGlide(context, R.id.small_icon, pt_img_small, contentViewSmall, notification, notificationId);
-                Utils.loadIntoGlide(context, R.id.big_image_app, pt_img_small, contentViewRating, notification, notificationId);
+                Utils.loadIntoGlide(context, R.id.small_icon, pt_img_small, contentViewRating, notification, notificationId);
                 Thread.sleep(1000);
                 notificationManager.cancel(notificationId);
                 Toast.makeText(context, "Thank you for your feedback", Toast.LENGTH_SHORT).show();
@@ -284,7 +320,27 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 return;
             }
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
+            contentViewBig.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewBig.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+            if (!bigTextList.isEmpty()) {
+                contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
+
+            }
+
+            if (!smallTextList.isEmpty()) {
+                contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(0));
+
+            }
+
+            if (!priceList.isEmpty()) {
+                contentViewBig.setTextViewText(R.id.product_price, priceList.get(0));
+
+            }
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.title, pt_title);
@@ -444,6 +500,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private void handleFiveCTANotification(Context context, Bundle extras) {
         String dl = null;
 
+        int notificationId = extras.getInt("notif_id");
         if (cta1 == extras.getBoolean("cta1")) {
             dl = deepLinkList.get(0);
         }
@@ -460,7 +517,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             dl = deepLinkList.get(4);
         }
         if (close == extras.getBoolean("close")) {
-            notificationManager.cancel(9986);
+            notificationManager.cancel(notificationId);
+            return;
 
         }
 

@@ -44,5 +44,6 @@ public class Constants {
     static final String PT_JSON = "pt_json";
     static final String PT_REQ_CODE = "pt_req_code";
     static final String PT_BUY_NOW_DL = "pt_buy_now_dl";
+    static final String PT_DEFAULT_DL = "pt_default_dl";
 
 }

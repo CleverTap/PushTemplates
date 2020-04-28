@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 
 
@@ -207,5 +208,9 @@ class Utils {
                 .load(identifier)
                 .centerCrop()
                 .into(bigNotifTarget);
+    }
+
+    static String getTimeStamp(Context context) {
+        return DateUtils.formatDateTime(context, System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME);
     }
 }

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -55,6 +56,7 @@ class TemplateRenderer {
     private ArrayList<String> priceList = new ArrayList<>();
     private String pt_bg;
     private String pt_close;
+    private String pt_rating_default_dl;
 
     private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating,
             contentViewProductDisplay, contentFiveCTAs;
@@ -93,6 +95,7 @@ class TemplateRenderer {
         smallTextList = Utils.getSmallTextFromExtras(extras);
         priceList = Utils.getPriceFromExtras(extras);
         pt_close = extras.getString(Constants.PT_CLOSE);
+        pt_rating_default_dl = extras.getString(Constants.PT_DEFAULT_DL);
     }
 
     @SuppressLint("NewApi")
@@ -214,6 +217,10 @@ class TemplateRenderer {
             PTLog.error("Message is missing or empty. Not showing notification");
             result = false;
         }
+        if (pt_rating_default_dl == null || pt_rating_default_dl.isEmpty()) {
+            PTLog.error("Default deeplink is missing or empty. Not showing notification");
+            result = false;
+        }
         //TO DO: Check if we wish to enforce this
         if (deepLinkList == null || deepLinkList.size() == 0) {
             PTLog.error("At least one deeplink is required. Not showing notification");
@@ -264,19 +271,15 @@ class TemplateRenderer {
         return result;
     }
 
-    private String getTimeStamp(Context context) {
-        return DateUtils.formatDateTime(context, System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME);
-    }
-
     private void renderRatingNotification(Context context, Bundle extras, int notificationId) {
         try {
             contentViewRating = new RemoteViews(context.getPackageName(), R.layout.rating);
             contentViewRating.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewRating.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewRating.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewSmall.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -359,10 +362,14 @@ class TemplateRenderer {
             PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent5, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star5, contentIntent5);
 
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            Intent launchIntent = new Intent(context, PushTemplateReceiver.class);
             launchIntent.putExtras(extras);
+            launchIntent.putExtra("notif_id", notificationId);
+            launchIntent.putExtra("default_dl",true);
+            launchIntent.putExtra(Constants.WZRK_DL, pt_rating_default_dl);
             launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
                     launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -413,11 +420,11 @@ class TemplateRenderer {
         try {
             contentViewCarousel = new RemoteViews(context.getPackageName(), R.layout.auto_carousel);
             contentViewCarousel.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewCarousel.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewCarousel.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewSmall.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -530,11 +537,11 @@ class TemplateRenderer {
         try {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
             contentViewBig.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewBig.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewBig.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewSmall.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -632,11 +639,11 @@ class TemplateRenderer {
 
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
             contentViewBig.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewBig.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewBig.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewSmall.setTextViewText(R.id.timestamp, getTimeStamp(context));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             if (!bigTextList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
@@ -779,40 +786,54 @@ class TemplateRenderer {
 
             notificationId = new Random().nextInt();
 
+            int reqCode1 = new Random().nextInt();
+            int reqCode2 = new Random().nextInt();
+            int reqCode3 = new Random().nextInt();
+            int reqCode4 = new Random().nextInt();
+            int reqCode5 = new Random().nextInt();
+            int reqCode6 = new Random().nextInt();
+
+
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("cta1", true);
+            notificationIntent1.putExtra("notif_id",notificationId);
             notificationIntent1.putExtras(extras);
-            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 1, notificationIntent1, 0);
+            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, reqCode1, notificationIntent1, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta1, contentIntent1);
 
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("cta2", true);
+            notificationIntent2.putExtra("notif_id",notificationId);
             notificationIntent2.putExtras(extras);
-            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 2, notificationIntent2, 0);
+            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, reqCode2, notificationIntent2, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta2, contentIntent2);
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("cta3", true);
+            notificationIntent3.putExtra("notif_id",notificationId);
             notificationIntent3.putExtras(extras);
-            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 3, notificationIntent3, 0);
+            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, reqCode3, notificationIntent3, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta3, contentIntent3);
 
             Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent4.putExtra("cta4", true);
+            notificationIntent4.putExtra("notif_id",notificationId);
             notificationIntent4.putExtras(extras);
-            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 4, notificationIntent4, 0);
+            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context,  reqCode4, notificationIntent4, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta4, contentIntent4);
 
             Intent notificationIntent5 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent5.putExtra("cta5", true);
+            notificationIntent5.putExtra("notif_id",notificationId);
             notificationIntent5.putExtras(extras);
-            PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 5, notificationIntent5, 0);
+            PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, reqCode5, notificationIntent5, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta5, contentIntent5);
 
             Intent notificationIntent6 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent6.putExtra("close", true);
+            notificationIntent6.putExtra("notif_id",notificationId);
             notificationIntent6.putExtras(extras);
-            PendingIntent contentIntent6 = PendingIntent.getBroadcast(context, ((int) System.currentTimeMillis()) + 6, notificationIntent6, 0);
+            PendingIntent contentIntent6 = PendingIntent.getBroadcast(context, reqCode6, notificationIntent6, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.close, contentIntent6);
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
