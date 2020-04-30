@@ -38,7 +38,7 @@ import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-public class TemplateRenderer {
+class TemplateRenderer {
 
     private String pt_id, pt_json;
     private TemplateType templateType;
@@ -99,7 +99,7 @@ public class TemplateRenderer {
     }
 
     @SuppressLint("NewApi")
-    public static void createNotification(Context context, Bundle extras) {
+    static void createNotification(Context context, Bundle extras) {
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
         templateRenderer._createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
@@ -281,6 +281,11 @@ public class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
+            contentViewRating.setTextColor(R.id.app_name, Color.parseColor("#808080"));
+            contentViewSmall.setTextColor(R.id.app_name, Color.parseColor("#808080"));
+            contentViewRating.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+            contentViewSmall.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     contentViewRating.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
@@ -426,6 +431,11 @@ public class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
+            contentViewCarousel.setTextColor(R.id.app_name, Color.parseColor("#808080"));
+            contentViewSmall.setTextColor(R.id.app_name, Color.parseColor("#808080"));
+            contentViewCarousel.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+            contentViewSmall.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     contentViewCarousel.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
@@ -543,6 +553,11 @@ public class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
+            contentViewBig.setTextColor(R.id.app_name, Color.parseColor("#808080"));
+            contentViewSmall.setTextColor(R.id.app_name, Color.parseColor("#808080"));
+            contentViewBig.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+            contentViewSmall.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
@@ -644,6 +659,11 @@ public class TemplateRenderer {
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+            contentViewBig.setTextColor(R.id.app_name, Color.parseColor("#808080"));
+            contentViewSmall.setTextColor(R.id.app_name, Color.parseColor("#808080"));
+            contentViewBig.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+            contentViewSmall.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
 
             if (!bigTextList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
