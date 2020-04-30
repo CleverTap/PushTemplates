@@ -39,7 +39,7 @@
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="232dp"
         android:layout_below="@id/big_relative_layout"
         >
         <ImageView
