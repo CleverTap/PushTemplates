@@ -38,7 +38,7 @@ import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-class TemplateRenderer {
+public class TemplateRenderer {
 
     private String pt_id, pt_json;
     private TemplateType templateType;
@@ -99,7 +99,7 @@ class TemplateRenderer {
     }
 
     @SuppressLint("NewApi")
-    static void createNotification(Context context, Bundle extras) {
+    public static void createNotification(Context context, Bundle extras) {
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
         templateRenderer._createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
@@ -435,6 +435,8 @@ class TemplateRenderer {
             contentViewSmall.setTextColor(R.id.app_name, Color.parseColor("#808080"));
             contentViewCarousel.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
             contentViewSmall.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+            contentViewCarousel.setTextColor(R.id.layout_name, Color.parseColor("#808080"));
+            contentViewSmall.setTextColor(R.id.layout_name, Color.parseColor("#808080"));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

@@ -4,12 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp"
-    android:paddingRight="16dp"
-    android:paddingEnd="16dp"
-    android:paddingLeft="16dp"
-    android:paddingStart="16dp">
+    android:padding="4dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,8 +12,8 @@
         android:id="@+id/rel_lyt">
 
         <ImageView android:id="@+id/small_icon"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginRight="4dp"
@@ -32,7 +27,7 @@
             android:layout_toRightOf="@id/small_icon"
             android:layout_toEndOf="@id/small_icon"
             android:text="app name"
-            android:textSize="12sp"
+            android:textSize="10sp"
             />
 
         <TextView
@@ -44,7 +39,7 @@
             android:layout_toRightOf="@id/app_name"
             android:layout_toEndOf="@id/app_name"
             android:text="app name"
-            android:textSize="12sp"
+            android:textSize="10sp"
             />
 
         <TextView android:id="@+id/product_name"
@@ -56,6 +51,7 @@
             android:layout_alignLeft="@id/small_icon"
             android:layout_marginRight="8dp"
             android:layout_marginEnd="8dp"
+            android:textSize="10sp"
             android:text="title"/>
         <TextView android:id="@+id/product_description"
             android:layout_width="wrap_content"
@@ -65,6 +61,7 @@
             android:layout_alignLeft="@id/product_name"
             android:layout_marginRight="8dp"
             android:layout_marginEnd="8dp"
+            android:textSize="10sp"
             android:text="message"/>
 
     </RelativeLayout>
@@ -74,7 +71,7 @@
     <LinearLayout
         android:id="@+id/carousel_relative_layout"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="175dp"
         android:layout_marginTop="8dp"
         android:weightSum="1">
 
@@ -99,6 +96,7 @@
                 android:layout_weight="0.4"
                 android:orientation="vertical"
                 android:padding="8dp"
+                android:textSize="10sp"
                 android:weightSum="3">
 
 
@@ -107,7 +105,7 @@
                     android:id="@+id/product_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:text="Rs: 5,000,000"
                     android:textAppearance="@style/PushTitle"/>
 
@@ -116,7 +114,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@android:color/holo_orange_light"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
+                    android:textSize="10sp"
                     android:textAppearance="@style/PushMessage"
                     android:text="Buy Now" />
 
@@ -125,7 +124,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
-                    android:layout_marginTop="16dp">
+                    android:layout_marginTop="8dp">
 
                     <ImageView
                         android:id="@+id/small_image1"

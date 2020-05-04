@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="4dp">
+    android:padding="4dp">
 
     <RelativeLayout
         android:id="@+id/rel_lyt"
@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/small_icon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_marginEnd="4dp"
@@ -30,7 +30,7 @@
             android:layout_toEndOf="@id/small_icon"
             android:layout_toRightOf="@id/small_icon"
             android:text="app name"
-            android:textSize="12sp" />
+            android:textSize="10sp" />
 
         <TextView
             android:id="@+id/timestamp"
@@ -41,7 +41,19 @@
             android:layout_toEndOf="@id/app_name"
             android:layout_toRightOf="@id/app_name"
             android:text="app name"
-            android:textSize="12sp" />
+            android:textColor="#808080"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/layout_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:text="sw200dp"
+            android:textSize="10sp" />
 
         <TextView
             android:id="@+id/title"
@@ -53,6 +65,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:text="title"
+            android:textSize="10sp"
             android:textAppearance="@style/PushTitle" />
 
         <TextView
@@ -64,6 +77,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:text="message"
+            android:textSize="10sp"
             android:textAppearance="@style/PushMessage" />
 
     </RelativeLayout>
@@ -71,7 +85,7 @@
     <ViewFlipper
         android:id="@+id/view_flipper"
         android:layout_width="match_parent"
-        android:layout_height="232dp"
+        android:layout_height="144dp"
         android:layout_below="@id/rel_lyt"
         android:autoStart="true"
         android:inAnimation="@anim/slide_in_right"
@@ -80,16 +94,16 @@
         <ImageView
             android:id="@+id/flipper_img1"
             android:layout_width="match_parent"
-            android:layout_height="232dp" />
+            android:layout_height="144dp" />
 
         <ImageView
             android:id="@+id/flipper_img2"
             android:layout_width="match_parent"
-            android:layout_height="232dp" />
+            android:layout_height="144dp" />
 
         <ImageView
             android:id="@+id/flipper_img3"
             android:layout_width="match_parent"
-            android:layout_height="232dp" />
+            android:layout_height="144dp" />
     </ViewFlipper>
 </RelativeLayout>
