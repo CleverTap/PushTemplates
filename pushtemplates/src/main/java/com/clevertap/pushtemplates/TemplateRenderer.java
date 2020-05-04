@@ -38,7 +38,7 @@ import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-public class TemplateRenderer {
+class TemplateRenderer {
 
     private String pt_id, pt_json;
     private TemplateType templateType;
@@ -99,7 +99,7 @@ public class TemplateRenderer {
     }
 
     @SuppressLint("NewApi")
-    public static void createNotification(Context context, Bundle extras) {
+    static void createNotification(Context context, Bundle extras) {
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
         templateRenderer._createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
