@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 Bundle extras = new Bundle();
 
                 try {
-                    JSONObject payload = new JSONObject("{\"wzrk_cid\":\"PTTesting\",\"pt_id\":\"pt_rating\",\"pt_msg\":\"Please take a moment to share your feedback.\", \"pt_msg_summary\":\"Please share your rating below.\",\"pt_title\":\"Your feedback is important.\",\"pt_ico\":\"https://www.searchpng.com/wp-content/uploads/2019/03/Swiggy-PNG-Logo-1024x1024.png\",\"pt_dl1\":\"https:///www.google.com\",\"pt_dl1\":\"https:///www.google.com\", \"pt_big_img\":\"https://images-na.ssl-images-amazon.com/images/I/61N--EbFDZL._UL1000_.jpg\"}");
+                    JSONObject payload = new JSONObject("{\"wzrk_cid\":\"PTTesting\",\"pt_id\":\"pt_rating\",\"pt_msg\":\"Please take a moment to share your feedback.\", \"pt_msg_summary\":\"Please share your rating below.\",\"pt_title\":\"Your feedback is important.\",\"pt_ico\":\"https://www.searchpng.com/wp-content/uploads/2019/03/Swiggy-PNG-Logo-1024x1024.png\",\"pt_dl1\":\"https:///www.google.com\",\"pt_default_dl\":\"https:///www.google.com\", \"pt_big_img\":\"https://images-na.ssl-images-amazon.com/images/I/61N--EbFDZL._UL1000_.jpg\"}");
                     //JSONObject payload = new JSONObject("{\"wzrk_cid\":\"PTTesting\",\"pt_id\":\"3\",\"pt_msg\":\"Please share your rating below.\",\"pt_title\":\"Your feedback is important.\",\"pt_small_img\":\"https://d35fo82fjcw0y8.cloudfront.net/2019/12/02015204/Manan-Bajoria.png\",\"pt_dl1\":\"https:///www.google.com\"}");
 
                     JSONArray keys = payload.names();

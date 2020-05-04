@@ -3,44 +3,43 @@
     android:id="@+id/content_view_small"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp"
+    android:paddingTop="6dp"
     android:paddingRight="16dp"
     android:paddingEnd="16dp"
     android:paddingLeft="16dp"
     android:paddingStart="16dp" >
-<!--
-    <ImageView android:id="@+id/small_image_app"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="10dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginEnd="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"/>
-    <TextView android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/small_image_app"
-        android:textAppearance="@style/PushTitle"
-        android:layout_toEndOf="@+id/small_image_app"
-        android:layout_marginRight="4dp"
-        android:layout_marginEnd="4dp"/>
-    <TextView android:id="@+id/msg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/PushMessage"
-        android:layout_toRightOf="@+id/small_image_app"
-        android:layout_below="@id/title"
-        android:layout_toEndOf="@+id/small_image_app"
-        android:layout_marginRight="4dp"
-        android:layout_marginEnd="4dp"/>-->
+        <!--
+            <ImageView android:id="@+id/small_image_app"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"/>
+            <TextView android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/small_image_app"
+                android:textAppearance="@style/PushTitle"
+                android:layout_toEndOf="@+id/small_image_app"
+                android:layout_marginRight="4dp"
+                android:layout_marginEnd="4dp"/>
+            <TextView android:id="@+id/msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/PushMessage"
+                android:layout_toRightOf="@+id/small_image_app"
+                android:layout_below="@id/title"
+                android:layout_toEndOf="@+id/small_image_app"
+                android:layout_marginRight="4dp"
+                android:layout_marginEnd="4dp"/>-->
 
 
         <ImageView android:id="@+id/small_icon"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginRight="4dp"
@@ -53,7 +52,7 @@
             android:layout_marginEnd="8dp"
             android:layout_toRightOf="@id/small_icon"
             android:text="app name"
-            android:textSize="12sp"
+            android:textSize="10sp"
             />
 
         <TextView
@@ -64,35 +63,41 @@
             android:layout_marginEnd="8dp"
             android:layout_toRightOf="@id/app_name"
             android:text="app name"
-            android:textSize="12sp"
+            android:textSize="10sp"
             />
         <TextView android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/PushTitle"
             android:layout_below="@+id/small_icon"
-            android:layout_marginTop="8dp"
             android:layout_alignLeft="@id/small_icon"
             android:layout_marginRight="8dp"
             android:layout_marginEnd="8dp"
+            android:textSize="11sp"
             android:text="title"/>
-        <TextView android:id="@+id/msg"
+
+        <TextView
+            android:id="@+id/msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/PushMessage"
             android:layout_below="@+id/title"
             android:layout_alignLeft="@id/title"
-            android:layout_marginRight="78dp"
-            android:layout_marginEnd="78dp"
-            android:text="message message message message message messagemessage"/>
+            android:layout_alignStart="@+id/title"
+            android:layout_alignRight="@+id/large_icon"
+            android:layout_alignEnd="@+id/large_icon"
+            android:paddingRight="2dp"
+            android:paddingEnd="2dp"
+            android:text="message message message message message messagemessage"
+            android:textAppearance="@style/PushMessage"
+            android:textSize="11sp" />
 
-    <ImageView android:id="@+id/large_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:scaleType="centerCrop" />
+        <ImageView android:id="@+id/large_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:scaleType="centerCrop" />
 
 </RelativeLayout>
