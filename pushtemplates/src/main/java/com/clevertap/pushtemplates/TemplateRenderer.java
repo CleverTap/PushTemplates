@@ -15,6 +15,7 @@ import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -48,18 +49,16 @@ class TemplateRenderer {
     private String pt_large_icon;
     private String pt_big_img;
     private String pt_title_clr, pt_msg_clr;
-    private ArrayList<String> imageList = new ArrayList<>();
-    private ArrayList<String> ctaList = new ArrayList<>();
-    private ArrayList<String> deepLinkList = new ArrayList<>();
-    private ArrayList<String> bigTextList = new ArrayList<>();
-    private ArrayList<String> smallTextList = new ArrayList<>();
-    private ArrayList<String> priceList = new ArrayList<>();
+    private ArrayList<String> imageList;
+    private ArrayList<String> deepLinkList;
+    private ArrayList<String> bigTextList;
+    private ArrayList<String> smallTextList;
+    private ArrayList<String> priceList;
     private String pt_bg;
-    private String pt_close;
     private String pt_rating_default_dl;
 
     private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating,
-            contentViewProductDisplay, contentFiveCTAs;
+             contentFiveCTAs;
     private String channelId;
     private int smallIcon = 0;
     private boolean requiresChannelId;
@@ -89,12 +88,10 @@ class TemplateRenderer {
         pt_big_img = extras.getString(Constants.PT_BIG_IMG);
         pt_large_icon = extras.getString(Constants.PT_NOTIF_ICON);
         imageList = Utils.getImageListFromExtras(extras);
-        ctaList = Utils.getCTAListFromExtras(extras);
         deepLinkList = Utils.getDeepLinkListFromExtras(extras);
         bigTextList = Utils.getBigTextFromExtras(extras);
         smallTextList = Utils.getSmallTextFromExtras(extras);
         priceList = Utils.getPriceFromExtras(extras);
-        pt_close = extras.getString(Constants.PT_CLOSE);
         pt_rating_default_dl = extras.getString(Constants.PT_DEFAULT_DL);
     }
 
@@ -281,10 +278,10 @@ class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
-            contentViewRating.setTextColor(R.id.app_name, Color.parseColor("#808080"));
-            contentViewSmall.setTextColor(R.id.app_name, Color.parseColor("#808080"));
-            contentViewRating.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
-            contentViewSmall.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+            contentViewRating.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewRating.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -431,12 +428,10 @@ class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
-            contentViewCarousel.setTextColor(R.id.app_name, Color.parseColor("#808080"));
-            contentViewSmall.setTextColor(R.id.app_name, Color.parseColor("#808080"));
-            contentViewCarousel.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
-            contentViewSmall.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
-            contentViewCarousel.setTextColor(R.id.layout_name, Color.parseColor("#808080"));
-            contentViewSmall.setTextColor(R.id.layout_name, Color.parseColor("#808080"));
+            contentViewCarousel.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewCarousel.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -555,10 +550,10 @@ class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
-            contentViewBig.setTextColor(R.id.app_name, Color.parseColor("#808080"));
-            contentViewSmall.setTextColor(R.id.app_name, Color.parseColor("#808080"));
-            contentViewBig.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
-            contentViewSmall.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+            contentViewBig.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewBig.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -662,10 +657,10 @@ class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
-            contentViewBig.setTextColor(R.id.app_name, Color.parseColor("#808080"));
-            contentViewSmall.setTextColor(R.id.app_name, Color.parseColor("#808080"));
-            contentViewBig.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
-            contentViewSmall.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+            contentViewBig.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewBig.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
 
             if (!bigTextList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
@@ -936,37 +931,5 @@ class TemplateRenderer {
         }
 
         return bundle;
-    }
-
-    private JSONObject fromTest(Context context, String jsonString) {
-        JSONObject jsonObject = null;
-        if (jsonString == null) {
-            jsonString = readRawTextFile(context, R.raw.test);
-        }
-        try {
-            jsonObject = new JSONObject(jsonString);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonObject;
-    }
-
-    private String readRawTextFile(Context ctx, int resId) {
-        InputStream inputStream = ctx.getResources().openRawResource(resId);
-
-        InputStreamReader inputreader = new InputStreamReader(inputStream);
-        BufferedReader buffreader = new BufferedReader(inputreader);
-        String line;
-        StringBuilder text = new StringBuilder();
-
-        try {
-            while ((line = buffreader.readLine()) != null) {
-                text.append(line);
-                text.append('\n');
-            }
-        } catch (IOException e) {
-            return null;
-        }
-        return text.toString();
     }
 }

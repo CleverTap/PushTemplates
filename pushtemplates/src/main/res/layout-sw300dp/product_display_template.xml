@@ -17,8 +17,8 @@
         android:id="@+id/rel_lyt">
 
         <ImageView android:id="@+id/small_icon"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginRight="4dp"

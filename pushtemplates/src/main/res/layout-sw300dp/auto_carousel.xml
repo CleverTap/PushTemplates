@@ -49,18 +49,6 @@
             android:textSize="10sp" />
 
         <TextView
-            android:id="@+id/layout_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:text="sw300dp"
-            android:textColor="#808080"
-            android:textSize="10sp" />
-
-        <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
