@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -18,7 +17,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import android.text.Html;
-import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -29,10 +27,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -41,7 +35,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class TemplateRenderer {
 
-    private String pt_id, pt_json;
+    private String pt_id;
     private TemplateType templateType;
     private String pt_title;
     private String pt_msg;
@@ -64,9 +58,9 @@ public class TemplateRenderer {
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
 
-    TemplateRenderer(Context context, Bundle extras) {
+    private TemplateRenderer(Context context, Bundle extras) {
         pt_id = extras.getString(Constants.PT_ID);
-        pt_json = extras.getString(Constants.PT_JSON);
+        String pt_json = extras.getString(Constants.PT_JSON);
         if (pt_id != null) {
             templateType = TemplateType.fromString(pt_id);
             Bundle newExtras = null;
@@ -95,12 +89,14 @@ public class TemplateRenderer {
         pt_rating_default_dl = extras.getString(Constants.PT_DEFAULT_DL);
     }
 
+    @SuppressWarnings("WeakerAccess")
     @SuppressLint("NewApi")
     public static void createNotification(Context context, Bundle extras) {
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
         templateRenderer._createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
 
+    @SuppressWarnings("SameParameterValue")
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void _createNotification(Context context, Bundle extras, int notificationId) {
         if (pt_id == null) {
@@ -172,6 +168,7 @@ public class TemplateRenderer {
             PTLog.error("Message is missing or empty. Not showing notification");
             result = false;
         }
+
         if (pt_big_img == null || pt_big_img.isEmpty()) {
             PTLog.error("Display Image is missing or empty. Not showing notification");
             result = false;
@@ -180,6 +177,7 @@ public class TemplateRenderer {
             PTLog.error("Icon Image is missing or empty. Not showing notification");
             result = false;
         }
+
         return result;
     }
 
@@ -543,11 +541,11 @@ public class TemplateRenderer {
     private void renderBasicTemplateNotification(Context context, Bundle extras, int notificationId) {
         try {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
-            contentViewBig.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewBig.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewBig.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewSmall.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewBig.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
@@ -624,7 +622,7 @@ public class TemplateRenderer {
             if (pt_big_img != null && !pt_big_img.isEmpty()) {
                 Utils.loadIntoGlide(context, R.id.big_image, pt_big_img, contentViewBig, notification, notificationId);
             } else {
-                contentViewRating.setViewVisibility(R.id.big_image, View.GONE);
+                contentViewBig.setViewVisibility(R.id.big_image, View.GONE);
             }
 
             if (pt_large_icon != null && !pt_large_icon.isEmpty()) {
@@ -635,7 +633,6 @@ public class TemplateRenderer {
 
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.big_image_app, pt_large_icon, contentViewSmall, notification, notificationId);
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {

@@ -308,6 +308,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             int notificationId = extras.getInt("notif_id");
             if (buynow == extras.getBoolean("buynow", false)) {
                 notificationManager.cancel(notificationId);
+                context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)); // close the notification drawer
                 String dl = extras.getString(Constants.PT_BUY_NOW_DL, deepLinkList.get(0));
                 Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dl));
                 launchIntent.putExtras(extras);
@@ -522,6 +523,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         }
         if (close == extras.getBoolean("close")) {
             notificationManager.cancel(notificationId);
+            context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
             return;
 
         }
@@ -533,6 +535,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
         launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(launchIntent);
+        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
 }

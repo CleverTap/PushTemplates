@@ -5,7 +5,7 @@ enum TemplateType {
     BASIC("pt_basic"),
     AUTO_CAROUSEL("pt_carousel"),
     RATING("pt_rating"),
-    FIVE_ICONS("4"),
+    FIVE_ICONS("pt_five_icons"),
     PRODUCT_DISPLAY("pt_product_display");
 
     private final String templateType;
@@ -16,10 +16,10 @@ enum TemplateType {
 
     static TemplateType fromString(String type){
         switch (type){
-            case "pt_basic" : return BASIC; //ignore
+            case "pt_basic" : return BASIC;
             case "pt_carousel" : return AUTO_CAROUSEL;
             case "pt_rating" : return RATING;
-            case "4" : return FIVE_ICONS; //ignore
+            case "pt_five_icons" : return FIVE_ICONS;
             case "pt_product_display" : return PRODUCT_DISPLAY;
             default: return null;
         }
