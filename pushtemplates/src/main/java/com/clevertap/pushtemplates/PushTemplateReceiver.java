@@ -151,8 +151,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             if (pt_msg != null && !pt_msg.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
+                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
                 } else {
                     contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
                 }
             }
             if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {

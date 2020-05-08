@@ -216,7 +216,7 @@ public class TemplateRenderer {
             PTLog.error("Default deeplink is missing or empty. Not showing notification");
             result = false;
         }
-        //TO DO: Check if we wish to enforce this
+
         if (deepLinkList == null || deepLinkList.size() == 0) {
             PTLog.error("At least one deeplink is required. Not showing notification");
             result = false;
@@ -269,11 +269,11 @@ public class TemplateRenderer {
     private void renderRatingNotification(Context context, Bundle extras, int notificationId) {
         try {
             contentViewRating = new RemoteViews(context.getPackageName(), R.layout.rating);
-            contentViewRating.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewRating.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewRating.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewSmall.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewRating.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
@@ -294,8 +294,10 @@ public class TemplateRenderer {
             if (pt_msg != null && !pt_msg.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
+                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
                 } else {
                     contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
                 }
             }
             if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {
