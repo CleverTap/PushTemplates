@@ -1,37 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/content_view_small"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/image_only_big_linear_layout"
+    android:background="@android:color/white"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp" >
-<!--
-    <ImageView android:id="@+id/small_image_app"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="10dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginEnd="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"/>
-    <TextView android:id="@+id/title"
-        android:layout_width="wrap_content"
+    android:orientation="vertical"
+    android:padding="4dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/small_image_app"
-        android:textAppearance="@style/PushTitle"
-        android:layout_toEndOf="@+id/small_image_app"
-        android:layout_marginRight="4dp"
-        android:layout_marginEnd="4dp"/>
-    <TextView android:id="@+id/msg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/PushMessage"
-        android:layout_toRightOf="@+id/small_image_app"
-        android:layout_below="@id/title"
-        android:layout_toEndOf="@+id/small_image_app"
-        android:layout_marginRight="4dp"
-        android:layout_marginEnd="4dp"/>-->
-
+        android:id="@+id/rel_lyt">
 
         <ImageView android:id="@+id/small_icon"
             android:layout_width="6dp"
@@ -44,9 +22,10 @@
             android:id="@+id/app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:layout_toRightOf="@id/small_icon"
+            android:layout_toEndOf="@id/small_icon"
             android:text="app name"
             android:textSize="10sp"
             />
@@ -55,9 +34,10 @@
             android:id="@+id/timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
             android:layout_toRightOf="@id/app_name"
+            android:layout_toEndOf="@id/app_name"
             android:text="app name"
             android:textSize="10sp"
             />
@@ -78,18 +58,18 @@
             android:textAppearance="@style/PushMessage"
             android:layout_below="@+id/title"
             android:layout_alignLeft="@id/title"
-            android:layout_marginRight="64dp"
-            android:layout_marginEnd="64dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
             android:textSize="10sp"
-            android:text="message message message message message messagemessage"/>
+            android:text="message"/>
 
-    <ImageView android:id="@+id/large_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:scaleType="centerCrop" />
+    </RelativeLayout>
 
-</RelativeLayout>
+    <ImageView
+        android:id="@+id/big_image"
+        android:layout_width="match_parent"
+        android:layout_height="128dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        />
+</LinearLayout>

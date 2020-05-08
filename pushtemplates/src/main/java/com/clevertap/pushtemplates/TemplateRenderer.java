@@ -15,6 +15,7 @@ import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -38,7 +39,7 @@ import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-class TemplateRenderer {
+public class TemplateRenderer {
 
     private String pt_id, pt_json;
     private TemplateType templateType;
@@ -48,24 +49,22 @@ class TemplateRenderer {
     private String pt_large_icon;
     private String pt_big_img;
     private String pt_title_clr, pt_msg_clr;
-    private ArrayList<String> imageList = new ArrayList<>();
-    private ArrayList<String> ctaList = new ArrayList<>();
-    private ArrayList<String> deepLinkList = new ArrayList<>();
-    private ArrayList<String> bigTextList = new ArrayList<>();
-    private ArrayList<String> smallTextList = new ArrayList<>();
-    private ArrayList<String> priceList = new ArrayList<>();
+    private ArrayList<String> imageList;
+    private ArrayList<String> deepLinkList;
+    private ArrayList<String> bigTextList;
+    private ArrayList<String> smallTextList;
+    private ArrayList<String> priceList;
     private String pt_bg;
-    private String pt_close;
     private String pt_rating_default_dl;
 
     private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating,
-            contentViewProductDisplay, contentFiveCTAs;
+             contentFiveCTAs;
     private String channelId;
     private int smallIcon = 0;
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
 
-    private TemplateRenderer(Context context, Bundle extras) {
+    TemplateRenderer(Context context, Bundle extras) {
         pt_id = extras.getString(Constants.PT_ID);
         pt_json = extras.getString(Constants.PT_JSON);
         if (pt_id != null) {
@@ -89,17 +88,15 @@ class TemplateRenderer {
         pt_big_img = extras.getString(Constants.PT_BIG_IMG);
         pt_large_icon = extras.getString(Constants.PT_NOTIF_ICON);
         imageList = Utils.getImageListFromExtras(extras);
-        ctaList = Utils.getCTAListFromExtras(extras);
         deepLinkList = Utils.getDeepLinkListFromExtras(extras);
         bigTextList = Utils.getBigTextFromExtras(extras);
         smallTextList = Utils.getSmallTextFromExtras(extras);
         priceList = Utils.getPriceFromExtras(extras);
-        pt_close = extras.getString(Constants.PT_CLOSE);
         pt_rating_default_dl = extras.getString(Constants.PT_DEFAULT_DL);
     }
 
     @SuppressLint("NewApi")
-    static void createNotification(Context context, Bundle extras) {
+    public static void createNotification(Context context, Bundle extras) {
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
         templateRenderer._createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
@@ -281,6 +278,11 @@ class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
+            contentViewRating.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewRating.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     contentViewRating.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
@@ -426,6 +428,11 @@ class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
+            contentViewCarousel.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewCarousel.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     contentViewCarousel.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
@@ -543,6 +550,11 @@ class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
+            contentViewBig.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewBig.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
@@ -644,6 +656,11 @@ class TemplateRenderer {
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+            contentViewBig.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewBig.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
 
             if (!bigTextList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
@@ -914,37 +931,5 @@ class TemplateRenderer {
         }
 
         return bundle;
-    }
-
-    private JSONObject fromTest(Context context, String jsonString) {
-        JSONObject jsonObject = null;
-        if (jsonString == null) {
-            jsonString = readRawTextFile(context, R.raw.test);
-        }
-        try {
-            jsonObject = new JSONObject(jsonString);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonObject;
-    }
-
-    private String readRawTextFile(Context ctx, int resId) {
-        InputStream inputStream = ctx.getResources().openRawResource(resId);
-
-        InputStreamReader inputreader = new InputStreamReader(inputStream);
-        BufferedReader buffreader = new BufferedReader(inputreader);
-        String line;
-        StringBuilder text = new StringBuilder();
-
-        try {
-            while ((line = buffreader.readLine()) != null) {
-                text.append(line);
-                text.append('\n');
-            }
-        } catch (IOException e) {
-            return null;
-        }
-        return text.toString();
     }
 }

@@ -41,6 +41,7 @@
             android:layout_toEndOf="@id/app_name"
             android:layout_toRightOf="@id/app_name"
             android:text="app name"
+            android:textColor="#808080"
             android:textSize="10sp" />
 
         <TextView

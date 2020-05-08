@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             CleverTapAPI.createNotificationChannel(this,"PTTesting","Push Template App Channel","Channel for Push Template App", NotificationManager.IMPORTANCE_HIGH,true);
         }
         HashMap<String, Object> profileUpdate = new HashMap<String, Object>();
-        profileUpdate.put("Email", "darshan@clevertap.com");
+        profileUpdate.put("Email", "test1@clevertap.com");
         if (cleverTapAPI != null) {
             cleverTapAPI.onUserLogin(profileUpdate);
         }
@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
                 if (cleverTapAPI != null) {
                     cleverTapAPI.pushEvent("Send Carousel Push");
                 }
-
             }
         });
 
@@ -72,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
                 if (cleverTapAPI != null) {
                     cleverTapAPI.pushEvent("Send Product Display Notification");
                 }
-
             }
         });
 
@@ -83,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
                 if (cleverTapAPI != null) {
                     cleverTapAPI.pushEvent("Send CTA Notification");
                 }
-
             }
         });
 

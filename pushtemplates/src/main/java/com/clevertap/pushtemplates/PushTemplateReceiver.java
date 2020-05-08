@@ -29,24 +29,22 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class PushTemplateReceiver extends BroadcastReceiver {
     boolean clicked1 = true, clicked2 = true, clicked3 = true, clicked4 = true, clicked5 = true, img1 = false, img2 = false, img3 = false, buynow = true, bigimage = true, cta1 = true, cta2 = true, cta3 = true, cta4 = true, cta5 = true, close = true;
-    private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating, contentFiveCTAs;
+    private RemoteViews contentViewBig, contentViewSmall, contentViewRating;
     private String pt_id;
     private TemplateType templateType;
     private String pt_title;
     private String pt_msg;
     private String pt_msg_summary;
     private String pt_img_small;
-    private String pt_img_big, pt_rating_default_dl;
+    private String pt_rating_default_dl;
     private String pt_title_clr, pt_msg_clr;
     private ArrayList<String> imageList = new ArrayList<>();
-    private ArrayList<String> ctaList = new ArrayList<>();
     private ArrayList<String> deepLinkList = new ArrayList<>();
     private ArrayList<String> bigTextList = new ArrayList<>();
     private ArrayList<String> smallTextList = new ArrayList<>();
     private ArrayList<String> priceList = new ArrayList<>();
-    private String pt_bg;
     private String channelId;
-    private int smallIcon = 0, requestCode = -1;
+    private int smallIcon = 0;
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
     private CleverTapAPI cleverTapAPI;
@@ -63,13 +61,9 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             pt_msg_clr = extras.getString(Constants.PT_MSG_COLOR);
             pt_title = extras.getString(Constants.PT_TITLE);
             pt_title_clr = extras.getString(Constants.PT_TITLE_COLOR);
-            pt_bg = extras.getString(Constants.PT_BG);
-            pt_img_big = extras.getString(Constants.PT_BIG_IMG);
             pt_img_small = extras.getString(Constants.PT_SMALL_IMG);
             pt_rating_default_dl = extras.getString(Constants.PT_DEFAULT_DL);
-            requestCode = extras.getInt(Constants.PT_REQ_CODE);
             imageList = Utils.getImageListFromExtras(extras);
-            ctaList = Utils.getCTAListFromExtras(extras);
             deepLinkList = Utils.getDeepLinkListFromExtras(extras);
             bigTextList = Utils.getBigTextFromExtras(extras);
             smallTextList = Utils.getSmallTextFromExtras(extras);
@@ -138,6 +132,11 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+            contentViewRating.setTextColor(R.id.app_name, Color.parseColor("#808080"));
+            contentViewSmall.setTextColor(R.id.app_name, Color.parseColor("#808080"));
+            contentViewRating.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+            contentViewSmall.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -326,6 +325,11 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+            contentViewBig.setTextColor(R.id.app_name, Color.parseColor("#808080"));
+            contentViewSmall.setTextColor(R.id.app_name, Color.parseColor("#808080"));
+            contentViewBig.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+            contentViewSmall.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
 
             if (!bigTextList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
