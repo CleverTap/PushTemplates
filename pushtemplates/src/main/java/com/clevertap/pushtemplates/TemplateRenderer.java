@@ -649,11 +649,11 @@ public class TemplateRenderer {
         try {
 
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
-            contentViewBig.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewBig.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewBig.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewSmall.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewBig.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
@@ -894,7 +894,7 @@ public class TemplateRenderer {
                 }
 
             }
-            Utils.loadIntoGlide(context, R.id.close, imageList.get(5), contentFiveCTAs, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.close, R.drawable.pt_close, contentFiveCTAs, notification, notificationId);
 
             CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
             if (instance != null) {
