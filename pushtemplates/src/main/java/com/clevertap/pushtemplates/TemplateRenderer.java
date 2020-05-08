@@ -419,11 +419,11 @@ public class TemplateRenderer {
     private void renderAutoCarouselNotification(Context context, Bundle extras, int notificationId) {
         try {
             contentViewCarousel = new RemoteViews(context.getPackageName(), R.layout.auto_carousel);
-            contentViewCarousel.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewCarousel.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewCarousel.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
+            contentViewSmall.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewCarousel.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
@@ -443,8 +443,10 @@ public class TemplateRenderer {
 
             if (pt_msg != null && !pt_msg.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
                     contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
                 } else {
+                    contentViewCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
                     contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
                 }
             }
@@ -506,8 +508,6 @@ public class TemplateRenderer {
             notificationManager.notify(notificationId, notification);
 
             Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
-
-            Utils.loadIntoGlide(context, R.id.big_image_app, pt_large_icon, contentViewCarousel, notification, notificationId);
 
             ArrayList<Integer> layoutIds = new ArrayList<>();
             layoutIds.add(0, R.id.flipper_img1);
