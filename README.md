@@ -75,9 +75,26 @@ Five CTA Template is a push notification with no text, just 5 icons and a close 
 
 [(Back to top)](#table-of-contents)
 
- Basic Template | Description 
- ---|:---:| 
+ Basic Template Keys | Description 
+ :---:|:---:| 
  pt_title* | Title 
  pt_msg* | Message 
  pt_big_img* | Image
  pt_ico* | Large Icon 
+ pt_bg | Background Color in HEX
+ pt_title_clr | Title Color in HEX
+ pt_msg_clr | Message Color in HEX
+ pt_dl1 | One Deep Link (minimum)
+ 
+ Auto Carousel Template Keys | Description 
+  :---:|:---:| 
+  pt_title* | Title 
+  pt_msg* | Message 
+  pt_big_img* | Image
+  pt_ico* | Large Icon 
+  pt_bg | Background Color in HEX
+  pt_title_clr | Title Color in HEX
+  pt_msg_clr | Message Color in HEX
+  pt_dl1 | One Deep Link (minimum)
+ 
+ 
