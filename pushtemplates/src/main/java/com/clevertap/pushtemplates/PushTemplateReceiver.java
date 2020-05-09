@@ -199,6 +199,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 clicked2 = false;
                 if (deepLinkList.size() > 1) {
                     pt_dl_clicked = deepLinkList.get(1);
+                }else{
+                    pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
                 contentViewRating.setImageViewResource(R.id.star2, R.drawable.outline_star_1);
@@ -213,6 +215,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 clicked3 = false;
                 if (deepLinkList.size() > 2) {
                     pt_dl_clicked = deepLinkList.get(2);
+                }else{
+                    pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
                 contentViewRating.setImageViewResource(R.id.star3, R.drawable.outline_star_1);
@@ -228,6 +232,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 clicked4 = false;
                 if (deepLinkList.size() > 3) {
                     pt_dl_clicked = deepLinkList.get(3);
+                }else{
+                    pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
                 contentViewRating.setImageViewResource(R.id.star4, R.drawable.outline_star_1);
@@ -244,6 +250,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 clicked5 = false;
                 if (deepLinkList.size() > 4) {
                     pt_dl_clicked = deepLinkList.get(4);
+                }else{
+                    pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
                 contentViewRating.setImageViewResource(R.id.star5, R.drawable.outline_star_1);
