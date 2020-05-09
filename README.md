@@ -1,2 +1,4 @@
-# PushTemplates
-A repo for fancy push notification templates using CleverTap
+# Push Templates SDK by CleverTap
+
+The Push Templates SDK helps you engage with your users using fancy Push Notification templates built specifically to work with CleverTap
+
