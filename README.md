@@ -88,6 +88,7 @@ Five icons template is a push notification with no text, just 5 icons and a clos
  pt_title_clr | Title Color in HEX
  pt_msg_clr | Message Color in HEX
  pt_dl1 | One Deep Link (minimum)
+ pt_json | Above keys in JSON format
  
 ## Auto Carousel Template
  
@@ -106,6 +107,7 @@ Five icons template is a push notification with no text, just 5 icons and a clos
   pt_title_clr | Title Color in HEX
   pt_msg_clr | Message Color in HEX
   pt_msg_summary | Message line when Notification is expanded
+  pt_json | Above keys in JSON format
   
 ## Rating Template
 
@@ -124,6 +126,7 @@ Five icons template is a push notification with no text, just 5 icons and a clos
  pt_title_clr | Title Color in HEX
  pt_msg_clr | Message Color in HEX
  pt_msg_summary | Message line when Notification is expanded
+ pt_json | Above keys in JSON format
  
 ## Product Catalog Template
 
@@ -147,6 +150,7 @@ Five icons template is a push notification with no text, just 5 icons and a clos
  pt_bg | Background Color in HEX
  pt_title_clr | Title Color in HEX
  pt_msg_clr | Message Color in HEX
+ pt_json | Above keys in JSON format
  
 ## Five Icons Template
 
@@ -163,3 +167,41 @@ Five icons template is a push notification with no text, just 5 icons and a clos
   pt_dl3* | Deep Link for third icon
   pt_dl4* | Deep Link for fourth icon
   pt_dl5* | Deep Link for fifth icon
+  pt_json | Above keys in JSON format
+  
+  ### NOTE
+  (*) - Mandatory
+  
+# Usage
+
+[(Back to top)](#table-of-contents)
+
+Using the above mentioned keys is very simple. While creating a Push Notification campaign on CleverTap, just follow the steps below -
+
+1. On the "WHAT" section pass some staple values in the "title" and "message" fields
+
+//TODO @vijay Add dashboard screenshot of title and message
+
+2. Click on "Advanced" and then click on "Add pair" to add the above keys
+
+//TODO @vijay Add custom key value pair screenshots
+
+3. You can also add the above keys into one JSON object and use the `pt_json` key to fill in the values
+
+//TODO @vijay Add custom key value pair screenshot using pt_json
+
+4. Send a test push and schedule!
+
+
+# Contributing
+
+[(Back to top)](#table-of-contents)
+
+Your contributions are always welcome! Please have a look at the [contribution guidelines](CONTRIBUTING.md) first. :tada:
+
+# License
+
+[(Back to top)](#table-of-contents)
+
+
+The MIT License (MIT) 2020. Please have a look at the [LICENSE.md](LICENSE.md) for more details.
