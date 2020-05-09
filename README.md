@@ -8,7 +8,7 @@ The Push Templates SDK helps you engage with your users using fancy Push Notific
 - [Template Types](#template-types)
 - [Template Keys](#template-keys)
 - [Usage](#usage)
-- [Example](#example)
+- [Sample App](#sample-app)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -193,11 +193,11 @@ Using the above mentioned keys is very simple. While creating a Push Notificatio
 
 4. Send a test push and schedule!
 
-# Example
+# Sample App
 
 [(Back to top)](#table-of-contents)
 
-Check out the [example](app) app 
+Check out the [Sample app](app) 
 
 # Contributing
 
