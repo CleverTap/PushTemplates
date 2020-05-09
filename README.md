@@ -103,26 +103,26 @@ Five CTA Template is a push notification with no text, just 5 icons and a close 
   
  
  Rating Template Keys | Description 
-   :---:|:---:| 
-   pt_title* | Title 
-   pt_msg* | Message 
-   pt_default_dl* | Default Deep Link for Push Notification
-   pt_dl1* | Deep Link for first/all star(s)
-   pt_dl2 | Deep Link for second star
-   pt_dl3 | Deep Link for third star
-   pt_dl4 | Deep Link for fourth star
-   pt_dl5 | Deep Link for fifth star
-   pt_bg | Background Color in HEX
-   pt_title_clr | Title Color in HEX
-   pt_msg_clr | Message Color in HEX
-   pt_msg_summary | Message line when Notification is expanded
+ :---:|:---:| 
+ pt_title* | Title 
+ pt_msg* | Message 
+ pt_default_dl* | Default Deep Link for Push Notification
+ pt_dl1* | Deep Link for first/all star(s)
+ pt_dl2 | Deep Link for second star
+ pt_dl3 | Deep Link for third star
+ pt_dl4 | Deep Link for fourth star
+ pt_dl5 | Deep Link for fifth star
+ pt_bg | Background Color in HEX
+ pt_title_clr | Title Color in HEX
+ pt_msg_clr | Message Color in HEX
+ pt_msg_summary | Message line when Notification is expanded
  
  
  Product Catalog Template Keys | Description 
-    :---:|:---:| 
-    pt_title* | Title 
-    pt_msg* | Message
-    pt_bg | Background Color in HEX
-    pt_title_clr | Title Color in HEX
-    pt_msg_clr | Message Color in HEX
-    pt_msg_summary | Message line when Notification is expanded
+ :---:|:---:| 
+ pt_title* | Title 
+ pt_msg* | Message
+ pt_bg | Background Color in HEX
+ pt_title_clr | Title Color in HEX
+ pt_msg_clr | Message Color in HEX
+ pt_msg_summary | Message line when Notification is expanded
