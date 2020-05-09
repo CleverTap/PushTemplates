@@ -41,33 +41,33 @@ The Push Templates SDK helps you engage with your users using fancy Push Notific
 
 [(Back to top)](#table-of-contents)
 
-### Basic Template
+## Basic Template
 
 Basic Template is the basic push notification received on apps.
 
 //TODO @vijay add Basic Template Image
 
-### Auto Carousel Template
+## Auto Carousel Template
 
-Auto Carousel is an automatic revolving carousel push notification.
+Auto carousel is an automatic revolving carousel push notification.
 
 //TODO @vijay add Auto Carousel GIF if possible
 
-### Rating Template
+## Rating Template
 
 Rating template lets your users give you feedback, this feedback is captures as an event in CleverTap with the rating as the event property so that it can later be actionable.
 
 //TODO @vijay add Rating template image
 
-### Product Catalog Template
+## Product Catalog Template
 
-Product Catalog Template lets you show case different images of a product before the user can decide to click on the "BUY NOW" option which can take them directly to the product via deep links.
+Product catalog template lets you show case different images of a product before the user can decide to click on the "BUY NOW" option which can take them directly to the product via deep links.
 
 //TODO @vijay add Product Catalog Template GIF if possible
 
-### Five CTA Template
+## Five Icons Template
 
-Five CTA Template is a push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
+Five icons template is a push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
 
 //TODO @vijay add Five CTA Template Image if possible
 
@@ -75,8 +75,11 @@ Five CTA Template is a push notification with no text, just 5 icons and a close 
 
 [(Back to top)](#table-of-contents)
 
+## Basic Template
+
  Basic Template Keys | Description 
  :---:|:---:| 
+ pt_id | Value - `pt_basic`
  pt_title* | Title 
  pt_msg* | Message 
  pt_big_img* | Image
@@ -86,8 +89,11 @@ Five CTA Template is a push notification with no text, just 5 icons and a close 
  pt_msg_clr | Message Color in HEX
  pt_dl1 | One Deep Link (minimum)
  
+## Auto Carousel Template
+ 
  Auto Carousel Template Keys | Description 
   :---:|:---:| 
+  pt_id | Value - `pt_carousel`
   pt_title* | Title 
   pt_msg* | Message
   pt_dl1* | One Deep Link (minimum)
@@ -101,9 +107,11 @@ Five CTA Template is a push notification with no text, just 5 icons and a close 
   pt_msg_clr | Message Color in HEX
   pt_msg_summary | Message line when Notification is expanded
   
- 
+## Rating Template
+
  Rating Template Keys | Description 
  :---:|:---:| 
+ pt_id | Value - `pt_rating`
  pt_title* | Title 
  pt_msg* | Message 
  pt_default_dl* | Default Deep Link for Push Notification
@@ -117,12 +125,41 @@ Five CTA Template is a push notification with no text, just 5 icons and a close 
  pt_msg_clr | Message Color in HEX
  pt_msg_summary | Message line when Notification is expanded
  
- 
+## Product Catalog Template
+
  Product Catalog Template Keys | Description 
  :---:|:---:| 
+ pt_id | Value - `pt_product_display`
  pt_title* | Title 
  pt_msg* | Message
+ pt_img1* | Image One
+ pt_img2* | Image Two
+ pt_img3* | Image Three
+ pt_bt1* | Big text for first image
+ pt_bt2* | Big text for second image
+ pt_bt3* | Big text for third image
+ pt_st1* | Small text for first image
+ pt_st2* | Small text for second image
+ pt_st3* | Small text for third image
+ pt_dl1* | Deep Link for first image
+ pt_dl2* | Deep Link for second image
+ pt_dl3* | Deep Link for third image
  pt_bg | Background Color in HEX
  pt_title_clr | Title Color in HEX
  pt_msg_clr | Message Color in HEX
- pt_msg_summary | Message line when Notification is expanded
+ 
+## Five Icons Template
+
+ Five Icons Template Keys | Description 
+  :---:|:---:| 
+  pt_id | Value - `pt_five_icons`
+  pt_img1* | Icon One
+  pt_img2* | Icon Two
+  pt_img3* | Icon Three
+  pt_img4* | Icon Four
+  pt_img5* | Icon Five
+  pt_dl1* | Deep Link for first icon
+  pt_dl2* | Deep Link for second icon
+  pt_dl3* | Deep Link for third icon
+  pt_dl4* | Deep Link for fourth icon
+  pt_dl5* | Deep Link for fifth icon
