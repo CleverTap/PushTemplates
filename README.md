@@ -55,7 +55,7 @@ Basic Template is the basic push notification received on apps.
 ## Auto Carousel Template
 
 Auto carousel is an automatic revolving carousel push notification.
-(Expanded and unexpanded example)
+<br/>(Expanded and unexpanded example)<br/><br/>
 ![Auto Carousel](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/autocarousel.gif)
 
 ## Rating Template
@@ -66,13 +66,15 @@ Rating template lets your users give you feedback, this feedback is captures as 
 
 ## Product Catalog Template
 
-Product catalog template lets you show case different images of a product before the user can decide to click on the "BUY NOW" option which can take them directly to the product via deep links.
+Product catalog template lets you show case different images of a product (or a product catalog) before the user can decide to click on the "BUY NOW" option which can take them directly to the product via deep links. 
+<br/>(Expanded and unexpanded example)
 
-//TODO @vijay add Product Catalog Template GIF if possible
+![Product Display](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/productdisplay.gif)
+
 
 ## Five Icons Template
 
-Five icons template is a push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
+Five icons template is a sticky push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
 
 //TODO @vijay add Five CTA Template Image if possible
 
