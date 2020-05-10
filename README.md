@@ -45,32 +45,35 @@ The Push Templates SDK helps you engage with your users using fancy Push Notific
 ## Basic Template
 
 Basic Template is the basic push notification received on apps.
+<br/>(Expanded and unexpanded example)<br/><br/>
+![Basic with color](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic%20color.png)
 
-//TODO @vijay add Basic Template Image
 
 ## Auto Carousel Template
 
 Auto carousel is an automatic revolving carousel push notification.
-
-//TODO @vijay add Auto Carousel GIF if possible
+<br/>(Expanded and unexpanded example)<br/><br/>
+![Auto Carousel](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/autocarousel.gif)
 
 ## Rating Template
 
-Rating template lets your users give you feedback, this feedback is captures as an event in CleverTap with the rating as the event property so that it can later be actionable.
+Rating template lets your users give you feedback, this feedback is captures as an event in CleverTap with the rating as the event property so that it can later be actionable.<br/>(Expanded and unexpanded example)<br/>
 
-//TODO @vijay add Rating template image
+![Rating](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/rating.gif)
 
 ## Product Catalog Template
 
-Product catalog template lets you show case different images of a product before the user can decide to click on the "BUY NOW" option which can take them directly to the product via deep links.
+Product catalog template lets you show case different images of a product (or a product catalog) before the user can decide to click on the "BUY NOW" option which can take them directly to the product via deep links. 
+<br/>(Expanded and unexpanded example)
 
-//TODO @vijay add Product Catalog Template GIF if possible
+![Product Display](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/productdisplay.gif)
+
 
 ## Five Icons Template
 
-Five icons template is a push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
+Five icons template is a sticky push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
 
-//TODO @vijay add Five CTA Template Image if possible
+<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
 
 # Template Keys
 
@@ -179,17 +182,17 @@ Five icons template is a push notification with no text, just 5 icons and a clos
 
 Using the above mentioned keys is very simple. While creating a Push Notification campaign on CleverTap, just follow the steps below -
 
-1. On the "WHAT" section pass some staple values in the "title" and "message" fields
+1. On the "WHAT" section pass some staple values in the "title" and "message" fields (NOTE: These will be ignored)
 
-//TODO @vijay Add dashboard screenshot of title and message
+![Basic](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic.png)
 
 2. Click on "Advanced" and then click on "Add pair" to add the above keys
 
-//TODO @vijay Add custom key value pair screenshots
+![KVs](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/kv.png)
 
 3. You can also add the above keys into one JSON object and use the `pt_json` key to fill in the values
 
-//TODO @vijay Add custom key value pair screenshot using pt_json
+![KVs in JSON](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/json.png)
 
 4. Send a test push and schedule!
 
