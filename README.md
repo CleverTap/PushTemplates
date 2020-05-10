@@ -60,9 +60,9 @@ Auto carousel is an automatic revolving carousel push notification.
 
 ## Rating Template
 
-Rating template lets your users give you feedback, this feedback is captures as an event in CleverTap with the rating as the event property so that it can later be actionable.
+Rating template lets your users give you feedback, this feedback is captures as an event in CleverTap with the rating as the event property so that it can later be actionable.<br/>(Expanded and unexpanded example)<br/>
 
-//TODO @vijay add Rating template image
+![Rating](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/rating.gif)
 
 ## Product Catalog Template
 
