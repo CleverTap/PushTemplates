@@ -190,6 +190,7 @@ Using the above mentioned keys is very simple. While creating a Push Notificatio
 3. You can also add the above keys into one JSON object and use the `pt_json` key to fill in the values
 
 //TODO @vijay Add custom key value pair screenshot using pt_json
+![KVs in JSON](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/json.png)
 
 4. Send a test push and schedule!
 
