@@ -76,7 +76,7 @@ Product catalog template lets you show case different images of a product (or a 
 
 Five icons template is a sticky push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
 
-//TODO @vijay add Five CTA Template Image if possible
+<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
 
 # Template Keys
 
@@ -195,7 +195,6 @@ Using the above mentioned keys is very simple. While creating a Push Notificatio
 
 3. You can also add the above keys into one JSON object and use the `pt_json` key to fill in the values
 
-//TODO @vijay Add custom key value pair screenshot using pt_json
 ![KVs in JSON](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/json.png)
 
 4. Send a test push and schedule!
