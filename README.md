@@ -179,13 +179,13 @@ Five icons template is a push notification with no text, just 5 icons and a clos
 
 Using the above mentioned keys is very simple. While creating a Push Notification campaign on CleverTap, just follow the steps below -
 
-1. On the "WHAT" section pass some staple values in the "title" and "message" fields
+1. On the "WHAT" section pass some staple values in the "title" and "message" fields (NOTE: These will be ignored)
 
-//TODO @vijay Add dashboard screenshot of title and message
+![Basic](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic.png)
 
 2. Click on "Advanced" and then click on "Add pair" to add the above keys
 
-//TODO @vijay Add custom key value pair screenshots
+![KVs](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/kv.png)
 
 3. You can also add the above keys into one JSON object and use the `pt_json` key to fill in the values
 
