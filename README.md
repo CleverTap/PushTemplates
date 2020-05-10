@@ -22,10 +22,25 @@ The Push Templates SDK helps you engage with your users using fancy Push Notific
 //TODO add code
 
 2. Add the Service to your `AndroidManifest.xml`
-//TODO add code
+
+```xml
+<service
+    android:name="com.clevertap.pushtemplates.PushTemplateMessagingService">
+    <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+    </intent-filter>
+</service>
+```
 
 3. Add the Receiver to your `AndroidManifest.xml`
-//TODO add code
+
+```xml
+<receiver
+    android:name="com.clevertap.pushtemplates.PushTemplateReceiver"
+    android:exported="false"
+    android:enabled="true">
+</receiver>
+```
 
 ### Custom Handling
 
@@ -33,10 +48,58 @@ The Push Templates SDK helps you engage with your users using fancy Push Notific
 //TODO add code
 
 2. Add the Receiver to your `AndroidManifest.xml`
-//TODO add code
+
+```xml
+<receiver
+    android:name="com.clevertap.pushtemplates.PushTemplateReceiver"
+    android:exported="false"
+    android:enabled="true">
+</receiver>
+```
+
 
 3. Add the following code in your custom FirebaseMessageService class
-//TODO add code
+
+```java
+public class MyMessagingService extends FirebaseMessagingService {
+
+    Context context;
+    CleverTapAPI instance;
+
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        try{
+            context = getApplicationContext();
+            if (remoteMessage.getData().size() > 0) {
+                Bundle extras = new Bundle();
+                for (Map.Entry<String, String> entry : remoteMessage.getData().entrySet()) {
+                    extras.putString(entry.getKey(), entry.getValue());
+                }
+
+                instance = CleverTapAPI.getDefaultInstance(getApplicationContext());
+
+                boolean processCleverTapPN = Utils.isPNFromCleverTap(extras);
+
+                if(processCleverTapPN){
+                    String pt_id = extras.getString(Constants.PT_ID);
+                    if(pt_id == null || pt_id.isEmpty()){
+                        CleverTapAPI.createNotification(context,extras);
+                    }else{
+                        TemplateRenderer.createNotification(context,extras);
+                        if (instance != null) {
+                            instance.pushNotificationViewedEvent(extras);
+                        }
+                    }
+                }else{
+                    //Other providers
+                }
+            }
+        }catch (Throwable throwable){
+            PTLog.error("Error parsing FCM payload",throwable);
+        }
+    }
+}
+```
 
 # Template Types
 

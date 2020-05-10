@@ -4,7 +4,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 ext {
 
-    bintrayRepo = "ct-ancillary"
+    bintrayRepo = "Maven"
     bintrayName = "ct-ancillary"
 
     publishedGroupId = 'com.clevertap.android'
