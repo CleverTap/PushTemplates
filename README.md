@@ -45,11 +45,8 @@ The Push Templates SDK helps you engage with your users using fancy Push Notific
 ## Basic Template
 
 Basic Template is the basic push notification received on apps.
-
-![Basic Unexpanded](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic%20unexpanded.png)
-
-(When Expanded)<br/><br/>
-![Basic Expanded](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic%20expanded.png)
+<br/>(Expanded and unexpanded example)<br/><br/>
+![Basic with color](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic%20color.png)
 
 
 ## Auto Carousel Template
