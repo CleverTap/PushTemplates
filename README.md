@@ -48,15 +48,15 @@ Basic Template is the basic push notification received on apps.
 
 ![Basic Unexpanded](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic%20unexpanded.png)
 
-<br/>(When Expanded)<br/><br/>
+(When Expanded)<br/><br/>
 ![Basic Expanded](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic%20expanded.png)
 
 
 ## Auto Carousel Template
 
 Auto carousel is an automatic revolving carousel push notification.
-
-//TODO @vijay add Auto Carousel GIF if possible
+(Expanded and unexpanded example)
+![Auto Carousel](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/autocarousel.gif)
 
 ## Rating Template
 
