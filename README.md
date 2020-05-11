@@ -5,9 +5,9 @@ The Push Templates SDK helps you engage with your users using fancy Push Notific
 # Table of contents
 
 - [Installation](#installation)
+- [Dashboard Usage](#dashboard-usage)
 - [Template Types](#template-types)
 - [Template Keys](#template-keys)
-- [Usage](#usage)
 - [Sample App](#sample-app)
 - [Contributing](#contributing)
 - [License](#license)
@@ -100,6 +100,25 @@ public class MyMessagingService extends FirebaseMessagingService {
     }
 }
 ```
+# Dashboard Usage
+
+[(Back to top)](#table-of-contents)
+
+Using the above mentioned keys is very simple. While creating a Push Notification campaign on CleverTap, just follow the steps below -
+
+1. On the "WHAT" section pass some staple values in the "title" and "message" fields (NOTE: These will be ignored)
+
+![Basic](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic.png)
+
+2. Click on "Advanced" and then click on "Add pair" to add the above keys
+
+![KVs](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/kv.png)
+
+3. You can also add the above keys into one JSON object and use the `pt_json` key to fill in the values
+
+![KVs in JSON](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/json.png)
+
+4. Send a test push and schedule!
 
 # Template Types
 
@@ -237,27 +256,8 @@ Five icons template is a sticky push notification with no text, just 5 icons and
   pt_json | Above keys in JSON format
   
   ### NOTE
-  (*) - Mandatory
-  
-# Usage
-
-[(Back to top)](#table-of-contents)
-
-Using the above mentioned keys is very simple. While creating a Push Notification campaign on CleverTap, just follow the steps below -
-
-1. On the "WHAT" section pass some staple values in the "title" and "message" fields (NOTE: These will be ignored)
-
-![Basic](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic.png)
-
-2. Click on "Advanced" and then click on "Add pair" to add the above keys
-
-![KVs](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/kv.png)
-
-3. You can also add the above keys into one JSON object and use the `pt_json` key to fill in the values
-
-![KVs in JSON](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/json.png)
-
-4. Send a test push and schedule!
+  * (*) - Mandatory
+  * `pt_title` and `pt_msg` in all the templates support HTML elements like bold `<b>`, italics `<i>` and underline `<u>`
 
 # Sample App
 

@@ -3,28 +3,27 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
 ext {
-
-    bintrayRepo = "Maven"
-    bintrayName = "ct-ancillary"
+    bintrayRepo = 'Maven'
+    bintrayName = 'PushTemplates'
+    org = 'clevertap'
 
     publishedGroupId = 'com.clevertap.android'
-    libraryName = 'ct-ancillary'
-    artifact = 'ct-ancillary'
+    libraryName = 'PushTemplates'
+    artifact = 'push-templates'
+    libraryDescription = 'Push Templates SDK for CleverTap'
 
-    libraryDescription = 'Ancillary SDK for CleverTap with push templates etc.'
-
-    siteUrl = 'https://github.com/darshanclevertap/PushTemplates'
-    gitUrl = 'https://github.com/darshanclevertap/PushTemplates.git'
+    siteUrl = 'https://https://github.com/CleverTap/PushTemplates'
+    gitUrl = 'https://github.com/CleverTap/PushTemplates.git'
 
     libraryVersion = '0.0.1'
 
-    developerId = 'darshanclevertap'
-    developerName = 'Darshan'
-    developerEmail = 'darshan@clevertap.com'
+    developerId = 'clevertap'
+    developerName = 'CleverTap'
+    developerEmail = 'support@clevertap.com'
 
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
+    licenseName = 'MIT License'
+    licenseUrl = 'https://opensource.org/licenses/MIT'
+    allLicenses = ["MIT"]
 }
 
 android {
@@ -37,7 +36,6 @@ android {
         versionName "0.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -46,8 +44,89 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
 }
+
+version = libraryVersion
+group = publishedGroupId
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            packaging 'aar'
+            groupId publishedGroupId
+            artifactId artifact
+
+            name libraryName
+            description libraryDescription
+            url siteUrl
+
+            licenses {
+                license {
+                    name licenseName
+                    url licenseUrl
+                }
+            }
+            developers {
+                developer {
+                    id developerId
+                    name developerName
+                    email developerEmail
+                }
+            }
+            scm {
+                connection gitUrl
+                developerConnection gitUrl
+                url siteUrl
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        dryRun = false
+        publish = true
+        override = false
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+        }
+    }
+}
+
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -61,15 +140,3 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 }
 
-repositories {
-    mavenCentral()
-}
-
-//Add these lines to publish library to bintray. This is the readymade scripts made by github user nuuneoi to make uploading to bintray easy.
-//Place it at the end of the file
-if (project.rootProject.file('local.properties').exists()) {
-    //install.gradle
-    apply from: 'install.gradle'
-    //bintray.gradle
-    apply from: 'bintray.gradle'
-}
