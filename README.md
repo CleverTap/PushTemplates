@@ -1,6 +1,9 @@
 # Push Templates SDK by CleverTap
 
-The Push Templates SDK helps you engage with your users using fancy Push Notification templates built specifically to work with CleverTap
+The Push Templates SDK helps you engage with your users using fancy Push Notification templates built specifically to work with CleverTap.
+
+## NOTE
+This library is in public beta, for any issues please open a new issue on this Github repo.
 
 # Table of contents
 
@@ -104,13 +107,13 @@ public class MyMessagingService extends FirebaseMessagingService {
 
 [(Back to top)](#table-of-contents)
 
-Using the above mentioned keys is very simple. While creating a Push Notification campaign on CleverTap, just follow the steps below -
+While creating a Push Notification campaign on CleverTap, just follow the steps below -
 
 1. On the "WHAT" section pass some staple values in the "title" and "message" fields (NOTE: These will be ignored)
 
 ![Basic](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic.png)
 
-2. Click on "Advanced" and then click on "Add pair" to add the above keys
+2. Click on "Advanced" and then click on "Add pair" to add the [Template Keys](#template-keys)
 
 ![KVs](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/kv.png)
 
@@ -119,6 +122,7 @@ Using the above mentioned keys is very simple. While creating a Push Notificatio
 ![KVs in JSON](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/json.png)
 
 4. Send a test push and schedule!
+
 
 # Template Types
 
