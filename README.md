@@ -1,9 +1,9 @@
-# Push Templates SDK by CleverTap
+# Push Templates by CleverTap
 
-The Push Templates SDK helps you engage with your users using fancy Push Notification templates built specifically to work with CleverTap.
+Push Templates SDK helps you engage with your users using fancy push notification templates built specifically to work with [CleverTap](https://www.clevertap.com).
 
 ## NOTE
-This library is in public beta, for any issues please open a new issue on this Github repo.
+This library is in public beta, for any issues, queries and concerns please open a new issue [here](https://github.com/CleverTap/PushTemplates/issues)
 
 # Table of contents
 
@@ -22,7 +22,12 @@ This library is in public beta, for any issues please open a new issue on this G
 ### Out of the box
 
 1. Add the dependencies to the `build.gradle`
-//TODO add code
+
+```groovy
+implementation 'com.clevertap.android:push-templates:0.0.1'
+implementation 'com.clevertap.android:clevertap-android-sdk:3.8.0'
+
+```
 
 2. Add the Service to your `AndroidManifest.xml`
 
@@ -45,10 +50,14 @@ This library is in public beta, for any issues please open a new issue on this G
 </receiver>
 ```
 
-### Custom Handling
+### Custom Handling Push Notifications
 
 1. Add the dependencies to the `build.gradle`
-//TODO add code
+
+```groovy
+implementation 'com.clevertap.android:push-templates:0.0.1'
+implementation 'com.clevertap.android:clevertap-android-sdk:3.8.0'
+```
 
 2. Add the Receiver to your `AndroidManifest.xml`
 
@@ -169,7 +178,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
 
  Basic Template Keys | Description 
  :---:|:---:| 
- pt_id | Value - `pt_basic`
+ pt_id* | Value - `pt_basic`
  pt_title* | Title 
  pt_msg* | Message 
  pt_big_img* | Image
@@ -184,7 +193,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
  
  Auto Carousel Template Keys | Description 
   :---:|:---:| 
-  pt_id | Value - `pt_carousel`
+  pt_id* | Value - `pt_carousel`
   pt_title* | Title 
   pt_msg* | Message
   pt_dl1* | One Deep Link (minimum)
@@ -203,7 +212,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
 
  Rating Template Keys | Description 
  :---:|:---:| 
- pt_id | Value - `pt_rating`
+ pt_id* | Value - `pt_rating`
  pt_title* | Title 
  pt_msg* | Message 
  pt_default_dl* | Default Deep Link for Push Notification
@@ -222,7 +231,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
 
  Product Catalog Template Keys | Description 
  :---:|:---:| 
- pt_id | Value - `pt_product_display`
+ pt_id* | Value - `pt_product_display`
  pt_title* | Title 
  pt_msg* | Message
  pt_img1* | Image One
@@ -246,7 +255,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
 
  Five Icons Template Keys | Description 
   :---:|:---:| 
-  pt_id | Value - `pt_five_icons`
+  pt_id* | Value - `pt_five_icons`
   pt_img1* | Icon One
   pt_img2* | Icon Two
   pt_img3* | Icon Three
