@@ -118,7 +118,7 @@ public class MyMessagingService extends FirebaseMessagingService {
 
 While creating a Push Notification campaign on CleverTap, just follow the steps below -
 
-1. On the "WHAT" section pass some staple values in the "title" and "message" fields (NOTE: These will be ignored)
+1. On the "WHAT" section pass any values in the "title" and "message" fields (NOTE: These will be ignored)
 
 ![Basic](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic.png)
 
