@@ -2,24 +2,37 @@ package com.clevertap.templateapp;
 
 import android.app.NotificationManager;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.clevertap.android.sdk.CleverTapAPI;
+
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
     Button sendBasicPush, sendCarouselPush, sendRatingPush, sendProductDisplayNotification, sendCTANotification;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        CleverTapAPI.setDebugLevel(3);
+
         final CleverTapAPI cleverTapAPI = CleverTapAPI.getDefaultInstance(getApplicationContext());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            CleverTapAPI.createNotificationChannel(this,"Test","Push Template App Channel","Channel for Push Template App", NotificationManager.IMPORTANCE_HIGH,true);
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             CleverTapAPI.createNotificationChannel(this,"PTTesting","Push Template App Channel","Channel for Push Template App", NotificationManager.IMPORTANCE_HIGH,true);
+        }
+        HashMap<String, Object> profileUpdate = new HashMap<String, Object>();
+        profileUpdate.put("Email", "test1@clevertap.com");
+        if (cleverTapAPI != null) {
+            cleverTapAPI.onUserLogin(profileUpdate);
         }
 
         sendBasicPush = findViewById(R.id.basicPush);
@@ -71,6 +84,5 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 }

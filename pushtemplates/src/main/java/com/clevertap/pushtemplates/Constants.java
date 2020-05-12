@@ -1,40 +1,29 @@
 package com.clevertap.pushtemplates;
 
+@SuppressWarnings("WeakerAccess")
 public class Constants {
-    static final String LOG_TAG = "PTLog";
-    static final String WZRK_PUSH_ID = "wzrk_pid";
-    static final String NOTIF_MSG = "nm";
-    static final String NOTIF_TITLE = "nt";
-    static final String NOTIF_ICON = "ico";
-    static final String WZRK_ACTIONS = "wzrk_acts";
-    static final String WZRK_BIG_PICTURE = "wzrk_bp";
-    static final String WZRK_MSG_SUMMARY = "wzrk_nms";
-    static final String NOTIF_PRIORITY = "pr";
-    static final String PRIORITY_HIGH = "high";
-    static final String PRIORITY_MAX = "max";
-    static final String WZRK_COLLAPSE = "wzrk_ck";
-    static final String WZRK_CHANNEL_ID = "wzrk_cid";
-    static final String WZRK_BADGE_ICON = "wzrk_bi";
-    static final String WZRK_BADGE_COUNT = "wzrk_bc";
-    static final String WZRK_SUBTITLE = "wzrk_st";
-    static final String WZRK_COLOR = "wzrk_clr";
-    static final String WZRK_SOUND = "wzrk_sound";
-    static final String WZRK_TIME_TO_LIVE = "wzrk_ttl";
-    static final String WZRK_RNV = "wzrk_rnv";
-    static final int EMPTY_NOTIFICATION_ID = -1000;
-    static final String NOTIF_TAG = "wzrk_pn";
-    static final String ICON_BASE_URL = "http://static.wizrocket.com/android/ico/";
-    static final String LABEL_NOTIFICATION_ICON = "CLEVERTAP_NOTIFICATION_ICON";
-    static final String PT_ID = "pt_id";
-    static final String PT_TITLE = "pt_title";
-    static final String PT_MSG = "pt_msg";
-    static final String PT_TITLE_COLOR = "pt_title_clr";
-    static final String PT_MSG_COLOR = "pt_msg_clr";
-    static final String PT_BG = "pt_bg";
-    static final String PT_BIG_IMG = "pt_big_img";
-    static final String PT_SMALL_IMG = "pt_small_img";
-    static final String PT_BIG_TEXT = "btlist";
-    static final String PT_SMALL_TEXT = "stlist";
-    static final String PT_CLOSE = "pt_close";
+    public static final String LOG_TAG = "PTLog";
+    public static final String WZRK_ACTIONS = "wzrk_acts";
+    public static final String WZRK_CHANNEL_ID = "wzrk_cid";
+    public static final String WZRK_DL = "wzrk_dl";
+    public static final String WZRK_FROM_KEY = "wzrk_from";
+    public static final String WZRK_FROM = "CTPushNotificationReceiver";
+    public static final int EMPTY_NOTIFICATION_ID = -1000;
+    public static final String NOTIF_TAG = "wzrk_pn";
+    public static final String ICON_BASE_URL = "http://static.wizrocket.com/android/ico/";
+    public static final String LABEL_NOTIFICATION_ICON = "CLEVERTAP_NOTIFICATION_ICON";
+    public static final String PT_ID = "pt_id";
+    public static final String PT_NOTIF_ICON = "pt_ico";
+    public static final String PT_TITLE = "pt_title";
+    public static final String PT_MSG = "pt_msg";
+    public static final String PT_MSG_SUMMARY = "pt_msg_summary";
+    public static final String PT_TITLE_COLOR = "pt_title_clr";
+    public static final String PT_MSG_COLOR = "pt_msg_clr";
+    public static final String PT_BG = "pt_bg";
+    public static final String PT_BIG_IMG = "pt_big_img";
+    public static final String PT_SMALL_IMG = "pt_small_img";
+    public static final String PT_JSON = "pt_json";
+    public static final String PT_BUY_NOW_DL = "pt_buy_now_dl";
+    public static final String PT_DEFAULT_DL = "pt_default_dl";
 
 }

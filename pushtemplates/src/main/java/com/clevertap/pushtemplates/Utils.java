@@ -1,5 +1,6 @@
 package com.clevertap.pushtemplates;
 
+import android.app.Notification;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
@@ -8,9 +9,12 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.LruCache;
+import android.text.format.DateUtils;
+import android.widget.RemoteViews;
 
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.NotificationTarget;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,9 +22,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+@SuppressWarnings("WeakerAccess")
 public class Utils {
 
-    static boolean isPNFromCleverTap(Bundle extras){
+    public static boolean isPNFromCleverTap(Bundle extras){
         if(extras == null) return false;
 
         boolean fromCleverTap = extras.containsKey(Constants.NOTIF_TAG);
@@ -59,7 +64,7 @@ public class Utils {
         }
     }
 
-    static Bitmap drawableToBitmap(Drawable drawable)
+    private static Bitmap drawableToBitmap(Drawable drawable)
             throws NullPointerException {
         if (drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable) drawable).getBitmap();
@@ -74,7 +79,7 @@ public class Utils {
         return bitmap;
     }
 
-    static Bitmap getBitmapFromURL(String srcUrl) {
+    private static Bitmap getBitmapFromURL(String srcUrl) {
         // Safe bet, won't have more than three /s
         srcUrl = srcUrl.replace("///", "/");
         srcUrl = srcUrl.replace("//", "/");
@@ -164,5 +169,55 @@ public class Utils {
             }
         }
         return stList;
+    }
+
+    static ArrayList<String> getPriceFromExtras(Bundle extras){
+        ArrayList<String> stList = new ArrayList<>();
+        for(String key : extras.keySet()){
+            if(key.contains("pt_price")){
+                stList.add(extras.getString(key));
+            }
+        }
+        return stList;
+    }
+
+    static void loadIntoGlide(Context context, int imageResource, String imageURL, RemoteViews remoteViews, Notification notification, int notificationId) {
+        NotificationTarget bigNotifTarget = new NotificationTarget(
+                context,
+                imageResource,
+                remoteViews,
+                notification,
+                notificationId);
+        Glide
+                .with(context.getApplicationContext())
+                .asBitmap()
+                .load(imageURL)
+                .centerCrop()
+                .into(bigNotifTarget);
+    }
+
+    static void loadIntoGlide(Context context, int imageResource, int identifier, RemoteViews remoteViews, Notification notification, int notificationId) {
+        NotificationTarget bigNotifTarget = new NotificationTarget(
+                context,
+                imageResource,
+                remoteViews,
+                notification,
+                notificationId);
+        Glide
+                .with(context.getApplicationContext())
+                .asBitmap()
+                .load(identifier)
+                .centerCrop()
+                .into(bigNotifTarget);
+    }
+
+    static String getTimeStamp(Context context) {
+        return DateUtils.formatDateTime(context, System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME);
+    }
+
+    static String getApplicationName(Context context) {
+        ApplicationInfo applicationInfo = context.getApplicationInfo();
+        int stringId = applicationInfo.labelRes;
+        return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
     }
 }
