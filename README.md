@@ -26,7 +26,7 @@ This library is in public beta, for any issues, queries and concerns please open
 ```groovy
 implementation 'com.clevertap.android:push-templates:0.0.1'
 implementation 'com.clevertap.android:clevertap-android-sdk:3.8.0'
-
+implementation 'com.github.bumptech.glide:glide:4.11.0'
 ```
 
 2. Add the Service to your `AndroidManifest.xml`
@@ -57,6 +57,7 @@ implementation 'com.clevertap.android:clevertap-android-sdk:3.8.0'
 ```groovy
 implementation 'com.clevertap.android:push-templates:0.0.1'
 implementation 'com.clevertap.android:clevertap-android-sdk:3.8.0'
+implementation 'com.github.bumptech.glide:glide:4.11.0'
 ```
 
 2. Add the Receiver to your `AndroidManifest.xml`
