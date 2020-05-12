@@ -22,9 +22,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-class Utils {
+@SuppressWarnings("WeakerAccess")
+public class Utils {
 
-    static boolean isPNFromCleverTap(Bundle extras){
+    public static boolean isPNFromCleverTap(Bundle extras){
         if(extras == null) return false;
 
         boolean fromCleverTap = extras.containsKey(Constants.NOTIF_TAG);
