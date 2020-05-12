@@ -408,10 +408,7 @@ public class TemplateRenderer {
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.big_image_app, pt_large_icon, contentViewSmall, notification, notificationId);
 
-            CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
-            if (instance != null) {
-                instance.pushNotificationViewedEvent(extras);
-            }
+            raiseNotificationViewed(context,extras);
 
         } catch (Throwable t) {
             PTLog.error("Error creating rating notification ", t);
@@ -531,10 +528,7 @@ public class TemplateRenderer {
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
 
 
-            CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
-            if (instance != null) {
-                instance.pushNotificationViewedEvent(extras);
-            }
+            raiseNotificationViewed(context,extras);
         } catch (Throwable t) {
             PTLog.error("Error creating auto carousel notification ", t);
         }
@@ -636,10 +630,7 @@ public class TemplateRenderer {
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
 
-            CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
-            if (instance != null) {
-                instance.pushNotificationViewedEvent(extras);
-            }
+            raiseNotificationViewed(context,extras);
         } catch (Throwable t) {
             PTLog.error("Error creating image only notification", t);
         }
@@ -787,10 +778,7 @@ public class TemplateRenderer {
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.big_image, imageList.get(0), contentViewBig, notification, notificationId);
-            CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
-            if (instance != null) {
-                instance.pushNotificationViewedEvent(extras);
-            }
+            raiseNotificationViewed(context,extras);
         } catch (Throwable t) {
             PTLog.error("Error creating Product Display Notification ", t);
         }
@@ -896,10 +884,7 @@ public class TemplateRenderer {
             }
             Utils.loadIntoGlide(context, R.id.close, R.drawable.pt_close, contentFiveCTAs, notification, notificationId);
 
-            CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
-            if (instance != null) {
-                instance.pushNotificationViewedEvent(extras);
-            }
+            raiseNotificationViewed(context,extras);
         } catch (Throwable t) {
             PTLog.error("Error creating image only notification", t);
         }
@@ -930,5 +915,12 @@ public class TemplateRenderer {
         }
 
         return bundle;
+    }
+
+    private void raiseNotificationViewed(Context context, Bundle extras){
+        CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
+        if (instance != null) {
+            instance.pushNotificationViewedEvent(extras);
+        }
     }
 }

@@ -98,9 +98,6 @@ public class MyMessagingService extends FirebaseMessagingService {
                         CleverTapAPI.createNotification(context,extras);
                     }else{
                         TemplateRenderer.createNotification(context,extras);
-                        if (instance != null) {
-                            instance.pushNotificationViewedEvent(extras);
-                        }
                     }
                 }else{
                     //Other providers
