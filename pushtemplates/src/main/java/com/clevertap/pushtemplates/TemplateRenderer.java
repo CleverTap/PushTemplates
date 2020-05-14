@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -27,13 +28,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-public class TemplateRenderer {
+public class TemplateRenderer implements OnDupeCheckCompletedListener {
 
     private String pt_id;
     private TemplateType templateType;
@@ -57,8 +60,12 @@ public class TemplateRenderer {
     private int smallIcon = 0;
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
+    private Context context;
+    private Bundle extras;
 
     private TemplateRenderer(Context context, Bundle extras) {
+        this.context = context;
+        this.extras = extras;
         pt_id = extras.getString(Constants.PT_ID);
         String pt_json = extras.getString(Constants.PT_JSON);
         if (pt_id != null) {
@@ -93,7 +100,20 @@ public class TemplateRenderer {
     @SuppressLint("NewApi")
     public static void createNotification(Context context, Bundle extras) {
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
-        templateRenderer._createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+        templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+    }
+
+    private synchronized void dupeCheck(Context context, Bundle extras, int id) {
+        DBHelper dbHelper = new DBHelper(context);
+        new AsyncDupeCheck(this, dbHelper, extras, id, this).execute();
+    }
+
+    @Override
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void onDupeCheckCompleted(Boolean isNotificationPresent) {
+        if(!isNotificationPresent) {
+            _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+        }
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -921,6 +941,68 @@ public class TemplateRenderer {
         CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
         if (instance != null) {
             instance.pushNotificationViewedEvent(extras);
+        }
+    }
+
+    private static class AsyncDupeCheck extends AsyncTask<String, String, Boolean> {
+
+        OnDupeCheckCompletedListener onDupeCheckCompletedListener;
+        private WeakReference<TemplateRenderer> templateRendererRef;
+        DBHelper dbHelper;
+        String jsonExtra;
+        Bundle extras;
+        int id;
+
+        AsyncDupeCheck(TemplateRenderer templateRenderer, DBHelper dbHelper, Bundle extras, int id, OnDupeCheckCompletedListener onDupeCheckCompletedListener){
+            this.onDupeCheckCompletedListener = onDupeCheckCompletedListener;
+            this.dbHelper = dbHelper;
+            templateRendererRef = new WeakReference<>(templateRenderer);
+            this.extras = extras;
+            jsonExtra = bundleToJSON(extras);
+            this.id = id;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(String... aurl) {
+
+            try {
+                String ptID = extras.getString("wzrk_pid");
+                if(dbHelper.isNotificationPresentInDB(ptID)){
+                    return true;
+                } else {
+                    dbHelper.savePT(ptID, jsonExtra);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isNotificationPresent) {
+            TemplateRenderer templateRenderer = templateRendererRef.get();
+            if(templateRenderer != null) {
+                onDupeCheckCompletedListener.onDupeCheckCompleted(isNotificationPresent);
+            }
+        }
+
+        private String bundleToJSON(Bundle extras) {
+            JSONObject json = new JSONObject();
+            Set<String> keys = extras.keySet();
+            for (String key : keys) {
+                try {
+                    json.put(key, extras.get(key));
+                } catch(JSONException e) {
+                    //Handle exception here
+                }
+            }
+            return json.toString();
         }
     }
 }
