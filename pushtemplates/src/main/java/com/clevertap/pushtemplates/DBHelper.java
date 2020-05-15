@@ -54,7 +54,12 @@ public class DBHelper extends SQLiteOpenHelper {
         stmt.bindString(1, ptID);
         stmt.bindString(2, jsonExtras);
 
-        stmt.executeInsert();
+        stmt.execute();
+        stmt.clearBindings();
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
         db.close();
     }
 
