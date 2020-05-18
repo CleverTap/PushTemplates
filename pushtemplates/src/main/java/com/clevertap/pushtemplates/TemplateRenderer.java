@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -28,15 +27,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-public class TemplateRenderer implements OnDupeCheckCompletedListener {
+public class TemplateRenderer {
 
     private String pt_id;
     private TemplateType templateType;
@@ -60,12 +60,11 @@ public class TemplateRenderer implements OnDupeCheckCompletedListener {
     private int smallIcon = 0;
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
-    private Context context;
-    private Bundle extras;
+
+    private long EXECUTOR_THREAD_ID = 0;
+    private ExecutorService es;
 
     private TemplateRenderer(Context context, Bundle extras) {
-        this.context = context;
-        this.extras = extras;
         pt_id = extras.getString(Constants.PT_ID);
         String pt_json = extras.getString(Constants.PT_JSON);
         if (pt_id != null) {
@@ -103,17 +102,30 @@ public class TemplateRenderer implements OnDupeCheckCompletedListener {
         templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
 
-    private synchronized void dupeCheck(Context context, Bundle extras, int id) {
-        DBHelper dbHelper = new DBHelper(context);
-        new AsyncDupeCheck(this, dbHelper, extras, id, this).execute();
-    }
+    private synchronized void dupeCheck(final Context context, final Bundle extras, int id) {
 
-    @Override
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void onDupeCheckCompleted(Boolean isNotificationPresent) {
-        if(!isNotificationPresent) {
-            _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+        this.es = Executors.newFixedThreadPool(1);
+        try {
+            postAsyncSafely("TemplateRenderer#_createNotification", new Runnable() {
+                @RequiresApi(api = Build.VERSION_CODES.O)
+                @Override
+                public void run() {
+                    try {
+                        DBHelper dbHelper = new DBHelper(context);
+                        String ptID = extras.getString(Constants.WZRK_PUSH_ID);
+                        if(!dbHelper.isNotificationPresentInDB(ptID)){
+                            _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+                            dbHelper.savePT(ptID, bundleToJSON(extras));
+                        }
+                    } catch (Throwable t) {
+                        PTLog.error("Couldn't render notification: " + t.getLocalizedMessage());
+                    }
+                }
+            });
+        } catch (Throwable t) {
+            PTLog.error("Failed to process push notification: " + t.getLocalizedMessage());
         }
+        PTLog.error("Display Image is missing or empty. Not showing notification");
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -944,65 +956,41 @@ public class TemplateRenderer implements OnDupeCheckCompletedListener {
         }
     }
 
-    private static class AsyncDupeCheck extends AsyncTask<String, String, Boolean> {
-
-        OnDupeCheckCompletedListener onDupeCheckCompletedListener;
-        private WeakReference<TemplateRenderer> templateRendererRef;
-        DBHelper dbHelper;
-        String jsonExtra;
-        Bundle extras;
-        int id;
-
-        AsyncDupeCheck(TemplateRenderer templateRenderer, DBHelper dbHelper, Bundle extras, int id, OnDupeCheckCompletedListener onDupeCheckCompletedListener){
-            this.onDupeCheckCompletedListener = onDupeCheckCompletedListener;
-            this.dbHelper = dbHelper;
-            templateRendererRef = new WeakReference<>(templateRenderer);
-            this.extras = extras;
-            jsonExtra = bundleToJSON(extras);
-            this.id = id;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Boolean doInBackground(String... aurl) {
-
+    private String bundleToJSON(Bundle extras) {
+        JSONObject json = new JSONObject();
+        Set<String> keys = extras.keySet();
+        for (String key : keys) {
             try {
-                String ptID = extras.getString("wzrk_pid");
-                if(dbHelper.isNotificationPresentInDB(ptID)){
-                    return true;
-                } else {
-                    dbHelper.savePT(ptID, jsonExtra);
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean isNotificationPresent) {
-            TemplateRenderer templateRenderer = templateRendererRef.get();
-            if(templateRenderer != null) {
-                onDupeCheckCompletedListener.onDupeCheckCompleted(isNotificationPresent);
+                json.put(key, extras.get(key));
+            } catch(JSONException e) {
+                //Handle exception here
             }
         }
+        return json.toString();
+    }
 
-        private String bundleToJSON(Bundle extras) {
-            JSONObject json = new JSONObject();
-            Set<String> keys = extras.keySet();
-            for (String key : keys) {
-                try {
-                    json.put(key, extras.get(key));
-                } catch(JSONException e) {
-                    //Handle exception here
-                }
+    @SuppressWarnings("UnusedParameters")
+    private void postAsyncSafely(final String name, final Runnable runnable) {
+        try {
+            final boolean executeSync = Thread.currentThread().getId() == EXECUTOR_THREAD_ID;
+
+            if (executeSync) {
+                runnable.run();
+            } else {
+                es.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        EXECUTOR_THREAD_ID = Thread.currentThread().getId();
+                        try {
+                            runnable.run();
+                        } catch (Throwable t) {
+                            PTLog.error("Executor service: Failed to complete the scheduled task");
+                        }
+                    }
+                });
             }
-            return json.toString();
+        } catch (Throwable t) {
+            PTLog.error("Failed to submit task to the executor service");
         }
     }
 }
