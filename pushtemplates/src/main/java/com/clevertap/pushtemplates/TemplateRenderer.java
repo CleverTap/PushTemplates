@@ -23,16 +23,11 @@ import android.widget.RemoteViews;
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -70,7 +65,7 @@ public class TemplateRenderer {
             Bundle newExtras = null;
             try {
                 if (pt_json != null && !pt_json.isEmpty()) {
-                    newExtras = fromJson(new JSONObject(pt_json));
+                    newExtras = Utils.fromJson(new JSONObject(pt_json));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -112,7 +107,7 @@ public class TemplateRenderer {
                         String ptID = extras.getString(Constants.WZRK_PUSH_ID);
                         if(!dbHelper.isNotificationPresentInDB(ptID)){
                             _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
-                            dbHelper.savePT(ptID, bundleToJSON(extras));
+                            dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
                         }
                     } catch (Throwable t) {
                         PTLog.error("Couldn't render notification: " + t.getLocalizedMessage());
@@ -919,49 +914,10 @@ public class TemplateRenderer {
 
     }
 
-    private Bundle fromJson(JSONObject s) {
-        Bundle bundle = new Bundle();
-
-        for (Iterator<String> it = s.keys(); it.hasNext(); ) {
-            String key = it.next();
-            JSONArray arr = s.optJSONArray(key);
-            String str = s.optString(key);
-
-            if (arr != null && arr.length() <= 0)
-                bundle.putStringArray(key, new String[]{});
-
-            else if (arr != null && arr.optString(0) != null) {
-                String[] newarr = new String[arr.length()];
-                for (int i = 0; i < arr.length(); i++)
-                    newarr[i] = arr.optString(i);
-                bundle.putStringArray(key, newarr);
-            } else if (str != null)
-                bundle.putString(key, str);
-
-            else
-                System.err.println("unable to transform json to bundle " + key);
-        }
-
-        return bundle;
-    }
-
     private void raiseNotificationViewed(Context context, Bundle extras){
         CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
         if (instance != null) {
             instance.pushNotificationViewedEvent(extras);
         }
-    }
-
-    private String bundleToJSON(Bundle extras) {
-        JSONObject json = new JSONObject();
-        Set<String> keys = extras.keySet();
-        for (String key : keys) {
-            try {
-                json.put(key, extras.get(key));
-            } catch(JSONException e) {
-                //Handle exception here
-            }
-        }
-        return json.toString();
     }
 }

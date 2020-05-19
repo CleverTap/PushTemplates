@@ -16,11 +16,17 @@ import android.widget.RemoteViews;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
 public class Utils {
@@ -219,5 +225,44 @@ public class Utils {
         ApplicationInfo applicationInfo = context.getApplicationInfo();
         int stringId = applicationInfo.labelRes;
         return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
+    }
+
+    static Bundle fromJson(JSONObject s) {
+        Bundle bundle = new Bundle();
+
+        for (Iterator<String> it = s.keys(); it.hasNext(); ) {
+            String key = it.next();
+            JSONArray arr = s.optJSONArray(key);
+            String str = s.optString(key);
+
+            if (arr != null && arr.length() <= 0)
+                bundle.putStringArray(key, new String[]{});
+
+            else if (arr != null && arr.optString(0) != null) {
+                String[] newarr = new String[arr.length()];
+                for (int i = 0; i < arr.length(); i++)
+                    newarr[i] = arr.optString(i);
+                bundle.putStringArray(key, newarr);
+            } else if (str != null)
+                bundle.putString(key, str);
+
+            else
+                System.err.println("unable to transform json to bundle " + key);
+        }
+
+        return bundle;
+    }
+
+    static String bundleToJSON(Bundle extras) {
+        JSONObject json = new JSONObject();
+        Set<String> keys = extras.keySet();
+        for (String key : keys) {
+            try {
+                json.put(key, extras.get(key));
+            } catch(JSONException e) {
+                //Handle exception here
+            }
+        }
+        return json.toString();
     }
 }
