@@ -61,8 +61,6 @@ public class TemplateRenderer {
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
 
-    private long EXECUTOR_THREAD_ID = 0;
-    private ExecutorService es;
 
     private TemplateRenderer(Context context, Bundle extras) {
         pt_id = extras.getString(Constants.PT_ID);
@@ -103,10 +101,9 @@ public class TemplateRenderer {
     }
 
     private synchronized void dupeCheck(final Context context, final Bundle extras, int id) {
-
-        this.es = Executors.newFixedThreadPool(1);
+        AsyncHelper asyncHelper = AsyncHelper.getInstance();
         try {
-            postAsyncSafely("TemplateRenderer#_createNotification", new Runnable() {
+            asyncHelper.postAsyncSafely("TemplateRenderer#_createNotification", new Runnable() {
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void run() {
@@ -125,7 +122,6 @@ public class TemplateRenderer {
         } catch (Throwable t) {
             PTLog.error("Failed to process push notification: " + t.getLocalizedMessage());
         }
-        PTLog.error("Display Image is missing or empty. Not showing notification");
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -967,30 +963,5 @@ public class TemplateRenderer {
             }
         }
         return json.toString();
-    }
-
-    @SuppressWarnings("UnusedParameters")
-    private void postAsyncSafely(final String name, final Runnable runnable) {
-        try {
-            final boolean executeSync = Thread.currentThread().getId() == EXECUTOR_THREAD_ID;
-
-            if (executeSync) {
-                runnable.run();
-            } else {
-                es.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        EXECUTOR_THREAD_ID = Thread.currentThread().getId();
-                        try {
-                            runnable.run();
-                        } catch (Throwable t) {
-                            PTLog.error("Executor service: Failed to complete the scheduled task");
-                        }
-                    }
-                });
-            }
-        } catch (Throwable t) {
-            PTLog.error("Failed to submit task to the executor service");
-        }
     }
 }
