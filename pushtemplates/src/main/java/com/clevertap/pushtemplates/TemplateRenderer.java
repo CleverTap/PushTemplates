@@ -408,7 +408,7 @@ public class TemplateRenderer {
             notificationBuilder.setSmallIcon(smallIcon)
                     .setCustomContentView(contentViewSmall)
                     .setCustomBigContentView(contentViewRating)
-                    .setContentTitle("Custom Notification")
+                    .setContentTitle(pt_title)
                     .setContentIntent(pIntent)
                     .setAutoCancel(true);
 
@@ -522,7 +522,7 @@ public class TemplateRenderer {
             notificationBuilder.setSmallIcon(smallIcon)
                     .setCustomContentView(contentViewSmall)
                     .setCustomBigContentView(contentViewCarousel)
-                    .setContentTitle("Custom Notification")
+                    .setContentTitle(pt_title)
                     .setContentIntent(pIntent)
                     .setAutoCancel(true);
 
@@ -631,7 +631,7 @@ public class TemplateRenderer {
             notificationBuilder.setSmallIcon(smallIcon)
                     .setCustomContentView(contentViewSmall)
                     .setCustomBigContentView(contentViewBig)
-                    .setContentTitle("Custom Notification")
+                    .setContentTitle(pt_title)
                     .setContentIntent(pIntent)
                     .setVibrate(new long[]{0L})
                     .setAutoCancel(true);
@@ -780,7 +780,7 @@ public class TemplateRenderer {
             notificationBuilder.setSmallIcon(smallIcon)
                     .setCustomContentView(contentViewSmall)
                     .setCustomBigContentView(contentViewBig)
-                    .setContentTitle("Custom Notification")
+                    .setContentTitle(pt_title)
                     .setContentIntent(pIntent)
                     .setVibrate(new long[]{0L})
                     .setAutoCancel(true);
@@ -809,6 +809,9 @@ public class TemplateRenderer {
 
     private void renderFiveIconNotification(Context context, Bundle extras, int notificationId) {
         try {
+            if (pt_title == null || pt_title.isEmpty()) {
+                pt_title = Utils.getApplicationName(context);
+            }
             contentFiveCTAs = new RemoteViews(context.getPackageName(), R.layout.five_cta);
 
             notificationId = new Random().nextInt();
@@ -881,7 +884,7 @@ public class TemplateRenderer {
             notificationBuilder.setSmallIcon(smallIcon)
                     .setCustomContentView(contentFiveCTAs)
                     .setCustomBigContentView(contentFiveCTAs)
-                    .setContentTitle("Custom Notification")
+                    .setContentTitle(pt_title)
                     .setContentIntent(pIntent)
                     .setOngoing(true)
                     .setVibrate(new long[]{0L})
