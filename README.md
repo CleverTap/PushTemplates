@@ -99,6 +99,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                     if(pt_id == null || pt_id.isEmpty()){
                         CleverTapAPI.createNotification(context,extras);
                     }else{
+                        TemplateRenderer.setDebugLevel(2); //-1 for OFF, 0, for INFO, 2 for DEBUG, 3 for VERBOSE (errors)
                         TemplateRenderer.createNotification(context,extras);
                     }
                 }else{
@@ -106,7 +107,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                 }
             }
         }catch (Throwable throwable){
-            PTLog.error("Error parsing FCM payload",throwable);
+            PTLog.verbose("Error parsing FCM payload",throwable);
         }
     }
 }

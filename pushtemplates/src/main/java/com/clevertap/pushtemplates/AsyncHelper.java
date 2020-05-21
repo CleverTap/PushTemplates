@@ -36,13 +36,13 @@ class AsyncHelper {
                         try {
                             runnable.run();
                         } catch (Throwable t) {
-                            PTLog.error("Executor service: Failed to complete the scheduled task");
+                            PTLog.verbose("Executor service: Failed to complete the scheduled task" + name);
                         }
                     }
                 });
             }
         } catch (Throwable t) {
-            PTLog.error("Failed to submit task to the executor service");
+            PTLog.verbose("Failed to submit task to the executor service");
         }
     }
 }

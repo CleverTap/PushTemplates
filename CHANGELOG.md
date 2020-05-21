@@ -1,8 +1,9 @@
 ## CHANGE LOG
 
-### Version 0.0.2 (May 19, 2020)
+### Version 0.0.2 (May 21, 2020)
 * Added Duplication check
-* Did minor refactoring
+* Added support to enable/disable logs
+* Performance enhancements
 
 ### Version 0.0.1 (May 12, 2020)
 * First release :tada:

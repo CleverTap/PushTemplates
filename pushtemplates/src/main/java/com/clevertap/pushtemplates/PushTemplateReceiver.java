@@ -83,7 +83,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     channelIdError = "Unable to render notification, channelId: " + channelId + " not registered by the app.";
                 }
                 if (channelIdError != null) {
-                    PTLog.error(channelIdError);
+                    PTLog.verbose(channelIdError);
                     return;
                 }
             }
@@ -306,7 +306,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             }
 
         } catch (Throwable t) {
-            PTLog.error("Error creating rating notification ", t);
+            PTLog.verbose("Error creating rating notification ", t);
         }
 
 
@@ -508,7 +508,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             }
 
         } catch (Throwable t) {
-            PTLog.error("Error creating rating notification ", t);
+            PTLog.verbose("Error creating rating notification ", t);
         }
     }
 

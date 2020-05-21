@@ -38,7 +38,7 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
                 }
             }
         }catch (Throwable throwable){
-            PTLog.error("Error parsing FCM payload",throwable);
+            PTLog.verbose("Error parsing FCM payload",throwable);
         }
     }
 }

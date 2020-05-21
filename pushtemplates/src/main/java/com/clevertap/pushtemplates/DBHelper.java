@@ -14,7 +14,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static String TABLE_PT_COLUMN_PTID = "pt_id";
     private static String TABLE_PT_COLUMN_PTEXTRAS = "pt_json";
 
-    public DBHelper(Context context) {
+    DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -43,7 +43,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void savePT(String ptID, String jsonExtras) {
+    void savePT(String ptID, String jsonExtras) {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "INSERT INTO " + TABLE_PT + " ( " +TABLE_PT_COLUMN_PTID + "," + TABLE_PT_COLUMN_PTEXTRAS + " ) VALUES ( ?, ? )";
 
@@ -63,14 +63,11 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public boolean isNotificationPresentInDB(String ptID) {
+    boolean isNotificationPresentInDB(String ptID) {
 
         SQLiteDatabase db = getReadableDatabase();
 
-        String query = "SELECT * FROM " + TABLE_PT
-                + " WHERE " + TABLE_PT_COLUMN_PTID + " = '" + ptID + "';";
-
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = db.query(TABLE_PT,null,TABLE_PT_COLUMN_PTID+ " =?",new String[]{ptID},null,null,null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             if (cursor.getLong(cursor.getColumnIndex(TABLE_PT_COLUMN_ID)) != 0) {
