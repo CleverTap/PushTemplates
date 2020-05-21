@@ -23,17 +23,18 @@ import android.widget.RemoteViews;
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class TemplateRenderer {
+
+    private static int debugLevel = TemplateRenderer.LogLevel.INFO.intValue();;
 
     private String pt_id;
     private TemplateType templateType;
@@ -50,13 +51,53 @@ public class TemplateRenderer {
     private ArrayList<String> priceList;
     private String pt_bg;
     private String pt_rating_default_dl;
-
     private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating,
              contentFiveCTAs;
     private String channelId;
     private int smallIcon = 0;
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
+    private AsyncHelper asyncHelper;
+    private DBHelper dbHelper;
+
+    @SuppressWarnings({"unused"})
+    public enum LogLevel {
+        OFF(-1),
+        INFO(0),
+        DEBUG(2),
+        VERBOSE(3);
+
+        private final int value;
+
+        LogLevel(final int newValue) {
+            value = newValue;
+        }
+
+        public int intValue() {
+            return value;
+        }
+    }
+
+    /**
+     * Enables or disables debugging. If enabled, see debug messages in Android's logcat utility.
+     * Debug messages are tagged as PTLog.
+     *
+     * @param level Can be one of the following:  -1 (disables all debugging), 0 (default, shows minimal SDK integration related logging),
+     *              2(shows debug output)
+     */
+    public static void setDebugLevel(int level){
+        debugLevel = level;
+    }
+
+    /**
+     * Returns the log level set for PushTemplates
+     *
+     * @return The int value
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static int getDebugLevel() {
+        return debugLevel;
+    }
 
     private TemplateRenderer(Context context, Bundle extras) {
         pt_id = extras.getString(Constants.PT_ID);
@@ -66,7 +107,7 @@ public class TemplateRenderer {
             Bundle newExtras = null;
             try {
                 if (pt_json != null && !pt_json.isEmpty()) {
-                    newExtras = fromJson(new JSONObject(pt_json));
+                    newExtras = Utils.fromJson(new JSONObject(pt_json));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -87,20 +128,45 @@ public class TemplateRenderer {
         smallTextList = Utils.getSmallTextFromExtras(extras);
         priceList = Utils.getPriceFromExtras(extras);
         pt_rating_default_dl = extras.getString(Constants.PT_DEFAULT_DL);
+        asyncHelper = AsyncHelper.getInstance();
+        dbHelper = new DBHelper(context);
     }
 
     @SuppressWarnings("WeakerAccess")
     @SuppressLint("NewApi")
     public static void createNotification(Context context, Bundle extras) {
+        PTLog.verbose("Creating notification...");
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
-        templateRenderer._createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+        templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+    }
+
+    private synchronized void dupeCheck(final Context context, final Bundle extras, int id) {
+        try {
+            asyncHelper.postAsyncSafely("TemplateRenderer#_createNotification", new Runnable() {
+                @RequiresApi(api = Build.VERSION_CODES.O)
+                @Override
+                public void run() {
+                    try {
+                        String ptID = extras.getString(Constants.WZRK_PUSH_ID);
+                        if(!dbHelper.isNotificationPresentInDB(ptID)){
+                            _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+                            dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
+                        }
+                    } catch (Throwable t) {
+                        PTLog.verbose("Couldn't render notification: " + t.getLocalizedMessage());
+                    }
+                }
+            });
+        } catch (Throwable t) {
+            PTLog.verbose("Failed to process push notification: " + t.getLocalizedMessage());
+        }
     }
 
     @SuppressWarnings("SameParameterValue")
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void _createNotification(Context context, Bundle extras, int notificationId) {
         if (pt_id == null) {
-            PTLog.error("Template ID not provided. Cannot create the notification");
+            PTLog.verbose("Template ID not provided. Cannot create the notification");
             return;
         }
 
@@ -116,7 +182,7 @@ public class TemplateRenderer {
                 channelIdError = "Unable to render notification, channelId: " + channelId + " not registered by the app.";
             }
             if (channelIdError != null) {
-                PTLog.error(channelIdError);
+                PTLog.verbose(channelIdError);
                 return;
             }
         }
@@ -161,20 +227,20 @@ public class TemplateRenderer {
     private boolean hasAllBasicNotifKeys() {
         boolean result = true;
         if (pt_title == null || pt_title.isEmpty()) {
-            PTLog.error("Title is missing or empty. Not showing notification");
+            PTLog.verbose("Title is missing or empty. Not showing notification");
             result = false;
         }
         if (pt_msg == null || pt_msg.isEmpty()) {
-            PTLog.error("Message is missing or empty. Not showing notification");
+            PTLog.verbose("Message is missing or empty. Not showing notification");
             result = false;
         }
 
         if (pt_big_img == null || pt_big_img.isEmpty()) {
-            PTLog.error("Display Image is missing or empty. Not showing notification");
+            PTLog.verbose("Display Image is missing or empty. Not showing notification");
             result = false;
         }
         if (pt_large_icon == null || pt_large_icon.isEmpty()) {
-            PTLog.error("Icon Image is missing or empty. Not showing notification");
+            PTLog.verbose("Icon Image is missing or empty. Not showing notification");
             result = false;
         }
 
@@ -184,19 +250,19 @@ public class TemplateRenderer {
     private boolean hasAllCarouselNotifKeys() {
         boolean result = true;
         if (pt_title == null || pt_title.isEmpty()) {
-            PTLog.error("Title is missing or empty. Not showing notification");
+            PTLog.verbose("Title is missing or empty. Not showing notification");
             result = false;
         }
         if (pt_msg == null || pt_msg.isEmpty()) {
-            PTLog.error("Message is missing or empty. Not showing notification");
+            PTLog.verbose("Message is missing or empty. Not showing notification");
             result = false;
         }
         if (deepLinkList == null || deepLinkList.size() == 0) {
-            PTLog.error("Deeplink is missing or empty. Not showing notification");
+            PTLog.verbose("Deeplink is missing or empty. Not showing notification");
             result = false;
         }
         if (imageList == null || imageList.size() < 3) {
-            PTLog.error("Three required images not present. Not showing notification");
+            PTLog.verbose("Three required images not present. Not showing notification");
             result = false;
         }
         return result;
@@ -205,20 +271,20 @@ public class TemplateRenderer {
     private boolean hasAllRatingNotifKeys() {
         boolean result = true;
         if (pt_title == null || pt_title.isEmpty()) {
-            PTLog.error("Title is missing or empty. Not showing notification");
+            PTLog.verbose("Title is missing or empty. Not showing notification");
             result = false;
         }
         if (pt_msg == null || pt_msg.isEmpty()) {
-            PTLog.error("Message is missing or empty. Not showing notification");
+            PTLog.verbose("Message is missing or empty. Not showing notification");
             result = false;
         }
         if (pt_rating_default_dl == null || pt_rating_default_dl.isEmpty()) {
-            PTLog.error("Default deeplink is missing or empty. Not showing notification");
+            PTLog.verbose("Default deeplink is missing or empty. Not showing notification");
             result = false;
         }
 
         if (deepLinkList == null || deepLinkList.size() == 0) {
-            PTLog.error("At least one deeplink is required. Not showing notification");
+            PTLog.verbose("At least one deeplink is required. Not showing notification");
             result = false;
         }
         return result;
@@ -227,11 +293,11 @@ public class TemplateRenderer {
     private boolean hasAll5IconNotifKeys() {
         boolean result = true;
         if (deepLinkList == null || deepLinkList.size() < 5) {
-            PTLog.error("Five required deeplinks not present. Not showing notification");
+            PTLog.verbose("Five required deeplinks not present. Not showing notification");
             result = false;
         }
         if (imageList == null || imageList.size() < 5) {
-            PTLog.error("Five required images not present. Not showing notification");
+            PTLog.verbose("Five required images not present. Not showing notification");
             result = false;
         }
         return result;
@@ -240,27 +306,27 @@ public class TemplateRenderer {
     private boolean hasAllProdDispNotifKeys() {
         boolean result = true;
         if (pt_title == null || pt_title.isEmpty()) {
-            PTLog.error("Title is missing or empty. Not showing notification");
+            PTLog.verbose("Title is missing or empty. Not showing notification");
             result = false;
         }
         if (pt_msg == null || pt_msg.isEmpty()) {
-            PTLog.error("Message is missing or empty. Not showing notification");
+            PTLog.verbose("Message is missing or empty. Not showing notification");
             result = false;
         }
         if (bigTextList == null || bigTextList.size() < 3) {
-            PTLog.error("Three required product titles not present. Not showing notification");
+            PTLog.verbose("Three required product titles not present. Not showing notification");
             result = false;
         }
         if (smallTextList == null || smallTextList.size() < 3) {
-            PTLog.error("Three required product descriptions not present. Not showing notification");
+            PTLog.verbose("Three required product descriptions not present. Not showing notification");
             result = false;
         }
         if (deepLinkList == null || deepLinkList.size() < 3) {
-            PTLog.error("Three required deeplinks not present. Not showing notification");
+            PTLog.verbose("Three required deeplinks not present. Not showing notification");
             result = false;
         }
         if (imageList == null || imageList.size() < 3) {
-            PTLog.error("Three required images not present. Not showing notification");
+            PTLog.verbose("Three required images not present. Not showing notification");
             result = false;
         }
         return result;
@@ -385,7 +451,7 @@ public class TemplateRenderer {
             notificationBuilder.setSmallIcon(smallIcon)
                     .setCustomContentView(contentViewSmall)
                     .setCustomBigContentView(contentViewRating)
-                    .setContentTitle("Custom Notification")
+                    .setContentTitle(pt_title)
                     .setContentIntent(pIntent)
                     .setAutoCancel(true);
 
@@ -411,7 +477,7 @@ public class TemplateRenderer {
             raiseNotificationViewed(context,extras);
 
         } catch (Throwable t) {
-            PTLog.error("Error creating rating notification ", t);
+            PTLog.verbose("Error creating rating notification ", t);
         }
     }
 
@@ -499,7 +565,7 @@ public class TemplateRenderer {
             notificationBuilder.setSmallIcon(smallIcon)
                     .setCustomContentView(contentViewSmall)
                     .setCustomBigContentView(contentViewCarousel)
-                    .setContentTitle("Custom Notification")
+                    .setContentTitle(pt_title)
                     .setContentIntent(pIntent)
                     .setAutoCancel(true);
 
@@ -530,7 +596,7 @@ public class TemplateRenderer {
 
             raiseNotificationViewed(context,extras);
         } catch (Throwable t) {
-            PTLog.error("Error creating auto carousel notification ", t);
+            PTLog.verbose("Error creating auto carousel notification ", t);
         }
     }
 
@@ -608,7 +674,7 @@ public class TemplateRenderer {
             notificationBuilder.setSmallIcon(smallIcon)
                     .setCustomContentView(contentViewSmall)
                     .setCustomBigContentView(contentViewBig)
-                    .setContentTitle("Custom Notification")
+                    .setContentTitle(pt_title)
                     .setContentIntent(pIntent)
                     .setVibrate(new long[]{0L})
                     .setAutoCancel(true);
@@ -632,7 +698,7 @@ public class TemplateRenderer {
 
             raiseNotificationViewed(context,extras);
         } catch (Throwable t) {
-            PTLog.error("Error creating image only notification", t);
+            PTLog.verbose("Error creating image only notification", t);
         }
     }
 
@@ -757,7 +823,7 @@ public class TemplateRenderer {
             notificationBuilder.setSmallIcon(smallIcon)
                     .setCustomContentView(contentViewSmall)
                     .setCustomBigContentView(contentViewBig)
-                    .setContentTitle("Custom Notification")
+                    .setContentTitle(pt_title)
                     .setContentIntent(pIntent)
                     .setVibrate(new long[]{0L})
                     .setAutoCancel(true);
@@ -780,12 +846,15 @@ public class TemplateRenderer {
             Utils.loadIntoGlide(context, R.id.big_image, imageList.get(0), contentViewBig, notification, notificationId);
             raiseNotificationViewed(context,extras);
         } catch (Throwable t) {
-            PTLog.error("Error creating Product Display Notification ", t);
+            PTLog.verbose("Error creating Product Display Notification ", t);
         }
     }
 
     private void renderFiveIconNotification(Context context, Bundle extras, int notificationId) {
         try {
+            if (pt_title == null || pt_title.isEmpty()) {
+                pt_title = Utils.getApplicationName(context);
+            }
             contentFiveCTAs = new RemoteViews(context.getPackageName(), R.layout.five_cta);
 
             notificationId = new Random().nextInt();
@@ -858,7 +927,7 @@ public class TemplateRenderer {
             notificationBuilder.setSmallIcon(smallIcon)
                     .setCustomContentView(contentFiveCTAs)
                     .setCustomBigContentView(contentFiveCTAs)
-                    .setContentTitle("Custom Notification")
+                    .setContentTitle(pt_title)
                     .setContentIntent(pIntent)
                     .setOngoing(true)
                     .setVibrate(new long[]{0L})
@@ -886,35 +955,9 @@ public class TemplateRenderer {
 
             raiseNotificationViewed(context,extras);
         } catch (Throwable t) {
-            PTLog.error("Error creating image only notification", t);
+            PTLog.verbose("Error creating image only notification", t);
         }
 
-    }
-
-    private Bundle fromJson(JSONObject s) {
-        Bundle bundle = new Bundle();
-
-        for (Iterator<String> it = s.keys(); it.hasNext(); ) {
-            String key = it.next();
-            JSONArray arr = s.optJSONArray(key);
-            String str = s.optString(key);
-
-            if (arr != null && arr.length() <= 0)
-                bundle.putStringArray(key, new String[]{});
-
-            else if (arr != null && arr.optString(0) != null) {
-                String[] newarr = new String[arr.length()];
-                for (int i = 0; i < arr.length(); i++)
-                    newarr[i] = arr.optString(i);
-                bundle.putStringArray(key, newarr);
-            } else if (str != null)
-                bundle.putString(key, str);
-
-            else
-                System.err.println("unable to transform json to bundle " + key);
-        }
-
-        return bundle;
     }
 
     private void raiseNotificationViewed(Context context, Bundle extras){

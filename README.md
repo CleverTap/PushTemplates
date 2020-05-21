@@ -56,7 +56,7 @@ implementation 'com.github.bumptech.glide:glide:4.11.0'
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.1'
+implementation 'com.clevertap.android:push-templates:0.0.2'
 implementation 'com.clevertap.android:clevertap-android-sdk:3.8.0'
 implementation 'com.github.bumptech.glide:glide:4.11.0'
 ```
@@ -99,6 +99,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                     if(pt_id == null || pt_id.isEmpty()){
                         CleverTapAPI.createNotification(context,extras);
                     }else{
+                        TemplateRenderer.setDebugLevel(2); //-1 for OFF, 0, for INFO, 2 for DEBUG, 3 for VERBOSE (errors)
                         TemplateRenderer.createNotification(context,extras);
                     }
                 }else{
@@ -106,7 +107,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                 }
             }
         }catch (Throwable throwable){
-            PTLog.error("Error parsing FCM payload",throwable);
+            PTLog.verbose("Error parsing FCM payload",throwable);
         }
     }
 }
