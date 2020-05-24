@@ -4,7 +4,6 @@ enum TemplateType {
 
     BASIC("pt_basic"),
     AUTO_CAROUSEL("pt_carousel"),
-    MANUAL_CAROUSEL("pt_manual_carousel"),
     RATING("pt_rating"),
     FIVE_ICONS("pt_five_icons"),
     PRODUCT_DISPLAY("pt_product_display");
@@ -19,7 +18,6 @@ enum TemplateType {
         switch (type){
             case "pt_basic" : return BASIC;
             case "pt_carousel" : return AUTO_CAROUSEL;
-            case "pt_manual_carousel" : return MANUAL_CAROUSEL;
             case "pt_rating" : return RATING;
             case "pt_five_icons" : return FIVE_ICONS;
             case "pt_product_display" : return PRODUCT_DISPLAY;

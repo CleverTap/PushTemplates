@@ -52,7 +52,7 @@ public class TemplateRenderer {
     private String pt_bg;
     private String pt_rating_default_dl;
     private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating,
-             contentFiveCTAs, contentViewManualCarousel;
+             contentFiveCTAs;
     private String channelId;
     private int smallIcon = 0;
     private boolean requiresChannelId;
@@ -148,7 +148,7 @@ public class TemplateRenderer {
                 public void run() {
                     try {
                         String ptID = extras.getString(Constants.WZRK_PUSH_ID);
-                        if(dbHelper.isNotificationPresentInDB(ptID)){
+                        if(!dbHelper.isNotificationPresentInDB(ptID)){
                             _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
                             dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
                         }
@@ -209,10 +209,6 @@ public class TemplateRenderer {
                 if (hasAllCarouselNotifKeys())
                     renderAutoCarouselNotification(context, extras, notificationId);
                 break;
-            case MANUAL_CAROUSEL:
-                if (hasAllManualCarouselNotifKeys())
-                    renderManualCarouselNotification(context, extras, notificationId);
-                break;
             case RATING:
                 if (hasAllRatingNotifKeys())
                     renderRatingNotification(context, extras, notificationId);
@@ -252,27 +248,6 @@ public class TemplateRenderer {
     }
 
     private boolean hasAllCarouselNotifKeys() {
-        boolean result = true;
-        if (pt_title == null || pt_title.isEmpty()) {
-            PTLog.verbose("Title is missing or empty. Not showing notification");
-            result = false;
-        }
-        if (pt_msg == null || pt_msg.isEmpty()) {
-            PTLog.verbose("Message is missing or empty. Not showing notification");
-            result = false;
-        }
-        if (deepLinkList == null || deepLinkList.size() == 0) {
-            PTLog.verbose("Deeplink is missing or empty. Not showing notification");
-            result = false;
-        }
-        if (imageList == null || imageList.size() < 3) {
-            PTLog.verbose("Three required images not present. Not showing notification");
-            result = false;
-        }
-        return result;
-    }
-
-    private boolean hasAllManualCarouselNotifKeys() {
         boolean result = true;
         if (pt_title == null || pt_title.isEmpty()) {
             PTLog.verbose("Title is missing or empty. Not showing notification");
@@ -616,169 +591,6 @@ public class TemplateRenderer {
             }
 
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewCarousel, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
-
-
-            raiseNotificationViewed(context,extras);
-        } catch (Throwable t) {
-            PTLog.verbose("Error creating auto carousel notification ", t);
-        }
-    }
-
-    private void renderManualCarouselNotification(Context context, Bundle extras, int notificationId) {
-        try {
-            if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
-                notificationId = (int) (Math.random() * 100);
-            }
-
-            contentViewManualCarousel = new RemoteViews(context.getPackageName(), R.layout.manual_carousel);
-            contentViewManualCarousel.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
-            contentViewManualCarousel.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
-
-            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-            contentViewSmall.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
-            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
-
-            contentViewManualCarousel.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
-            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
-            contentViewManualCarousel.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
-            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
-
-            if (pt_title != null && !pt_title.isEmpty()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    contentViewManualCarousel.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
-                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
-                } else {
-                    contentViewManualCarousel.setTextViewText(R.id.title, Html.fromHtml(pt_title));
-                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title));
-                }
-            }
-
-            if (pt_msg != null && !pt_msg.isEmpty()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    contentViewManualCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
-                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
-                } else {
-                    contentViewManualCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
-                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
-                }
-            }
-
-            if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    contentViewManualCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary, Html.FROM_HTML_MODE_LEGACY));
-                } else {
-                    contentViewManualCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary));
-                }
-            }
-
-            if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
-                contentViewManualCarousel.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
-                contentViewSmall.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
-            }
-
-            if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
-                contentViewManualCarousel.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
-                contentViewSmall.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
-            }
-
-            if (pt_bg != null && !pt_bg.isEmpty()) {
-                contentViewManualCarousel.setInt(R.id.carousel_relative_layout, "setBackgroundColor", Color.parseColor(pt_bg));
-                contentViewSmall.setInt(R.id.content_view_small, "setBackgroundColor", Color.parseColor(pt_bg));
-            }
-
-            int reqCodePos0 = new Random().nextInt();
-            int reqCodePos1 = new Random().nextInt();
-            int reqCodePos2 = new Random().nextInt();
-
-            contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos1, View.INVISIBLE);
-            contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos2, View.INVISIBLE);
-
-            contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos1, View.INVISIBLE);
-            contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos0, View.VISIBLE);
-
-            Intent rightArrowPos0Intent = new Intent(context, PushTemplateReceiver.class);
-            rightArrowPos0Intent.putExtra("right_swipe", true);
-            rightArrowPos0Intent.putExtra("manual_carousel_from", 0);
-            rightArrowPos0Intent.putExtra("pt_reqcode0", reqCodePos0);
-            rightArrowPos0Intent.putExtra("pt_reqcode1", reqCodePos1);
-            rightArrowPos0Intent.putExtra("pt_reqcode2", reqCodePos2);
-            rightArrowPos0Intent.putExtra("notif_id", notificationId);
-            rightArrowPos0Intent.putExtras(extras);
-            PendingIntent contentRightPos0Intent = PendingIntent.getBroadcast(context, reqCodePos1, rightArrowPos0Intent, 0);
-            contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos0, contentRightPos0Intent);
-
-            Intent rightArrowPos1Intent = new Intent(context, PushTemplateReceiver.class);
-            rightArrowPos1Intent.putExtra("right_swipe", true);
-            rightArrowPos1Intent.putExtra("manual_carousel_from", 1);
-            rightArrowPos1Intent.putExtra("pt_reqcode0", reqCodePos0);
-            rightArrowPos1Intent.putExtra("pt_reqcode1", reqCodePos1);
-            rightArrowPos1Intent.putExtra("pt_reqcode2", reqCodePos2);
-            rightArrowPos1Intent.putExtra("notif_id", notificationId);
-            rightArrowPos1Intent.putExtras(extras);
-            PendingIntent contentRightPos1Intent = PendingIntent.getBroadcast(context, reqCodePos2, rightArrowPos1Intent, 0);
-            contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos1, contentRightPos1Intent);
-
-            Intent leftArrowPos1Intent = new Intent(context, PushTemplateReceiver.class);
-            leftArrowPos1Intent.putExtra("right_swipe", false);
-            leftArrowPos1Intent.putExtra("manual_carousel_from", 1);
-            leftArrowPos1Intent.putExtra("pt_reqcode0", reqCodePos0);
-            leftArrowPos1Intent.putExtra("pt_reqcode1", reqCodePos1);
-            leftArrowPos1Intent.putExtra("pt_reqcode2", reqCodePos2);
-            leftArrowPos1Intent.putExtra("notif_id", notificationId);
-            leftArrowPos1Intent.putExtras(extras);
-            PendingIntent contentLeftPos1Intent = PendingIntent.getBroadcast(context, reqCodePos0, leftArrowPos1Intent, 0);
-            contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos1, contentLeftPos1Intent);
-
-            Intent leftArrowPos2Intent = new Intent(context, PushTemplateReceiver.class);
-            leftArrowPos2Intent.putExtra("right_swipe", false);
-            leftArrowPos2Intent.putExtra("manual_carousel_from", 2);
-            leftArrowPos2Intent.putExtra("pt_reqcode0", reqCodePos0);
-            leftArrowPos2Intent.putExtra("pt_reqcode1", reqCodePos1);
-            leftArrowPos2Intent.putExtra("pt_reqcode2", reqCodePos2);
-            leftArrowPos2Intent.putExtra("notif_id", notificationId);
-            leftArrowPos2Intent.putExtras(extras);
-            PendingIntent contentLeftPos2Intent = PendingIntent.getBroadcast(context, reqCodePos1, leftArrowPos2Intent, 0);
-            contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos2, contentLeftPos2Intent);
-
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
-            launchIntent.putExtras(extras);
-            if (deepLinkList != null) {
-                launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
-            }
-            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
-                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            NotificationCompat.Builder notificationBuilder;
-            if (requiresChannelId) {
-                notificationBuilder = new NotificationCompat.Builder(context, channelId);
-            } else {
-                notificationBuilder = new NotificationCompat.Builder(context);
-            }
-
-            notificationBuilder.setSmallIcon(smallIcon)
-                    .setCustomContentView(contentViewSmall)
-                    .setCustomBigContentView(contentViewManualCarousel)
-                    .setContentTitle(pt_title)
-                    .setContentIntent(pIntent)
-                    .setAutoCancel(true);
-
-            Notification notification = notificationBuilder.build();
-            notificationManager.notify(notificationId, notification);
-
-            Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
-
-            Utils.loadIntoGlide(context, R.id.carousel_image, imageList.get(0), contentViewManualCarousel, notification, notificationId);
-
-            if (pt_large_icon != null && !pt_large_icon.isEmpty()) {
-                Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
-            } else {
-                contentViewSmall.setViewVisibility(R.id.large_icon, View.GONE);
-            }
-
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewManualCarousel, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
 
 
