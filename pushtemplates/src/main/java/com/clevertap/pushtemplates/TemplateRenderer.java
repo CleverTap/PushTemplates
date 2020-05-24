@@ -148,7 +148,7 @@ public class TemplateRenderer {
                 public void run() {
                     try {
                         String ptID = extras.getString(Constants.WZRK_PUSH_ID);
-                        if(dbHelper.isNotificationPresentInDB(ptID)){
+                        if(!dbHelper.isNotificationPresentInDB(ptID)){
                             _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
                             dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
                         }
