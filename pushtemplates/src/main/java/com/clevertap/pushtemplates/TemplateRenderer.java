@@ -691,11 +691,15 @@ public class TemplateRenderer {
             int reqCodePos1 = new Random().nextInt();
             int reqCodePos2 = new Random().nextInt();
 
-            contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos1, View.INVISIBLE);
-            contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos2, View.INVISIBLE);
-
-            contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos1, View.INVISIBLE);
+            contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos0, View.VISIBLE);
             contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos0, View.VISIBLE);
+
+            contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos1, View.INVISIBLE);
+            contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos1, View.INVISIBLE);
+
+            contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos2, View.INVISIBLE);
+            contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos2, View.INVISIBLE);
+
 
             Intent rightArrowPos0Intent = new Intent(context, PushTemplateReceiver.class);
             rightArrowPos0Intent.putExtra("right_swipe", true);
@@ -718,6 +722,28 @@ public class TemplateRenderer {
             rightArrowPos1Intent.putExtras(extras);
             PendingIntent contentRightPos1Intent = PendingIntent.getBroadcast(context, reqCodePos2, rightArrowPos1Intent, 0);
             contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos1, contentRightPos1Intent);
+
+            Intent rightArrowPos2Intent = new Intent(context, PushTemplateReceiver.class);
+            rightArrowPos2Intent.putExtra("right_swipe", true);
+            rightArrowPos2Intent.putExtra("manual_carousel_from", 2);
+            rightArrowPos2Intent.putExtra("pt_reqcode0", reqCodePos0);
+            rightArrowPos2Intent.putExtra("pt_reqcode1", reqCodePos1);
+            rightArrowPos2Intent.putExtra("pt_reqcode2", reqCodePos2);
+            rightArrowPos2Intent.putExtra("notif_id", notificationId);
+            rightArrowPos2Intent.putExtras(extras);
+            PendingIntent contentRightPos2Intent = PendingIntent.getBroadcast(context, reqCodePos0, rightArrowPos2Intent, 0);
+            contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos2, contentRightPos2Intent);
+
+            Intent leftArrowPos0Intent = new Intent(context, PushTemplateReceiver.class);
+            leftArrowPos0Intent.putExtra("right_swipe", false);
+            leftArrowPos0Intent.putExtra("manual_carousel_from", 0);
+            leftArrowPos0Intent.putExtra("pt_reqcode0", reqCodePos0);
+            leftArrowPos0Intent.putExtra("pt_reqcode1", reqCodePos1);
+            leftArrowPos0Intent.putExtra("pt_reqcode2", reqCodePos2);
+            leftArrowPos0Intent.putExtra("notif_id", notificationId);
+            leftArrowPos0Intent.putExtras(extras);
+            PendingIntent contentLeftPos0Intent = PendingIntent.getBroadcast(context, reqCodePos2, leftArrowPos0Intent, 0);
+            contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos0, contentLeftPos0Intent);
 
             Intent leftArrowPos1Intent = new Intent(context, PushTemplateReceiver.class);
             leftArrowPos1Intent.putExtra("right_swipe", false);
