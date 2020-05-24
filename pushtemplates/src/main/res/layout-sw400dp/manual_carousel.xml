@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/carousel_relative_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="4dp">
+
+    <RelativeLayout
+        android:id="@+id/rel_lyt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/small_icon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp" />
+
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_toEndOf="@id/small_icon"
+            android:layout_toRightOf="@id/small_icon"
+            android:text="app name"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_toEndOf="@id/app_name"
+            android:layout_toRightOf="@id/app_name"
+            android:text="app name"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/small_icon"
+            android:layout_alignLeft="@id/small_icon"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:text="title"
+            android:textAppearance="@style/PushTitle" />
+
+        <TextView
+            android:id="@+id/msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:layout_alignLeft="@id/title"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:text="message"
+            android:textAppearance="@style/PushMessage" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="232dp"
+        android:layout_below="@id/rel_lyt">
+        <ImageView
+            android:id="@+id/leftArrowPos1"
+            android:visibility="invisible"
+            android:src="@drawable/ic_arrow_back_ios"
+            android:layout_width="47dp"
+            android:layout_height="74dp"
+            android:layout_centerVertical="true" />
+        <ImageView
+            android:id="@+id/leftArrowPos2"
+            android:visibility="invisible"
+            android:src="@drawable/ic_arrow_back_ios"
+            android:layout_width="47dp"
+            android:layout_height="74dp"
+            android:layout_centerVertical="true" />
+
+        <ImageView
+            android:id="@+id/rightArrowPos0"
+            android:src="@drawable/ic_arrow_forward_ios"
+            android:layout_width="47dp"
+            android:layout_height="74dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />
+
+        <ImageView
+            android:id="@+id/rightArrowPos1"
+            android:visibility="invisible"
+            android:src="@drawable/ic_arrow_forward_ios"
+            android:layout_width="47dp"
+            android:layout_height="74dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />
+
+        <ImageView
+            android:id="@+id/carousel_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+</RelativeLayout>
