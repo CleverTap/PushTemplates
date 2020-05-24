@@ -34,7 +34,8 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 @SuppressWarnings("FieldCanBeLocal")
 public class TemplateRenderer {
 
-    private static int debugLevel = TemplateRenderer.LogLevel.INFO.intValue();;
+    private static int debugLevel = TemplateRenderer.LogLevel.INFO.intValue();
+    ;
 
     private String pt_id;
     private TemplateType templateType;
@@ -51,8 +52,9 @@ public class TemplateRenderer {
     private ArrayList<String> priceList;
     private String pt_bg;
     private String pt_rating_default_dl;
+    private String pt_small_view;
     private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating,
-             contentFiveCTAs;
+            contentFiveCTAs;
     private String channelId;
     private int smallIcon = 0;
     private boolean requiresChannelId;
@@ -85,7 +87,7 @@ public class TemplateRenderer {
      * @param level Can be one of the following:  -1 (disables all debugging), 0 (default, shows minimal SDK integration related logging),
      *              2(shows debug output)
      */
-    public static void setDebugLevel(int level){
+    public static void setDebugLevel(int level) {
         debugLevel = level;
     }
 
@@ -122,6 +124,7 @@ public class TemplateRenderer {
         pt_bg = extras.getString(Constants.PT_BG);
         pt_big_img = extras.getString(Constants.PT_BIG_IMG);
         pt_large_icon = extras.getString(Constants.PT_NOTIF_ICON);
+        pt_small_view = extras.getString(Constants.PT_SMALL_VIEW);
         imageList = Utils.getImageListFromExtras(extras);
         deepLinkList = Utils.getDeepLinkListFromExtras(extras);
         bigTextList = Utils.getBigTextFromExtras(extras);
@@ -137,7 +140,8 @@ public class TemplateRenderer {
     public static void createNotification(Context context, Bundle extras) {
         PTLog.verbose("Creating notification...");
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
-        templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+        //templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+        templateRenderer._createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
 
     private synchronized void dupeCheck(final Context context, final Bundle extras, int id) {
@@ -148,7 +152,7 @@ public class TemplateRenderer {
                 public void run() {
                     try {
                         String ptID = extras.getString(Constants.WZRK_PUSH_ID);
-                        if(!dbHelper.isNotificationPresentInDB(ptID)){
+                        if (!dbHelper.isNotificationPresentInDB(ptID)) {
                             _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
                             dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
                         }
@@ -220,6 +224,10 @@ public class TemplateRenderer {
             case PRODUCT_DISPLAY:
                 if (hasAllProdDispNotifKeys())
                     renderProductDisplayNotification(context, extras, notificationId);
+                break;
+            case ZERO_BEZEL:
+                if (hasAllBasicNotifKeys())
+                    renderZeroBezelNotification(context, extras, notificationId);
                 break;
         }
     }
@@ -342,10 +350,10 @@ public class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
-            contentViewRating.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
-            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
-            contentViewRating.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
-            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewRating.setTextColor(R.id.app_name, ContextCompat.getColor(context, R.color.gray));
+            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context, R.color.gray));
+            contentViewRating.setTextColor(R.id.timestamp, ContextCompat.getColor(context, R.color.gray));
+            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context, R.color.gray));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -433,7 +441,7 @@ public class TemplateRenderer {
             Intent launchIntent = new Intent(context, PushTemplateReceiver.class);
             launchIntent.putExtras(extras);
             launchIntent.putExtra("notif_id", notificationId);
-            launchIntent.putExtra("default_dl",true);
+            launchIntent.putExtra("default_dl", true);
             launchIntent.putExtra(Constants.WZRK_DL, pt_rating_default_dl);
             launchIntent.removeExtra(Constants.WZRK_ACTIONS);
             launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
@@ -474,7 +482,7 @@ public class TemplateRenderer {
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
             //Utils.loadIntoGlide(context, R.id.big_image_app, pt_large_icon, contentViewSmall, notification, notificationId);
 
-            raiseNotificationViewed(context,extras);
+            raiseNotificationViewed(context, extras);
 
         } catch (Throwable t) {
             PTLog.verbose("Error creating rating notification ", t);
@@ -491,10 +499,10 @@ public class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
-            contentViewCarousel.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
-            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
-            contentViewCarousel.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
-            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewCarousel.setTextColor(R.id.app_name, ContextCompat.getColor(context, R.color.gray));
+            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context, R.color.gray));
+            contentViewCarousel.setTextColor(R.id.timestamp, ContextCompat.getColor(context, R.color.gray));
+            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context, R.color.gray));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -594,7 +602,7 @@ public class TemplateRenderer {
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
 
 
-            raiseNotificationViewed(context,extras);
+            raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
             PTLog.verbose("Error creating auto carousel notification ", t);
         }
@@ -610,10 +618,10 @@ public class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
-            contentViewBig.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
-            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
-            contentViewBig.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
-            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewBig.setTextColor(R.id.app_name, ContextCompat.getColor(context, R.color.gray));
+            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context, R.color.gray));
+            contentViewBig.setTextColor(R.id.timestamp, ContextCompat.getColor(context, R.color.gray));
+            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context, R.color.gray));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -656,7 +664,7 @@ public class TemplateRenderer {
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
             launchIntent.putExtras(extras);
-            if (deepLinkList != null && deepLinkList.size()>0) {
+            if (deepLinkList != null && deepLinkList.size() > 0) {
                 launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
             }
             launchIntent.removeExtra(Constants.WZRK_ACTIONS);
@@ -696,7 +704,7 @@ public class TemplateRenderer {
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
 
-            raiseNotificationViewed(context,extras);
+            raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
             PTLog.verbose("Error creating image only notification", t);
         }
@@ -713,10 +721,10 @@ public class TemplateRenderer {
             contentViewSmall.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
-            contentViewBig.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
-            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
-            contentViewBig.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
-            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewBig.setTextColor(R.id.app_name, ContextCompat.getColor(context, R.color.gray));
+            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context, R.color.gray));
+            contentViewBig.setTextColor(R.id.timestamp, ContextCompat.getColor(context, R.color.gray));
+            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context, R.color.gray));
 
             if (!bigTextList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
@@ -844,7 +852,7 @@ public class TemplateRenderer {
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.big_image, imageList.get(0), contentViewBig, notification, notificationId);
-            raiseNotificationViewed(context,extras);
+            raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
             PTLog.verbose("Error creating Product Display Notification ", t);
         }
@@ -869,42 +877,42 @@ public class TemplateRenderer {
 
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("cta1", true);
-            notificationIntent1.putExtra("notif_id",notificationId);
+            notificationIntent1.putExtra("notif_id", notificationId);
             notificationIntent1.putExtras(extras);
             PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, reqCode1, notificationIntent1, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta1, contentIntent1);
 
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("cta2", true);
-            notificationIntent2.putExtra("notif_id",notificationId);
+            notificationIntent2.putExtra("notif_id", notificationId);
             notificationIntent2.putExtras(extras);
             PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, reqCode2, notificationIntent2, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta2, contentIntent2);
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("cta3", true);
-            notificationIntent3.putExtra("notif_id",notificationId);
+            notificationIntent3.putExtra("notif_id", notificationId);
             notificationIntent3.putExtras(extras);
             PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, reqCode3, notificationIntent3, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta3, contentIntent3);
 
             Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent4.putExtra("cta4", true);
-            notificationIntent4.putExtra("notif_id",notificationId);
+            notificationIntent4.putExtra("notif_id", notificationId);
             notificationIntent4.putExtras(extras);
-            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context,  reqCode4, notificationIntent4, 0);
+            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, reqCode4, notificationIntent4, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta4, contentIntent4);
 
             Intent notificationIntent5 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent5.putExtra("cta5", true);
-            notificationIntent5.putExtra("notif_id",notificationId);
+            notificationIntent5.putExtra("notif_id", notificationId);
             notificationIntent5.putExtras(extras);
             PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, reqCode5, notificationIntent5, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta5, contentIntent5);
 
             Intent notificationIntent6 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent6.putExtra("close", true);
-            notificationIntent6.putExtra("notif_id",notificationId);
+            notificationIntent6.putExtra("notif_id", notificationId);
             notificationIntent6.putExtras(extras);
             PendingIntent contentIntent6 = PendingIntent.getBroadcast(context, reqCode6, notificationIntent6, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.close, contentIntent6);
@@ -953,14 +961,159 @@ public class TemplateRenderer {
             }
             Utils.loadIntoGlide(context, R.id.close, R.drawable.pt_close, contentFiveCTAs, notification, notificationId);
 
-            raiseNotificationViewed(context,extras);
+            raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
             PTLog.verbose("Error creating image only notification", t);
         }
 
     }
 
-    private void raiseNotificationViewed(Context context, Bundle extras){
+    private void renderZeroBezelNotification(Context context, Bundle extras, int notificationId) {
+        try {
+            contentViewBig = new RemoteViews(context.getPackageName(), R.layout.zero_bezel);
+            contentViewBig.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
+            contentViewBig.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+            if (pt_small_view != null && pt_small_view.equals("text_only")) {
+                contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.cv_small_text_only);
+            } else {
+                contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.cv_small_zero_bezel);
+            }
+            contentViewSmall.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+            contentViewBig.setTextColor(R.id.app_name, ContextCompat.getColor(context, R.color.white));
+            contentViewBig.setTextColor(R.id.timestamp, ContextCompat.getColor(context, R.color.white));
+
+            if (pt_small_view != null && pt_small_view.equals("text_only")) {
+                contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context, R.color.gray));
+                contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context, R.color.gray));
+            } else {
+                contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context, R.color.white));
+                contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context, R.color.white));
+            }
+
+            if (pt_title != null && !pt_title.isEmpty()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                }
+            }
+
+            if (pt_small_view == null || !pt_small_view.equals("text_only")) {
+                if (pt_msg != null && !pt_msg.isEmpty()) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
+                    } else {
+                        contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                    }
+                }
+            } else {
+                contentViewSmall.setViewVisibility(R.id.msg, View.GONE);
+            }
+
+            if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewBig.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewBig.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary));
+                }
+            }
+
+            if (pt_bg != null && !pt_bg.isEmpty()) {
+                contentViewBig.setInt(R.id.image_only_big_linear_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+                contentViewSmall.setInt(R.id.content_view_small, "setBackgroundColor", Color.parseColor(pt_bg));
+            }
+
+            if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
+                contentViewBig.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+                contentViewSmall.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+            } else {
+                contentViewBig.setTextColor(R.id.title, ContextCompat.getColor(context, R.color.white));
+                if (pt_small_view == null || !pt_small_view.equals("text_only")) {
+                    contentViewSmall.setTextColor(R.id.title, ContextCompat.getColor(context, R.color.white));
+                }
+            }
+
+            if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
+                contentViewBig.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
+                if (pt_small_view == null || !pt_small_view.equals("text_only")) {
+                    contentViewSmall.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
+                }
+            } else {
+                contentViewBig.setTextColor(R.id.msg, ContextCompat.getColor(context, R.color.white));
+                if (pt_small_view == null || !pt_small_view.equals("text_only")) {
+                    contentViewSmall.setTextColor(R.id.msg, ContextCompat.getColor(context, R.color.white));
+                }
+            }
+
+            if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
+                notificationId = (int) (Math.random() * 100);
+            }
+
+            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            launchIntent.putExtras(extras);
+            if (deepLinkList != null && deepLinkList.size() > 0) {
+                launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
+            }
+            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder notificationBuilder;
+            if (requiresChannelId) {
+                notificationBuilder = new NotificationCompat.Builder(context, channelId);
+            } else {
+                notificationBuilder = new NotificationCompat.Builder(context);
+            }
+
+            notificationBuilder.setSmallIcon(smallIcon)
+                    .setCustomContentView(contentViewSmall)
+                    .setCustomBigContentView(contentViewBig)
+                    .setContentTitle(pt_title)
+                    .setContentIntent(pIntent)
+                    .setVibrate(new long[]{0L})
+                    .setAutoCancel(true);
+
+
+            Notification notification = notificationBuilder.build();
+
+
+            if (pt_big_img != null && !pt_big_img.isEmpty()) {
+                Utils.loadIntoGlide(context, R.id.big_image, pt_big_img, contentViewBig, notification, notificationId);
+                if (pt_small_view == null || !pt_small_view.equals("text_only")) {
+                    Utils.loadIntoGlide(context, R.id.bg_image, pt_big_img, contentViewSmall, notification, notificationId);
+                }
+            } else {
+                contentViewBig.setViewVisibility(R.id.big_image, View.GONE);
+            }
+
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
+
+
+            if (pt_small_view != null && pt_small_view.equals("text_only")) {
+                if (pt_large_icon != null && !pt_large_icon.isEmpty()) {
+                    Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
+                } else {
+                    notificationBuilder.setLargeIcon(Utils.getNotificationBitmap("", true, context));
+                }
+            } else {
+                Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+            }
+
+            notificationManager.notify(notificationId, notification);
+
+            raiseNotificationViewed(context, extras);
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating image only notification", t);
+        }
+    }
+
+    private void raiseNotificationViewed(Context context, Bundle extras) {
         CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
         if (instance != null) {
             instance.pushNotificationViewedEvent(extras);

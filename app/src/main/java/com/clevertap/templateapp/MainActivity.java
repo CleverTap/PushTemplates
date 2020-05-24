@@ -9,12 +9,18 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.clevertap.android.sdk.CleverTapAPI;
+import com.clevertap.pushtemplates.TemplateRenderer;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button sendBasicPush, sendCarouselPush, sendRatingPush, sendProductDisplayNotification, sendCTANotification;
+    Button sendBasicPush, sendCarouselPush, sendRatingPush, sendProductDisplayNotification,
+            sendCTANotification, sendZeroBezel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +87,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (cleverTapAPI != null) {
                     cleverTapAPI.pushEvent("Send CTA Notification");
+                }
+            }
+        });
+
+        sendZeroBezel = findViewById(R.id.zero_bezel);
+        sendZeroBezel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cleverTapAPI != null) {
+                    cleverTapAPI.pushEvent("Send Zero Bezel Notification");
                 }
             }
         });

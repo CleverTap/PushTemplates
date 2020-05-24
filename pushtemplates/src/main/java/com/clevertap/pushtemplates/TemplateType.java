@@ -6,7 +6,8 @@ enum TemplateType {
     AUTO_CAROUSEL("pt_carousel"),
     RATING("pt_rating"),
     FIVE_ICONS("pt_five_icons"),
-    PRODUCT_DISPLAY("pt_product_display");
+    PRODUCT_DISPLAY("pt_product_display"),
+    ZERO_BEZEL("pt_zero_bezel");
 
     private final String templateType;
 
@@ -21,6 +22,7 @@ enum TemplateType {
             case "pt_rating" : return RATING;
             case "pt_five_icons" : return FIVE_ICONS;
             case "pt_product_display" : return PRODUCT_DISPLAY;
+            case "pt_zero_bezel" : return ZERO_BEZEL;
             default: return null;
         }
     }
