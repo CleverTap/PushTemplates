@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button sendBasicPush, sendCarouselPush, sendRatingPush, sendProductDisplayNotification, sendCTANotification;
+    Button sendBasicPush, sendCarouselPush, sendRatingPush, sendProductDisplayNotification, sendCTANotification, sendTimerNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +81,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (cleverTapAPI != null) {
                     cleverTapAPI.pushEvent("Send CTA Notification");
+                }
+            }
+        });
+
+        sendTimerNotification = findViewById(R.id.timer);
+        sendTimerNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cleverTapAPI != null) {
+                    cleverTapAPI.pushEvent("Send Timer Notification");
                 }
             }
         });

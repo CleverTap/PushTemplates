@@ -16,7 +16,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
-import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.text.Html;
 import android.view.View;
@@ -61,7 +60,7 @@ public class TemplateRenderer {
     private NotificationManager notificationManager;
     private AsyncHelper asyncHelper;
     private DBHelper dbHelper;
-    private int pt_timer_threshold = -1;
+    private int pt_timer_threshold;
 
     @SuppressWarnings({"unused"})
     public enum LogLevel {
@@ -133,7 +132,7 @@ public class TemplateRenderer {
         pt_rating_default_dl = extras.getString(Constants.PT_DEFAULT_DL);
         asyncHelper = AsyncHelper.getInstance();
         dbHelper = new DBHelper(context);
-        pt_timer_threshold = extras.getInt(Constants.PT_TIMER_THRESHOLD);
+        pt_timer_threshold = Utils.getTimerThreshold(extras);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -342,7 +341,7 @@ public class TemplateRenderer {
 
     private boolean hasAllTimerKeys() {
         boolean result = true;
-        if (deepLinkList == null || deepLinkList.size() < 5) {
+        if (deepLinkList == null || deepLinkList.size() == 0) {
             PTLog.verbose("Five required deeplinks not present. Not showing notification");
             result = false;
         }
@@ -1063,19 +1062,11 @@ public class TemplateRenderer {
 
             raiseNotificationViewed(context,extras);
 
-            final int finalNotificationId = notificationId;
-            new CountDownTimer(pt_timer_threshold - 100, 1000) {
+            TemplateRenderer tr = new TemplateRenderer(context,extras);
+            tr.pTimer(context,pt_timer_threshold,notificationId);
 
-                public void onTick(long millisUntilFinished) {
-                    // doing nothing
-                }
-
-                public void onFinish() {
-                    Utils.cancelNotification(context.getApplicationContext(), finalNotificationId);
-                }
-            }.start();
         } catch (Throwable t) {
-            PTLog.verbose("Error creating auto carousel notification ", t);
+            PTLog.verbose("Error creating Timer notification ", t);
         }
     }
 
@@ -1083,6 +1074,26 @@ public class TemplateRenderer {
         CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
         if (instance != null) {
             instance.pushNotificationViewedEvent(extras);
+        }
+    }
+
+
+    private synchronized void pTimer(final Context context, final int pt_timer_threshold, final int notifcationId) {
+        try {
+            asyncHelper.postAsyncSafely("TimerTemplate#ParallelTimer", new Runnable() {
+                @RequiresApi(api = Build.VERSION_CODES.O)
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(pt_timer_threshold);
+                        Utils.cancelNotification(context,notifcationId);
+                    } catch (Throwable t) {
+                        PTLog.verbose("Couldn't render notification: " + t.getLocalizedMessage());
+                    }
+                }
+            });
+        } catch (Throwable t) {
+            PTLog.verbose("Failed to process push notification: " + t.getLocalizedMessage());
         }
     }
 }

@@ -284,9 +284,19 @@ public class Utils {
         return json.toString();
     }
 
-    public static void cancelNotification(Context ctx, int notifyId) {
+    static void cancelNotification(Context ctx, int notifyId) {
         String ns = Context.NOTIFICATION_SERVICE;
         NotificationManager nMgr = (NotificationManager) ctx.getSystemService(ns);
         nMgr.cancel(notifyId);
+    }
+
+    static int getTimerThreshold(Bundle extras){
+        String val = "-1";
+        for(String key : extras.keySet()){
+            if(key.contains(Constants.PT_TIMER_THRESHOLD)){
+                val =  extras.getString(key);
+            }
+        }
+        return Integer.parseInt(val);
     }
 }

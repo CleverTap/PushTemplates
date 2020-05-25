@@ -7,8 +7,7 @@ enum TemplateType {
     RATING("pt_rating"),
     FIVE_ICONS("pt_five_icons"),
     PRODUCT_DISPLAY("pt_product_display"),
-    TIMER("pt_timer"),
-    INPUT("pt_input");
+    TIMER("pt_timer");
 
 
     private final String templateType;
@@ -25,7 +24,6 @@ enum TemplateType {
             case "pt_five_icons" : return FIVE_ICONS;
             case "pt_product_display" : return PRODUCT_DISPLAY;
             case "pt_timer" : return TIMER;
-            case "pt_input" : return INPUT;
             default: return null;
         }
     }
