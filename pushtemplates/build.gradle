@@ -99,7 +99,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 artifacts {
     archives javadocJar
-    archives sourcesJar
+    ar  chives sourcesJar
 }
 
 Properties properties = new Properties()
