@@ -997,6 +997,9 @@ public class TemplateRenderer {
             contentViewTimer.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewTimer.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
+            contentViewTimer.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewTimer.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     contentViewTimer.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
@@ -1013,12 +1016,16 @@ public class TemplateRenderer {
                 }
             }
 
-            if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    contentViewTimer.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary, Html.FROM_HTML_MODE_LEGACY));
-                } else {
-                    contentViewTimer.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary));
-                }
+            if (pt_bg != null && !pt_bg.isEmpty()) {
+                contentViewTimer.setInt(R.id.image_only_big_linear_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+            }
+
+            if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
+                contentViewTimer.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+            }
+
+            if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
+                contentViewTimer.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
             }
 
             contentViewTimer.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + pt_timer_threshold,null,true);
