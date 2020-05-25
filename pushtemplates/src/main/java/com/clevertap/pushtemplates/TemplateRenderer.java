@@ -140,8 +140,7 @@ public class TemplateRenderer {
     public static void createNotification(Context context, Bundle extras) {
         PTLog.verbose("Creating notification...");
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
-        //templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
-        templateRenderer._createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+        templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
 
     private synchronized void dupeCheck(final Context context, final Bundle extras, int id) {
