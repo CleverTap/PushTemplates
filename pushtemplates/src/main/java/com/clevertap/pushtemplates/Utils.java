@@ -41,7 +41,9 @@ public class Utils {
 
 
 
-    static Bitmap getNotificationBitmap(String icoPath, boolean fallbackToAppIcon, final Context context)
+    @SuppressWarnings("unused")
+    static Bitmap getNotificationBitmap(String icoPath, boolean fallbackToAppIcon,
+                                        final Context context)
             throws NullPointerException {
         // If the icon path is not specified
         if (icoPath == null || icoPath.equals("")) {
@@ -52,21 +54,22 @@ public class Utils {
             icoPath = Constants.ICON_BASE_URL + "/" + icoPath;
         }
         Bitmap ic = getBitmapFromURL(icoPath);
-        //noinspection ConstantConditions
         return (ic != null) ? ic : ((fallbackToAppIcon) ? getAppIcon(context) : null);
     }
 
     private static Bitmap getAppIcon(final Context context) throws NullPointerException {
         // Try to get the app logo first
         try {
-            Drawable logo = context.getPackageManager().getApplicationLogo(context.getApplicationInfo());
+            Drawable logo =
+                    context.getPackageManager().getApplicationLogo(context.getApplicationInfo());
             if (logo == null)
                 throw new Exception("Logo is null");
             return drawableToBitmap(logo);
         } catch (Exception e) {
             // Try to get the app icon now
             // No error handling here - handle upstream
-            return drawableToBitmap(context.getPackageManager().getApplicationIcon(context.getApplicationInfo()));
+            return drawableToBitmap(
+                    context.getPackageManager().getApplicationIcon(context.getApplicationInfo()));
         }
     }
 
@@ -114,6 +117,7 @@ public class Utils {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     static String _getManifestStringValueForKey(Bundle manifest, String name) {
         try {
             Object o = manifest.get(name);
@@ -138,6 +142,7 @@ public class Utils {
         return imageList;
     }
 
+    @SuppressWarnings("unused")
     static ArrayList<String> getCTAListFromExtras(Bundle extras){
         ArrayList<String> ctaList = new ArrayList<>();
         for(String key : extras.keySet()){
@@ -187,46 +192,58 @@ public class Utils {
         return stList;
     }
 
-    static void loadIntoGlide(Context context, int imageResource, String imageURL, RemoteViews remoteViews, Notification notification, int notificationId) {
-        NotificationTarget bigNotifTarget = new NotificationTarget(
-                context,
-                imageResource,
-                remoteViews,
-                notification,
-                notificationId);
+    static void loadIntoGlide(Context context,
+                              int imageResource,
+                              String imageURL,
+                              RemoteViews remoteViews,
+                              Notification notification,
+                              int notificationId) {
         Glide
                 .with(context.getApplicationContext())
                 .asBitmap()
                 .load(imageURL)
                 .centerCrop()
-                .into(bigNotifTarget);
+                .into(buildNotificationTarget(context,imageResource,remoteViews,notification,
+                        notificationId));
     }
 
-    static void loadIntoGlide(Context context, int imageResource, int identifier, RemoteViews remoteViews, Notification notification, int notificationId) {
-        NotificationTarget bigNotifTarget = new NotificationTarget(
-                context,
-                imageResource,
-                remoteViews,
-                notification,
-                notificationId);
+    static void loadIntoGlide(Context context, int imageResource, int identifier,
+                              RemoteViews remoteViews, Notification notification,
+                              int notificationId) {
         Glide
                 .with(context.getApplicationContext())
                 .asBitmap()
                 .load(identifier)
                 .centerCrop()
-                .into(bigNotifTarget);
+                .into(buildNotificationTarget(context,imageResource,remoteViews,notification,
+                        notificationId));
+    }
+
+    static NotificationTarget buildNotificationTarget(Context context, int imageResource,
+                                                      RemoteViews remoteViews,
+                                                      Notification notification,
+                                                      int notificationId ){
+        return new NotificationTarget(
+                context,
+                imageResource,
+                remoteViews,
+                notification,
+                notificationId);
     }
 
     static String getTimeStamp(Context context) {
-        return DateUtils.formatDateTime(context, System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME);
+        return DateUtils.formatDateTime(context, System.currentTimeMillis(),
+                DateUtils.FORMAT_SHOW_TIME);
     }
 
     static String getApplicationName(Context context) {
         ApplicationInfo applicationInfo = context.getApplicationInfo();
         int stringId = applicationInfo.labelRes;
-        return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
+        return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString()
+                : context.getString(stringId);
     }
 
+    @SuppressWarnings("ConstantConditions")
     static Bundle fromJson(JSONObject s) {
         Bundle bundle = new Bundle();
 
