@@ -112,7 +112,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         }
     }
 
-    private void handleInputBoxNotification(Context context, Bundle extras, Intent intent) {
+    private void handleInputBoxNotification(Context context, Bundle extras, Intent intent){
 
         //Fetch Remote Input
         Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
@@ -128,10 +128,57 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 PTLog.verbose("Processing Input from Input Template");
 
-                /* Check if Feedback key is present and not empty, if present then show feedback and
-                auto kill in 3 secs. If not present, then launch the App with Dl or Launcher activity.
+
+
+                //Update the notification to show that the reply was received.
+                NotificationCompat.Builder repliedNotification;
+                if (requiresChannelId) {
+                    repliedNotification = new NotificationCompat.Builder(context, channelId);
+                } else {
+                    repliedNotification = new NotificationCompat.Builder(context);
+                }
+
+                Bundle metaData;
+                try {
+                    PackageManager pm = context.getPackageManager();
+                    ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+                    metaData = ai.metaData;
+                    String x = Utils._getManifestStringValueForKey(metaData, Constants.LABEL_NOTIFICATION_ICON);
+                    if (x == null) throw new IllegalArgumentException();
+                    smallIcon = context.getResources().getIdentifier(x, "drawable", context.getPackageName());
+                    if (smallIcon == 0) throw new IllegalArgumentException();
+                } catch (Throwable t) {
+                    smallIcon = Utils.getAppIconAsIntId(context);
+                }
+
+                repliedNotification.setSmallIcon(smallIcon)
+                        .setContentTitle(pt_title)
+                        .setContentText(extras.getString(Constants.PT_INPUT_FEEDBACK))
+                        .setVibrate(new long[]{0L})
+                        .setTimeoutAfter(Constants.PT_INPUT_TIMEOUT)
+                        .setWhen(System.currentTimeMillis())
+                        .setAutoCancel(true);
+
+                HashMap <String, Object> mp = new HashMap<>();
+                mp.put("Reply", reply);
+                mp.put("Platform", "Android");
+
+                cleverTapAPI.pushEvent("Reply Submitted", mp);
+
+                Notification notification = repliedNotification.build();
+                notificationManager.notify(notificationId, notification);
+
+                /* Check if Auto Open key is present and not empty, if not present then show feedback and
+                auto kill in 3 secs. If present, then launch the App with Dl or Launcher activity.
                 The launcher activity will get the reply in extras under the key "pt_reply" */
-                if (extras.getString(Constants.PT_INPUT_FEEDBACK) == null || extras.getString(Constants.PT_INPUT_FEEDBACK).isEmpty()) {
+                if(extras.getString(Constants.PT_INPUT_AUTO_OPEN) != null || extras.getBoolean(Constants.PT_INPUT_AUTO_OPEN)) {
+                    //adding delay for launcher
+                    try {
+                        Thread.sleep(Constants.PT_INPUT_TIMEOUT+200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                     Intent launchIntent;
 
                     if (extras.containsKey(Constants.WZRK_DL)) {
@@ -147,53 +194,12 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     launchIntent.putExtras(extras);
 
                     //adding reply to extra
-                    launchIntent.putExtra("pt_reply",reply);
+                    launchIntent.putExtra("pt_reply", reply);
 
                     launchIntent.removeExtra(Constants.WZRK_ACTIONS);
                     launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-                    Utils.cancelNotification(context,notificationId);
-
                     context.startActivity(launchIntent);
-                } else {
-
-                    //Update the notification to show that the reply was received.
-                    NotificationCompat.Builder repliedNotification;
-                    if (requiresChannelId) {
-                        repliedNotification = new NotificationCompat.Builder(context, channelId);
-                    } else {
-                        repliedNotification = new NotificationCompat.Builder(context);
-                    }
-
-                    Bundle metaData;
-                    try {
-                        PackageManager pm = context.getPackageManager();
-                        ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-                        metaData = ai.metaData;
-                        String x = Utils._getManifestStringValueForKey(metaData, Constants.LABEL_NOTIFICATION_ICON);
-                        if (x == null) throw new IllegalArgumentException();
-                        smallIcon = context.getResources().getIdentifier(x, "drawable", context.getPackageName());
-                        if (smallIcon == 0) throw new IllegalArgumentException();
-                    } catch (Throwable t) {
-                        smallIcon = Utils.getAppIconAsIntId(context);
-                    }
-
-                    repliedNotification.setSmallIcon(smallIcon)
-                            .setContentTitle(pt_title)
-                            .setContentText(extras.getString(Constants.PT_INPUT_FEEDBACK))
-                            .setVibrate(new long[]{0L})
-                            .setTimeoutAfter(Constants.PT_INPUT_TIMEOUT)
-                            .setWhen(System.currentTimeMillis())
-                            .setAutoCancel(true);
-
-                    HashMap <String, Object> mp = new HashMap<>();
-                    mp.put("Reply", reply);
-                    mp.put("Platform", "Android");
-
-                    cleverTapAPI.pushEvent("Reply Submitted", mp);
-
-                    Notification notification = repliedNotification.build();
-                    notificationManager.notify(notificationId, notification);
                 }
 
             } else {

@@ -64,6 +64,7 @@ public class TemplateRenderer {
     private int pt_timer_threshold;
     private String pt_input_label;
     private String pt_input_feedback;
+    private String pt_input_auto_open;
 
 
 
@@ -140,6 +141,7 @@ public class TemplateRenderer {
         pt_timer_threshold = Utils.getTimerThreshold(extras);
         pt_input_label = extras.getString(Constants.PT_INPUT_LABEL);
         pt_input_feedback = extras.getString(Constants.PT_INPUT_FEEDBACK);
+        pt_input_auto_open = extras.getString(Constants.PT_INPUT_AUTO_OPEN);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -157,11 +159,16 @@ public class TemplateRenderer {
                 @Override
                 public void run() {
                     try {
-                        String ptID = extras.getString(Constants.WZRK_PUSH_ID);
-                        if(!dbHelper.isNotificationPresentInDB(ptID)){
+                        if(extras.getString(Constants.WZRK_PUSH_ID) != null) {
+                            String ptID = extras.getString(Constants.WZRK_PUSH_ID);
+                            if(!dbHelper.isNotificationPresentInDB(ptID)){
+                                _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+                                dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
+                            }
+                        }else {
                             _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
-                            dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
                         }
+
                     } catch (Throwable t) {
                         PTLog.verbose("Couldn't render notification: " + t.getLocalizedMessage());
                     }
@@ -391,6 +398,10 @@ public class TemplateRenderer {
         }
         if (pt_input_label == null || pt_input_label.isEmpty()) {
             PTLog.verbose("Input Label is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_input_feedback == null || pt_input_feedback.isEmpty()) {
+            PTLog.verbose("Feedback Text is missing or empty. Not showing notification");
             result = false;
         }
         return result;
@@ -1145,6 +1156,7 @@ public class TemplateRenderer {
             launchIntent.putExtras(extras);
             launchIntent.putExtra(Constants.PT_NOTIF_ID, notificationId);
             launchIntent.putExtra(Constants.PT_INPUT_FEEDBACK, pt_input_feedback);
+            launchIntent.putExtra(Constants.PT_INPUT_AUTO_OPEN, pt_input_auto_open);
 
 
             if (deepLinkList != null && deepLinkList.size()>0) {
