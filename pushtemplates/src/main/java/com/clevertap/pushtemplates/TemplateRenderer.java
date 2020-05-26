@@ -63,7 +63,8 @@ public class TemplateRenderer {
     private DBHelper dbHelper;
     private int pt_timer_threshold;
     private String pt_input_label;
-    private String key_reply = "key_reply";
+    private String pt_input_feedback;
+
 
 
     @SuppressWarnings({"unused"})
@@ -138,6 +139,7 @@ public class TemplateRenderer {
         dbHelper = new DBHelper(context);
         pt_timer_threshold = Utils.getTimerThreshold(extras);
         pt_input_label = extras.getString(Constants.PT_INPUT_LABEL);
+        pt_input_feedback = extras.getString(Constants.PT_INPUT_FEEDBACK);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -389,10 +391,6 @@ public class TemplateRenderer {
         }
         if (pt_input_label == null || pt_input_label.isEmpty()) {
             PTLog.verbose("Input Label is missing or empty. Not showing notification");
-            result = false;
-        }
-        if (pt_big_img == null || pt_big_img.isEmpty()) {
-            PTLog.verbose("Display Image is missing or empty. Not showing notification");
             result = false;
         }
         return result;
@@ -1116,13 +1114,17 @@ public class TemplateRenderer {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
     private void renderInputBoxNotification(final Context context, Bundle extras, int notificationId) {
         try {
-
+            //Fetch Notif ID
             if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
                 notificationId = (int) (Math.random() * 100);
             }
-
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            //Set launchIntent to reciever
+            Intent launchIntent = new Intent(context, PushTemplateReceiver.class);
             launchIntent.putExtras(extras);
+            launchIntent.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            launchIntent.putExtra(Constants.PT_INPUT_FEEDBACK, pt_input_feedback);
+
+
             if (deepLinkList != null && deepLinkList.size()>0) {
                 launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
             }
@@ -1143,11 +1145,13 @@ public class TemplateRenderer {
                     .setContentText(pt_msg)
                     .setContentIntent(pIntent)
                     .setVibrate(new long[]{0L})
+                    .setWhen(System.currentTimeMillis())
                     .setAutoCancel(true);
 
 
+
             //Initialise RemoteInput
-            RemoteInput remoteInput = new RemoteInput.Builder(key_reply)
+            RemoteInput remoteInput = new RemoteInput.Builder(Constants.PT_INPUT_KEY)
                     .setLabel(pt_input_label)
                     .build();
 

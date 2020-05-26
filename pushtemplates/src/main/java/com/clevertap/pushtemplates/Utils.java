@@ -3,7 +3,9 @@ package com.clevertap.pushtemplates;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -27,6 +29,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
@@ -298,5 +301,18 @@ public class Utils {
             }
         }
         return Integer.parseInt(val);
+    }
+
+    static void setPackageNameFromResolveInfoList(Context context, Intent launchIntent){
+        List<ResolveInfo> resolveInfoList = context.getPackageManager().queryIntentActivities(launchIntent,0);
+        if(resolveInfoList != null){
+            String appPackageName = context.getPackageName();
+            for(ResolveInfo resolveInfo : resolveInfoList){
+                if(appPackageName.equals(resolveInfo.activityInfo.packageName)){
+                    launchIntent.setPackage(appPackageName);
+                    break;
+                }
+            }
+        }
     }
 }
