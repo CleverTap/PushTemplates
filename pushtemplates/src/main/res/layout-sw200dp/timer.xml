@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/image_only_big_linear_layout"
     android:background="@android:color/white"
     android:layout_width="match_parent"
@@ -45,6 +44,7 @@
         <TextView android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/PushTitle"
             android:layout_below="@+id/small_icon"
             android:layout_marginTop="8dp"
             android:layout_alignLeft="@id/small_icon"
@@ -55,6 +55,7 @@
         <TextView android:id="@+id/msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/PushMessage"
             android:layout_below="@+id/title"
             android:layout_alignLeft="@id/title"
             android:layout_marginRight="8dp"
