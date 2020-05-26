@@ -27,5 +27,5 @@ public class Constants {
     public static final String PT_BUY_NOW_DL = "pt_buy_now_dl";
     public static final String PT_DEFAULT_DL = "pt_default_dl";
     public static final String PT_TIMER_THRESHOLD = "pt_timer_threshold";
-
+    public static final String PT_INPUT_LABEL = "pt_input_label";
 }

@@ -14,6 +14,7 @@ import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.RemoteInput;
 import androidx.core.content.ContextCompat;
 
 import android.os.SystemClock;
@@ -53,7 +54,7 @@ public class TemplateRenderer {
     private String pt_bg;
     private String pt_rating_default_dl;
     private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating,
-             contentFiveCTAs, contentViewTimer;
+             contentFiveCTAs, contentViewTimer, contentViewInputBoxExpanded, contentViewInputBoxCollapsed;
     private String channelId;
     private int smallIcon = 0;
     private boolean requiresChannelId;
@@ -61,6 +62,9 @@ public class TemplateRenderer {
     private AsyncHelper asyncHelper;
     private DBHelper dbHelper;
     private int pt_timer_threshold;
+    private String pt_input_label;
+    private String key_reply = "key_reply";
+
 
     @SuppressWarnings({"unused"})
     public enum LogLevel {
@@ -133,6 +137,7 @@ public class TemplateRenderer {
         asyncHelper = AsyncHelper.getInstance();
         dbHelper = new DBHelper(context);
         pt_timer_threshold = Utils.getTimerThreshold(extras);
+        pt_input_label = extras.getString(Constants.PT_INPUT_LABEL);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -227,6 +232,10 @@ public class TemplateRenderer {
             case TIMER:
                 if (hasAllTimerKeys())
                     renderTimerNotification(context, extras, notificationId);
+                break;
+            case INPUT_BOX:
+                if (hasAllInputBoxKeys())
+                    renderInputBoxNotification(context, extras, notificationId);
                 break;
         }
     }
@@ -342,7 +351,7 @@ public class TemplateRenderer {
     private boolean hasAllTimerKeys() {
         boolean result = true;
         if (deepLinkList == null || deepLinkList.size() == 0) {
-            PTLog.verbose("Five required deeplinks not present. Not showing notification");
+            PTLog.verbose("Deeplink not present. Not showing notification");
             result = false;
         }
         if (pt_title == null || pt_title.isEmpty()) {
@@ -355,6 +364,35 @@ public class TemplateRenderer {
         }
         if (pt_timer_threshold == -1) {
             PTLog.verbose("Timer Threshold not defined. Not showing notification");
+            result = false;
+        }
+        return result;
+    }
+
+    private boolean hasAllInputBoxKeys() {
+        boolean result = true;
+        if (deepLinkList == null || deepLinkList.size() == 0) {
+            PTLog.verbose("Deeplink is not present. Not showing notification");
+            result = false;
+        }
+        if (pt_title == null || pt_title.isEmpty()) {
+            PTLog.verbose("Title is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_msg == null || pt_msg.isEmpty()) {
+            PTLog.verbose("Message is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_msg_summary == null || pt_msg_summary.isEmpty()) {
+            PTLog.verbose("Message is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_input_label == null || pt_input_label.isEmpty()) {
+            PTLog.verbose("Input Label is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_big_img == null || pt_big_img.isEmpty()) {
+            PTLog.verbose("Display Image is missing or empty. Not showing notification");
             result = false;
         }
         return result;
@@ -1059,6 +1097,7 @@ public class TemplateRenderer {
                     .setContentTitle(pt_title)
                     .setContentIntent(pIntent)
                     .setVibrate(new long[]{0L})
+                    .setTimeoutAfter(pt_timer_threshold)
                     .setAutoCancel(true);
 
             Notification notification = notificationBuilder.build();
@@ -1069,13 +1108,71 @@ public class TemplateRenderer {
 
             raiseNotificationViewed(context,extras);
 
-            TemplateRenderer tr = new TemplateRenderer(context,extras);
-            tr.pTimer(context,pt_timer_threshold,notificationId);
-
         } catch (Throwable t) {
             PTLog.verbose("Error creating Timer notification ", t);
         }
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
+    private void renderInputBoxNotification(final Context context, Bundle extras, int notificationId) {
+        try {
+
+            if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
+                notificationId = (int) (Math.random() * 100);
+            }
+
+            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            launchIntent.putExtras(extras);
+            if (deepLinkList != null && deepLinkList.size()>0) {
+                launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
+            }
+            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder notificationBuilder;
+            if (requiresChannelId) {
+                notificationBuilder = new NotificationCompat.Builder(context, channelId);
+            } else {
+                notificationBuilder = new NotificationCompat.Builder(context);
+            }
+
+            notificationBuilder.setSmallIcon(smallIcon)
+                    .setContentTitle(pt_title)
+                    .setContentText(pt_msg)
+                    .setContentIntent(pIntent)
+                    .setVibrate(new long[]{0L})
+                    .setAutoCancel(true);
+
+
+            //Initialise RemoteInput
+            RemoteInput remoteInput = new RemoteInput.Builder(key_reply)
+                    .setLabel(pt_input_label)
+                    .build();
+
+
+            //Notification Action with RemoteInput instance added.
+            NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(
+                    android.R.drawable.sym_action_chat, pt_input_label, pIntent)
+                    .addRemoteInput(remoteInput)
+                    .setAllowGeneratedReplies(true)
+                    .build();
+
+
+            //Notification.Action instance added to Notification Builder.
+            notificationBuilder.addAction(replyAction);
+
+            Notification notification = notificationBuilder.build();
+            notificationManager.notify(notificationId, notification);
+
+            raiseNotificationViewed(context,extras);
+
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating Input Box notification ", t);
+        }
+    }
+
 
     private void raiseNotificationViewed(Context context, Bundle extras){
         CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
@@ -1084,23 +1181,4 @@ public class TemplateRenderer {
         }
     }
 
-
-    private synchronized void pTimer(final Context context, final int pt_timer_threshold, final int notifcationId) {
-        try {
-            asyncHelper.postAsyncSafely("TimerTemplate#ParallelTimer", new Runnable() {
-                @RequiresApi(api = Build.VERSION_CODES.O)
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(pt_timer_threshold);
-                        Utils.cancelNotification(context,notifcationId);
-                    } catch (Throwable t) {
-                        PTLog.verbose("Couldn't render notification: " + t.getLocalizedMessage());
-                    }
-                }
-            });
-        } catch (Throwable t) {
-            PTLog.verbose("Failed to process push notification: " + t.getLocalizedMessage());
-        }
-    }
 }

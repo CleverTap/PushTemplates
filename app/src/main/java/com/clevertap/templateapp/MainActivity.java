@@ -9,18 +9,19 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.clevertap.android.sdk.CleverTapAPI;
+import com.clevertap.pushtemplates.TemplateRenderer;
 
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button sendBasicPush, sendCarouselPush, sendRatingPush, sendProductDisplayNotification, sendCTANotification, sendTimerNotification;
+    Button sendBasicPush, sendCarouselPush, sendRatingPush, sendProductDisplayNotification, sendCTANotification, sendTimerNotification,sendInputBoxNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        TemplateRenderer.setDebugLevel(3);
         final CleverTapAPI cleverTapAPI = CleverTapAPI.getDefaultInstance(getApplicationContext());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -91,6 +92,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (cleverTapAPI != null) {
                     cleverTapAPI.pushEvent("Send Timer Notification");
+                }
+            }
+        });
+
+        sendInputBoxNotification = findViewById(R.id.inputBox);
+        sendInputBoxNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cleverTapAPI != null) {
+                    cleverTapAPI.pushEvent("Send Input Box Notification");
                 }
             }
         });
