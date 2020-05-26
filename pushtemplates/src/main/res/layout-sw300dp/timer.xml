@@ -64,16 +64,30 @@
             android:layout_marginEnd="8dp"
             android:text="message"/>
 
+
+
+        <Chronometer
+            android:id="@+id/chronometer"
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:background="#FFFFFF"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:paddingTop="14dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp" />
+
     </RelativeLayout>
 
-    <Chronometer
-        android:id="@+id/chronometer"
+    <ImageView
+        android:id="@+id/big_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:textSize="24sp"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="#000000"
-        android:background="#FFFFFF" />
+        android:layout_height="144dp"
+        android:layout_marginTop="10dp"
+        android:scaleType="centerCrop"
+        />
+
 </LinearLayout>

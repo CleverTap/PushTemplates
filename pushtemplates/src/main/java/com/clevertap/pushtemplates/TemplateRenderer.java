@@ -54,7 +54,7 @@ public class TemplateRenderer {
     private String pt_bg;
     private String pt_rating_default_dl;
     private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating,
-             contentFiveCTAs, contentViewTimer, contentViewInputBoxExpanded, contentViewInputBoxCollapsed;
+             contentFiveCTAs, contentViewTimer, contentViewTimerCollapsed;
     private String channelId;
     private int smallIcon = 0;
     private boolean requiresChannelId;
@@ -1030,42 +1030,59 @@ public class TemplateRenderer {
         try {
 
             contentViewTimer = new RemoteViews(context.getPackageName(), R.layout.timer);
+            contentViewTimerCollapsed = new RemoteViews(context.getPackageName(), R.layout.timer_collapsed);
             contentViewTimer.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewTimer.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewTimer.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
             contentViewTimer.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewTimerCollapsed.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
+            contentViewTimerCollapsed.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+            contentViewTimerCollapsed.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewTimerCollapsed.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
 
             if (pt_title != null && !pt_title.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     contentViewTimer.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
+                    contentViewTimerCollapsed.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
                 } else {
                     contentViewTimer.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                    contentViewTimerCollapsed.setTextViewText(R.id.title, Html.fromHtml(pt_title));
                 }
             }
 
             if (pt_msg != null && !pt_msg.isEmpty()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     contentViewTimer.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
+                    contentViewTimerCollapsed.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
                 } else {
                     contentViewTimer.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                    contentViewTimerCollapsed.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
                 }
             }
 
             if (pt_bg != null && !pt_bg.isEmpty()) {
                 contentViewTimer.setInt(R.id.image_only_big_linear_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+                contentViewTimerCollapsed.setInt(R.id.content_view_small, "setBackgroundColor", Color.parseColor(pt_bg));
             }
 
             if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
                 contentViewTimer.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+                contentViewTimerCollapsed.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
             }
 
             if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
                 contentViewTimer.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
+                contentViewTimerCollapsed.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
+
             }
 
             contentViewTimer.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + pt_timer_threshold,null,true);
             contentViewTimer.setChronometerCountDown(R.id.chronometer, true);
+
+            contentViewTimerCollapsed.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + pt_timer_threshold,null,true);
+            contentViewTimerCollapsed.setChronometerCountDown(R.id.chronometer, true);
 
 
             if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
@@ -1090,7 +1107,7 @@ public class TemplateRenderer {
             }
 
             notificationBuilder.setSmallIcon(smallIcon)
-                    .setCustomContentView(contentViewTimer)
+                    .setCustomContentView(contentViewTimerCollapsed)
                     .setCustomBigContentView(contentViewTimer)
                     .setContentTitle(pt_title)
                     .setContentIntent(pIntent)
@@ -1101,6 +1118,11 @@ public class TemplateRenderer {
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
 
+            if (pt_big_img != null && !pt_big_img.isEmpty()) {
+                Utils.loadIntoGlide(context, R.id.big_image, pt_big_img, contentViewTimer, notification, notificationId);
+            } else {
+                contentViewTimer.setViewVisibility(R.id.big_image, View.GONE);
+            }
 
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewTimer, notification, notificationId);
 
