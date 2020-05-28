@@ -128,7 +128,9 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 PTLog.verbose("Processing Input from Input Template");
 
+                extras.putString(Constants.PT_INPUT_KEY,reply.toString());
 
+                Utils.raiseCleverTapEvent(cleverTapAPI, extras, Constants.PT_INPUT_KEY);
 
                 //Update the notification to show that the reply was received.
                 NotificationCompat.Builder repliedNotification;
@@ -158,12 +160,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                         .setTimeoutAfter(Constants.PT_INPUT_TIMEOUT)
                         .setWhen(System.currentTimeMillis())
                         .setAutoCancel(true);
-
-                HashMap <String, Object> mp = new HashMap<>();
-                mp.put("Reply", reply);
-                mp.put("Platform", "Android");
-
-                cleverTapAPI.pushEvent("Reply Submitted", mp);
 
                 Notification notification = repliedNotification.build();
                 notificationManager.notify(notificationId, notification);

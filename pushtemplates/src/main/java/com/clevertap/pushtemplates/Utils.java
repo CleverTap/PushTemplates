@@ -18,6 +18,7 @@ import android.widget.RemoteViews;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
+import com.clevertap.android.sdk.CleverTapAPI;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +29,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -314,5 +316,102 @@ public class Utils {
                 }
             }
         }
+    }
+
+    static void raiseCleverTapEvent(CleverTapAPI cleverTapAPI, Bundle extras) {
+
+        HashMap<String, Object> eProps;
+        eProps = getEventPropertiesFromExtras(extras);
+
+        String eName = getEventNameFromExtras(extras);
+
+        if (eName != null || !eName.isEmpty()){
+            if (eProps != null)
+                cleverTapAPI.pushEvent(eName, eProps);
+            else
+                cleverTapAPI.pushEvent(eName);
+        }
+
+    }
+
+    static void raiseCleverTapEvent(CleverTapAPI cleverTapAPI, Bundle extras,String key) {
+
+        HashMap<String, Object> eProps;
+        String value = extras.getString(key);
+
+        eProps = getEventPropertiesFromExtras(extras,key,value);
+
+        String eName = getEventNameFromExtras(extras);
+
+        if (eName != null || !eName.isEmpty()){
+            if (eProps != null)
+                cleverTapAPI.pushEvent(eName, eProps);
+            else
+                cleverTapAPI.pushEvent(eName);
+        }
+
+    }
+
+    static String getEventNameFromExtras(Bundle extras) {
+        String eName = null;
+        for(String key : extras.keySet()){
+            if(key.contains(Constants.PT_EVENT_NAME_KEY)){
+               eName = extras.getString(key);
+            }
+        }
+        return eName;
+    }
+
+    static HashMap<String, Object> getEventPropertiesFromExtras(Bundle extras,String pkey, String value) {
+        HashMap<String, Object> eProps = new HashMap<>();
+
+        String[] eProp;
+        for(String key : extras.keySet()){
+            if(key.contains(Constants.PT_EVENT_PROPERTY_KEY)){
+                if (extras.getString(key) != null || !extras.getString(key).isEmpty()) {
+                    if(key.contains(Constants.PT_EVENT_PROPERTY_SEPERATOR)){
+                        eProp = key.split(Constants.PT_EVENT_PROPERTY_SEPERATOR);
+                        if(extras.getString(key).equalsIgnoreCase(pkey)) {
+                            eProps.put(eProp[1],value);
+                            continue;
+                        }
+                        eProps.put(eProp[1],extras.getString(key));
+                    }else{
+                        PTLog.verbose("Property " + key + " does not have the separator");
+                    }
+
+                }
+                else{
+                    PTLog.verbose("Property Key is Empty. Skipping Property: " + key);
+                }
+
+            }
+        }
+        return eProps;
+    }
+
+
+    static HashMap<String, Object> getEventPropertiesFromExtras(Bundle extras) {
+        HashMap<String, Object> eProps = new HashMap<>();
+
+        String[] eProp;
+        for(String key : extras.keySet()){
+            if(key.contains(Constants.PT_EVENT_PROPERTY_KEY)){
+                if (extras.getString(key) != null || !extras.getString(key).isEmpty()) {
+                    if(key.contains(Constants.PT_EVENT_PROPERTY_SEPERATOR)){
+                        eProp = key.split(Constants.PT_EVENT_PROPERTY_SEPERATOR);
+                        eProps.put(eProp[1],extras.getString(key));
+                    }else{
+                        PTLog.verbose("Property " + key + " does not have the separator");
+                    }
+
+                }
+                else{
+                    PTLog.verbose("Property Key is Empty. Skipping Property: " + key);
+                }
+
+            }
+        }
+        return eProps;
     }
 }

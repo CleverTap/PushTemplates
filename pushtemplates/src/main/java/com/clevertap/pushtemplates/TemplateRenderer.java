@@ -1089,10 +1089,10 @@ public class TemplateRenderer {
 
             }
 
-            contentViewTimer.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + pt_timer_threshold,null,true);
+            contentViewTimer.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (pt_timer_threshold*1000),null,true);
             contentViewTimer.setChronometerCountDown(R.id.chronometer, true);
 
-            contentViewTimerCollapsed.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + pt_timer_threshold,null,true);
+            contentViewTimerCollapsed.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (pt_timer_threshold*1000),null,true);
             contentViewTimerCollapsed.setChronometerCountDown(R.id.chronometer, true);
 
 
@@ -1123,7 +1123,7 @@ public class TemplateRenderer {
                     .setContentTitle(pt_title)
                     .setContentIntent(pIntent)
                     .setVibrate(new long[]{0L})
-                    .setTimeoutAfter(pt_timer_threshold)
+                    .setTimeoutAfter(pt_timer_threshold*1000)
                     .setAutoCancel(true);
 
             Notification notification = notificationBuilder.build();

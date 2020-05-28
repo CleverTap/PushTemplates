@@ -33,4 +33,7 @@ public class Constants {
     public static final int PT_INPUT_TIMEOUT = 1000;
     public static final String PT_NOTIF_ID = "notificationId";
     public static final String PT_INPUT_AUTO_OPEN = "pt_input_auto_open";
+    public static final String PT_EVENT_NAME_KEY = "pt_event_name";
+    public static final String PT_EVENT_PROPERTY_KEY = "pt_event_property";
+    public static final String PT_EVENT_PROPERTY_SEPERATOR = "pt_event_property_";
 }
