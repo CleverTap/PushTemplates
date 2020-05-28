@@ -15,7 +15,7 @@ ext {
     siteUrl = 'https://https://github.com/CleverTap/PushTemplates'
     gitUrl = 'https://github.com/CleverTap/PushTemplates.git'
 
-    libraryVersion = '0.0.2'
+    libraryVersion = '0.0.3'
 
     developerId = 'clevertap'
     developerName = 'CleverTap'
@@ -32,8 +32,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 01
-        versionName "0.0.2"
+        versionCode 03
+        versionName "0.0.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

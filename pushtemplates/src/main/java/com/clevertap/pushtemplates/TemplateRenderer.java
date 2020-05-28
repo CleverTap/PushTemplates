@@ -14,8 +14,10 @@ import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.RemoteInput;
 import androidx.core.content.ContextCompat;
 
+import android.os.SystemClock;
 import android.text.Html;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -34,7 +36,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 @SuppressWarnings("FieldCanBeLocal")
 public class TemplateRenderer {
 
-    private static int debugLevel = TemplateRenderer.LogLevel.INFO.intValue();;
+    private static int debugLevel = TemplateRenderer.LogLevel.INFO.intValue();
 
     private String pt_id;
     private TemplateType templateType;
@@ -52,13 +54,19 @@ public class TemplateRenderer {
     private String pt_bg;
     private String pt_rating_default_dl;
     private RemoteViews contentViewBig, contentViewSmall, contentViewCarousel, contentViewRating,
-             contentFiveCTAs, contentViewManualCarousel;
+             contentFiveCTAs, contentViewTimer, contentViewTimerCollapsed, contentViewManualCarousel;
     private String channelId;
     private int smallIcon = 0;
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
     private AsyncHelper asyncHelper;
     private DBHelper dbHelper;
+    private int pt_timer_threshold;
+    private String pt_input_label;
+    private String pt_input_feedback;
+    private String pt_input_auto_open;
+
+
 
     @SuppressWarnings({"unused"})
     public enum LogLevel {
@@ -130,6 +138,10 @@ public class TemplateRenderer {
         pt_rating_default_dl = extras.getString(Constants.PT_DEFAULT_DL);
         asyncHelper = AsyncHelper.getInstance();
         dbHelper = new DBHelper(context);
+        pt_timer_threshold = Utils.getTimerThreshold(extras);
+        pt_input_label = extras.getString(Constants.PT_INPUT_LABEL);
+        pt_input_feedback = extras.getString(Constants.PT_INPUT_FEEDBACK);
+        pt_input_auto_open = extras.getString(Constants.PT_INPUT_AUTO_OPEN);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -147,11 +159,16 @@ public class TemplateRenderer {
                 @Override
                 public void run() {
                     try {
-                        String ptID = extras.getString(Constants.WZRK_PUSH_ID);
-                        if(!dbHelper.isNotificationPresentInDB(ptID)){
+                        if(extras.getString(Constants.WZRK_PUSH_ID) != null || !extras.getString(Constants.WZRK_PUSH_ID).isEmpty()) {
+                            String ptID = extras.getString(Constants.WZRK_PUSH_ID);
+                            if(!dbHelper.isNotificationPresentInDB(ptID)){
+                                _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+                                dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
+                            }
+                        }else {
                             _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
-                            dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
                         }
+
                     } catch (Throwable t) {
                         PTLog.verbose("Couldn't render notification: " + t.getLocalizedMessage());
                     }
@@ -224,6 +241,14 @@ public class TemplateRenderer {
             case PRODUCT_DISPLAY:
                 if (hasAllProdDispNotifKeys())
                     renderProductDisplayNotification(context, extras, notificationId);
+                break;
+            case TIMER:
+                if (hasAllTimerKeys())
+                    renderTimerNotification(context, extras, notificationId);
+                break;
+            case INPUT_BOX:
+                if (hasAllInputBoxKeys())
+                    renderInputBoxNotification(context, extras, notificationId);
                 break;
         }
     }
@@ -352,6 +377,56 @@ public class TemplateRenderer {
         }
         if (imageList == null || imageList.size() < 3) {
             PTLog.verbose("Three required images not present. Not showing notification");
+            result = false;
+        }
+        return result;
+    }
+
+    private boolean hasAllTimerKeys() {
+        boolean result = true;
+        if (deepLinkList == null || deepLinkList.size() == 0) {
+            PTLog.verbose("Deeplink not present. Not showing notification");
+            result = false;
+        }
+        if (pt_title == null || pt_title.isEmpty()) {
+            PTLog.verbose("Title is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_msg == null || pt_msg.isEmpty()) {
+            PTLog.verbose("Message is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_timer_threshold == -1) {
+            PTLog.verbose("Timer Threshold not defined. Not showing notification");
+            result = false;
+        }
+        return result;
+    }
+
+    private boolean hasAllInputBoxKeys() {
+        boolean result = true;
+        if (deepLinkList == null || deepLinkList.size() == 0) {
+            PTLog.verbose("Deeplink is not present. Not showing notification");
+            result = false;
+        }
+        if (pt_title == null || pt_title.isEmpty()) {
+            PTLog.verbose("Title is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_msg == null || pt_msg.isEmpty()) {
+            PTLog.verbose("Message is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_msg_summary == null || pt_msg_summary.isEmpty()) {
+            PTLog.verbose("Message is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_input_label == null || pt_input_label.isEmpty()) {
+            PTLog.verbose("Input Label is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_input_feedback == null || pt_input_feedback.isEmpty()) {
+            PTLog.verbose("Feedback Text is missing or empty. Not showing notification");
             result = false;
         }
         return result;
@@ -1174,10 +1249,188 @@ public class TemplateRenderer {
 
     }
 
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void renderTimerNotification(final Context context, Bundle extras, int notificationId) {
+        try {
+
+            contentViewTimer = new RemoteViews(context.getPackageName(), R.layout.timer);
+            contentViewTimerCollapsed = new RemoteViews(context.getPackageName(), R.layout.timer_collapsed);
+            contentViewTimer.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
+            contentViewTimer.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+            contentViewTimer.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewTimer.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewTimerCollapsed.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
+            contentViewTimerCollapsed.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+            contentViewTimerCollapsed.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewTimerCollapsed.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+
+            if (pt_title != null && !pt_title.isEmpty()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewTimer.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
+                    contentViewTimerCollapsed.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewTimer.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                    contentViewTimerCollapsed.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                }
+            }
+
+            if (pt_msg != null && !pt_msg.isEmpty()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewTimer.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
+                    contentViewTimerCollapsed.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewTimer.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                    contentViewTimerCollapsed.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                }
+            }
+
+            if (pt_bg != null && !pt_bg.isEmpty()) {
+                contentViewTimer.setInt(R.id.image_only_big_linear_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+                contentViewTimerCollapsed.setInt(R.id.content_view_small, "setBackgroundColor", Color.parseColor(pt_bg));
+            }
+
+            if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
+                contentViewTimer.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+                contentViewTimerCollapsed.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+            }
+
+            if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
+                contentViewTimer.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
+                contentViewTimerCollapsed.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
+
+            }
+
+            contentViewTimer.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + pt_timer_threshold,null,true);
+            contentViewTimer.setChronometerCountDown(R.id.chronometer, true);
+
+            contentViewTimerCollapsed.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + pt_timer_threshold,null,true);
+            contentViewTimerCollapsed.setChronometerCountDown(R.id.chronometer, true);
+
+
+            if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
+                notificationId = (int) (Math.random() * 100);
+            }
+
+            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            launchIntent.putExtras(extras);
+            if (deepLinkList != null && deepLinkList.size()>0) {
+                launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
+            }
+            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder notificationBuilder;
+            if (requiresChannelId) {
+                notificationBuilder = new NotificationCompat.Builder(context, channelId);
+            } else {
+                notificationBuilder = new NotificationCompat.Builder(context);
+            }
+
+            notificationBuilder.setSmallIcon(smallIcon)
+                    .setCustomContentView(contentViewTimerCollapsed)
+                    .setCustomBigContentView(contentViewTimer)
+                    .setContentTitle(pt_title)
+                    .setContentIntent(pIntent)
+                    .setVibrate(new long[]{0L})
+                    .setTimeoutAfter(pt_timer_threshold)
+                    .setAutoCancel(true);
+
+            Notification notification = notificationBuilder.build();
+            notificationManager.notify(notificationId, notification);
+
+            if (pt_big_img != null && !pt_big_img.isEmpty()) {
+                Utils.loadIntoGlide(context, R.id.big_image, pt_big_img, contentViewTimer, notification, notificationId);
+            } else {
+                contentViewTimer.setViewVisibility(R.id.big_image, View.GONE);
+            }
+
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewTimer, notification, notificationId);
+
+            raiseNotificationViewed(context,extras);
+
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating Timer notification ", t);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
+    private void renderInputBoxNotification(final Context context, Bundle extras, int notificationId) {
+        try {
+            //Fetch Notif ID
+            if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
+                notificationId = (int) (Math.random() * 100);
+            }
+            //Set launchIntent to reciever
+            Intent launchIntent = new Intent(context, PushTemplateReceiver.class);
+            launchIntent.putExtras(extras);
+            launchIntent.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            launchIntent.putExtra(Constants.PT_INPUT_FEEDBACK, pt_input_feedback);
+            launchIntent.putExtra(Constants.PT_INPUT_AUTO_OPEN, pt_input_auto_open);
+
+
+            if (deepLinkList != null && deepLinkList.size()>0) {
+                launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
+            }
+            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder notificationBuilder;
+            if (requiresChannelId) {
+                notificationBuilder = new NotificationCompat.Builder(context, channelId);
+            } else {
+                notificationBuilder = new NotificationCompat.Builder(context);
+            }
+
+            notificationBuilder.setSmallIcon(smallIcon)
+                    .setContentTitle(pt_title)
+                    .setContentText(pt_msg)
+                    .setContentIntent(pIntent)
+                    .setVibrate(new long[]{0L})
+                    .setWhen(System.currentTimeMillis())
+                    .setAutoCancel(true);
+
+
+
+            //Initialise RemoteInput
+            RemoteInput remoteInput = new RemoteInput.Builder(Constants.PT_INPUT_KEY)
+                    .setLabel(pt_input_label)
+                    .build();
+
+
+            //Notification Action with RemoteInput instance added.
+            NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(
+                    android.R.drawable.sym_action_chat, pt_input_label, pIntent)
+                    .addRemoteInput(remoteInput)
+                    .setAllowGeneratedReplies(true)
+                    .build();
+
+
+            //Notification.Action instance added to Notification Builder.
+            notificationBuilder.addAction(replyAction);
+
+            Notification notification = notificationBuilder.build();
+            notificationManager.notify(notificationId, notification);
+
+            raiseNotificationViewed(context,extras);
+
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating Input Box notification ", t);
+        }
+    }
+
+
     private void raiseNotificationViewed(Context context, Bundle extras){
         CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
         if (instance != null) {
             instance.pushNotificationViewedEvent(extras);
         }
     }
+
 }

@@ -26,5 +26,11 @@ public class Constants {
     public static final String PT_JSON = "pt_json";
     public static final String PT_BUY_NOW_DL = "pt_buy_now_dl";
     public static final String PT_DEFAULT_DL = "pt_default_dl";
-
+    public static final String PT_TIMER_THRESHOLD = "pt_timer_threshold";
+    public static final String PT_INPUT_LABEL = "pt_input_label";
+    public static final String PT_INPUT_KEY = "pt_input_reply";
+    public static final String PT_INPUT_FEEDBACK = "pt_input_feedback";
+    public static final int PT_INPUT_TIMEOUT = 1000;
+    public static final String PT_NOTIF_ID = "notificationId";
+    public static final String PT_INPUT_AUTO_OPEN = "pt_input_auto_open";
 }
