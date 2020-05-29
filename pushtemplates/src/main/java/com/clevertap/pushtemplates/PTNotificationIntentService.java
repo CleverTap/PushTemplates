@@ -10,7 +10,7 @@ import android.os.Bundle;
 
 public class PTNotificationIntentService extends IntentService {
 
-    public final static String MAIN_ACTION = "com.clevertap.PUSH_EVENT";
+    public final static String MAIN_ACTION = "com.clevertap.PT_PUSH_EVENT";
     public final static String TYPE_BUTTON_CLICK = "com.clevertap.ACTION_BUTTON_CLICK";
 
     public PTNotificationIntentService() {
@@ -22,7 +22,7 @@ public class PTNotificationIntentService extends IntentService {
         Bundle extras = intent.getExtras();
         if (extras == null) return;
 
-        String type = extras.getString("ct_type");
+        String type = extras.getString("pt_type");
         if (TYPE_BUTTON_CLICK.equals(type)) {
             PTLog.verbose("PTNotificationIntentService handling " + TYPE_BUTTON_CLICK);
             handleActionButtonClick(extras);
@@ -34,10 +34,17 @@ public class PTNotificationIntentService extends IntentService {
     private void handleActionButtonClick(Bundle extras) {
         try {
             boolean autoCancel = extras.getBoolean("autoCancel", false);
-            int notificationId = extras.getInt("notificationId", -1);
+            int notificationId = extras.getInt(Constants.PT_NOTIF_ID, -1);
             String dl = extras.getString("dl");
+            String dismissOnClick = extras.getString(Constants.PT_DISMISS_ON_CLICK);
 
             Context context = getApplicationContext();
+
+            if (dismissOnClick!=null)
+                if (dismissOnClick.equalsIgnoreCase("true")){
+                    Utils.cancelNotification(context,notificationId);
+                    return;
+                }
             Intent launchIntent;
             if (dl != null) {
                 launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dl));
