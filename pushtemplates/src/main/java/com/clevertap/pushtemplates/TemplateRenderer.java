@@ -1391,7 +1391,7 @@ public class TemplateRenderer {
 
             // Assign big picture notification
             NotificationCompat.Style bPstyle;
-            String bigPictureUrl = extras.getString(Constants.PT_BIG_IMG);
+            String bigPictureUrl = pt_big_img;
             if (bigPictureUrl != null && bigPictureUrl.startsWith("http")) {
                 try {
                     Bitmap bpMap = Utils.getNotificationBitmap(bigPictureUrl, false, context);
@@ -1399,24 +1399,24 @@ public class TemplateRenderer {
                     if (bpMap == null)
                         throw new Exception("Failed to fetch big picture!");
 
-                    if (extras.containsKey("pt_msg_summary")) {
-                        String summaryText = extras.getString("pt_msg_summary");
+                    if (extras.containsKey(Constants.PT_MSG_SUMMARY)) {
+                        String summaryText = pt_msg_summary;
                         bPstyle = new NotificationCompat.BigPictureStyle()
                                 .setSummaryText(summaryText)
                                 .bigPicture(bpMap);
                     } else {
                         bPstyle = new NotificationCompat.BigPictureStyle()
-                                .setSummaryText("pt_msg")
+                                .setSummaryText(pt_msg)
                                 .bigPicture(bpMap);
                     }
                 } catch (Throwable t) {
                     bPstyle = new NotificationCompat.BigTextStyle()
-                            .bigText("pt_msg");
+                            .bigText(pt_msg);
                     PTLog.verbose( "Falling back to big text notification, couldn't fetch big picture", t);
                 }
             } else {
                 bPstyle = new NotificationCompat.BigTextStyle()
-                        .bigText("pt_msg");
+                        .bigText(pt_msg);
             }
 
             notificationBuilder.setSmallIcon(smallIcon)
