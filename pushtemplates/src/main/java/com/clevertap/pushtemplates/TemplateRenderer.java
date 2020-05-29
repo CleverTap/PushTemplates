@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -1365,7 +1366,7 @@ public class TemplateRenderer {
             if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
                 notificationId = (int) (Math.random() * 100);
             }
-            //Set launchIntent to reciever
+            //Set launchIntent to receiver
             Intent launchIntent = new Intent(context, PushTemplateReceiver.class);
             launchIntent.putExtras(extras);
             launchIntent.putExtra(Constants.PT_NOTIF_ID, notificationId);
@@ -1388,14 +1389,44 @@ public class TemplateRenderer {
                 notificationBuilder = new NotificationCompat.Builder(context);
             }
 
+            // Assign big picture notification
+            NotificationCompat.Style bPstyle;
+            String bigPictureUrl = extras.getString(Constants.PT_BIG_IMG);
+            if (bigPictureUrl != null && bigPictureUrl.startsWith("http")) {
+                try {
+                    Bitmap bpMap = Utils.getNotificationBitmap(bigPictureUrl, false, context);
+
+                    if (bpMap == null)
+                        throw new Exception("Failed to fetch big picture!");
+
+                    if (extras.containsKey("pt_msg_summary")) {
+                        String summaryText = extras.getString("pt_msg_summary");
+                        bPstyle = new NotificationCompat.BigPictureStyle()
+                                .setSummaryText(summaryText)
+                                .bigPicture(bpMap);
+                    } else {
+                        bPstyle = new NotificationCompat.BigPictureStyle()
+                                .setSummaryText("pt_msg")
+                                .bigPicture(bpMap);
+                    }
+                } catch (Throwable t) {
+                    bPstyle = new NotificationCompat.BigTextStyle()
+                            .bigText("pt_msg");
+                    PTLog.verbose( "Falling back to big text notification, couldn't fetch big picture", t);
+                }
+            } else {
+                bPstyle = new NotificationCompat.BigTextStyle()
+                        .bigText("pt_msg");
+            }
+
             notificationBuilder.setSmallIcon(smallIcon)
                     .setContentTitle(pt_title)
                     .setContentText(pt_msg)
                     .setContentIntent(pIntent)
+                    .setStyle(bPstyle)
                     .setVibrate(new long[]{0L})
                     .setWhen(System.currentTimeMillis())
                     .setAutoCancel(true);
-
 
 
             //Initialise RemoteInput
