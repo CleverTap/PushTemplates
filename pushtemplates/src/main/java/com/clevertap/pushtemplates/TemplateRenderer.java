@@ -160,14 +160,16 @@ public class TemplateRenderer {
                 @Override
                 public void run() {
                     try {
-                        if(extras.getString(Constants.WZRK_PUSH_ID) != null || !extras.getString(Constants.WZRK_PUSH_ID).isEmpty()) {
-                            String ptID = extras.getString(Constants.WZRK_PUSH_ID);
-                            if(!dbHelper.isNotificationPresentInDB(ptID)){
-                                _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
-                                dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
+                        if(extras.getString(Constants.WZRK_PUSH_ID) != null) {
+                            if (!extras.getString(Constants.WZRK_PUSH_ID).isEmpty()) {
+                                String ptID = extras.getString(Constants.WZRK_PUSH_ID);
+                                if (!dbHelper.isNotificationPresentInDB(ptID)) {
+                                    _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+                                    dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
+                                }
                             }
-                        }else {
-                            _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+                        } else {
+                                _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
                         }
 
                     } catch (Throwable t) {
@@ -1367,7 +1369,7 @@ public class TemplateRenderer {
                 notificationId = (int) (Math.random() * 100);
             }
             //Set launchIntent to receiver
-            Intent launchIntent = new Intent(context, PushTemplateReceiver.class);
+            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
             launchIntent.putExtras(extras);
             launchIntent.putExtra(Constants.PT_NOTIF_ID, notificationId);
             launchIntent.putExtra(Constants.PT_INPUT_FEEDBACK, pt_input_feedback);
@@ -1390,32 +1392,31 @@ public class TemplateRenderer {
             }
 
             // Assign big picture notification
-            NotificationCompat.Style bPstyle;
-            String bigPictureUrl = pt_big_img;
-            if (bigPictureUrl != null && bigPictureUrl.startsWith("http")) {
+            NotificationCompat.Style bigPictureStyle;
+            if (pt_big_img != null && pt_big_img.startsWith("http")) {
                 try {
-                    Bitmap bpMap = Utils.getNotificationBitmap(bigPictureUrl, false, context);
+                    Bitmap bpMap = Utils.getNotificationBitmap(pt_big_img, false, context);
 
                     if (bpMap == null)
                         throw new Exception("Failed to fetch big picture!");
 
                     if (extras.containsKey(Constants.PT_MSG_SUMMARY)) {
                         String summaryText = pt_msg_summary;
-                        bPstyle = new NotificationCompat.BigPictureStyle()
+                        bigPictureStyle = new NotificationCompat.BigPictureStyle()
                                 .setSummaryText(summaryText)
                                 .bigPicture(bpMap);
                     } else {
-                        bPstyle = new NotificationCompat.BigPictureStyle()
+                        bigPictureStyle = new NotificationCompat.BigPictureStyle()
                                 .setSummaryText(pt_msg)
                                 .bigPicture(bpMap);
                     }
                 } catch (Throwable t) {
-                    bPstyle = new NotificationCompat.BigTextStyle()
+                    bigPictureStyle = new NotificationCompat.BigTextStyle()
                             .bigText(pt_msg);
                     PTLog.verbose( "Falling back to big text notification, couldn't fetch big picture", t);
                 }
             } else {
-                bPstyle = new NotificationCompat.BigTextStyle()
+                bigPictureStyle = new NotificationCompat.BigTextStyle()
                         .bigText(pt_msg);
             }
 
@@ -1423,7 +1424,7 @@ public class TemplateRenderer {
                     .setContentTitle(pt_title)
                     .setContentText(pt_msg)
                     .setContentIntent(pIntent)
-                    .setStyle(bPstyle)
+                    .setStyle(bigPictureStyle)
                     .setVibrate(new long[]{0L})
                     .setWhen(System.currentTimeMillis())
                     .setAutoCancel(true);
@@ -1434,10 +1435,25 @@ public class TemplateRenderer {
                     .setLabel(pt_input_label)
                     .build();
 
+            //Set launchIntent to receiver
+            Intent replyIntent = new Intent(context, PushTemplateReceiver.class);
+            replyIntent.putExtras(extras);
+            replyIntent.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            replyIntent.putExtra(Constants.PT_INPUT_FEEDBACK, pt_input_feedback);
+            replyIntent.putExtra(Constants.PT_INPUT_AUTO_OPEN, pt_input_auto_open);
+
+
+            if (deepLinkList != null && deepLinkList.size()>0) {
+                launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
+            }
+            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            PendingIntent replyPendingIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+                    replyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             //Notification Action with RemoteInput instance added.
             NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(
-                    android.R.drawable.sym_action_chat, pt_input_label, pIntent)
+                    android.R.drawable.sym_action_chat, pt_input_label, replyPendingIntent)
                     .addRemoteInput(remoteInput)
                     .setAllowGeneratedReplies(true)
                     .build();
