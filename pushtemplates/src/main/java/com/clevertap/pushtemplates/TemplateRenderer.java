@@ -7,9 +7,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -26,6 +29,7 @@ import android.widget.RemoteViews;
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -1259,11 +1263,13 @@ public class TemplateRenderer {
 
             contentViewTimer = new RemoteViews(context.getPackageName(), R.layout.timer);
             contentViewTimerCollapsed = new RemoteViews(context.getPackageName(), R.layout.timer_collapsed);
+
             contentViewTimer.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewTimer.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
             contentViewTimer.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
             contentViewTimer.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+
             contentViewTimerCollapsed.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
             contentViewTimerCollapsed.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
@@ -1293,16 +1299,22 @@ public class TemplateRenderer {
             if (pt_bg != null && !pt_bg.isEmpty()) {
                 contentViewTimer.setInt(R.id.image_only_big_linear_layout, "setBackgroundColor", Color.parseColor(pt_bg));
                 contentViewTimerCollapsed.setInt(R.id.content_view_small, "setBackgroundColor", Color.parseColor(pt_bg));
+                contentViewTimer.setInt(R.id.chronometer, "setBackgroundColor", Color.parseColor(pt_bg));
+                contentViewTimerCollapsed.setInt(R.id.chronometer, "setBackgroundColor", Color.parseColor(pt_bg));
+
             }
 
             if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
                 contentViewTimer.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
                 contentViewTimerCollapsed.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+                contentViewTimerCollapsed.setTextColor(R.id.chronometer, Color.parseColor(pt_title_clr));
+                contentViewTimer.setTextColor(R.id.chronometer, Color.parseColor(pt_title_clr));
             }
 
             if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
                 contentViewTimer.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
                 contentViewTimerCollapsed.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
+
 
             }
 
@@ -1333,7 +1345,6 @@ public class TemplateRenderer {
             } else {
                 notificationBuilder = new NotificationCompat.Builder(context);
             }
-
             notificationBuilder.setSmallIcon(smallIcon)
                     .setCustomContentView(contentViewTimerCollapsed)
                     .setCustomBigContentView(contentViewTimer)
@@ -1371,10 +1382,6 @@ public class TemplateRenderer {
             //Set launchIntent to receiver
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
             launchIntent.putExtras(extras);
-            launchIntent.putExtra(Constants.PT_NOTIF_ID, notificationId);
-            launchIntent.putExtra(Constants.PT_INPUT_FEEDBACK, pt_input_feedback);
-            launchIntent.putExtra(Constants.PT_INPUT_AUTO_OPEN, pt_input_auto_open);
-
 
             if (deepLinkList != null && deepLinkList.size()>0) {
                 launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
@@ -1462,6 +1469,8 @@ public class TemplateRenderer {
             //Notification.Action instance added to Notification Builder.
             notificationBuilder.addAction(replyAction);
 
+            setActionButtons(context,extras,notificationId,notificationBuilder);
+
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
 
@@ -1478,6 +1487,133 @@ public class TemplateRenderer {
         if (instance != null) {
             instance.pushNotificationViewedEvent(extras);
         }
+    }
+
+    private void setActionButtons(Context context, Bundle extras, int notificationId, NotificationCompat.Builder nb){
+        JSONArray actions = null;
+
+        String actionsString = extras.getString(Constants.WZRK_ACTIONS);
+        if (actionsString != null) {
+            try {
+                actions = new JSONArray(actionsString);
+            } catch (Throwable t) {
+                PTLog.debug("error parsing notification actions: " + t.getLocalizedMessage());
+            }
+        }
+
+        String intentServiceName = ManifestInfo.getInstance(context).getIntentServiceName();
+        Class clazz = null;
+        if (intentServiceName != null) {
+            try {
+                clazz = Class.forName(intentServiceName);
+            } catch (ClassNotFoundException e) {
+                try {
+                    clazz = Class.forName("com.clevertap.pushtemplates.PTNotificationIntentService");
+                } catch (ClassNotFoundException ex) {
+                    PTLog.debug("No Intent Service found");
+                }
+            }
+        } else {
+            try {
+                clazz = Class.forName("com.clevertap.pushtemplates.PTNotificationIntentService");
+            } catch (ClassNotFoundException ex) {
+                PTLog.debug("No Intent Service found");
+            }
+        }
+
+        boolean isPTIntentServiceAvailable = isServiceAvailable(context, clazz);
+
+
+        if (actions != null && actions.length() > 0) {
+            for (int i = 0; i < actions.length(); i++) {
+                try {
+                    JSONObject action = actions.getJSONObject(i);
+                    String label = action.optString("l");
+                    String dl = action.optString("dl");
+                    String ico = action.optString(Constants.PT_NOTIF_ICON);
+                    String id = action.optString("id");
+                    boolean autoCancel = action.optBoolean("ac", true);
+                    if (label.isEmpty() || id.isEmpty()) {
+                        PTLog.debug( "not adding push notification action: action label or id missing");
+                        continue;
+                    }
+                    int icon = 0;
+                    if (!ico.isEmpty()) {
+                        try {
+                            icon = context.getResources().getIdentifier(ico, "drawable", context.getPackageName());
+                        } catch (Throwable t) {
+                            PTLog.debug( "unable to add notification action icon: " + t.getLocalizedMessage());
+                        }
+                    }
+
+                    boolean sendToPTIntentService = (autoCancel && isPTIntentServiceAvailable);
+
+                    Intent actionLaunchIntent;
+                    if (sendToPTIntentService) {
+                        actionLaunchIntent = new Intent(PTNotificationIntentService.MAIN_ACTION);
+                        actionLaunchIntent.setPackage(context.getPackageName());
+                        actionLaunchIntent.putExtra("ct_type", PTNotificationIntentService.TYPE_BUTTON_CLICK);
+                        if (!dl.isEmpty()) {
+                            actionLaunchIntent.putExtra("dl", dl);
+                        }
+                    } else {
+                        if (!dl.isEmpty()) {
+                            actionLaunchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dl));
+                        } else {
+                            actionLaunchIntent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+                        }
+                    }
+
+                    if (actionLaunchIntent != null) {
+                        actionLaunchIntent.putExtras(extras);
+                        actionLaunchIntent.removeExtra(Constants.WZRK_ACTIONS);
+                        actionLaunchIntent.putExtra("actionId", id);
+                        actionLaunchIntent.putExtra("autoCancel", autoCancel);
+                        actionLaunchIntent.putExtra("wzrk_c2a", id);
+                        actionLaunchIntent.putExtra("notificationId", notificationId);
+
+                        actionLaunchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    }
+
+                    PendingIntent actionIntent;
+                    int requestCode = ((int) System.currentTimeMillis()) + i;
+                    if (sendToPTIntentService) {
+                        actionIntent = PendingIntent.getService(context, requestCode,
+                                actionLaunchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    } else {
+                        actionIntent = PendingIntent.getActivity(context, requestCode,
+                                actionLaunchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    }
+                    nb.addAction(icon, label, actionIntent);
+
+                } catch (Throwable t) {
+                    PTLog.debug( "error adding notification action : " + t.getLocalizedMessage());
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private static boolean isServiceAvailable(Context context, Class clazz) {
+        if (clazz == null) return false;
+
+        PackageManager pm = context.getPackageManager();
+        String packageName = context.getPackageName();
+
+        PackageInfo packageInfo;
+        try {
+            packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_SERVICES);
+            ServiceInfo[] services = packageInfo.services;
+            for (ServiceInfo serviceInfo : services) {
+                if (serviceInfo.name.equals(clazz.getName())) {
+                    PTLog.verbose("Service " + serviceInfo.name + " found");
+                    return true;
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            PTLog.debug("Intent Service name not found exception - " + e.getLocalizedMessage());
+        }
+        return false;
     }
 
 }
