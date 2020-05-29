@@ -1144,8 +1144,9 @@ public class TemplateRenderer {
             if(extras.getString(Constants.WZRK_ACTIONS) == null || extras.getString(Constants.WZRK_ACTIONS).isEmpty()  )
                 notificationBuilder.addAction(replyAction);
 
-            if (pt_dismiss_on_click!=null || !pt_dismiss_on_click.isEmpty())
-                extras.putString(Constants.PT_DISMISS_ON_CLICK,pt_dismiss_on_click);
+            if (pt_dismiss_on_click!=null)
+                if( !pt_dismiss_on_click.isEmpty())
+                    extras.putString(Constants.PT_DISMISS_ON_CLICK,pt_dismiss_on_click);
 
             setActionButtons(context,extras,notificationId,notificationBuilder);
 
