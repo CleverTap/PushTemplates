@@ -1337,9 +1337,6 @@ public class TemplateRenderer {
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
-        // contentView.setTextColor(R.id.app_name, ContextCompat.getColor(context, R.color.gray));
-        // contentView.setTextColor(R.id.timestamp, ContextCompat.getColor(context, R.color.gray));
-
     }
 
     private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context, int color) {
