@@ -29,7 +29,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:text="app name"
-            android:textSize="10sp" />
+            android:textAppearance="@style/MetaData"/>
 
         <TextView
             android:id="@+id/timestamp"
@@ -40,7 +40,7 @@
             android:layout_toEndOf="@+id/app_name"
             android:layout_toRightOf="@+id/app_name"
             android:text="app name"
-            android:textSize="10sp" />
+            android:textAppearance="@style/MetaData"/>
 
         <TextView
             android:id="@+id/title"

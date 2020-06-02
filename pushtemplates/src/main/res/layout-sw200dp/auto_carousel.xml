@@ -12,44 +12,15 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/small_icon"
-            android:layout_width="6dp"
-            android:layout_height="6dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginEnd="4dp"
-            android:layout_marginRight="4dp" />
-
-        <TextView
-            android:id="@+id/app_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_toEndOf="@id/small_icon"
-            android:layout_toRightOf="@id/small_icon"
-            android:text="app name"
-            android:textSize="10sp" />
-
-        <TextView
-            android:id="@+id/timestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_toEndOf="@id/app_name"
-            android:layout_toRightOf="@id/app_name"
-            android:text="app name"
-            android:textColor="#808080"
-            android:textSize="10sp" />
+        <include layout="@layout/metadata"
+            android:id="@+id/metadata"/>
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/small_icon"
-            android:layout_alignLeft="@id/small_icon"
+            android:layout_below="@+id/metadata"
+            android:layout_alignLeft="@id/metadata"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"

@@ -450,7 +450,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private void handleRatingNotification(Context context, Bundle extras) {
 
         try {
-            int notificationId = extras.getInt("notif_id");
+            int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
             if (extras.getBoolean("default_dl", false)) {
                 notificationManager.cancel(notificationId);
 

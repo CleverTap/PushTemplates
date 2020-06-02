@@ -3,73 +3,52 @@
     android:id="@+id/content_view_small"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp" >
+    android:padding="4dp">
 
 
-    <ImageView android:id="@+id/small_icon"
-        android:layout_width="6dp"
-        android:layout_height="6dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginRight="4dp"
-        android:layout_marginEnd="4dp"/>
-    <TextView
-        android:id="@+id/app_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_toRightOf="@id/small_icon"
-        android:text="app name"
-        android:textSize="10sp"
-        />
+    <include
+        android:id="@+id/metadata"
+        layout="@layout/metadata" />
 
     <TextView
-        android:id="@+id/timestamp"
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_toRightOf="@id/app_name"
-        android:text="app name"
-        android:textSize="10sp"
-        />
-    <TextView android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/PushTitle"
-        android:layout_below="@+id/small_icon"
+        android:layout_below="@+id/metadata"
+        android:layout_alignLeft="@id/metadata"
         android:layout_marginTop="8dp"
-        android:layout_alignLeft="@id/small_icon"
-        android:layout_marginRight="8dp"
         android:layout_marginEnd="8dp"
-        android:textSize="10sp"
-        android:text="title"/>
-    <TextView android:id="@+id/msg"
+        android:layout_marginRight="8dp"
+        android:text="title"
+        android:textAppearance="@style/PushTitle"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/PushMessage"
         android:layout_below="@+id/title"
         android:layout_alignLeft="@id/title"
-        android:layout_marginRight="64dp"
         android:layout_marginEnd="64dp"
-        android:textSize="10sp"
-        android:text="message message message message message messagemessage"/>
+        android:layout_marginRight="64dp"
+        android:text="message message message message message messagemessage"
+        android:textAppearance="@style/PushMessage"
+        android:textSize="10sp" />
 
 
     <Chronometer
         android:id="@+id/chronometer"
         android:layout_width="80dp"
         android:layout_height="60dp"
-        android:background="#FFFFFF"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:background="#FFFFFF"
+        android:forceDarkAllowed="true"
+        android:paddingTop="14dp"
         android:textAlignment="center"
         android:textColor="#000000"
-        android:textSize="20sp"
-        android:paddingTop="14dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:forceDarkAllowed="true"/>
+        android:textSize="20sp" />
 
 </RelativeLayout>

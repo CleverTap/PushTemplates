@@ -16,7 +16,7 @@
 
     <style name="MetaData" parent="android:Widget.TextView">
         <item name="android:textColor">@color/gray</item>
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
 </resources>

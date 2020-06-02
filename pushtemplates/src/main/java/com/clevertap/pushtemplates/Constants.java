@@ -37,4 +37,6 @@ public class Constants {
     public static final String PT_EVENT_NAME_KEY = "pt_event_name";
     public static final String PT_EVENT_PROPERTY_KEY = "pt_event_property";
     public static final String PT_EVENT_PROPERTY_SEPERATOR = "pt_event_property_";
+    public static final String PT_DISMISS_ON_CLICK ="pt_dismiss_on_click";
+    public static final String PT_CHRONO_TITLE_COLOUR = "pt_chrono_title_clr";
 }
