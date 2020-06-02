@@ -3,30 +3,31 @@
     android:id="@+id/five_cta_layout"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:padding="6dp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="6dp">
 
-    <ImageView android:id="@+id/cta1"
+    <ImageView
+        android:id="@+id/cta1"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:layout_margin="6dip"
-        android:src="@drawable/pt_image"/>
+        android:layout_weight="1"
+        android:src="@drawable/pt_image" />
 
     <ImageView
         android:id="@+id/cta2"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:layout_margin="6dip"
+        android:layout_weight="1"
         android:src="@drawable/pt_image" />
 
     <ImageView
         android:id="@+id/cta3"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:layout_margin="6dip"
+        android:layout_weight="1"
 
         android:src="@drawable/pt_image" />
 
@@ -34,8 +35,8 @@
         android:id="@+id/cta4"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:layout_margin="6dip"
+        android:layout_weight="1"
 
         android:src="@drawable/pt_image" />
 
@@ -43,8 +44,8 @@
         android:id="@+id/cta5"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:layout_margin="6dip"
+        android:layout_weight="1"
 
 
         android:src="@drawable/pt_image" />
@@ -53,8 +54,8 @@
         android:id="@+id/close"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:layout_margin="6dip"
+        android:layout_weight="1"
 
         android:src="@drawable/pt_close" />
 

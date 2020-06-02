@@ -96,7 +96,23 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/productDisplay"
-        app:layout_constraintVertical_bias="0.092" />
+        app:layout_constraintVertical_bias="0.038" />
+
+    <Button
+        android:id="@+id/zero_bezel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="SEND ZERO BAZEL"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/productDisplay"
+        app:layout_constraintVertical_bias="0.319" />
 
     <Button
         android:id="@+id/timer"
@@ -109,10 +125,9 @@
         android:text="SEND Timer Push"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/productDisplay"
-        app:layout_constraintVertical_bias="0.092" />
+        app:layout_constraintVertical_bias="0.565" />
 
     <Button
         android:id="@+id/inputBox"
@@ -125,10 +140,9 @@
         android:text="SEND Input Box Push"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/timer"
-        app:layout_constraintVertical_bias="0.092" />
+        app:layout_constraintVertical_bias="0.245" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

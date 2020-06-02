@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cv_small_zero_bezel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/big_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop">
+
+    </ImageView>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/bg_image"
+        android:background="@drawable/scrim" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/bg_image"
+        android:paddingLeft="16dp"
+        android:paddingTop="4dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="4dp">
+
+        <include
+            android:id="@+id/metadata"
+            layout="@layout/metadata" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/metadata"
+            android:layout_alignLeft="@id/metadata"
+            android:layout_alignStart="@id/metadata"
+            android:text="title"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/PushTitle"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:layout_alignStart="@+id/title"
+            android:layout_alignLeft="@id/title"
+
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="message message message "
+            android:textAppearance="@style/PushMessage"
+            android:textColor="@color/white"/>
+
+    </RelativeLayout>
+</RelativeLayout>
