@@ -39,6 +39,6 @@ public class Constants {
     public static final String PT_EVENT_PROPERTY_SEPERATOR = "pt_event_property_";
     public static final String PT_DISMISS_ON_CLICK ="pt_dismiss_on_click";
     public static final String PT_CHRONO_TITLE_COLOUR = "pt_chrono_title_clr";
-    public static final String PT_VIDEO_URL = "pt_videourl";
+    public static final String PT_VIDEO_URL = "pt_video_url";
 
 }
