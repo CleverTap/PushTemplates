@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 
 import android.os.SystemClock;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -262,6 +263,11 @@ public class TemplateRenderer {
             case INPUT_BOX:
                 if (hasAllInputBoxKeys())
                     renderInputBoxNotification(context, extras, notificationId);
+                break;
+            case INPUT_VIDEO:
+                //   if (hasAllInputBoxKeys())
+                //   renderInputBoxNotification(context, extras, notificationId);
+                renderVideoNotification(context, extras, notificationId);
                 break;
         }
     }
@@ -1249,7 +1255,110 @@ public class TemplateRenderer {
             PTLog.verbose("Error creating Input Box notification ", t);
         }
     }
+    private void renderVideoNotification(final Context context, Bundle extras, int notificationId) {
+        try {
+            contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
+            contentViewBig.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
+            contentViewBig.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
+            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            contentViewSmall.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
+            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+            contentViewBig.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
+            contentViewBig.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+            contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
+
+            if (pt_title != null && !pt_title.isEmpty()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewBig.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+                }
+            }
+
+            if (pt_msg != null && !pt_msg.isEmpty()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    contentViewBig.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    contentViewBig.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+                }
+            }
+
+            if (pt_bg != null && !pt_bg.isEmpty()) {
+                contentViewBig.setInt(R.id.image_only_big_linear_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+                contentViewSmall.setInt(R.id.content_view_small, "setBackgroundColor", Color.parseColor(pt_bg));
+            }
+
+            if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
+                contentViewBig.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+                contentViewSmall.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+            }
+
+            if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
+                contentViewBig.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
+                contentViewSmall.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
+            }
+
+            if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
+                notificationId = (int) (Math.random() * 100);
+            }
+
+            Intent launchIntent = new Intent(context, SecondActivity.class);
+            // launchIntent.putExtras(extras);
+            launchIntent.putExtra("bundle", extras);
+            PendingIntent pIntent =null;
+            if (Constants.WZRK_VIDEO != null ) {
+                Log.d("yahaaare",extras.getString("videourl"));
+                pIntent = PendingIntent.getActivity(context, 0, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            }
+            // launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+            //  launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+           /* PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+                    launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);*/
+
+            NotificationCompat.Builder notificationBuilder;
+            if (requiresChannelId) {
+                notificationBuilder = new NotificationCompat.Builder(context, channelId);
+            } else {
+                notificationBuilder = new NotificationCompat.Builder(context);
+            }
+
+            notificationBuilder.setSmallIcon(smallIcon)
+                    .setCustomContentView(contentViewSmall)
+                    .setCustomBigContentView(contentViewBig)
+                    .setContentTitle(pt_title)
+                    .setContentIntent(pIntent)
+                    .setVibrate(new long[]{0L})
+                    .setAutoCancel(true);
+
+            Notification notification = notificationBuilder.build();
+            notificationManager.notify(notificationId, notification);
+            if (pt_big_img != null && !pt_big_img.isEmpty()) {
+                Utils.loadIntoGlide(context, R.id.big_image, pt_big_img, contentViewBig, notification, notificationId);
+            } else {
+                contentViewBig.setViewVisibility(R.id.big_image, View.GONE);
+            }
+
+            if (pt_large_icon != null && !pt_large_icon.isEmpty()) {
+                Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
+            } else {
+                contentViewSmall.setViewVisibility(R.id.large_icon, View.GONE);
+            }
+
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+
+            raiseNotificationViewed(context,extras);
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating image only notification", t);
+        }
+    }
     private PendingIntent setPendingIntent(Context context, int notificationId, Bundle extras, Intent launchIntent, String dl) {
         launchIntent.putExtras(extras);
         launchIntent.putExtra(Constants.PT_NOTIF_ID, notificationId);
