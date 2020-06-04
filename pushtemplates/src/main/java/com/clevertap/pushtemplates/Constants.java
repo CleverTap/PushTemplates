@@ -4,6 +4,7 @@ package com.clevertap.pushtemplates;
 public class Constants {
     public static final String LOG_TAG = "PTLog";
     public static final String WZRK_ACTIONS = "wzrk_acts";
+    public static final String WZRK_VIDEO = "videourl";
     public static final String WZRK_CHANNEL_ID = "wzrk_cid";
     public static final String WZRK_PUSH_ID = "wzrk_pid";
     public static final String WZRK_DL = "wzrk_dl";
