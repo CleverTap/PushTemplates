@@ -11,7 +11,7 @@ enum TemplateType {
     ZERO_BEZEL("pt_zero_bezel"),
     TIMER("pt_timer"),
     INPUT_BOX("pt_input"),
-    INPUT_VIDEO("pt_video");
+    VIDEO("pt_video");
 
     private final String templateType;
 
@@ -30,7 +30,7 @@ enum TemplateType {
             case "pt_zero_bezel" : return ZERO_BEZEL;
             case "pt_timer" : return TIMER;
             case "pt_input" : return INPUT_BOX;
-            case "pt_video" : return INPUT_VIDEO;
+            case "pt_video" : return VIDEO;
             default: return null;
         }
     }

@@ -47,7 +47,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.clevertap.pushtemplates.SecondActivity"
+        <activity android:name="com.clevertap.pushtemplates.VideoActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true"

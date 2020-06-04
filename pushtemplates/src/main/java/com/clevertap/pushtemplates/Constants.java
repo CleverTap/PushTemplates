@@ -4,7 +4,6 @@ package com.clevertap.pushtemplates;
 public class Constants {
     public static final String LOG_TAG = "PTLog";
     public static final String WZRK_ACTIONS = "wzrk_acts";
-    public static final String WZRK_VIDEO = "videourl";
     public static final String WZRK_CHANNEL_ID = "wzrk_cid";
     public static final String WZRK_PUSH_ID = "wzrk_pid";
     public static final String WZRK_DL = "wzrk_dl";
@@ -40,4 +39,6 @@ public class Constants {
     public static final String PT_EVENT_PROPERTY_SEPERATOR = "pt_event_property_";
     public static final String PT_DISMISS_ON_CLICK ="pt_dismiss_on_click";
     public static final String PT_CHRONO_TITLE_COLOUR = "pt_chrono_title_clr";
+    public static final String PT_VIDEO_URL = "pt_videourl";
+
 }

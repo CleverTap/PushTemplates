@@ -27,9 +27,9 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class SecondActivity extends AppCompatActivity {
+public class VideoActivity extends AppCompatActivity {
 	//VideoDialogFragment fragment1;
-	Bundle bundle;
+	Bundle extras;
 	private SimpleExoPlayer player;
 	PlayerView videoView;
 	private boolean playWhenReady = true;
@@ -43,8 +43,7 @@ public class SecondActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.activity_second);
-		Log.d("yaha_hore","cool");
+		setContentView(R.layout.video);
 		try
 		{
 			this.getSupportActionBar().hide();
@@ -52,35 +51,33 @@ public class SecondActivity extends AppCompatActivity {
 		catch (NullPointerException e){}
 		videoView = findViewById(R.id.videoView);
 		button=findViewById(R.id.button);
-		aspectRatioFrameLayout=findViewById(R.id.activity_second);
+		aspectRatioFrameLayout=findViewById(R.id.video_activity);
 		videoView.showController();
 		aspectRatioFrameLayout.setAspectRatio(16f/9f);
-		bundle = getIntent().getBundleExtra("bundle");
-		if (bundle != null) {
-			for (String key : bundle.keySet()) {
-				Object value = bundle.get(key);
+		extras = getIntent().getExtras();
+		if (extras != null) {
+			for (String key : extras.keySet()) {
+				Object value = extras.get(key);
 
 			}
 		}
 		setFinishOnTouchOutside(false);
-		initializePlayer(bundle.getString("videourl"));
+		initializePlayer(extras.getString(Constants.PT_VIDEO_URL));
 		button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Context ctx= SecondActivity.this; // or you can replace **'this'** with your **ActivityName.this**
+				Context ctx= VideoActivity.this;
 				Intent i = ctx.getPackageManager().getLaunchIntentForPackage(getPackageName());
 				ctx.startActivity(i);
 			}
 		});
-
-	//	initializePlayer("https://claykart17091994.000webhostapp.com/videoplayback.mp4");
 
 	}
 
 
 
 	private void initializePlayer(String url) {
-		player = ExoPlayerFactory.newSimpleInstance(SecondActivity.this);
+		player = ExoPlayerFactory.newSimpleInstance(VideoActivity.this);
 		videoView.setPlayer(player);
 
 		Uri uri = Uri.parse(url);
@@ -93,16 +90,12 @@ public class SecondActivity extends AppCompatActivity {
 	private MediaSource buildMediaSource(Uri uri) {
 		// These factories are used to construct two media sources below
 		DataSource.Factory dataSourceFactory =
-				new DefaultDataSourceFactory(SecondActivity.this, "exoplayer-codelab");
+				new DefaultDataSourceFactory(VideoActivity.this, "exoplayer-codelab");
 		ProgressiveMediaSource.Factory mediaSourceFactory =
 				new ProgressiveMediaSource.Factory(dataSourceFactory);
 
 		// Create a media source using the supplied URI
 		MediaSource mediaSource1 = mediaSourceFactory.createMediaSource(uri);
-
-		// Additionally create a media source using an MP3
-		// Uri audioUri = Uri.parse(getString(uri);
-		// MediaSource mediaSource2 = mediaSourceFactory.createMediaSource(audioUri);
 
 		return new ConcatenatingMediaSource(mediaSource1);
 	}
