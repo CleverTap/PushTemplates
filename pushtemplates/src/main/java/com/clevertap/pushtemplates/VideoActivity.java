@@ -23,12 +23,10 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class VideoActivity extends AppCompatActivity {
-	//VideoDialogFragment fragment1;
 	Bundle extras;
 	private SimpleExoPlayer player;
 	PlayerView videoView;
@@ -37,7 +35,6 @@ public class VideoActivity extends AppCompatActivity {
 	AspectRatioFrameLayout aspectRatioFrameLayout;
 	private long playbackPosition = 0;
 	Button button;
-//	private final PictureInPictureParams.Builder pictureInPictureParamsBuilder=new PictureInPictureParams.Builder();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
