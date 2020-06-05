@@ -9,7 +9,8 @@
     android:paddingRight="16dp"
     android:paddingEnd="16dp"
     android:paddingLeft="16dp"
-    android:paddingStart="16dp">
+    android:paddingStart="16dp"
+    android:id="@+id/content_view_big">
 
     <RelativeLayout
         android:layout_width="match_parent"

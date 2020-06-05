@@ -698,7 +698,6 @@ public class TemplateRenderer {
             setCustomContentViewBasicKeys(contentViewManualCarousel, context);
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-
             setCustomContentViewBasicKeys(contentViewSmall, context);
 
             setCustomContentViewTitle(contentViewManualCarousel, pt_title);
@@ -1029,9 +1028,8 @@ public class TemplateRenderer {
             }
             contentFiveCTAs = new RemoteViews(context.getPackageName(), R.layout.five_cta);
 
-            if (pt_bg != null && !pt_bg.isEmpty()) {
-                contentFiveCTAs.setInt(R.id.five_cta_layout, "setBackgroundColor", Color.parseColor(pt_bg));
-            }
+            setCustomContentViewExpandedBackgroundColour(contentFiveCTAs,pt_bg);
+
 
             notificationId = setNotificationId(notificationId);
 
@@ -1563,7 +1561,7 @@ public class TemplateRenderer {
 
     private void setCustomContentViewExpandedBackgroundColour(RemoteViews contentView, String pt_bg) {
         if (pt_bg != null && !pt_bg.isEmpty()) {
-            contentView.setInt(R.id.image_only_big_linear_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+            contentView.setInt(R.id.content_view_big, "setBackgroundColor", Color.parseColor(pt_bg));
         }
     }
 
