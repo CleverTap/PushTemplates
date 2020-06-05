@@ -4,15 +4,27 @@ package com.clevertap.pushtemplates;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -32,10 +44,11 @@ public class VideoActivity extends AppCompatActivity {
 	PlayerView videoView;
 	private boolean playWhenReady = true;
 	private int currentWindow = 0;
-	AspectRatioFrameLayout aspectRatioFrameLayout;
+	FrameLayout aspectRatioFrameLayout;
 	private long playbackPosition = 0;
-	Button button;
-
+	ImageButton openapp_button,close_button;
+	ImageView fullscreenButton;
+	boolean fullscreen = false;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,10 +60,14 @@ public class VideoActivity extends AppCompatActivity {
 		}
 		catch (NullPointerException e){}
 		videoView = findViewById(R.id.videoView);
-		button=findViewById(R.id.button);
+
+
 		aspectRatioFrameLayout=findViewById(R.id.video_activity);
-		videoView.showController();
-		aspectRatioFrameLayout.setAspectRatio(16f/9f);
+		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)  videoView.getLayoutParams();
+		params.width = (int) (350*getApplicationContext().getResources().getDisplayMetrics().density);
+		params.height = (int) ( 210 * getApplicationContext().getResources().getDisplayMetrics().density);
+
+
 		extras = getIntent().getExtras();
 		if (extras != null) {
 			for (String key : extras.keySet()) {
@@ -59,8 +76,8 @@ public class VideoActivity extends AppCompatActivity {
 			}
 		}
 		setFinishOnTouchOutside(false);
-		initializePlayer(extras.getString(Constants.PT_VIDEO_URL));
-		button.setOnClickListener(new View.OnClickListener() {
+		openapp_button=videoView.findViewById(R.id.openapp);
+		openapp_button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				Context ctx= VideoActivity.this;
@@ -68,7 +85,72 @@ public class VideoActivity extends AppCompatActivity {
 				ctx.startActivity(i);
 			}
 		});
+		close_button=videoView.findViewById(R.id.exo_close);
+		close_button.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				releasePlayer();
+				finish();
+			}
+		});
+		fullscreenButton = (ImageView)videoView.findViewById(R.id.exo_fullscreen_icon);
+		fullscreenButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if(fullscreen) {
+					fullscreenButton.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.ic_fullscreen_open));
+					ViewGroup.LayoutParams params1 = openapp_button.getLayoutParams();
+					ViewGroup.LayoutParams params2 = close_button.getLayoutParams();
+					params1.width = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+					params1.height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+					params2.width=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+					params2.height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+					openapp_button.setLayoutParams(params1);
+					close_button.setLayoutParams(params2);
 
+					getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+					if(getSupportActionBar() != null){
+						getSupportActionBar().show();
+					}
+					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+					FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) aspectRatioFrameLayout.getLayoutParams();
+					params.width = (int) (350*getApplicationContext().getResources().getDisplayMetrics().density);
+					params.height = (int) ( 210 * getApplicationContext().getResources().getDisplayMetrics().density);
+					videoView.setLayoutParams(params);
+					fullscreen = false;
+				}else{
+					fullscreenButton.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.ic_fullscreen_close));
+					ViewGroup.LayoutParams params1 = openapp_button.getLayoutParams();
+					ViewGroup.LayoutParams params2 = close_button.getLayoutParams();
+					params1.width = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+					params1.height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+					params2.width=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+					params2.height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+					openapp_button.setLayoutParams(params1);
+					close_button.setLayoutParams(params2);
+					getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+							|View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+							|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+					if(getSupportActionBar() != null){
+						getSupportActionBar().hide();
+					}
+					DisplayMetrics metrics = new DisplayMetrics();
+					getWindowManager().getDefaultDisplay().getMetrics(metrics);
+					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+					FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) aspectRatioFrameLayout.getLayoutParams();
+					params.width = (int) (2*350*getApplicationContext().getResources().getDisplayMetrics().density);
+					params.height = params.MATCH_PARENT;
+
+					videoView.setLayoutParams(params);
+
+
+
+					fullscreen = true;
+				}
+			}
+		});
+		initializePlayer(extras.getString(Constants.PT_VIDEO_URL));
+		//initializePlayer("https://claykart17091994.000webhostapp.com/videoplayback.mp4");
 	}
 
 
