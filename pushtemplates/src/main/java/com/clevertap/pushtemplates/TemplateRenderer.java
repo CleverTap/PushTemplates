@@ -71,7 +71,8 @@ public class TemplateRenderer {
     private String pt_input_feedback;
     private String pt_input_auto_open;
     private String pt_dismiss_on_click;
-    private final String pt_video_url;
+    private String pt_video_url;
+    private String pt_cancel_notif_id;
 
 
     @SuppressWarnings({"unused"})
@@ -152,6 +153,7 @@ public class TemplateRenderer {
         pt_dismiss_on_click = extras.getString(Constants.PT_DISMISS_ON_CLICK);
         pt_chrono_title_clr = extras.getString(Constants.PT_CHRONO_TITLE_COLOUR);
         pt_video_url = extras.getString(Constants.PT_VIDEO_URL);
+        pt_cancel_notif_id = extras.getString(Constants.PT_CANCEL_NOTIF_ID);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -268,6 +270,9 @@ public class TemplateRenderer {
             case VIDEO:
                 if (hasAllVideoKeys())
                     renderVideoNotification(context, extras, notificationId);
+                break;
+            case CANCEL:
+                renderCancelNotification(context, extras);
                 break;
         }
     }
@@ -476,6 +481,18 @@ public class TemplateRenderer {
             result = false;
         }
         return result;
+    }
+
+    private void renderCancelNotification(Context context, Bundle extras) {
+        if (pt_cancel_notif_id != null && !pt_cancel_notif_id.isEmpty()) {
+            int notificationId = Integer.parseInt(pt_cancel_notif_id);
+            notificationManager.cancel(notificationId);
+        }
+        else
+            notificationManager.cancelAll();
+
+        raiseNotificationViewed(context, extras);
+
     }
 
     private void renderRatingNotification(Context context, Bundle extras, int notificationId) {

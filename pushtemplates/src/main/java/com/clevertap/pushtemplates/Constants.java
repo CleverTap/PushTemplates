@@ -40,5 +40,5 @@ public class Constants {
     public static final String PT_DISMISS_ON_CLICK ="pt_dismiss_on_click";
     public static final String PT_CHRONO_TITLE_COLOUR = "pt_chrono_title_clr";
     public static final String PT_VIDEO_URL = "pt_video_url";
-
+    public static final String PT_CANCEL_NOTIF_ID = "pt_cancel_notif_id";
 }
