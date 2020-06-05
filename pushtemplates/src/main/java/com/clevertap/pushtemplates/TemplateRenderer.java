@@ -1552,10 +1552,10 @@ public class TemplateRenderer {
 
     private void setCustomContentViewChronometerTitleColour(RemoteViews contentView, String pt_chrono_title_clr, String pt_title_clr) {
         if (pt_chrono_title_clr != null && !pt_chrono_title_clr.isEmpty()) {
-            contentView.setTextColor(R.id.chronometer, Color.parseColor(pt_title_clr));
+            contentView.setTextColor(R.id.chronometer, Color.parseColor(pt_chrono_title_clr));
         } else {
             if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
-                contentView.setTextColor(R.id.chronometer, Color.parseColor(pt_chrono_title_clr));
+                contentView.setTextColor(R.id.chronometer, Color.parseColor(pt_title_clr));
             }
         }
 
