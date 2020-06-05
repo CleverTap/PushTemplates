@@ -81,7 +81,7 @@
                     android:textAppearance="@style/PushTitle" />
 
                 <Button
-                    android:id="@+id/action_button"
+                    android:id="@+id/product_action"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -100,7 +100,8 @@
                         android:id="@+id/small_image1"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        />
 
                     <ImageView
                         android:id="@+id/small_image2"

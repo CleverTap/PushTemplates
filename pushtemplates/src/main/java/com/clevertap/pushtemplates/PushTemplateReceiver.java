@@ -54,7 +54,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
     private CleverTapAPI cleverTapAPI;
-
+    private String pt_product_display_action;
+    private String pt_product_display_action_clr;
 
 
     @Override
@@ -77,6 +78,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             bigTextList = Utils.getBigTextFromExtras(extras);
             smallTextList = Utils.getSmallTextFromExtras(extras);
             priceList = Utils.getPriceFromExtras(extras);
+            pt_product_display_action = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION);
+            pt_product_display_action_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_COLOUR);
 
             notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
             cleverTapAPI = CleverTapAPI.getDefaultInstance(context);
@@ -180,7 +183,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     contentViewSmall.setInt(R.id.content_view_small, "setBackgroundColor", Color.parseColor(pt_bg));
                 }
 
-                int notificationId = extras.getInt("notif_id");
+                int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
 
                 int positionFrom = extras.getInt("manual_carousel_from");
 
@@ -230,7 +233,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 rightArrowPos0Intent.putExtra("pt_reqcode0", reqCodePos0);
                 rightArrowPos0Intent.putExtra("pt_reqcode1", reqCodePos1);
                 rightArrowPos0Intent.putExtra("pt_reqcode2", reqCodePos2);
-                rightArrowPos0Intent.putExtra("notif_id", notificationId);
+                rightArrowPos0Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
                 rightArrowPos0Intent.putExtras(extras);
                 PendingIntent contentRightPos0Intent = PendingIntent.getBroadcast(context, reqCodePos1, rightArrowPos0Intent, 0);
                 contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos0, contentRightPos0Intent);
@@ -241,7 +244,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 rightArrowPos1Intent.putExtra("pt_reqcode0", reqCodePos0);
                 rightArrowPos1Intent.putExtra("pt_reqcode1", reqCodePos1);
                 rightArrowPos1Intent.putExtra("pt_reqcode2", reqCodePos2);
-                rightArrowPos1Intent.putExtra("notif_id", notificationId);
+                rightArrowPos1Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
                 rightArrowPos1Intent.putExtras(extras);
                 PendingIntent contentRightPos1Intent = PendingIntent.getBroadcast(context, reqCodePos2, rightArrowPos1Intent, 0);
                 contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos1, contentRightPos1Intent);
@@ -252,7 +255,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 rightArrowPos2Intent.putExtra("pt_reqcode0", reqCodePos0);
                 rightArrowPos2Intent.putExtra("pt_reqcode1", reqCodePos1);
                 rightArrowPos2Intent.putExtra("pt_reqcode2", reqCodePos2);
-                rightArrowPos2Intent.putExtra("notif_id", notificationId);
+                rightArrowPos2Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
                 rightArrowPos2Intent.putExtras(extras);
                 PendingIntent contentRightPos2Intent = PendingIntent.getBroadcast(context, reqCodePos0, rightArrowPos2Intent, 0);
                 contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos2, contentRightPos2Intent);
@@ -263,7 +266,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 leftArrowPos0Intent.putExtra("pt_reqcode0", reqCodePos0);
                 leftArrowPos0Intent.putExtra("pt_reqcode1", reqCodePos1);
                 leftArrowPos0Intent.putExtra("pt_reqcode2", reqCodePos2);
-                leftArrowPos0Intent.putExtra("notif_id", notificationId);
+                leftArrowPos0Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
                 leftArrowPos0Intent.putExtras(extras);
                 PendingIntent contentLeftPos0Intent = PendingIntent.getBroadcast(context, reqCodePos2, leftArrowPos0Intent, 0);
                 contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos0, contentLeftPos0Intent);
@@ -274,7 +277,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 leftArrowPos1Intent.putExtra("pt_reqcode0", reqCodePos0);
                 leftArrowPos1Intent.putExtra("pt_reqcode1", reqCodePos1);
                 leftArrowPos1Intent.putExtra("pt_reqcode2", reqCodePos2);
-                leftArrowPos1Intent.putExtra("notif_id", notificationId);
+                leftArrowPos1Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
                 leftArrowPos1Intent.putExtras(extras);
                 PendingIntent contentLeftPos1Intent = PendingIntent.getBroadcast(context, reqCodePos0, leftArrowPos1Intent, 0);
                 contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos1, contentLeftPos1Intent);
@@ -285,7 +288,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 leftArrowPos2Intent.putExtra("pt_reqcode0", reqCodePos0);
                 leftArrowPos2Intent.putExtra("pt_reqcode1", reqCodePos1);
                 leftArrowPos2Intent.putExtra("pt_reqcode2", reqCodePos2);
-                leftArrowPos2Intent.putExtra("notif_id", notificationId);
+                leftArrowPos2Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
                 leftArrowPos2Intent.putExtras(extras);
                 PendingIntent contentLeftPos2Intent = PendingIntent.getBroadcast(context, reqCodePos1, leftArrowPos2Intent, 0);
                 contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos2, contentLeftPos2Intent);
@@ -652,7 +655,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
     private void handleProductDisplayNotification(Context context, Bundle extras) {
         try {
-            int notificationId = extras.getInt("notif_id");
+            int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
             if (buynow == extras.getBoolean("buynow", false)) {
                 notificationManager.cancel(notificationId);
                 context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)); // close the notification drawer
@@ -714,6 +717,19 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewSmall.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
             }
 
+            if (pt_bg != null && !pt_bg.isEmpty()) {
+                contentViewBig.setInt(R.id.image_only_big_linear_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+                contentViewSmall.setInt(R.id.image_only_big_linear_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+            }
+
+            if (pt_product_display_action != null && !pt_product_display_action.isEmpty()) {
+                contentViewBig.setTextViewText(R.id.product_action, pt_product_display_action);
+            }
+
+            if (pt_product_display_action_clr != null && !pt_product_display_action_clr.isEmpty()) {
+                contentViewBig.setInt(R.id.product_action, "setBackgroundColor", Color.parseColor(pt_product_display_action_clr));
+            }
+
             String imageUrl = "", dl = "";
             if (img1 != extras.getBoolean("img1", false)) {
                 imageUrl = imageList.get(0);
@@ -758,7 +774,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("img1", true);
-            notificationIntent1.putExtra("notif_id", notificationId);
+            notificationIntent1.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent1.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(0));
             notificationIntent1.putExtra("pt_reqcode1", requestCode1);
             notificationIntent1.putExtra("pt_reqcode2", requestCode2);
@@ -769,7 +785,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("img2", true);
-            notificationIntent2.putExtra("notif_id", notificationId);
+            notificationIntent2.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent2.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(1));
             notificationIntent2.putExtra("pt_reqcode1", requestCode1);
             notificationIntent2.putExtra("pt_reqcode2", requestCode2);
@@ -780,7 +796,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("img3", true);
-            notificationIntent3.putExtra("notif_id", notificationId);
+            notificationIntent3.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent3.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(2));
             notificationIntent3.putExtra("pt_reqcode1", requestCode1);
             notificationIntent3.putExtra("pt_reqcode2", requestCode2);
@@ -791,7 +807,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent4.putExtra("img1", true);
-            notificationIntent4.putExtra("notif_id", notificationId);
+            notificationIntent4.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent4.putExtra(Constants.PT_BUY_NOW_DL, dl);
             notificationIntent4.putExtra("pt_reqcode1", requestCode1);
             notificationIntent4.putExtra("pt_reqcode2", requestCode2);
@@ -799,7 +815,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             notificationIntent4.putExtra("buynow", true);
             notificationIntent4.putExtras(extras);
             PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
-            contentViewBig.setOnClickPendingIntent(R.id.action_button, contentIntent4);
+            contentViewBig.setOnClickPendingIntent(R.id.product_action, contentIntent4);
 
             Bundle metaData;
             try {
@@ -852,7 +868,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private void handleFiveCTANotification(Context context, Bundle extras) {
         String dl = null;
 
-        int notificationId = extras.getInt("notif_id");
+        int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
         if (cta1 == extras.getBoolean("cta1")) {
             dl = deepLinkList.get(0);
         }

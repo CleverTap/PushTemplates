@@ -55,6 +55,8 @@ public class TemplateRenderer {
     private ArrayList<String> bigTextList;
     private ArrayList<String> smallTextList;
     private ArrayList<String> priceList;
+    private String pt_product_display_action;
+    private String pt_product_display_action_clr;
     private String pt_bg;
     private String pt_rating_default_dl;
     private String pt_small_view;
@@ -152,6 +154,8 @@ public class TemplateRenderer {
         pt_dismiss_on_click = extras.getString(Constants.PT_DISMISS_ON_CLICK);
         pt_chrono_title_clr = extras.getString(Constants.PT_CHRONO_TITLE_COLOUR);
         pt_video_url = extras.getString(Constants.PT_VIDEO_URL);
+        pt_product_display_action = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION);
+        pt_product_display_action_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_COLOUR);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -175,6 +179,9 @@ public class TemplateRenderer {
                                 if (!dbHelper.isNotificationPresentInDB(ptID)) {
                                     _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
                                     dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
+                                }
+                                else {
+                                    PTLog.debug("Notification already Rendered. skipping this payload");
                                 }
                             }
                         } else {
@@ -295,7 +302,10 @@ public class TemplateRenderer {
             PTLog.verbose("Video URL is missing or empty. Not showing notification");
             result = false;
         }
-
+        if (pt_bg == null || pt_bg.isEmpty()) {
+            PTLog.verbose("Background colour is missing or empty. Not showing notification");
+            result = false;
+        }
         return result;
     }
 
@@ -318,7 +328,10 @@ public class TemplateRenderer {
             PTLog.verbose("Icon Image is missing or empty. Not showing notification");
             result = false;
         }
-
+        if (pt_bg == null || pt_bg.isEmpty()) {
+            PTLog.verbose("Background colour is missing or empty. Not showing notification");
+            result = false;
+        }
         return result;
     }
 
@@ -340,6 +353,10 @@ public class TemplateRenderer {
             PTLog.verbose("Three required images not present. Not showing notification");
             result = false;
         }
+        if (pt_bg == null || pt_bg.isEmpty()) {
+            PTLog.verbose("Background colour is missing or empty. Not showing notification");
+            result = false;
+        }
         return result;
     }
 
@@ -359,6 +376,10 @@ public class TemplateRenderer {
         }
         if (imageList == null || imageList.size() < 3) {
             PTLog.verbose("Three required images not present. Not showing notification");
+            result = false;
+        }
+        if (pt_bg == null || pt_bg.isEmpty()) {
+            PTLog.verbose("Background colour is missing or empty. Not showing notification");
             result = false;
         }
         return result;
@@ -383,6 +404,10 @@ public class TemplateRenderer {
             PTLog.verbose("At least one deeplink is required. Not showing notification");
             result = false;
         }
+        if (pt_bg == null || pt_bg.isEmpty()) {
+            PTLog.verbose("Background colour is missing or empty. Not showing notification");
+            result = false;
+        }
         return result;
     }
 
@@ -394,6 +419,10 @@ public class TemplateRenderer {
         }
         if (imageList == null || imageList.size() < 5) {
             PTLog.verbose("Five required images not present. Not showing notification");
+            result = false;
+        }
+        if (pt_bg == null || pt_bg.isEmpty()) {
+            PTLog.verbose("Background colour is missing or empty. Not showing notification");
             result = false;
         }
         return result;
@@ -425,6 +454,18 @@ public class TemplateRenderer {
             PTLog.verbose("Three required images not present. Not showing notification");
             result = false;
         }
+        if (pt_bg == null || pt_bg.isEmpty()) {
+            PTLog.verbose("Background colour is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_product_display_action == null || pt_product_display_action.isEmpty()) {
+            PTLog.verbose("Button label is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_product_display_action_clr == null || pt_product_display_action_clr.isEmpty()) {
+            PTLog.verbose("Button colour is missing or empty. Not showing notification");
+            result = false;
+        }
         return result;
     }
 
@@ -444,6 +485,10 @@ public class TemplateRenderer {
         }
         if (pt_timer_threshold == -1) {
             PTLog.verbose("Timer Threshold not defined. Not showing notification");
+            result = false;
+        }
+        if (pt_bg == null || pt_bg.isEmpty()) {
+            PTLog.verbose("Background colour is missing or empty. Not showing notification");
             result = false;
         }
         return result;
@@ -501,6 +546,9 @@ public class TemplateRenderer {
             setCustomContentViewMessageColour(contentViewRating, pt_msg_clr);
             setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
 
+            setCustomContentViewExpandedBackgroundColour(contentViewRating, pt_bg);
+            setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
+
             //Set the rating stars
             contentViewRating.setImageViewResource(R.id.star1, R.drawable.outline_star_1);
             contentViewRating.setImageViewResource(R.id.star2, R.drawable.outline_star_1);
@@ -514,35 +562,35 @@ public class TemplateRenderer {
 
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("click1", true);
-            notificationIntent1.putExtra("notif_id", notificationId);
+            notificationIntent1.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent1.putExtras(extras);
             PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent1, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star1, contentIntent1);
 
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("click2", true);
-            notificationIntent2.putExtra("notif_id", notificationId);
+            notificationIntent2.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent2.putExtras(extras);
             PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent2, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star2, contentIntent2);
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("click3", true);
-            notificationIntent3.putExtra("notif_id", notificationId);
+            notificationIntent3.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent3.putExtras(extras);
             PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent3, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star3, contentIntent3);
 
             Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent4.putExtra("click4", true);
-            notificationIntent4.putExtra("notif_id", notificationId);
+            notificationIntent4.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent4.putExtras(extras);
             PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star4, contentIntent4);
 
             Intent notificationIntent5 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent5.putExtra("click5", true);
-            notificationIntent5.putExtra("notif_id", notificationId);
+            notificationIntent5.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent5.putExtras(extras);
             PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent5, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star5, contentIntent5);
@@ -690,7 +738,7 @@ public class TemplateRenderer {
             rightArrowPos0Intent.putExtra("pt_reqcode0", reqCodePos0);
             rightArrowPos0Intent.putExtra("pt_reqcode1", reqCodePos1);
             rightArrowPos0Intent.putExtra("pt_reqcode2", reqCodePos2);
-            rightArrowPos0Intent.putExtra("notif_id", notificationId);
+            rightArrowPos0Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
             rightArrowPos0Intent.putExtras(extras);
             PendingIntent contentRightPos0Intent = PendingIntent.getBroadcast(context, reqCodePos1, rightArrowPos0Intent, 0);
             contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos0, contentRightPos0Intent);
@@ -701,7 +749,7 @@ public class TemplateRenderer {
             rightArrowPos1Intent.putExtra("pt_reqcode0", reqCodePos0);
             rightArrowPos1Intent.putExtra("pt_reqcode1", reqCodePos1);
             rightArrowPos1Intent.putExtra("pt_reqcode2", reqCodePos2);
-            rightArrowPos1Intent.putExtra("notif_id", notificationId);
+            rightArrowPos1Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
             rightArrowPos1Intent.putExtras(extras);
             PendingIntent contentRightPos1Intent = PendingIntent.getBroadcast(context, reqCodePos2, rightArrowPos1Intent, 0);
             contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos1, contentRightPos1Intent);
@@ -712,7 +760,7 @@ public class TemplateRenderer {
             rightArrowPos2Intent.putExtra("pt_reqcode0", reqCodePos0);
             rightArrowPos2Intent.putExtra("pt_reqcode1", reqCodePos1);
             rightArrowPos2Intent.putExtra("pt_reqcode2", reqCodePos2);
-            rightArrowPos2Intent.putExtra("notif_id", notificationId);
+            rightArrowPos2Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
             rightArrowPos2Intent.putExtras(extras);
             PendingIntent contentRightPos2Intent = PendingIntent.getBroadcast(context, reqCodePos0, rightArrowPos2Intent, 0);
             contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos2, contentRightPos2Intent);
@@ -734,7 +782,7 @@ public class TemplateRenderer {
             leftArrowPos1Intent.putExtra("pt_reqcode0", reqCodePos0);
             leftArrowPos1Intent.putExtra("pt_reqcode1", reqCodePos1);
             leftArrowPos1Intent.putExtra("pt_reqcode2", reqCodePos2);
-            leftArrowPos1Intent.putExtra("notif_id", notificationId);
+            leftArrowPos1Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
             leftArrowPos1Intent.putExtras(extras);
             PendingIntent contentLeftPos1Intent = PendingIntent.getBroadcast(context, reqCodePos0, leftArrowPos1Intent, 0);
             contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos1, contentLeftPos1Intent);
@@ -745,7 +793,7 @@ public class TemplateRenderer {
             leftArrowPos2Intent.putExtra("pt_reqcode0", reqCodePos0);
             leftArrowPos2Intent.putExtra("pt_reqcode1", reqCodePos1);
             leftArrowPos2Intent.putExtra("pt_reqcode2", reqCodePos2);
-            leftArrowPos2Intent.putExtra("notif_id", notificationId);
+            leftArrowPos2Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
             leftArrowPos2Intent.putExtras(extras);
             PendingIntent contentLeftPos2Intent = PendingIntent.getBroadcast(context, reqCodePos1, leftArrowPos2Intent, 0);
             contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos2, contentLeftPos2Intent);
@@ -877,6 +925,12 @@ public class TemplateRenderer {
             setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
             setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
 
+            setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
+            setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
+
+            setCustomContentViewButtonLabel(contentViewBig, R.id.product_action, pt_product_display_action);
+            setCustomContentViewButtonColour(contentViewSmall, R.id.product_action, pt_product_display_action_clr);
+
             notificationId = setNotificationId(notificationId);
 
             int requestCode1 = new Random().nextInt();
@@ -885,7 +939,7 @@ public class TemplateRenderer {
 
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("img1", true);
-            notificationIntent1.putExtra("notif_id", notificationId);
+            notificationIntent1.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent1.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(0));
             notificationIntent1.putExtra("pt_reqcode1", requestCode1);
             notificationIntent1.putExtra("pt_reqcode2", requestCode2);
@@ -896,7 +950,7 @@ public class TemplateRenderer {
 
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("img2", true);
-            notificationIntent2.putExtra("notif_id", notificationId);
+            notificationIntent2.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent2.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(1));
             notificationIntent2.putExtra("pt_reqcode1", requestCode1);
             notificationIntent2.putExtra("pt_reqcode2", requestCode2);
@@ -907,7 +961,7 @@ public class TemplateRenderer {
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("img3", true);
-            notificationIntent3.putExtra("notif_id", notificationId);
+            notificationIntent3.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent3.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(2));
             notificationIntent3.putExtra("pt_reqcode1", requestCode1);
             notificationIntent3.putExtra("pt_reqcode2", requestCode2);
@@ -917,8 +971,8 @@ public class TemplateRenderer {
             contentViewBig.setOnClickPendingIntent(R.id.small_image3, contentIntent3);
 
             Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
-            notificationIntent1.putExtra("img1", true);
-            notificationIntent4.putExtra("notif_id", notificationId);
+            notificationIntent4.putExtra("img1", true);
+            notificationIntent4.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent4.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(0));
             notificationIntent4.putExtra("pt_reqcode1", requestCode1);
             notificationIntent4.putExtra("pt_reqcode2", requestCode2);
@@ -926,7 +980,7 @@ public class TemplateRenderer {
             notificationIntent4.putExtra("buynow", true);
             notificationIntent4.putExtras(extras);
             PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
-            contentViewBig.setOnClickPendingIntent(R.id.action_button, contentIntent4);
+            contentViewBig.setOnClickPendingIntent(R.id.product_action, contentIntent4);
 
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
@@ -975,6 +1029,10 @@ public class TemplateRenderer {
             }
             contentFiveCTAs = new RemoteViews(context.getPackageName(), R.layout.five_cta);
 
+            if (pt_bg != null && !pt_bg.isEmpty()) {
+                contentFiveCTAs.setInt(R.id.five_cta_layout, "setBackgroundColor", Color.parseColor(pt_bg));
+            }
+
             notificationId = setNotificationId(notificationId);
 
             int reqCode1 = new Random().nextInt();
@@ -987,42 +1045,42 @@ public class TemplateRenderer {
 
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("cta1", true);
-            notificationIntent1.putExtra("notif_id", notificationId);
+            notificationIntent1.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent1.putExtras(extras);
             PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, reqCode1, notificationIntent1, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta1, contentIntent1);
 
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("cta2", true);
-            notificationIntent2.putExtra("notif_id", notificationId);
+            notificationIntent2.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent2.putExtras(extras);
             PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, reqCode2, notificationIntent2, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta2, contentIntent2);
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("cta3", true);
-            notificationIntent3.putExtra("notif_id", notificationId);
+            notificationIntent3.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent3.putExtras(extras);
             PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, reqCode3, notificationIntent3, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta3, contentIntent3);
 
             Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent4.putExtra("cta4", true);
-            notificationIntent4.putExtra("notif_id", notificationId);
+            notificationIntent4.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent4.putExtras(extras);
             PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, reqCode4, notificationIntent4, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta4, contentIntent4);
 
             Intent notificationIntent5 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent5.putExtra("cta5", true);
-            notificationIntent5.putExtra("notif_id", notificationId);
+            notificationIntent5.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent5.putExtras(extras);
             PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, reqCode5, notificationIntent5, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.cta5, contentIntent5);
 
             Intent notificationIntent6 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent6.putExtra("close", true);
-            notificationIntent6.putExtra("notif_id", notificationId);
+            notificationIntent6.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent6.putExtras(extras);
             PendingIntent contentIntent6 = PendingIntent.getBroadcast(context, reqCode6, notificationIntent6, 0);
             contentFiveCTAs.setOnClickPendingIntent(R.id.close, contentIntent6);
@@ -1035,6 +1093,8 @@ public class TemplateRenderer {
             NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId, channelId, context);
 
             setNotificationBuilderBasics(notificationBuilder, contentFiveCTAs, contentFiveCTAs, pt_title, pIntent);
+
+            notificationBuilder.setOngoing(true);
 
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
@@ -1175,6 +1235,7 @@ public class TemplateRenderer {
             setCustomContentViewMessageColour(contentViewTimer, pt_msg_clr);
             setCustomContentViewMessageColour(contentViewTimerCollapsed, pt_msg_clr);
 
+            setCustomContentViewMessageSummary(contentViewTimer,pt_msg_summary);
 
             contentViewTimer.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (pt_timer_threshold * 1000), null, true);
             contentViewTimer.setChronometerCountDown(R.id.chronometer, true);
@@ -1420,6 +1481,18 @@ public class TemplateRenderer {
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
+    }
+
+    private void setCustomContentViewButtonColour(RemoteViews contentView, int resourceID, String pt_product_display_action_clr) {
+        if (pt_product_display_action_clr != null && !pt_product_display_action_clr.isEmpty()) {
+            contentView.setInt(resourceID, "setBackgroundColor", Color.parseColor(pt_product_display_action_clr));
+        }
+    }
+
+    private void setCustomContentViewButtonLabel(RemoteViews contentView, int resourceID, String pt_product_display_action) {
+        if (pt_product_display_action != null && !pt_product_display_action.isEmpty()) {
+            contentView.setTextViewText(resourceID, pt_product_display_action);
+        }
     }
 
     private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context, int color) {
