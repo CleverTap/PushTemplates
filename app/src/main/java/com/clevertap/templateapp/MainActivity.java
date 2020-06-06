@@ -349,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int mod(long x, int y)
     {
-        int result = (int) (y % x);
+        int result = (int) (x % y);
         if (result < 0)
             result += y;
         return result;
