@@ -319,17 +319,12 @@ public class TemplateRenderer {
             PTLog.verbose("Message is missing or empty. Not showing notification");
             result = false;
         }
-
         if (pt_big_img == null || pt_big_img.isEmpty()) {
             PTLog.verbose("Display Image is missing or empty. Not showing notification");
             result = false;
         }
         if (pt_large_icon == null || pt_large_icon.isEmpty()) {
             PTLog.verbose("Icon Image is missing or empty. Not showing notification");
-            result = false;
-        }
-        if (pt_bg == null || pt_bg.isEmpty()) {
-            PTLog.verbose("Background colour is missing or empty. Not showing notification");
             result = false;
         }
         return result;
@@ -1147,11 +1142,6 @@ public class TemplateRenderer {
             }
 
             setCustomContentViewMessageSummary(contentViewBig, pt_msg_summary);
-
-
-            setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
-            setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
-
 
             setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
             setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
