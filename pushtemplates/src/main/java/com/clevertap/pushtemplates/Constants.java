@@ -42,4 +42,7 @@ public class Constants {
     public static final String PT_VIDEO_URL = "pt_video_url";
     public static final String PT_PRODUCT_DISPLAY_ACTION = "pt_product_display_action";
     public static final String PT_PRODUCT_DISPLAY_ACTION_COLOUR = "pt_product_display_action_clr";
+    public static final String PT_TIMER_END = "pt_timer_end";
+    public static final String PT_TIMER_SPLIT = "$D_";
+    public static final int PT_TIMER_MIN_THRESHOLD = 10;
 }

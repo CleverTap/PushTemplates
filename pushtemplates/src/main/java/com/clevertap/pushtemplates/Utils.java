@@ -356,7 +356,7 @@ public class Utils {
         String eName = null;
         for(String key : extras.keySet()){
             if(key.contains(Constants.PT_EVENT_NAME_KEY)){
-               eName = extras.getString(key);
+                eName = extras.getString(key);
             }
         }
         return eName;
@@ -415,4 +415,19 @@ public class Utils {
         return eProps;
     }
 
+    public static int getTimerEnd(Bundle extras) {
+        String val = "-1";
+        for(String key : extras.keySet()){
+            if(key.contains(Constants.PT_TIMER_END)){
+                val =  extras.getString(key);
+            }
+        }
+        if (val.contains("$D_")){
+            String[] temp =  val.split(Constants.PT_TIMER_SPLIT);
+            val = temp[1];
+        }
+        long currentts =  System.currentTimeMillis();
+        int diff = (int) (Long.parseLong(val) - (currentts/1000));
+        return diff;
+    }
 }

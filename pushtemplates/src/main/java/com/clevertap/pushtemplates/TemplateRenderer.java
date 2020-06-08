@@ -73,7 +73,8 @@ public class TemplateRenderer {
     private String pt_input_feedback;
     private String pt_input_auto_open;
     private String pt_dismiss_on_click;
-    private final String pt_video_url;
+    private String pt_video_url;
+    private int pt_timer_end;
 
 
     @SuppressWarnings({"unused"})
@@ -156,6 +157,7 @@ public class TemplateRenderer {
         pt_video_url = extras.getString(Constants.PT_VIDEO_URL);
         pt_product_display_action = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION);
         pt_product_display_action_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_COLOUR);
+        pt_timer_end = Utils.getTimerEnd(extras);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -478,8 +480,8 @@ public class TemplateRenderer {
             PTLog.verbose("Message is missing or empty. Not showing notification");
             result = false;
         }
-        if (pt_timer_threshold == -1) {
-            PTLog.verbose("Timer Threshold not defined. Not showing notification");
+        if (pt_timer_threshold == -1 && pt_timer_end == -1) {
+            PTLog.verbose("Timer Threshold or End time not defined. Not showing notification");
             result = false;
         }
         if (pt_bg == null || pt_bg.isEmpty()) {
@@ -1199,6 +1201,17 @@ public class TemplateRenderer {
             contentViewTimer = new RemoteViews(context.getPackageName(), R.layout.timer);
             contentViewTimerCollapsed = new RemoteViews(context.getPackageName(), R.layout.timer_collapsed);
 
+            int timer_end;
+
+            if (pt_timer_threshold!=-1){
+                timer_end = pt_timer_threshold * 1000;
+            }else if (pt_timer_end >= Constants.PT_TIMER_MIN_THRESHOLD){
+                timer_end = pt_timer_end *1000;
+            } else  {
+                PTLog.debug("Not rendering notification Timer End value lesser than threshold (10 seconds) from current time: " + Constants.PT_TIMER_END);
+                return;
+            }
+
             setCustomContentViewBasicKeys(contentViewTimer, context);
             setCustomContentViewBasicKeys(contentViewTimerCollapsed, context);
 
@@ -1225,10 +1238,10 @@ public class TemplateRenderer {
 
             setCustomContentViewMessageSummary(contentViewTimer,pt_msg_summary);
 
-            contentViewTimer.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (pt_timer_threshold * 1000), null, true);
+            contentViewTimer.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (timer_end), null, true);
             contentViewTimer.setChronometerCountDown(R.id.chronometer, true);
 
-            contentViewTimerCollapsed.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (pt_timer_threshold * 1000), null, true);
+            contentViewTimerCollapsed.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (timer_end), null, true);
             contentViewTimerCollapsed.setChronometerCountDown(R.id.chronometer, true);
 
             notificationId = setNotificationId(notificationId);
@@ -1247,7 +1260,7 @@ public class TemplateRenderer {
 
             setNotificationBuilderBasics(notificationBuilder, contentViewTimerCollapsed, contentViewTimer, pt_title, pIntent);
 
-            notificationBuilder.setTimeoutAfter(pt_timer_threshold * 1000);
+            notificationBuilder.setTimeoutAfter(timer_end);
 
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
