@@ -30,7 +30,7 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode 03
         versionName "0.0.3"
