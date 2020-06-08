@@ -1754,6 +1754,8 @@ public class TemplateRenderer {
 
         if (pt_big_img_alt != null || !pt_big_img_alt.isEmpty()) {
             extras.putString(Constants.PT_BIG_IMG, pt_big_img_alt);
+            extras.putString(Constants.PT_TITLE, pt_msg_alt);
+            extras.putString(Constants.PT_MSG, pt_title_alt);
             extras.putString(Constants.PT_ID, "pt_basic");
             handler.postDelayed(new Runnable() {
                 @RequiresApi(api = Build.VERSION_CODES.O)
