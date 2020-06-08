@@ -1268,6 +1268,7 @@ public class TemplateRenderer {
             setCustomContentViewBigImage(contentViewTimer, pt_big_img, context, notification, notificationId);
 
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewTimer, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewTimerCollapsed, notification, notificationId);
 
             raiseNotificationViewed(context, extras);
 
