@@ -45,4 +45,7 @@ public class Constants {
     public static final String PT_TIMER_END = "pt_timer_end";
     public static final String PT_TIMER_SPLIT = "$D_";
     public static final int PT_TIMER_MIN_THRESHOLD = 10;
+    public static final String PT_BIG_IMG_ALT = "pt_big_img_alt";
+    public static final String PT_TITLE_ALT = "pt_title_alt";
+    public static final String PT_MSG_ALT = "pt_msg_alt";
 }

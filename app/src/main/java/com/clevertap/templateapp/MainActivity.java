@@ -1,7 +1,6 @@
 package com.clevertap.templateapp;
 
 import android.app.NotificationManager;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -11,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.pushtemplates.TemplateRenderer;
-import com.clevertap.pushtemplates.VideoActivity;
 
 import java.util.HashMap;
 
@@ -122,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
         sendVideoNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
               if (cleverTapAPI != null) {
                     cleverTapAPI.pushEvent("Send Video Notification");
                 }

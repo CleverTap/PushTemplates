@@ -21,6 +21,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.RemoteInput;
 import androidx.core.content.ContextCompat;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.text.Html;
 import android.view.View;
@@ -75,6 +77,11 @@ public class TemplateRenderer {
     private String pt_dismiss_on_click;
     private String pt_video_url;
     private int pt_timer_end;
+    private String pt_title_alt;
+    private String pt_msg_alt;
+    private String pt_big_img_alt;
+
+
 
 
     @SuppressWarnings({"unused"})
@@ -158,6 +165,9 @@ public class TemplateRenderer {
         pt_product_display_action = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION);
         pt_product_display_action_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_COLOUR);
         pt_timer_end = Utils.getTimerEnd(extras);
+        pt_big_img_alt = extras.getString(Constants.PT_BIG_IMG_ALT);
+        pt_msg_alt = extras.getString(Constants.PT_MSG_ALT);
+        pt_title_alt = extras.getString(Constants.PT_TITLE_ALT);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -1204,9 +1214,9 @@ public class TemplateRenderer {
             int timer_end;
 
             if (pt_timer_threshold!=-1){
-                timer_end = pt_timer_threshold * 1000;
+                timer_end = (pt_timer_threshold * 1000) + 1000;
             }else if (pt_timer_end >= Constants.PT_TIMER_MIN_THRESHOLD){
-                timer_end = pt_timer_end *1000;
+                timer_end = (pt_timer_end *1000) + 1000;
             } else  {
                 PTLog.debug("Not rendering notification Timer End value lesser than threshold (10 seconds) from current time: " + Constants.PT_TIMER_END);
                 return;
@@ -1271,6 +1281,8 @@ public class TemplateRenderer {
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewTimerCollapsed, notification, notificationId);
 
             raiseNotificationViewed(context, extras);
+
+            timerRunner(context,extras, notificationId ,timer_end);
 
         } catch (Throwable t) {
             PTLog.verbose("Error creating Timer notification ", t);
@@ -1733,6 +1745,31 @@ public class TemplateRenderer {
             PTLog.debug("Intent Service name not found exception - " + e.getLocalizedMessage());
         }
         return false;
+    }
+
+    private void timerRunner(final Context context, final Bundle extras, final int notificationId, final int delay){
+        final Handler handler = new Handler(Looper.getMainLooper());
+
+        extras.remove("wzrk_rnv");
+
+        if (pt_big_img_alt != null || !pt_big_img_alt.isEmpty()) {
+            extras.putString(Constants.PT_BIG_IMG, pt_big_img_alt);
+            extras.putString(Constants.PT_ID, "pt_basic");
+            handler.postDelayed(new Runnable() {
+                @RequiresApi(api = Build.VERSION_CODES.O)
+                @Override
+                public void run() {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (Utils.isNotificationInTray(context, notificationId)) {
+                            if(hasAllBasicNotifKeys()) {
+                                renderBasicTemplateNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+                            }
+                        }
+                    }
+
+                }
+            }, delay - 300);
+        }
     }
 
 }
