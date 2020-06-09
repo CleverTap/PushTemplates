@@ -932,18 +932,18 @@ public class TemplateRenderer {
                 contentViewBig.setTextViewText(R.id.product_price, priceList.get(0));
             }
 
-            setCustomContentViewTitle(contentViewBig, pt_title);
             if(!isLinear) {
+                setCustomContentViewTitle(contentViewBig, pt_title);
                 setCustomContentViewTitle(contentViewSmall, pt_title);
+                setCustomContentViewMessage(contentViewBig, pt_msg);
+                setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
             }
 
-            setCustomContentViewMessage(contentViewBig, pt_msg);
             setCustomContentViewMessage(contentViewSmall, pt_msg);
 
             setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
             setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
 
-            setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
             setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
 
             setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
@@ -1235,7 +1235,6 @@ public class TemplateRenderer {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void renderTimerNotification(final Context context, Bundle extras, int notificationId) {
         try {
 
@@ -1280,10 +1279,18 @@ public class TemplateRenderer {
             setCustomContentViewMessageSummary(contentViewTimer,pt_msg_summary);
 
             contentViewTimer.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (timer_end), null, true);
-            contentViewTimer.setChronometerCountDown(R.id.chronometer, true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                contentViewTimer.setChronometerCountDown(R.id.chronometer, true);
+            }else {
+                //TODO Darshan
+            }
 
             contentViewTimerCollapsed.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (timer_end), null, true);
-            contentViewTimerCollapsed.setChronometerCountDown(R.id.chronometer, true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                contentViewTimerCollapsed.setChronometerCountDown(R.id.chronometer, true);
+            }else {
+                //TODO Darshan
+            }
 
             notificationId = setNotificationId(notificationId);
 
@@ -1320,7 +1327,6 @@ public class TemplateRenderer {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
     private void renderInputBoxNotification(final Context context, Bundle extras, int notificationId) {
         try {
             //Fetch Notif ID
@@ -1789,7 +1795,6 @@ public class TemplateRenderer {
             extras.putString(Constants.PT_MSG, pt_title_alt);
             extras.putString(Constants.PT_ID, "pt_basic");
             handler.postDelayed(new Runnable() {
-                @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void run() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
