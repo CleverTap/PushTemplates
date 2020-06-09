@@ -48,4 +48,5 @@ public class Constants {
     public static final String PT_BIG_IMG_ALT = "pt_big_img_alt";
     public static final String PT_TITLE_ALT = "pt_title_alt";
     public static final String PT_MSG_ALT = "pt_msg_alt";
+    public static final String PT_PRODUCT_DISPLAY_LINEAR = "pt_product_display_linear";
 }

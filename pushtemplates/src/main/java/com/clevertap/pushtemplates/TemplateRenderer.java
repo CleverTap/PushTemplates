@@ -80,6 +80,7 @@ public class TemplateRenderer {
     private String pt_title_alt;
     private String pt_msg_alt;
     private String pt_big_img_alt;
+    private String pt_product_display_linear;
 
 
 
@@ -168,6 +169,7 @@ public class TemplateRenderer {
         pt_big_img_alt = extras.getString(Constants.PT_BIG_IMG_ALT);
         pt_msg_alt = extras.getString(Constants.PT_MSG_ALT);
         pt_title_alt = extras.getString(Constants.PT_TITLE_ALT);
+        pt_product_display_linear =  extras.getString(Constants.PT_PRODUCT_DISPLAY_LINEAR);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -902,32 +904,38 @@ public class TemplateRenderer {
 
     private void renderProductDisplayNotification(Context context, Bundle extras, int notificationId) {
         try {
+            boolean isLinear = true;
 
-            contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
+            if (pt_product_display_linear == null || pt_product_display_linear.isEmpty()) {
+                contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
+                contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            }else{
+                isLinear = true;
+                contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_linear_expanded);
+                contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.product_display_linear_collapsed);
+            }
 
             setCustomContentViewBasicKeys(contentViewBig, context);
-
-            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-
-            setCustomContentViewBasicKeys(contentViewSmall, context);
+            if(!isLinear) {
+                setCustomContentViewBasicKeys(contentViewSmall, context);
+            }
 
             if (!bigTextList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
-
             }
 
             if (!smallTextList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(0));
-
             }
 
             if (!priceList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.product_price, priceList.get(0));
-
             }
 
             setCustomContentViewTitle(contentViewBig, pt_title);
-            setCustomContentViewTitle(contentViewSmall, pt_title);
+            if(!isLinear) {
+                setCustomContentViewTitle(contentViewSmall, pt_title);
+            }
 
             setCustomContentViewMessage(contentViewBig, pt_msg);
             setCustomContentViewMessage(contentViewSmall, pt_msg);
@@ -942,7 +950,7 @@ public class TemplateRenderer {
             setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
 
             setCustomContentViewButtonLabel(contentViewBig, R.id.product_action, pt_product_display_action);
-            setCustomContentViewButtonColour(contentViewSmall, R.id.product_action, pt_product_display_action_clr);
+            setCustomContentViewButtonColour(contentViewBig, R.id.product_action, pt_product_display_action_clr);
 
             notificationId = setNotificationId(notificationId);
 
@@ -995,6 +1003,11 @@ public class TemplateRenderer {
             PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
             contentViewBig.setOnClickPendingIntent(R.id.product_action, contentIntent4);
 
+            if(isLinear){
+                contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentIntent4);
+                contentViewSmall.setOnClickPendingIntent(R.id.small_image1_collapsed, contentIntent4);
+                contentViewSmall.setOnClickPendingIntent(R.id.small_image2_collapsed, contentIntent4);
+            }
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
 
@@ -1013,20 +1026,31 @@ public class TemplateRenderer {
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
 
-            Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
+            if(!isLinear) {
+                Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
+                Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+            }
 
             for (int index = 0; index < imageList.size(); index++) {
                 if (index == 0) {
                     Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
+                    if(isLinear) {
+                        Utils.loadIntoGlide(context, R.id.small_image1_collapsed, imageList.get(0), contentViewSmall, notification, notificationId);
+                    }
                 } else if (index == 1) {
                     Utils.loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewBig, notification, notificationId);
+                    if(isLinear) {
+                        Utils.loadIntoGlide(context, R.id.small_image2_collapsed, imageList.get(1), contentViewSmall, notification, notificationId);
+                    }
                 } else if (index == 2) {
                     Utils.loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewBig, notification, notificationId);
+                    if(isLinear) {
+                        Utils.loadIntoGlide(context, R.id.small_image3_collapsed, imageList.get(2), contentViewSmall, notification, notificationId);
+                    }
                 }
             }
 
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.big_image, imageList.get(0), contentViewBig, notification, notificationId);
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {

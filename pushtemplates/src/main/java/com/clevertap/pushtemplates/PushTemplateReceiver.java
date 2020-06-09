@@ -57,6 +57,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private CleverTapAPI cleverTapAPI;
     private String pt_product_display_action;
     private String pt_product_display_action_clr;
+    private String pt_product_display_linear;
 
 
     @Override
@@ -81,7 +82,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             priceList = Utils.getPriceFromExtras(extras);
             pt_product_display_action = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION);
             pt_product_display_action_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_COLOUR);
-
+            pt_product_display_linear = extras.getString(Constants.PT_PRODUCT_DISPLAY_LINEAR);
             notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
             cleverTapAPI = CleverTapAPI.getDefaultInstance(context);
             channelId = extras.getString(Constants.WZRK_CHANNEL_ID, "");
@@ -599,13 +600,20 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 return;
             }
 
-            contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
+            boolean isLinear = false;
+            if (pt_product_display_linear == null || pt_product_display_linear.isEmpty()) {
+                contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
+                contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            }else{
+                isLinear = true;
+                contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_linear_expanded);
+                contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.product_display_linear_collapsed);
+            }
 
             setCustomContentViewBasicKeys(contentViewBig, context);
-
-            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-
-            setCustomContentViewBasicKeys(contentViewSmall, context);
+            if(!isLinear) {
+                setCustomContentViewBasicKeys(contentViewSmall, context);
+            }
 
             if (!bigTextList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
@@ -623,8 +631,9 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             }
 
             setCustomContentViewTitle(contentViewBig, pt_title);
-            setCustomContentViewTitle(contentViewSmall, pt_title);
-
+            if(!isLinear) {
+                setCustomContentViewTitle(contentViewSmall, pt_title);
+            }
             setCustomContentViewMessage(contentViewBig, pt_msg);
             setCustomContentViewMessage(contentViewSmall, pt_msg);
 
@@ -638,7 +647,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
 
             setCustomContentViewButtonLabel(contentViewBig, R.id.product_action, pt_product_display_action);
-            setCustomContentViewButtonColour(contentViewSmall, R.id.product_action, pt_product_display_action_clr);
+            setCustomContentViewButtonColour(contentViewBig, R.id.product_action, pt_product_display_action_clr);
 
             String imageUrl = "", dl = "";
             if (img1 != extras.getBoolean("img1", false)) {
@@ -758,15 +767,30 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 Notification notification = notificationBuilder.build();
                 notificationManager.notify(notificationId, notification);
+                Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
+                if(!isLinear) {
+                    Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+
+                }
                 for (int index = 0; index < imageList.size(); index++) {
                     if (index == 0) {
                         Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
+                        if(isLinear) {
+                            Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewSmall, notification, notificationId);
+                        }
                     } else if (index == 1) {
                         Utils.loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewBig, notification, notificationId);
+                        if(isLinear) {
+                            Utils.loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewSmall, notification, notificationId);
+                        }
                     } else if (index == 2) {
                         Utils.loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewBig, notification, notificationId);
+                        if(isLinear) {
+                            Utils.loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewSmall, notification, notificationId);
+                        }
                     }
                 }
+                Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
                 Utils.loadIntoGlide(context, R.id.big_image, imageUrl, contentViewBig, notification, notificationId);
             }
 
