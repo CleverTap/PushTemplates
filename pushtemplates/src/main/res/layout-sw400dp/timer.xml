@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:clipToPadding="false">
 
     <RelativeLayout
         android:id="@+id/rel_lyt"
@@ -57,8 +58,11 @@
     <ImageView
         android:id="@+id/big_image"
         android:layout_width="match_parent"
-        android:layout_height="144dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="-16dp"
+        android:layout_marginEnd="-16dp"
+        android:layout_marginBottom="-16dp"
         android:scaleType="centerCrop" />
 
 </LinearLayout>

@@ -866,6 +866,8 @@ public class TemplateRenderer {
             setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
             setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
 
+            setCustomContentViewMessageSummary(contentViewBig,pt_msg_summary);
+
             notificationId = setNotificationId(notificationId);
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
