@@ -33,7 +33,7 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
                     if(("0").equals(pt_id) || pt_id == null || pt_id.isEmpty()){
                         CleverTapAPI.createNotification(context,extras);
                     }else{
-                        TemplateRenderer.createNotification(context,extras);
+                       TemplateRenderer.createNotification(context,extras);
                     }
                 }
             }

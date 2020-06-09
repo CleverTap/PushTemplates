@@ -173,6 +173,11 @@ public class TemplateRenderer {
     @SuppressWarnings("WeakerAccess")
     @SuppressLint("NewApi")
     public static void createNotification(Context context, Bundle extras) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            PTLog.debug("OS Version less than Marshmallow, passing the notification service to CleverTapAPI");
+            CleverTapAPI.createNotification(context,extras);
+            return;
+        }
         PTLog.verbose("Creating notification...");
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
         templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);

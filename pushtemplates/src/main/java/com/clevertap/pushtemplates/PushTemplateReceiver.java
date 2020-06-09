@@ -671,7 +671,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 img3 = false;
                 dl = deepLinkList.get(2);
             }
-            PendingIntent pIntent = null;
+
+            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+
+            PendingIntent pIntent;
 
             if (bigimage == extras.getBoolean("bigimage", false)) {
                 bigimage = false;
@@ -742,6 +745,11 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId, channelId, context);
 
+            if (deepLinkList != null) {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
+            } else {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
+            }
 
 
             if (notificationManager != null) {
