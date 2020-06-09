@@ -449,7 +449,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             HashMap<String, Object> map = new HashMap<String, Object>();
             if (clicked1 == extras.getBoolean("click1", false)) {
-                contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 1);
                 cleverTapAPI.pushEvent("Rated", map);
@@ -459,11 +459,11 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
-                contentViewRating.setImageViewResource(R.id.star1, R.drawable.outline_star_1);
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_outline);
             }
             if (clicked2 == extras.getBoolean("click2", false)) {
-                contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star2, R.drawable.filled_star_1);
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 2);
                 cleverTapAPI.pushEvent("Rated", map);
@@ -474,12 +474,12 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
-                contentViewRating.setImageViewResource(R.id.star2, R.drawable.outline_star_1);
+                contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_outline);
             }
             if (clicked3 == extras.getBoolean("click3", false)) {
-                contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star2, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star3, R.drawable.filled_star_1);
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 3);
                 cleverTapAPI.pushEvent("Rated", map);
@@ -490,13 +490,13 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
-                contentViewRating.setImageViewResource(R.id.star3, R.drawable.outline_star_1);
+                contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_outline);
             }
             if (clicked4 == extras.getBoolean("click4", false)) {
-                contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star2, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star3, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star4, R.drawable.filled_star_1);
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star4, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 4);
                 cleverTapAPI.pushEvent("Rated", map);
@@ -507,14 +507,14 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
-                contentViewRating.setImageViewResource(R.id.star4, R.drawable.outline_star_1);
+                contentViewRating.setImageViewResource(R.id.star4, R.drawable.pt_star_outline);
             }
             if (clicked5 == extras.getBoolean("click5", false)) {
-                contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star2, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star3, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star4, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star5, R.drawable.filled_star_1);
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star4, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star5, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 5);
                 cleverTapAPI.pushEvent("Rated", map);
@@ -525,7 +525,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
-                contentViewRating.setImageViewResource(R.id.star5, R.drawable.outline_star_1);
+                contentViewRating.setImageViewResource(R.id.star5, R.drawable.pt_star_outline);
             }
 
             Bundle metaData;

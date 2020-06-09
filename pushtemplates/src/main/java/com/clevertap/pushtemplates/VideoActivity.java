@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,16 +13,12 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -31,7 +26,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -98,7 +92,7 @@ public class VideoActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View view) {
 				if(fullscreen) {
-					fullscreenButton.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.ic_fullscreen_open));
+					fullscreenButton.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.pt_video_fullscreen_open));
 					ViewGroup.LayoutParams params1 = openapp_button.getLayoutParams();
 					ViewGroup.LayoutParams params2 = close_button.getLayoutParams();
 					params1.width = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
@@ -119,7 +113,7 @@ public class VideoActivity extends AppCompatActivity {
 					videoView.setLayoutParams(params);
 					fullscreen = false;
 				}else{
-					fullscreenButton.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.ic_fullscreen_close));
+					fullscreenButton.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.pt_video_fullscreen_close));
 					ViewGroup.LayoutParams params1 = openapp_button.getLayoutParams();
 					ViewGroup.LayoutParams params2 = close_button.getLayoutParams();
 					params1.width = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());

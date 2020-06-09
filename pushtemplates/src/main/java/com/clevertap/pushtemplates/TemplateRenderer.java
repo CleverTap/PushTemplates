@@ -562,11 +562,11 @@ public class TemplateRenderer {
             setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
 
             //Set the rating stars
-            contentViewRating.setImageViewResource(R.id.star1, R.drawable.outline_star_1);
-            contentViewRating.setImageViewResource(R.id.star2, R.drawable.outline_star_1);
-            contentViewRating.setImageViewResource(R.id.star3, R.drawable.outline_star_1);
-            contentViewRating.setImageViewResource(R.id.star4, R.drawable.outline_star_1);
-            contentViewRating.setImageViewResource(R.id.star5, R.drawable.outline_star_1);
+            contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_outline);
+            contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_outline);
+            contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_outline);
+            contentViewRating.setImageViewResource(R.id.star4, R.drawable.pt_star_outline);
+            contentViewRating.setImageViewResource(R.id.star5, R.drawable.pt_star_outline);
 
             notificationId = setNotificationId(notificationId);
 

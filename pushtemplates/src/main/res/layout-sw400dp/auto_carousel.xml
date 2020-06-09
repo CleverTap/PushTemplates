@@ -15,7 +15,6 @@
         <include
             android:id="@+id/metadata"
             layout="@layout/metadata" />
-
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -38,17 +37,17 @@
             android:layout_marginRight="8dp"
             android:text="message"
             android:textAppearance="@style/PushMessage" />
-
     </RelativeLayout>
 
     <ViewFlipper
         android:id="@+id/view_flipper"
         android:layout_width="match_parent"
-        android:layout_height="232dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/rel_lyt"
         android:autoStart="true"
         android:inAnimation="@anim/slide_in_right"
         android:outAnimation="@anim/slide_out_left">
+
 
         <ImageView
             android:id="@+id/flipper_img1"

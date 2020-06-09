@@ -52,28 +52,28 @@
         android:layout_below="@id/rel_lyt">
         <ImageView
             android:id="@+id/leftArrowPos0"
-            android:src="@drawable/ic_arrow_back_ios"
+            android:src="@drawable/pt_arrow_back"
             android:layout_width="36dp"
             android:layout_height="57dp"
             android:layout_centerVertical="true" />
         <ImageView
             android:id="@+id/leftArrowPos1"
             android:visibility="invisible"
-            android:src="@drawable/ic_arrow_back_ios"
+            android:src="@drawable/pt_arrow_back"
             android:layout_width="36dp"
             android:layout_height="57dp"
             android:layout_centerVertical="true" />
         <ImageView
             android:id="@+id/leftArrowPos2"
             android:visibility="invisible"
-            android:src="@drawable/ic_arrow_back_ios"
+            android:src="@drawable/pt_arrow_back"
             android:layout_width="36dp"
             android:layout_height="57dp"
             android:layout_centerVertical="true" />
         <ImageView
             android:id="@+id/rightArrowPos2"
             android:visibility="invisible"
-            android:src="@drawable/ic_arrow_forward_ios"
+            android:src="@drawable/pt_arrow_forward"
             android:layout_width="36dp"
             android:layout_height="57dp"
             android:layout_alignParentEnd="true"
@@ -83,7 +83,7 @@
         <ImageView
             android:id="@+id/rightArrowPos1"
             android:visibility="invisible"
-            android:src="@drawable/ic_arrow_forward_ios"
+            android:src="@drawable/pt_arrow_forward"
             android:layout_width="36dp"
             android:layout_height="57dp"
             android:layout_alignParentEnd="true"
@@ -91,7 +91,7 @@
             android:layout_centerVertical="true" />
         <ImageView
             android:id="@+id/rightArrowPos0"
-            android:src="@drawable/ic_arrow_forward_ios"
+            android:src="@drawable/pt_arrow_forward"
             android:layout_width="36dp"
             android:layout_height="57dp"
             android:layout_alignParentEnd="true"
