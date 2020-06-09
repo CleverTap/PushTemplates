@@ -904,7 +904,7 @@ public class TemplateRenderer {
 
     private void renderProductDisplayNotification(Context context, Bundle extras, int notificationId) {
         try {
-            boolean isLinear = true;
+            boolean isLinear = false;
 
             if (pt_product_display_linear == null || pt_product_display_linear.isEmpty()) {
                 contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
