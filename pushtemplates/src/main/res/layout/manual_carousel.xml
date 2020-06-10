@@ -2,15 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/carousel_relative_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="4dp">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:id="@+id/rel_lyt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:paddingStart="@dimen/padding_horizontal"
+        android:paddingLeft="@dimen/padding_horizontal"
+        android:paddingTop="@dimen/padding_vertical"
+        android:paddingEnd="@dimen/padding_horizontal"
+        android:paddingRight="@dimen/padding_horizontal"
+        android:paddingBottom="@dimen/padding_vertical">
 
         <include
             android:id="@+id/metadata"
@@ -18,82 +21,57 @@
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/metadata"
             android:layout_alignLeft="@id/metadata"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginTop="@dimen/metadata_title_margin_vertical"
             android:text="title"
-            android:textSize="10sp"
             android:textAppearance="@style/PushTitle" />
 
         <TextView
             android:id="@+id/msg"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_alignLeft="@id/title"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:text="message"
-            android:textSize="10sp"
             android:textAppearance="@style/PushMessage" />
 
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="144dp"
+        android:layout_height="match_parent"
         android:layout_below="@id/rel_lyt">
+
         <ImageView
             android:id="@+id/leftArrowPos0"
-            android:src="@drawable/ic_arrow_back_ios"
-            android:layout_width="30dp"
-            android:layout_height="46dp"
-            android:layout_centerVertical="true" />
+            style="@style/ManualCarouselArrowRev" />
+
         <ImageView
             android:id="@+id/leftArrowPos1"
-            android:visibility="invisible"
-            android:src="@drawable/ic_arrow_back_ios"
-            android:layout_width="30dp"
-            android:layout_height="46dp"
-            android:layout_centerVertical="true" />
+            style="@style/ManualCarouselArrowRev"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/leftArrowPos2"
-            android:visibility="invisible"
-            android:src="@drawable/ic_arrow_back_ios"
-            android:layout_width="30dp"
-            android:layout_height="46dp"
-            android:layout_centerVertical="true" />
-        <ImageView
-            android:id="@+id/rightArrowPos2"
-            android:visibility="invisible"
-            android:src="@drawable/ic_arrow_forward_ios"
-            android:layout_width="30dp"
-            android:layout_height="46dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true" />
-        <ImageView
-            android:id="@+id/rightArrowPos1"
-            android:visibility="invisible"
-            android:src="@drawable/ic_arrow_forward_ios"
-            android:layout_width="30dp"
-            android:layout_height="46dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true" />
+            style="@style/ManualCarouselArrowRev"
+            android:visibility="invisible" />
+
         <ImageView
             android:id="@+id/rightArrowPos0"
-            android:src="@drawable/ic_arrow_forward_ios"
-            android:layout_width="30dp"
-            android:layout_height="46dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true" />
+            style="@style/ManualCarouselArrowFwd" />
+
+        <ImageView
+            android:id="@+id/rightArrowPos1"
+            style="@style/ManualCarouselArrowFwd"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/rightArrowPos2"
+            style="@style/ManualCarouselArrowFwd"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/carousel_image"

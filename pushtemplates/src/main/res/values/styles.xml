@@ -3,21 +3,38 @@
     <style name="PushTitle" parent="android:Widget.TextView">
         <item name="android:textColor">@android:color/black</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/title_font_size</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
     </style>
     <style name="PushMessage" parent="android:Widget.TextView">
         <item name="android:textColor">@android:color/black</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/msg_font_size</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
     </style>
 
     <style name="MetaData" parent="android:Widget.TextView">
         <item name="android:textColor">@color/gray</item>
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">@dimen/metadata_font_size</item>
     </style>
+
+    <style name="ManualCarouselArrowRev" parent="android:Widget.TextView">
+        <item name="android:layout_width">@dimen/manual_carousel_arrow</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:src">@drawable/ic_arrow_back_ios</item>
+    </style>
+
+    <style name="ManualCarouselArrowFwd" parent="android:Widget.TextView">
+        <item name="android:layout_width">@dimen/manual_carousel_arrow</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentEnd">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:src">@drawable/ic_arrow_forward_ios</item>
+    </style>
+
     <style name="Dialog" parent="Theme.AppCompat.Dialog">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

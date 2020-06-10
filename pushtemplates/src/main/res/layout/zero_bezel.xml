@@ -20,34 +20,41 @@
         android:background="@drawable/scrim" />
 
     <RelativeLayout
+        android:id="@+id/rel_lyt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/big_image"
-        android:id="@+id/rel_lyt"
-        android:layout_margin="16dp">
+        android:paddingStart="@dimen/padding_horizontal"
+        android:paddingLeft="@dimen/padding_horizontal"
+        android:paddingTop="@dimen/padding_vertical"
+        android:paddingEnd="@dimen/padding_horizontal"
+        android:paddingRight="@dimen/padding_horizontal"
+        android:paddingBottom="@dimen/padding_vertical">
 
-        <include layout="@layout/metadata"
-            android:id="@+id/metadata"/>
+        <include
+            android:id="@+id/metadata"
+            layout="@layout/metadata" />
 
-        <TextView android:id="@+id/title"
+        <TextView
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/PushTitle"
             android:layout_below="@+id/metadata"
-            android:layout_marginTop="8dp"
             android:layout_alignLeft="@id/metadata"
+            android:layout_marginTop="@dimen/metadata_title_margin_vertical"
             android:text="title"
-            android:textColor="@color/white"/>
-        <TextView android:id="@+id/msg"
+            android:textAppearance="@style/PushTitle"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/msg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/PushMessage"
-            android:maxLines="2"
-            android:ellipsize="end"
             android:layout_below="@+id/title"
             android:layout_alignLeft="@id/title"
             android:text="message"
-            android:textColor="@color/white"/>
+            android:textAppearance="@style/PushMessage"
+            android:textColor="@color/white" />
 
     </RelativeLayout>
 

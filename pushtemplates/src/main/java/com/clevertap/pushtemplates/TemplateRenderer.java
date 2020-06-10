@@ -169,7 +169,7 @@ public class TemplateRenderer {
                 @Override
                 public void run() {
                     try {
-                        if (extras.getString(Constants.WZRK_PUSH_ID) != null) {
+                       /* if (extras.getString(Constants.WZRK_PUSH_ID) != null) {
                             if (!extras.getString(Constants.WZRK_PUSH_ID).isEmpty()) {
                                 String ptID = extras.getString(Constants.WZRK_PUSH_ID);
                                 if (!dbHelper.isNotificationPresentInDB(ptID)) {
@@ -177,9 +177,9 @@ public class TemplateRenderer {
                                     dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
                                 }
                             }
-                        } else {
+                        } else {*/
                             _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
-                        }
+                        /*}*/
 
                     } catch (Throwable t) {
                         PTLog.verbose("Couldn't render notification: " + t.getLocalizedMessage());

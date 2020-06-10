@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="4dp">
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/rel_lyt"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/padding_horizontal"
+        android:paddingLeft="@dimen/padding_horizontal"
+        android:paddingTop="@dimen/padding_vertical"
+        android:paddingEnd="@dimen/padding_horizontal"
+        android:paddingRight="@dimen/padding_horizontal"
+        android:paddingBottom="@dimen/padding_vertical">
 
         <include
             android:id="@+id/metadata"
@@ -20,25 +24,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/metadata"
-            android:layout_alignLeft="@id/metadata"
+            android:layout_alignStart="@+id/metadata"
+            android:layout_alignLeft="@+id/metadata"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:text="title"
-            android:textAppearance="@style/PushTitle"
-            android:textSize="10sp" />
+            android:textAppearance="@style/PushTitle" />
 
         <TextView
             android:id="@+id/product_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/product_name"
-            android:layout_alignLeft="@id/product_name"
+            android:layout_alignStart="@+id/product_name"
+            android:layout_alignLeft="@+id/product_name"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:text="message"
-            android:textAppearance="@style/PushMessage"
-            android:textSize="10sp" />
+            android:textAppearance="@style/PushMessage" />
 
     </RelativeLayout>
 
@@ -46,9 +50,9 @@
     <LinearLayout
         android:id="@+id/carousel_relative_layout"
         android:layout_width="match_parent"
-        android:layout_height="175dp"
-        android:layout_marginTop="8dp"
-        android:weightSum="1">
+        android:layout_height="match_parent"
+        android:layout_below="@id/rel_lyt"
+        android:layout_marginTop="@dimen/metadata_title_margin_vertical">
 
         <ImageView
             android:id="@+id/big_image"
@@ -56,74 +60,88 @@
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:inAnimation="@anim/slide_in_left"
-            android:outAnimation="@anim/slide_out_right" />
+            android:outAnimation="@anim/slide_out_right"
+            android:scaleType="centerCrop" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            android:orientation="vertical"
-            android:weightSum="1">
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/product_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/metadata_title_margin_vertical"
+                android:text="Rs: 5,000,000"
+                android:textAppearance="@style/PushTitle" />
+
+            <Button
+                android:id="@+id/action_button"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/product_display_button_height"
+                android:layout_marginTop="@dimen/metadata_title_margin_vertical"
+                android:background="@android:color/holo_orange_light"
+                android:text="Buy Now"
+                android:textAppearance="@style/PushMessage" />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.4"
-                android:orientation="vertical"
-                android:padding="8dp"
-                android:textSize="10sp"
-                android:weightSum="3">
+                android:layout_marginTop="@dimen/padding_vertical"
+                android:orientation="horizontal">
 
-
-                <TextView
-                    android:id="@+id/product_price"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Rs: 5,000,000"
-                    android:textAppearance="@style/PushTitle" />
-
-                <Button
-                    android:id="@+id/action_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@android:color/holo_orange_light"
-                    android:text="Buy Now"
-                    android:textAppearance="@style/PushMessage"
-                    android:textSize="10sp" />
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/small_image1"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
+                    android:layout_weight="1"
+                    android:scaleType="centerCrop" />
 
-                    <ImageView
-                        android:id="@+id/small_image1"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                <ImageView
+                    android:id="@+id/small_image2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="centerCrop" />
 
-                    <ImageView
-                        android:id="@+id/small_image2"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                <ImageView
+                    android:id="@+id/small_image3"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="centerCrop" />
+            </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/small_image3"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1" />
-                </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <View
+                    android:id="@+id/indicator_1"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <View
+                    android:id="@+id/indicator_2"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <View
+                    android:id="@+id/indicator_3"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
             </LinearLayout>
 
 
         </LinearLayout>
 
     </LinearLayout>
-</LinearLayout>
-
+</RelativeLayout>
 
