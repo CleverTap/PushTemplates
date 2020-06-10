@@ -26,28 +26,14 @@
             android:inAnimation="@anim/slide_in_left"
             android:outAnimation="@anim/slide_out_right"
             />
-
-<!--        <TextView-->
-<!--            android:id="@+id/product_description"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_below="@+id/product_name"-->
-<!--            android:text="message"-->
-<!--            android:gravity="center"-->
-<!--            android:textAppearance="@style/PushMessage"-->
-<!--            android:layout_weight="0.5"/>-->
-
         <LinearLayout
             android:id="@+id/buy_price"
             android:layout_width="match_parent"
-            android:layout_height="25dp"
+            android:layout_height="30dp"
             android:orientation="horizontal"
             android:layout_marginTop="4dp"
-            android:layout_weight="0">
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
+            android:layout_weight="0.1">
+
             <TextView
                 android:id="@+id/product_name"
                 android:layout_width="0dp"
@@ -57,10 +43,6 @@
                 android:textAppearance="@style/PushTitle"
                 android:layout_weight="4"/>
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
             <TextView
                 android:id="@+id/product_price"
                 android:layout_width="0dp"
@@ -70,11 +52,6 @@
                 android:textAppearance="@style/PushTitle"
                 android:gravity="center"/>
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
-
             <Button
                 android:id="@+id/product_action"
                 android:layout_width="0dp"
@@ -83,10 +60,6 @@
                 android:layout_weight="4"
                 android:text="Buy Now"
                 android:textAppearance="@style/PushMessage" />
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
         </LinearLayout>
 
         <LinearLayout

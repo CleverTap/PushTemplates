@@ -924,8 +924,10 @@ public class TemplateRenderer {
                 contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
             }
 
-            if (!smallTextList.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(0));
+            if(!isLinear) {
+                if (!smallTextList.isEmpty()) {
+                    contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(0));
+                }
             }
 
             if (!priceList.isEmpty()) {
@@ -937,14 +939,14 @@ public class TemplateRenderer {
                 setCustomContentViewTitle(contentViewSmall, pt_title);
                 setCustomContentViewMessage(contentViewBig, pt_msg);
                 setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
+                setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
+                setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
+
             }
 
             setCustomContentViewMessage(contentViewSmall, pt_msg);
-
-            setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
-            setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
-
             setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
+
 
             setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
             setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
@@ -1002,12 +1004,12 @@ public class TemplateRenderer {
             notificationIntent4.putExtras(extras);
             PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
             contentViewBig.setOnClickPendingIntent(R.id.product_action, contentIntent4);
-
-            if(isLinear){
-                contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentIntent4);
-                contentViewSmall.setOnClickPendingIntent(R.id.small_image1_collapsed, contentIntent4);
-                contentViewSmall.setOnClickPendingIntent(R.id.small_image2_collapsed, contentIntent4);
-            }
+//
+//            if(isLinear){
+//                contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentIntent4);
+//                contentViewSmall.setOnClickPendingIntent(R.id.small_image1_collapsed, contentIntent4);
+//                contentViewSmall.setOnClickPendingIntent(R.id.small_image2_collapsed, contentIntent4);
+//            }
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
 
