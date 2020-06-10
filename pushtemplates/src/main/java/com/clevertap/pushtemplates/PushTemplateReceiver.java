@@ -362,17 +362,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                         .setWhen(System.currentTimeMillis())
                         .setAutoCancel(true);
 
-                if (pt_big_img_alt !=null && pt_big_img_alt.startsWith("http")){
-                    try {
-                        Bitmap bpMap = Utils.getNotificationBitmap(pt_big_img_alt, false, context);
-
-                        repliedNotification.setStyle(new NotificationCompat.BigPictureStyle()
-                                .bigPicture(bpMap));
-
-                    } catch (Throwable t) {
-                        PTLog.debug("Big image not downloadable - ", t);
-                    }
-                }
+                setStandardViewBigImageStyle(pt_big_img_alt,extras,context,repliedNotification);
 
                 Notification notification = repliedNotification.build();
                 notificationManager.notify(notificationId, notification);
@@ -962,6 +952,40 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentView.setTextViewText(R.id.title, Html.fromHtml(pt_title));
             }
         }
+    }
+
+
+    private void setStandardViewBigImageStyle(String imgUrl, Bundle extras, Context context, NotificationCompat.Builder notificationBuilder) {
+        NotificationCompat.Style bigPictureStyle;
+        if (imgUrl != null && imgUrl.startsWith("http")) {
+            try {
+                Bitmap bpMap = Utils.getNotificationBitmap(imgUrl, false, context);
+
+                if (bpMap == null)
+                    throw new Exception("Failed to fetch big picture!");
+
+                if (extras.containsKey(Constants.PT_MSG_SUMMARY)) {
+                    String summaryText = pt_msg_summary;
+                    bigPictureStyle = new NotificationCompat.BigPictureStyle()
+                            .setSummaryText(summaryText)
+                            .bigPicture(bpMap);
+                } else {
+                    bigPictureStyle = new NotificationCompat.BigPictureStyle()
+                            .setSummaryText(pt_msg)
+                            .bigPicture(bpMap);
+                }
+            } catch (Throwable t) {
+                bigPictureStyle = new NotificationCompat.BigTextStyle()
+                        .bigText(pt_msg);
+                PTLog.verbose("Falling back to big text notification, couldn't fetch big picture", t);
+            }
+        } else {
+            bigPictureStyle = new NotificationCompat.BigTextStyle()
+                    .bigText(pt_msg);
+        }
+
+        notificationBuilder.setStyle(bigPictureStyle);
+
     }
 
 }
