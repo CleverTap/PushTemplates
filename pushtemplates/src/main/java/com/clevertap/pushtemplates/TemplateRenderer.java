@@ -1533,10 +1533,11 @@ public class TemplateRenderer {
     private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context) {
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
-
-        contentView.setTextColor(R.id.app_name, Color.parseColor(pt_meta_clr));
-        contentView.setTextColor(R.id.timestamp, Color.parseColor(pt_meta_clr));
-        contentView.setTextColor(R.id.sep, Color.parseColor(pt_meta_clr));
+        if(pt_meta_clr != null && !pt_meta_clr.isEmpty()) {
+            contentView.setTextColor(R.id.app_name, Color.parseColor(pt_meta_clr));
+            contentView.setTextColor(R.id.timestamp, Color.parseColor(pt_meta_clr));
+            contentView.setTextColor(R.id.sep, Color.parseColor(pt_meta_clr));
+        }
     }
 
     private void setCustomContentViewButtonColour(RemoteViews contentView, int resourceID, String pt_product_display_action_clr) {
