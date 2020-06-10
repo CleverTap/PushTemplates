@@ -642,6 +642,20 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
                 setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
                 setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
+            }
+
+            if(isLinear){
+                Intent notificationSmallIntent1 = new Intent(context, CTPushNotificationReceiver.class);
+                PendingIntent contentSmallIntent1 = setPendingIntent(context,notificationId,extras,notificationSmallIntent1,deepLinkList.get(0));
+                contentViewSmall.setOnClickPendingIntent(R.id.small_image1_collapsed, contentSmallIntent1);
+
+                Intent notificationSmallIntent2 = new Intent(context, CTPushNotificationReceiver.class);
+                PendingIntent contentSmallIntent2 = setPendingIntent(context,notificationId,extras,notificationSmallIntent2,deepLinkList.get(1));
+                contentViewSmall.setOnClickPendingIntent(R.id.small_image2_collapsed, contentSmallIntent2);
+
+                Intent notificationSmallIntent3 = new Intent(context, CTPushNotificationReceiver.class);
+                PendingIntent contentSmallIntent3 = setPendingIntent(context,notificationId,extras,notificationSmallIntent3,deepLinkList.get(2));
+                contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentSmallIntent3);
 
             }
 

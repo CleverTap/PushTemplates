@@ -1000,12 +1000,21 @@ public class TemplateRenderer {
             notificationIntent4.putExtras(extras);
             PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
             contentViewBig.setOnClickPendingIntent(R.id.product_action, contentIntent4);
-//
-//            if(isLinear){
-//                contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentIntent4);
-//                contentViewSmall.setOnClickPendingIntent(R.id.small_image1_collapsed, contentIntent4);
-//                contentViewSmall.setOnClickPendingIntent(R.id.small_image2_collapsed, contentIntent4);
-//            }
+
+            if(isLinear){
+                Intent notificationSmallIntent1 = new Intent(context, CTPushNotificationReceiver.class);
+                PendingIntent contentSmallIntent1 = setPendingIntent(context,notificationId,extras,notificationSmallIntent1,deepLinkList.get(0));
+                contentViewSmall.setOnClickPendingIntent(R.id.small_image1_collapsed, contentSmallIntent1);
+
+                Intent notificationSmallIntent2 = new Intent(context, CTPushNotificationReceiver.class);
+                PendingIntent contentSmallIntent2 = setPendingIntent(context,notificationId,extras,notificationSmallIntent2,deepLinkList.get(1));
+                contentViewSmall.setOnClickPendingIntent(R.id.small_image2_collapsed, contentSmallIntent2);
+
+                Intent notificationSmallIntent3 = new Intent(context, CTPushNotificationReceiver.class);
+                PendingIntent contentSmallIntent3 = setPendingIntent(context,notificationId,extras,notificationSmallIntent3,deepLinkList.get(2));
+                contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentSmallIntent3);
+
+            }
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
 
