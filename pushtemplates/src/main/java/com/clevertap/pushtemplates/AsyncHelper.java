@@ -21,7 +21,7 @@ class AsyncHelper {
         return asyncHelperInstance;
     }
 
-    @SuppressWarnings("UnusedParameters")
+    @SuppressWarnings({"UnusedParameters", "SameParameterValue"})
     void postAsyncSafely(final String name, final Runnable runnable) {
         try {
             final boolean executeSync = Thread.currentThread().getId() == EXECUTOR_THREAD_ID;

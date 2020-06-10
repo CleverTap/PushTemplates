@@ -82,9 +82,6 @@ public class TemplateRenderer {
     private String pt_big_img_alt;
     private String pt_product_display_linear;
 
-
-
-
     @SuppressWarnings({"unused"})
     public enum LogLevel {
         OFF(-1),
@@ -175,19 +172,16 @@ public class TemplateRenderer {
     @SuppressWarnings("WeakerAccess")
     @SuppressLint("NewApi")
     public static void createNotification(Context context, Bundle extras) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            PTLog.debug("OS Version less than Marshmallow, passing the notification service to CleverTapAPI");
-            CleverTapAPI.createNotification(context,extras);
-            return;
-        }
         PTLog.verbose("Creating notification...");
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
         templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private synchronized void dupeCheck(final Context context, final Bundle extras, int id) {
         try {
             asyncHelper.postAsyncSafely("TemplateRenderer#_createNotification", new Runnable() {
+                @SuppressWarnings("ConstantConditions")
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void run() {
@@ -217,8 +211,8 @@ public class TemplateRenderer {
         }
     }
 
+    @SuppressLint("NewApi")
     @SuppressWarnings("SameParameterValue")
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private void _createNotification(Context context, Bundle extras, int notificationId) {
         if (pt_id == null) {
             PTLog.verbose("Template ID not provided. Cannot create the notification");
@@ -1165,9 +1159,9 @@ public class TemplateRenderer {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.zero_bezel);
             setCustomContentViewBasicKeys(contentViewBig, context, R.color.white);
 
-            Boolean text_only_small_view = pt_small_view != null && pt_small_view.equals("text_only");
+            boolean textOnlySmallView = pt_small_view != null && pt_small_view.equals("text_only");
 
-            if (text_only_small_view) {
+            if (textOnlySmallView) {
                 contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.cv_small_text_only);
                 setCustomContentViewBasicKeys(contentViewSmall, context);
             } else {
@@ -1180,7 +1174,7 @@ public class TemplateRenderer {
 
             setCustomContentViewMessage(contentViewBig, pt_msg);
 
-            if (text_only_small_view) {
+            if (textOnlySmallView) {
                 contentViewSmall.setViewVisibility(R.id.msg, View.GONE);
             } else {
                 setCustomContentViewMessage(contentViewSmall, pt_msg);
@@ -1216,18 +1210,18 @@ public class TemplateRenderer {
 
 
             setCustomContentViewBigImage(contentViewBig, pt_big_img, context, notification, notificationId);
-            if (!text_only_small_view) {
+            if (!textOnlySmallView) {
                 setCustomContentViewBigImage(contentViewSmall, pt_big_img, context, notification, notificationId);
             }
 
-            if (text_only_small_view) {
+            if (textOnlySmallView) {
                 setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
             }
 
 
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
 
-            if (!text_only_small_view) {
+            if (!textOnlySmallView) {
                 Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
             }
 
@@ -1463,9 +1457,8 @@ public class TemplateRenderer {
         launchIntent.removeExtra(Constants.WZRK_ACTIONS);
         launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
         launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+        return PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
                 launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        return pIntent;
     }
 
     private void setNotificationBuilderBasics(NotificationCompat.Builder notificationBuilder, RemoteViews contentViewSmall, RemoteViews contentViewBig, String pt_title, PendingIntent pIntent) {
@@ -1536,10 +1529,8 @@ public class TemplateRenderer {
     }
 
     private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context) {
-
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
-
     }
 
     private void setCustomContentViewButtonColour(RemoteViews contentView, int resourceID, String pt_product_display_action_clr) {
@@ -1555,15 +1546,12 @@ public class TemplateRenderer {
     }
 
     private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context, int color) {
-
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
         contentView.setTextColor(R.id.app_name, ContextCompat.getColor(context, color));
         contentView.setTextColor(R.id.timestamp, ContextCompat.getColor(context, color));
         contentView.setTextColor(R.id.sep, ContextCompat.getColor(context, color));
-
-
     }
 
     private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img, Context context, Notification notification, int notificationId) {
@@ -1597,18 +1585,10 @@ public class TemplateRenderer {
         }
     }
 
-    private void setCustomContentViewMessageColour(RemoteViews contentView, int color) {
-        contentView.setTextColor(R.id.msg, color);
-    }
-
     private void setCustomContentViewTitleColour(RemoteViews contentView, String pt_title_clr) {
         if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
             contentView.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
         }
-    }
-
-    private void setCustomContentViewTitleColour(RemoteViews contentView, int color) {
-        contentView.setTextColor(R.id.title, color);
     }
 
     private void setCustomContentViewChronometerTitleColour(RemoteViews contentView, String pt_chrono_title_clr, String pt_title_clr) {
@@ -1673,27 +1653,14 @@ public class TemplateRenderer {
             }
         }
 
-        String intentServiceName = ManifestInfo.getInstance(context).getIntentServiceName();
         Class clazz = null;
-        if (intentServiceName != null) {
-            try {
-                clazz = Class.forName(intentServiceName);
-            } catch (ClassNotFoundException e) {
-                try {
-                    clazz = Class.forName("com.clevertap.pushtemplates.PTNotificationIntentService");
-                } catch (ClassNotFoundException ex) {
-                    PTLog.debug("No Intent Service found");
-                }
-            }
-        } else {
-            try {
-                clazz = Class.forName("com.clevertap.pushtemplates.PTNotificationIntentService");
-            } catch (ClassNotFoundException ex) {
-                PTLog.debug("No Intent Service found");
-            }
+        try {
+            clazz = Class.forName("com.clevertap.pushtemplates.PTNotificationIntentService");
+        } catch (ClassNotFoundException ex) {
+            PTLog.debug("No Intent Service found");
         }
 
-        boolean isPTIntentServiceAvailable = isServiceAvailable(context, clazz);
+        boolean isPTIntentServiceAvailable = Utils.isServiceAvailable(context, clazz);
 
 
         if (actions != null && actions.length() > 0) {
@@ -1765,28 +1732,6 @@ public class TemplateRenderer {
         }
     }
 
-    @SuppressWarnings("SameParameterValue")
-    private static boolean isServiceAvailable(Context context, Class clazz) {
-        if (clazz == null) return false;
-
-        PackageManager pm = context.getPackageManager();
-        String packageName = context.getPackageName();
-
-        PackageInfo packageInfo;
-        try {
-            packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_SERVICES);
-            ServiceInfo[] services = packageInfo.services;
-            for (ServiceInfo serviceInfo : services) {
-                if (serviceInfo.name.equals(clazz.getName())) {
-                    PTLog.verbose("Service " + serviceInfo.name + " found");
-                    return true;
-                }
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            PTLog.debug("Intent Service name not found exception - " + e.getLocalizedMessage());
-        }
-        return false;
-    }
 
     private void timerRunner(final Context context, final Bundle extras, final int notificationId, final int delay){
         final Handler handler = new Handler(Looper.getMainLooper());

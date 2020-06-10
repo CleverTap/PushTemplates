@@ -5,7 +5,10 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.pm.ServiceInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -446,6 +449,29 @@ public class Utils {
             if (notification.getId() == notificationId) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    static boolean isServiceAvailable(Context context, Class clazz) {
+        if (clazz == null) return false;
+
+        PackageManager pm = context.getPackageManager();
+        String packageName = context.getPackageName();
+
+        PackageInfo packageInfo;
+        try {
+            packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_SERVICES);
+            ServiceInfo[] services = packageInfo.services;
+            for (ServiceInfo serviceInfo : services) {
+                if (serviceInfo.name.equals(clazz.getName())) {
+                    PTLog.verbose("Service " + serviceInfo.name + " found");
+                    return true;
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            PTLog.debug("Intent Service name not found exception - " + e.getLocalizedMessage());
         }
         return false;
     }

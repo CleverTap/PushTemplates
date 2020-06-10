@@ -369,7 +369,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 if(extras.getString(Constants.PT_INPUT_AUTO_OPEN) != null || extras.getBoolean(Constants.PT_INPUT_AUTO_OPEN)) {
                     //adding delay for launcher
                     try {
-                        Thread.sleep(Constants.PT_INPUT_TIMEOUT+200);
+                        Thread.sleep(Constants.PT_INPUT_TIMEOUT);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -847,9 +847,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         launchIntent.removeExtra(Constants.WZRK_ACTIONS);
         launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
         launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+        return PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
                 launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        return pIntent;
     }
 
     private void setNotificationBuilderBasics(NotificationCompat.Builder notificationBuilder, RemoteViews contentViewSmall, RemoteViews contentViewBig, String pt_title, PendingIntent pIntent) {
@@ -863,51 +862,11 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 .setAutoCancel(true);
     }
 
-    private void setStandardViewBigImageStyle(String pt_big_img, Bundle extras, Context context, NotificationCompat.Builder notificationBuilder) {
-        NotificationCompat.Style bigPictureStyle;
-        if (pt_big_img != null && pt_big_img.startsWith("http")) {
-            try {
-                Bitmap bpMap = Utils.getNotificationBitmap(pt_big_img, false, context);
-
-                if (bpMap == null)
-                    throw new Exception("Failed to fetch big picture!");
-
-                if (extras.containsKey(Constants.PT_MSG_SUMMARY)) {
-                    String summaryText = pt_msg_summary;
-                    bigPictureStyle = new NotificationCompat.BigPictureStyle()
-                            .setSummaryText(summaryText)
-                            .bigPicture(bpMap);
-                } else {
-                    bigPictureStyle = new NotificationCompat.BigPictureStyle()
-                            .setSummaryText(pt_msg)
-                            .bigPicture(bpMap);
-                }
-            } catch (Throwable t) {
-                bigPictureStyle = new NotificationCompat.BigTextStyle()
-                        .bigText(pt_msg);
-                PTLog.verbose("Falling back to big text notification, couldn't fetch big picture", t);
-            }
-        } else {
-            bigPictureStyle = new NotificationCompat.BigTextStyle()
-                    .bigText(pt_msg);
-        }
-
-        notificationBuilder.setStyle(bigPictureStyle);
-
-    }
-
     private void setCustomContentViewLargeIcon(RemoteViews contentView, String pt_large_icon, Context context, Notification notification, int notificationId) {
         if (pt_large_icon != null && !pt_large_icon.isEmpty()) {
             Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentView, notification, notificationId);
         } else {
             contentView.setViewVisibility(R.id.large_icon, View.GONE);
-        }
-    }
-
-    private void raiseNotificationViewed(Context context, Bundle extras) {
-        CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
-        if (instance != null) {
-            instance.pushNotificationViewedEvent(extras);
         }
     }
 
@@ -920,10 +879,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     }
 
     private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context) {
-
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
-
     }
 
     private void setCustomContentViewButtonColour(RemoteViews contentView, int resourceID, String pt_product_display_action_clr) {
@@ -938,30 +895,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         }
     }
 
-    private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context, int color) {
-
-        contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
-        contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
-
-        contentView.setTextColor(R.id.app_name, ContextCompat.getColor(context, color));
-        contentView.setTextColor(R.id.timestamp, ContextCompat.getColor(context, color));
-
-    }
-
-    private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img, Context context, Notification notification, int notificationId) {
-        if (pt_big_img != null && !pt_big_img.isEmpty()) {
-            Utils.loadIntoGlide(context, R.id.big_image, pt_big_img, contentView, notification, notificationId);
-        } else {
-            contentView.setViewVisibility(R.id.big_image, View.GONE);
-        }
-    }
-
-    private int setNotificationId(int notificationId) {
-        if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
-            notificationId = (int) (Math.random() * 100);
-        }
-        return notificationId;
-    }
 
     private void setCustomContentViewMessageSummary(RemoteViews contentView, String pt_msg_summary) {
         if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {
@@ -979,29 +912,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         }
     }
 
-    private void setCustomContentViewMessageColour(RemoteViews contentView, int color) {
-        contentView.setTextColor(R.id.msg, color);
-    }
-
     private void setCustomContentViewTitleColour(RemoteViews contentView, String pt_title_clr) {
         if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
             contentView.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
         }
-    }
-
-    private void setCustomContentViewTitleColour(RemoteViews contentView, int color) {
-        contentView.setTextColor(R.id.title, color);
-    }
-
-    private void setCustomContentViewChronometerTitleColour(RemoteViews contentView, String pt_chrono_title_clr, String pt_title_clr) {
-        if (pt_chrono_title_clr != null && !pt_chrono_title_clr.isEmpty()) {
-            contentView.setTextColor(R.id.chronometer, Color.parseColor(pt_chrono_title_clr));
-        } else {
-            if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
-                contentView.setTextColor(R.id.chronometer, Color.parseColor(pt_title_clr));
-            }
-        }
-
     }
 
     private void setCustomContentViewExpandedBackgroundColour(RemoteViews contentView, String pt_bg) {
@@ -1013,13 +927,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private void setCustomContentViewCollapsedBackgroundColour(RemoteViews contentView, String pt_bg) {
         if (pt_bg != null && !pt_bg.isEmpty()) {
             contentView.setInt(R.id.content_view_small, "setBackgroundColor", Color.parseColor(pt_bg));
-        }
-    }
-
-    private void setCustomContentViewChronometerBackgroundColour(RemoteViews contentView, String pt_bg) {
-        if (pt_bg != null && !pt_bg.isEmpty()) {
-            contentView.setInt(R.id.chronometer, "setBackgroundColor", Color.parseColor(pt_bg));
-
         }
     }
 
