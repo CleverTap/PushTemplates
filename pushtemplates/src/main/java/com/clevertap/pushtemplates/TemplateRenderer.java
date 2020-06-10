@@ -81,6 +81,7 @@ public class TemplateRenderer {
     private String pt_msg_alt;
     private String pt_big_img_alt;
     private String pt_product_display_linear;
+    private String pt_meta_clr;
 
     @SuppressWarnings({"unused"})
     public enum LogLevel {
@@ -141,6 +142,7 @@ public class TemplateRenderer {
         pt_msg_clr = extras.getString(Constants.PT_MSG_COLOR);
         pt_title = extras.getString(Constants.PT_TITLE);
         pt_title_clr = extras.getString(Constants.PT_TITLE_COLOR);
+        pt_meta_clr = extras.getString(Constants.WZRK_CLR);
         pt_bg = extras.getString(Constants.PT_BG);
         pt_big_img = extras.getString(Constants.PT_BIG_IMG);
         pt_large_icon = extras.getString(Constants.PT_NOTIF_ICON);
@@ -1531,6 +1533,10 @@ public class TemplateRenderer {
     private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context) {
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+        contentView.setTextColor(R.id.app_name, Color.parseColor(pt_meta_clr));
+        contentView.setTextColor(R.id.timestamp, Color.parseColor(pt_meta_clr));
+        contentView.setTextColor(R.id.sep, Color.parseColor(pt_meta_clr));
     }
 
     private void setCustomContentViewButtonColour(RemoteViews contentView, int resourceID, String pt_product_display_action_clr) {

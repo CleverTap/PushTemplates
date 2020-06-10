@@ -51,4 +51,5 @@ public class Constants {
     public static final String PT_PRODUCT_DISPLAY_LINEAR = "pt_product_display_linear";
     public static final int PT_VIDEO_WIDTH = 350;
     public static final int PT_VIDEO_HEIGHT = 210;
+    public static final String WZRK_CLR = "wzrk_clr";
 }
