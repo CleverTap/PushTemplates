@@ -620,9 +620,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             }
 
-            if (!smallTextList.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(0));
-
+            if(!isLinear) {
+                if (!smallTextList.isEmpty()) {
+                    contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(0));
+                }
             }
 
             if (!priceList.isEmpty()) {
@@ -630,18 +631,19 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             }
 
-            setCustomContentViewTitle(contentViewBig, pt_title);
             if(!isLinear) {
+                setCustomContentViewTitle(contentViewBig, pt_title);
                 setCustomContentViewTitle(contentViewSmall, pt_title);
+                setCustomContentViewMessage(contentViewBig, pt_msg);
+                setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
+                setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
+                setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
+
             }
-            setCustomContentViewMessage(contentViewBig, pt_msg);
+
             setCustomContentViewMessage(contentViewSmall, pt_msg);
-
-            setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
-            setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
-
-            setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
             setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
+
 
             setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
             setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
