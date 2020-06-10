@@ -1561,6 +1561,8 @@ public class TemplateRenderer {
 
         contentView.setTextColor(R.id.app_name, ContextCompat.getColor(context, color));
         contentView.setTextColor(R.id.timestamp, ContextCompat.getColor(context, color));
+        contentView.setTextColor(R.id.sep, ContextCompat.getColor(context, color));
+
 
     }
 

@@ -22,44 +22,49 @@
             android:id="@+id/big_image"
             android:layout_width="match_parent"
             android:layout_weight="4.5"
-            android:layout_height="wrap_content"
+            android:layout_height="140dp"
             android:inAnimation="@anim/slide_in_left"
             android:outAnimation="@anim/slide_out_right"
+            android:layout_marginLeft="-8dp"
+            android:layout_marginRight="-8dp"
+            android:scaleType="centerCrop"
             />
         <LinearLayout
             android:id="@+id/buy_price"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:orientation="horizontal"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:layout_weight="0.1">
 
             <TextView
                 android:id="@+id/product_name"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="Product name"
+                android:text="1234567890123456"
                 android:gravity="center"
                 android:textAppearance="@style/PushTitle"
-                android:layout_weight="4"/>
+                android:layout_weight="2"/>
 
-            <TextView
-                android:id="@+id/product_price"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:text="Rs: 5,000,000"
-                android:textAppearance="@style/PushTitle"
-                android:gravity="center"/>
+<!--            <TextView-->
+<!--                android:id="@+id/product_price"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_weight="4"-->
+<!--                android:text="1234567890123456"-->
+<!--                android:textAppearance="@style/PushTitle"-->
+<!--                android:gravity="center"/>-->
 
             <Button
                 android:id="@+id/product_action"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:background="@android:color/holo_orange_light"
-                android:layout_weight="4"
+                android:layout_weight="1"
+                android:background="@android:color/holo_red_dark"
+                android:textColor="@android:color/white"
                 android:text="Buy Now"
                 android:textAppearance="@style/PushMessage" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -75,7 +80,7 @@
             <ImageView
                 android:id="@+id/small_image1"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
                 android:layout_marginLeft="-5dp"
                 android:layout_marginRight="2dp"
                 android:layout_weight="1"
@@ -84,7 +89,7 @@
             <ImageView
                 android:id="@+id/small_image2"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
                 android:layout_marginRight="2dp"
                 android:layout_marginLeft="2dp"
                 android:layout_weight="1"
@@ -92,7 +97,7 @@
             <ImageView
                 android:id="@+id/small_image3"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
                 android:layout_marginEnd="-4dp"
                 android:layout_weight="1"
                 />
