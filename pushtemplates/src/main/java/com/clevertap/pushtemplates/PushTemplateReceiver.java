@@ -58,6 +58,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private String pt_product_display_action;
     private String pt_product_display_action_clr;
     private String pt_product_display_linear;
+    private String pt_big_img_alt;
 
 
     @Override
@@ -86,6 +87,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
             cleverTapAPI = CleverTapAPI.getDefaultInstance(context);
             channelId = extras.getString(Constants.WZRK_CHANNEL_ID, "");
+            pt_big_img_alt = extras.getString(Constants.PT_BIG_IMG_ALT);
 
             requiresChannelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
 
@@ -359,6 +361,18 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                         .setTimeoutAfter(Constants.PT_INPUT_TIMEOUT)
                         .setWhen(System.currentTimeMillis())
                         .setAutoCancel(true);
+
+                if (pt_big_img_alt !=null && pt_big_img_alt.startsWith("http")){
+                    try {
+                        Bitmap bpMap = Utils.getNotificationBitmap(pt_big_img_alt, false, context);
+
+                        repliedNotification.setStyle(new NotificationCompat.BigPictureStyle()
+                                .bigPicture(bpMap));
+
+                    } catch (Throwable t) {
+                        PTLog.debug("Big image not downloadable - ", t);
+                    }
+                }
 
                 Notification notification = repliedNotification.build();
                 notificationManager.notify(notificationId, notification);
