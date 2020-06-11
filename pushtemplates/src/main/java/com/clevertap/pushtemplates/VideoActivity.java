@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -17,7 +16,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -31,7 +29,6 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-@RequiresApi(api = Build.VERSION_CODES.O)
 public class VideoActivity extends AppCompatActivity {
 	Bundle extras;
 	private SimpleExoPlayer player;
@@ -43,6 +40,8 @@ public class VideoActivity extends AppCompatActivity {
 	ImageButton openapp_button,close_button;
 	ImageView fullscreenButton;
 	boolean fullscreen = false;
+
+	@SuppressWarnings("ConstantConditions")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,23 +51,20 @@ public class VideoActivity extends AppCompatActivity {
 		{
 			this.getSupportActionBar().hide();
 		}
-		catch (NullPointerException e){}
+		catch (NullPointerException e){
+			PTLog.debug("NPE during hiding action bar");
+		}
 		videoView = findViewById(R.id.videoView);
 
 
 		aspectRatioFrameLayout=findViewById(R.id.video_activity);
 		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)  videoView.getLayoutParams();
-		params.width = (int) (350*getApplicationContext().getResources().getDisplayMetrics().density);
-		params.height = (int) ( 210 * getApplicationContext().getResources().getDisplayMetrics().density);
+		params.width = (int) (Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
+		params.height = (int) ( Constants.PT_VIDEO_HEIGHT * getApplicationContext().getResources().getDisplayMetrics().density);
 
 
 		extras = getIntent().getExtras();
-		if (extras != null) {
-			for (String key : extras.keySet()) {
-				Object value = extras.get(key);
 
-			}
-		}
 		setFinishOnTouchOutside(false);
 		openapp_button=videoView.findViewById(R.id.openapp);
 		openapp_button.setOnClickListener(new View.OnClickListener() {
@@ -87,7 +83,7 @@ public class VideoActivity extends AppCompatActivity {
 				finish();
 			}
 		});
-		fullscreenButton = (ImageView)videoView.findViewById(R.id.exo_fullscreen_icon);
+		fullscreenButton = videoView.findViewById(R.id.exo_fullscreen_icon);//fullScreenButton is an ImageView
 		fullscreenButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -132,8 +128,8 @@ public class VideoActivity extends AppCompatActivity {
 					getWindowManager().getDefaultDisplay().getMetrics(metrics);
 					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 					FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) aspectRatioFrameLayout.getLayoutParams();
-					params.width = (int) (2*350*getApplicationContext().getResources().getDisplayMetrics().density);
-					params.height = params.MATCH_PARENT;
+					params.width = (int) (2 * Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
+					params.height = ViewGroup.LayoutParams.MATCH_PARENT;
 
 					videoView.setLayoutParams(params);
 
@@ -144,10 +140,7 @@ public class VideoActivity extends AppCompatActivity {
 			}
 		});
 		initializePlayer(extras.getString(Constants.PT_VIDEO_URL));
-		//initializePlayer("https://claykart17091994.000webhostapp.com/videoplayback.mp4");
 	}
-
-
 
 	private void initializePlayer(String url) {
 		player = ExoPlayerFactory.newSimpleInstance(VideoActivity.this);
@@ -160,10 +153,11 @@ public class VideoActivity extends AppCompatActivity {
 		player.seekTo(currentWindow, playbackPosition);
 		player.prepare(mediaSource, false, false);
 	}
+
 	private MediaSource buildMediaSource(Uri uri) {
 		// These factories are used to construct two media sources below
 		DataSource.Factory dataSourceFactory =
-				new DefaultDataSourceFactory(VideoActivity.this, "exoplayer-codelab");
+				new DefaultDataSourceFactory(VideoActivity.this, Util.getUserAgent(this,this.getApplication().getPackageName()));
 		ProgressiveMediaSource.Factory mediaSourceFactory =
 				new ProgressiveMediaSource.Factory(dataSourceFactory);
 
@@ -184,41 +178,31 @@ public class VideoActivity extends AppCompatActivity {
 	}
 	@Override
 	public void onBackPressed() {
-finish();
-			super.onBackPressed();
+		finish();
+		super.onBackPressed();
 
 	}
 	@Override
 	public void onStart() {
 		super.onStart();
-		if (Util.SDK_INT > 23) {
-			//   initializePlayer();
-		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		hideSystemUi();
-		if ((Util.SDK_INT <= 23 || player == null)) {
-			//   initializePlayer();
-		}
+		initializePlayer(extras.getString(Constants.PT_VIDEO_URL));
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (Util.SDK_INT <= 23) {
-			releasePlayer();
-		}
+		releasePlayer();
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		if (Util.SDK_INT > 23) {
-			releasePlayer();
-		}
 	}
 
 

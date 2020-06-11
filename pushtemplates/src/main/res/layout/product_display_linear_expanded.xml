@@ -45,43 +45,22 @@
                 android:id="@+id/product_name"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="4"
+                android:text="1234567890123456"
                 android:gravity="center"
-                android:text="Product name"
-                android:textAppearance="@style/PushTitle" />
+                android:textAppearance="@style/PushTitle"
+                android:layout_weight="2"/>
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/product_price"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:gravity="center"
-                android:text="Rs: 5,000,000"
-                android:textAppearance="@style/PushTitle" />
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/product_action"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:background="@android:color/holo_orange_light"
+                android:layout_weight="1"
+                android:background="@android:color/holo_red_dark"
+                android:textColor="@android:color/white"
                 android:text="Buy Now"
                 android:textAppearance="@style/PushMessage" />
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
         </LinearLayout>
 
         <LinearLayout
@@ -89,8 +68,10 @@
             android:layout_height="0dp"
             android:layout_below="@id/buy_price"
             android:layout_marginTop="@dimen/metadata_title_margin_vertical"
-            android:layout_weight="2"
-            android:orientation="horizontal">
+            android:paddingRight="4dp"
+            android:paddingLeft="4dp"
+            android:orientation="horizontal"
+            android:layout_weight="1.5">
 
             <ImageView
                 android:id="@+id/small_image1"
