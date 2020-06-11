@@ -11,10 +11,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.service.notification.StatusBarNotification;
 import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 
+
+import androidx.annotation.RequiresApi;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
@@ -33,6 +37,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 @SuppressWarnings("WeakerAccess")
 public class Utils {
@@ -290,7 +296,7 @@ public class Utils {
     }
 
     static void cancelNotification(Context ctx, int notifyId) {
-        String ns = Context.NOTIFICATION_SERVICE;
+        String ns = NOTIFICATION_SERVICE;
         NotificationManager nMgr = (NotificationManager) ctx.getSystemService(ns);
         nMgr.cancel(notifyId);
     }
@@ -356,7 +362,7 @@ public class Utils {
         String eName = null;
         for(String key : extras.keySet()){
             if(key.contains(Constants.PT_EVENT_NAME_KEY)){
-               eName = extras.getString(key);
+                eName = extras.getString(key);
             }
         }
         return eName;
@@ -415,4 +421,32 @@ public class Utils {
         return eProps;
     }
 
+    public static int getTimerEnd(Bundle extras) {
+        String val = "-1";
+        for(String key : extras.keySet()){
+            if(key.contains(Constants.PT_TIMER_END)){
+                val =  extras.getString(key);
+            }
+        }
+        if (val.contains("$D_")){
+            String[] temp =  val.split(Constants.PT_TIMER_SPLIT);
+            val = temp[1];
+        }
+        long currentts =  System.currentTimeMillis();
+        int diff = (int) (Long.parseLong(val) - (currentts/1000));
+        return diff;
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public static boolean isNotificationInTray(Context context, int notificationId) {
+        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        StatusBarNotification[] notifications = mNotificationManager.getActiveNotifications();
+        for (StatusBarNotification notification : notifications) {
+            if (notification.getId() == notificationId) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -23,7 +23,7 @@
         <item name="android:layout_width">@dimen/manual_carousel_arrow</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_centerVertical">true</item>
-        <item name="android:src">@drawable/ic_arrow_back_ios</item>
+        <item name="android:src">@drawable/pt_arrow_back</item>
     </style>
 
     <style name="ManualCarouselArrowFwd" parent="android:Widget.TextView">
@@ -32,12 +32,13 @@
         <item name="android:layout_centerVertical">true</item>
         <item name="android:layout_alignParentEnd">true</item>
         <item name="android:layout_alignParentRight">true</item>
-        <item name="android:src">@drawable/ic_arrow_forward_ios</item>
+        <item name="android:src">@drawable/pt_arrow_forward</item>
     </style>
 
     <style name="Dialog" parent="Theme.AppCompat.Dialog">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
         <item name="android:windowFullscreen">true</item>
     </style>
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">

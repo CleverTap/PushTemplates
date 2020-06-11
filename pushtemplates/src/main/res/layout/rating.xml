@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout"
+    android:id="@+id/content_view_big"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -66,35 +66,35 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/rating_star"
             android:layout_weight="1"
-            android:src="@drawable/outline_star_1" />
+            android:src="@drawable/pt_star_outline" />
 
         <ImageView
             android:id="@+id/star2"
             android:layout_width="0dp"
             android:layout_height="@dimen/rating_star"
             android:layout_weight="1"
-            android:src="@drawable/outline_star_1" />
+            android:src="@drawable/pt_star_outline" />
 
         <ImageView
             android:id="@+id/star3"
             android:layout_width="0dp"
             android:layout_height="@dimen/rating_star"
             android:layout_weight="1"
-            android:src="@drawable/outline_star_1" />
+            android:src="@drawable/pt_star_outline" />
 
         <ImageView
             android:id="@+id/star4"
             android:layout_width="0dp"
             android:layout_height="@dimen/rating_star"
             android:layout_weight="1"
-            android:src="@drawable/outline_star_1" />
+            android:src="@drawable/pt_star_outline" />
 
         <ImageView
             android:id="@+id/star5"
             android:layout_width="0dp"
             android:layout_height="@dimen/rating_star"
             android:layout_weight="1"
-            android:src="@drawable/outline_star_1" />
+            android:src="@drawable/pt_star_outline" />
 
     </LinearLayout>
 </RelativeLayout>

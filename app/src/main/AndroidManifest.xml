@@ -15,12 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-<!--        <meta-data-->
-<!--            android:name="CLEVERTAP_ACCOUNT_ID"-->
-<!--            android:value="W67-774-7Z5Z"/>-->
-<!--        <meta-data-->
-<!--            android:name="CLEVERTAP_TOKEN"-->
-<!--            android:value="4aa-a60"/>-->
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
             android:value="TEST-R78-ZZK-955Z"/>
@@ -39,6 +33,9 @@
             android:name="CLEVERTAP_INAPP_EXCLUDE"
             android:value="MainActivity" />
 
+        <meta-data
+            android:name="CLEVERTAP_USE_GOOGLE_AD_ID"
+            android:value="1"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>

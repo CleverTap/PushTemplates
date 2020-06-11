@@ -1,43 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/video_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_weight="80"
+    android:background="#00000000"
     android:gravity="center"
-    android:orientation="vertical">
+    android:visibility="visible"
+    tools:context="com.clevertap.pushtemplates.VideoActivity">
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/videoView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:background="#00000000"
+        android:keepScreenOn="true"
+        app:controller_layout_id="@layout/exo_playback_control_view"
+        app:fastforward_increment="10000"
+        app:repeat_toggle_modes="none"
+        app:resize_mode="fill"
+        app:rewind_increment="10000"
+        app:show_buffering="always"
+        app:surface_type="texture_view"/>
 
 
-    <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-        android:id="@+id/video_activity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        app:resize_mode="fixed_width"
-        tools:context="com.clevertap.pushtemplates.VideoActivity">
-
-        <com.google.android.exoplayer2.ui.PlayerView
-            android:id="@+id/videoView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentStart="false"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentRight="false"
-            android:layout_alignParentTop="false"
-            android:layout_alignParentBottom="false"
-            android:layout_gravity="center"
-            android:background="#000"
-            app:resize_mode="fill"
-            app:show_buffering="always"
-            app:surface_type="texture_view" />
-
-
-    </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Open App" />
-</LinearLayout>
+</FrameLayout>

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -54,7 +55,9 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
     private CleverTapAPI cleverTapAPI;
-
+    private String pt_product_display_action;
+    private String pt_product_display_action_clr;
+    private String pt_product_display_linear;
 
 
     @Override
@@ -77,7 +80,9 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             bigTextList = Utils.getBigTextFromExtras(extras);
             smallTextList = Utils.getSmallTextFromExtras(extras);
             priceList = Utils.getPriceFromExtras(extras);
-
+            pt_product_display_action = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION);
+            pt_product_display_action_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_COLOUR);
+            pt_product_display_linear = extras.getString(Constants.PT_PRODUCT_DISPLAY_LINEAR);
             notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
             cleverTapAPI = CleverTapAPI.getDefaultInstance(context);
             channelId = extras.getString(Constants.WZRK_CHANNEL_ID, "");
@@ -125,62 +130,30 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private void handleManualCarouselNotification(Context context, Bundle extras) {
             try {
                 contentViewManualCarousel = new RemoteViews(context.getPackageName(), R.layout.manual_carousel);
-                contentViewManualCarousel.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
-                contentViewManualCarousel.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+                setCustomContentViewBasicKeys(contentViewManualCarousel, context);
 
                 contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-                contentViewSmall.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
-                contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+                setCustomContentViewBasicKeys(contentViewSmall, context);
 
-                contentViewManualCarousel.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
-                contentViewSmall.setTextColor(R.id.app_name, ContextCompat.getColor(context,R.color.gray));
-                contentViewManualCarousel.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
-                contentViewSmall.setTextColor(R.id.timestamp, ContextCompat.getColor(context,R.color.gray));
 
-                if (pt_title != null && !pt_title.isEmpty()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        contentViewManualCarousel.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
-                        contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
-                    } else {
-                        contentViewManualCarousel.setTextViewText(R.id.title, Html.fromHtml(pt_title));
-                        contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title));
-                    }
-                }
+                setCustomContentViewTitle(contentViewManualCarousel, pt_title);
+                setCustomContentViewTitle(contentViewSmall, pt_title);
 
-                if (pt_msg != null && !pt_msg.isEmpty()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        contentViewManualCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
-                        contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
-                    } else {
-                        contentViewManualCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
-                        contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
-                    }
-                }
+                setCustomContentViewMessage(contentViewManualCarousel, pt_msg);
+                setCustomContentViewMessage(contentViewSmall, pt_msg);
 
-                if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        contentViewManualCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary, Html.FROM_HTML_MODE_LEGACY));
-                    } else {
-                        contentViewManualCarousel.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary));
-                    }
-                }
+                setCustomContentViewExpandedBackgroundColour(contentViewManualCarousel, pt_bg);
+                setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
 
-                if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
-                    contentViewManualCarousel.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
-                    contentViewSmall.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
-                }
+                setCustomContentViewTitleColour(contentViewManualCarousel, pt_title_clr);
+                setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
 
-                if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
-                    contentViewManualCarousel.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
-                    contentViewSmall.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
-                }
+                setCustomContentViewMessageColour(contentViewManualCarousel, pt_msg_clr);
+                setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
 
-                if (pt_bg != null && !pt_bg.isEmpty()) {
-                    contentViewManualCarousel.setInt(R.id.carousel_relative_layout, "setBackgroundColor", Color.parseColor(pt_bg));
-                    contentViewSmall.setInt(R.id.content_view_small, "setBackgroundColor", Color.parseColor(pt_bg));
-                }
+                setCustomContentViewMessageSummary(contentViewManualCarousel, pt_msg_summary);
 
-                int notificationId = extras.getInt("notif_id");
+                int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
 
                 int positionFrom = extras.getInt("manual_carousel_from");
 
@@ -230,7 +203,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 rightArrowPos0Intent.putExtra("pt_reqcode0", reqCodePos0);
                 rightArrowPos0Intent.putExtra("pt_reqcode1", reqCodePos1);
                 rightArrowPos0Intent.putExtra("pt_reqcode2", reqCodePos2);
-                rightArrowPos0Intent.putExtra("notif_id", notificationId);
+                rightArrowPos0Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
                 rightArrowPos0Intent.putExtras(extras);
                 PendingIntent contentRightPos0Intent = PendingIntent.getBroadcast(context, reqCodePos1, rightArrowPos0Intent, 0);
                 contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos0, contentRightPos0Intent);
@@ -241,7 +214,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 rightArrowPos1Intent.putExtra("pt_reqcode0", reqCodePos0);
                 rightArrowPos1Intent.putExtra("pt_reqcode1", reqCodePos1);
                 rightArrowPos1Intent.putExtra("pt_reqcode2", reqCodePos2);
-                rightArrowPos1Intent.putExtra("notif_id", notificationId);
+                rightArrowPos1Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
                 rightArrowPos1Intent.putExtras(extras);
                 PendingIntent contentRightPos1Intent = PendingIntent.getBroadcast(context, reqCodePos2, rightArrowPos1Intent, 0);
                 contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos1, contentRightPos1Intent);
@@ -252,7 +225,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 rightArrowPos2Intent.putExtra("pt_reqcode0", reqCodePos0);
                 rightArrowPos2Intent.putExtra("pt_reqcode1", reqCodePos1);
                 rightArrowPos2Intent.putExtra("pt_reqcode2", reqCodePos2);
-                rightArrowPos2Intent.putExtra("notif_id", notificationId);
+                rightArrowPos2Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
                 rightArrowPos2Intent.putExtras(extras);
                 PendingIntent contentRightPos2Intent = PendingIntent.getBroadcast(context, reqCodePos0, rightArrowPos2Intent, 0);
                 contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos2, contentRightPos2Intent);
@@ -263,7 +236,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 leftArrowPos0Intent.putExtra("pt_reqcode0", reqCodePos0);
                 leftArrowPos0Intent.putExtra("pt_reqcode1", reqCodePos1);
                 leftArrowPos0Intent.putExtra("pt_reqcode2", reqCodePos2);
-                leftArrowPos0Intent.putExtra("notif_id", notificationId);
+                leftArrowPos0Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
                 leftArrowPos0Intent.putExtras(extras);
                 PendingIntent contentLeftPos0Intent = PendingIntent.getBroadcast(context, reqCodePos2, leftArrowPos0Intent, 0);
                 contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos0, contentLeftPos0Intent);
@@ -274,7 +247,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 leftArrowPos1Intent.putExtra("pt_reqcode0", reqCodePos0);
                 leftArrowPos1Intent.putExtra("pt_reqcode1", reqCodePos1);
                 leftArrowPos1Intent.putExtra("pt_reqcode2", reqCodePos2);
-                leftArrowPos1Intent.putExtra("notif_id", notificationId);
+                leftArrowPos1Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
                 leftArrowPos1Intent.putExtras(extras);
                 PendingIntent contentLeftPos1Intent = PendingIntent.getBroadcast(context, reqCodePos0, leftArrowPos1Intent, 0);
                 contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos1, contentLeftPos1Intent);
@@ -285,28 +258,22 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 leftArrowPos2Intent.putExtra("pt_reqcode0", reqCodePos0);
                 leftArrowPos2Intent.putExtra("pt_reqcode1", reqCodePos1);
                 leftArrowPos2Intent.putExtra("pt_reqcode2", reqCodePos2);
-                leftArrowPos2Intent.putExtra("notif_id", notificationId);
+                leftArrowPos2Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
                 leftArrowPos2Intent.putExtras(extras);
                 PendingIntent contentLeftPos2Intent = PendingIntent.getBroadcast(context, reqCodePos1, leftArrowPos2Intent, 0);
                 contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos2, contentLeftPos2Intent);
 
 
                 Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
-                launchIntent.putExtras(extras);
-                if (deepLinkList != null) {
-                    launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
-                }
-                launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-                launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
-                        launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pIntent;
 
-                NotificationCompat.Builder notificationBuilder;
-                if (requiresChannelId) {
-                    notificationBuilder = new NotificationCompat.Builder(context, channelId);
+                if (deepLinkList != null) {
+                    pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
                 } else {
-                    notificationBuilder = new NotificationCompat.Builder(context);
+                    pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
                 }
+
+                NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId, channelId, context);
 
                 Bundle metaData;
                 try {
@@ -321,12 +288,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     smallIcon = Utils.getAppIconAsIntId(context);
                 }
 
-                notificationBuilder.setSmallIcon(smallIcon)
-                        .setCustomContentView(contentViewSmall)
-                        .setCustomBigContentView(contentViewManualCarousel)
-                        .setContentTitle(pt_title)
-                        .setContentIntent(pIntent)
-                        .setAutoCancel(true);
+                setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewManualCarousel, pt_title, pIntent);
 
                 Notification notification = notificationBuilder.build();
                 notificationManager.notify(notificationId, notification);
@@ -338,11 +300,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
 
-                if (pt_large_icon != null && !pt_large_icon.isEmpty()) {
-                    Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
-                } else {
-                    contentViewSmall.setViewVisibility(R.id.large_icon, View.GONE);
-                }
+                setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
 
                 Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewManualCarousel, notification, notificationId);
                 Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
@@ -465,59 +423,34 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             }
             //Set RemoteViews again
             contentViewRating = new RemoteViews(context.getPackageName(), R.layout.rating);
-            contentViewRating.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewRating.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+            setCustomContentViewBasicKeys(contentViewRating, context);
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
-            contentViewRating.setTextColor(R.id.app_name, Color.parseColor("#808080"));
-            contentViewSmall.setTextColor(R.id.app_name, Color.parseColor("#808080"));
-            contentViewRating.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
-            contentViewSmall.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+            setCustomContentViewBasicKeys(contentViewSmall, context);
 
-            if (pt_title != null && !pt_title.isEmpty()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    contentViewRating.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
-                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
-                } else {
-                    contentViewRating.setTextViewText(R.id.title, Html.fromHtml(pt_title));
-                    contentViewSmall.setTextViewText(R.id.title, Html.fromHtml(pt_title));
-                }
-            }
+            setCustomContentViewTitle(contentViewRating, pt_title);
+            setCustomContentViewTitle(contentViewSmall, pt_title);
 
-            if (pt_msg != null && !pt_msg.isEmpty()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
-                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
-                } else {
-                    contentViewSmall.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
-                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
-                }
-            }
-            if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary, Html.FROM_HTML_MODE_LEGACY));
-                } else {
-                    contentViewRating.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary));
-                }
-            }
+            setCustomContentViewMessage(contentViewRating, pt_msg);
+            setCustomContentViewMessage(contentViewSmall, pt_msg);
 
-            if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
-                contentViewRating.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
-                contentViewSmall.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
-            }
+            setCustomContentViewMessageSummary(contentViewRating, pt_msg_summary);
 
-            if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
-                contentViewRating.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
-                contentViewSmall.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
-            }
+            setCustomContentViewTitleColour(contentViewRating, pt_title_clr);
+            setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
+
+            setCustomContentViewMessageColour(contentViewRating, pt_msg_clr);
+            setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
+
+            setCustomContentViewExpandedBackgroundColour(contentViewRating, pt_bg);
+            setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
+
             String pt_dl_clicked = deepLinkList.get(0);
 
             HashMap<String, Object> map = new HashMap<String, Object>();
             if (clicked1 == extras.getBoolean("click1", false)) {
-                contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 1);
                 cleverTapAPI.pushEvent("Rated", map);
@@ -527,11 +460,11 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
-                contentViewRating.setImageViewResource(R.id.star1, R.drawable.outline_star_1);
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_outline);
             }
             if (clicked2 == extras.getBoolean("click2", false)) {
-                contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star2, R.drawable.filled_star_1);
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 2);
                 cleverTapAPI.pushEvent("Rated", map);
@@ -542,12 +475,12 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
-                contentViewRating.setImageViewResource(R.id.star2, R.drawable.outline_star_1);
+                contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_outline);
             }
             if (clicked3 == extras.getBoolean("click3", false)) {
-                contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star2, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star3, R.drawable.filled_star_1);
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 3);
                 cleverTapAPI.pushEvent("Rated", map);
@@ -558,13 +491,13 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
-                contentViewRating.setImageViewResource(R.id.star3, R.drawable.outline_star_1);
+                contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_outline);
             }
             if (clicked4 == extras.getBoolean("click4", false)) {
-                contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star2, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star3, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star4, R.drawable.filled_star_1);
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star4, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 4);
                 cleverTapAPI.pushEvent("Rated", map);
@@ -575,14 +508,14 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
-                contentViewRating.setImageViewResource(R.id.star4, R.drawable.outline_star_1);
+                contentViewRating.setImageViewResource(R.id.star4, R.drawable.pt_star_outline);
             }
             if (clicked5 == extras.getBoolean("click5", false)) {
-                contentViewRating.setImageViewResource(R.id.star1, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star2, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star3, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star4, R.drawable.filled_star_1);
-                contentViewRating.setImageViewResource(R.id.star5, R.drawable.filled_star_1);
+                contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star4, R.drawable.pt_star_filled);
+                contentViewRating.setImageViewResource(R.id.star5, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 5);
                 cleverTapAPI.pushEvent("Rated", map);
@@ -593,7 +526,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     pt_dl_clicked = deepLinkList.get(0);
                 }
             } else {
-                contentViewRating.setImageViewResource(R.id.star5, R.drawable.outline_star_1);
+                contentViewRating.setImageViewResource(R.id.star5, R.drawable.pt_star_outline);
             }
 
             Bundle metaData;
@@ -652,7 +585,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
     private void handleProductDisplayNotification(Context context, Bundle extras) {
         try {
-            int notificationId = extras.getInt("notif_id");
+            int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
             if (buynow == extras.getBoolean("buynow", false)) {
                 notificationManager.cancel(notificationId);
                 context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)); // close the notification drawer
@@ -666,18 +599,21 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 context.startActivity(launchIntent);
                 return;
             }
-            contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
-            contentViewBig.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewBig.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
-            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-            contentViewSmall.setTextViewText(R.id.app_name, context.getResources().getString(R.string.app_name));
-            contentViewSmall.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+            boolean isLinear = false;
+            if (pt_product_display_linear == null || pt_product_display_linear.isEmpty()) {
+                contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
+                contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            }else{
+                isLinear = true;
+                contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_linear_expanded);
+                contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.product_display_linear_collapsed);
+            }
 
-            contentViewBig.setTextColor(R.id.app_name, Color.parseColor("#808080"));
-            contentViewSmall.setTextColor(R.id.app_name, Color.parseColor("#808080"));
-            contentViewBig.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
-            contentViewSmall.setTextColor(R.id.timestamp, Color.parseColor("#808080"));
+            setCustomContentViewBasicKeys(contentViewBig, context);
+            if(!isLinear) {
+                setCustomContentViewBasicKeys(contentViewSmall, context);
+            }
 
             if (!bigTextList.isEmpty()) {
                 contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
@@ -694,25 +630,24 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             }
 
-            if (pt_title != null && !pt_title.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.title, pt_title);
-                contentViewSmall.setTextViewText(R.id.title, pt_title);
+            setCustomContentViewTitle(contentViewBig, pt_title);
+            if(!isLinear) {
+                setCustomContentViewTitle(contentViewSmall, pt_title);
             }
+            setCustomContentViewMessage(contentViewBig, pt_msg);
+            setCustomContentViewMessage(contentViewSmall, pt_msg);
 
-            if (pt_msg != null && !pt_msg.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.msg, pt_msg);
-                contentViewSmall.setTextViewText(R.id.msg, pt_msg);
-            }
+            setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
+            setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
 
-            if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
-                contentViewBig.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
-                contentViewSmall.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
-            }
+            setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
+            setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
 
-            if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
-                contentViewBig.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
-                contentViewSmall.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
-            }
+            setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
+            setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
+
+            setCustomContentViewButtonLabel(contentViewBig, R.id.product_action, pt_product_display_action);
+            setCustomContentViewButtonColour(contentViewBig, R.id.product_action, pt_product_display_action_clr);
 
             String imageUrl = "", dl = "";
             if (img1 != extras.getBoolean("img1", false)) {
@@ -745,7 +680,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 img3 = false;
                 dl = deepLinkList.get(2);
             }
-            PendingIntent pIntent = null;
+
+            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+
+            PendingIntent pIntent;
 
             if (bigimage == extras.getBoolean("bigimage", false)) {
                 bigimage = false;
@@ -758,7 +696,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("img1", true);
-            notificationIntent1.putExtra("notif_id", notificationId);
+            notificationIntent1.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent1.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(0));
             notificationIntent1.putExtra("pt_reqcode1", requestCode1);
             notificationIntent1.putExtra("pt_reqcode2", requestCode2);
@@ -769,7 +707,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("img2", true);
-            notificationIntent2.putExtra("notif_id", notificationId);
+            notificationIntent2.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent2.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(1));
             notificationIntent2.putExtra("pt_reqcode1", requestCode1);
             notificationIntent2.putExtra("pt_reqcode2", requestCode2);
@@ -780,7 +718,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("img3", true);
-            notificationIntent3.putExtra("notif_id", notificationId);
+            notificationIntent3.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent3.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(2));
             notificationIntent3.putExtra("pt_reqcode1", requestCode1);
             notificationIntent3.putExtra("pt_reqcode2", requestCode2);
@@ -791,7 +729,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent4.putExtra("img1", true);
-            notificationIntent4.putExtra("notif_id", notificationId);
+            notificationIntent4.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent4.putExtra(Constants.PT_BUY_NOW_DL, dl);
             notificationIntent4.putExtra("pt_reqcode1", requestCode1);
             notificationIntent4.putExtra("pt_reqcode2", requestCode2);
@@ -799,7 +737,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             notificationIntent4.putExtra("buynow", true);
             notificationIntent4.putExtras(extras);
             PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
-            contentViewBig.setOnClickPendingIntent(R.id.action_button, contentIntent4);
+            contentViewBig.setOnClickPendingIntent(R.id.product_action, contentIntent4);
 
             Bundle metaData;
             try {
@@ -814,33 +752,45 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 smallIcon = Utils.getAppIconAsIntId(context);
             }
 
-            NotificationCompat.Builder notificationBuilder;
-            if (requiresChannelId) {
-                notificationBuilder = new NotificationCompat.Builder(context, channelId);
+            NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId, channelId, context);
+
+            if (deepLinkList != null) {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
             } else {
-                notificationBuilder = new NotificationCompat.Builder(context);
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
             }
+
 
             if (notificationManager != null) {
                 //Use the Builder to build notification
-                notificationBuilder.setSmallIcon(smallIcon)
-                        .setCustomContentView(contentViewBig)
-                        .setCustomBigContentView(contentViewBig)
-                        .setContentTitle("Custom Notification")
-                        .setContentIntent(pIntent)
-                        .setAutoCancel(true);
+                setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewBig, pt_title, pIntent);
 
                 Notification notification = notificationBuilder.build();
                 notificationManager.notify(notificationId, notification);
+                Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
+                if(!isLinear) {
+                    Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+
+                }
                 for (int index = 0; index < imageList.size(); index++) {
                     if (index == 0) {
                         Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
+                        if(isLinear) {
+                            Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewSmall, notification, notificationId);
+                        }
                     } else if (index == 1) {
                         Utils.loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewBig, notification, notificationId);
+                        if(isLinear) {
+                            Utils.loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewSmall, notification, notificationId);
+                        }
                     } else if (index == 2) {
                         Utils.loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewBig, notification, notificationId);
+                        if(isLinear) {
+                            Utils.loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewSmall, notification, notificationId);
+                        }
                     }
                 }
+                Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
                 Utils.loadIntoGlide(context, R.id.big_image, imageUrl, contentViewBig, notification, notificationId);
             }
 
@@ -852,7 +802,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private void handleFiveCTANotification(Context context, Bundle extras) {
         String dl = null;
 
-        int notificationId = extras.getInt("notif_id");
+        int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
         if (cta1 == extras.getBoolean("cta1")) {
             dl = deepLinkList.get(0);
         }
@@ -883,6 +833,212 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(launchIntent);
         context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+    }
+
+    private PendingIntent setPendingIntent(Context context, int notificationId, Bundle extras, Intent launchIntent, String dl) {
+        launchIntent.putExtras(extras);
+        launchIntent.putExtra(Constants.PT_NOTIF_ID, notificationId);
+        if (dl != null) {
+            launchIntent.putExtra("default_dl", true);
+            launchIntent.putExtra(Constants.WZRK_DL, dl);
+        }
+        launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+        launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
+        launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+                launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return pIntent;
+    }
+
+    private void setNotificationBuilderBasics(NotificationCompat.Builder notificationBuilder, RemoteViews contentViewSmall, RemoteViews contentViewBig, String pt_title, PendingIntent pIntent) {
+        notificationBuilder.setSmallIcon(smallIcon)
+                .setCustomContentView(contentViewSmall)
+                .setCustomBigContentView(contentViewBig)
+                .setContentTitle(pt_title)
+                .setContentIntent(pIntent)
+                .setVibrate(new long[]{0L})
+                .setWhen(System.currentTimeMillis())
+                .setAutoCancel(true);
+    }
+
+    private void setStandardViewBigImageStyle(String pt_big_img, Bundle extras, Context context, NotificationCompat.Builder notificationBuilder) {
+        NotificationCompat.Style bigPictureStyle;
+        if (pt_big_img != null && pt_big_img.startsWith("http")) {
+            try {
+                Bitmap bpMap = Utils.getNotificationBitmap(pt_big_img, false, context);
+
+                if (bpMap == null)
+                    throw new Exception("Failed to fetch big picture!");
+
+                if (extras.containsKey(Constants.PT_MSG_SUMMARY)) {
+                    String summaryText = pt_msg_summary;
+                    bigPictureStyle = new NotificationCompat.BigPictureStyle()
+                            .setSummaryText(summaryText)
+                            .bigPicture(bpMap);
+                } else {
+                    bigPictureStyle = new NotificationCompat.BigPictureStyle()
+                            .setSummaryText(pt_msg)
+                            .bigPicture(bpMap);
+                }
+            } catch (Throwable t) {
+                bigPictureStyle = new NotificationCompat.BigTextStyle()
+                        .bigText(pt_msg);
+                PTLog.verbose("Falling back to big text notification, couldn't fetch big picture", t);
+            }
+        } else {
+            bigPictureStyle = new NotificationCompat.BigTextStyle()
+                    .bigText(pt_msg);
+        }
+
+        notificationBuilder.setStyle(bigPictureStyle);
+
+    }
+
+    private void setCustomContentViewLargeIcon(RemoteViews contentView, String pt_large_icon, Context context, Notification notification, int notificationId) {
+        if (pt_large_icon != null && !pt_large_icon.isEmpty()) {
+            Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentView, notification, notificationId);
+        } else {
+            contentView.setViewVisibility(R.id.large_icon, View.GONE);
+        }
+    }
+
+    private void raiseNotificationViewed(Context context, Bundle extras) {
+        CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
+        if (instance != null) {
+            instance.pushNotificationViewedEvent(extras);
+        }
+    }
+
+    private NotificationCompat.Builder setBuilderWithChannelIDCheck(boolean requiresChannelId, String channelId, Context context) {
+        if (requiresChannelId) {
+            return new NotificationCompat.Builder(context, channelId);
+        } else {
+            return new NotificationCompat.Builder(context);
+        }
+    }
+
+    private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context) {
+
+        contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
+        contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+    }
+
+    private void setCustomContentViewButtonColour(RemoteViews contentView, int resourceID, String pt_product_display_action_clr) {
+        if (pt_product_display_action_clr != null && !pt_product_display_action_clr.isEmpty()) {
+            contentView.setInt(resourceID, "setBackgroundColor", Color.parseColor(pt_product_display_action_clr));
+        }
+    }
+
+    private void setCustomContentViewButtonLabel(RemoteViews contentView, int resourceID, String pt_product_display_action) {
+        if (pt_product_display_action != null && !pt_product_display_action.isEmpty()) {
+            contentView.setTextViewText(resourceID, pt_product_display_action);
+        }
+    }
+
+    private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context, int color) {
+
+        contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
+        contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+        contentView.setTextColor(R.id.app_name, ContextCompat.getColor(context, color));
+        contentView.setTextColor(R.id.timestamp, ContextCompat.getColor(context, color));
+
+    }
+
+    private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img, Context context, Notification notification, int notificationId) {
+        if (pt_big_img != null && !pt_big_img.isEmpty()) {
+            Utils.loadIntoGlide(context, R.id.big_image, pt_big_img, contentView, notification, notificationId);
+        } else {
+            contentView.setViewVisibility(R.id.big_image, View.GONE);
+        }
+    }
+
+    private int setNotificationId(int notificationId) {
+        if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
+            notificationId = (int) (Math.random() * 100);
+        }
+        return notificationId;
+    }
+
+    private void setCustomContentViewMessageSummary(RemoteViews contentView, String pt_msg_summary) {
+        if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                contentView.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary, Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                contentView.setTextViewText(R.id.msg, Html.fromHtml(pt_msg_summary));
+            }
+        }
+    }
+
+    private void setCustomContentViewMessageColour(RemoteViews contentView, String pt_msg_clr) {
+        if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
+            contentView.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
+        }
+    }
+
+    private void setCustomContentViewMessageColour(RemoteViews contentView, int color) {
+        contentView.setTextColor(R.id.msg, color);
+    }
+
+    private void setCustomContentViewTitleColour(RemoteViews contentView, String pt_title_clr) {
+        if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
+            contentView.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+        }
+    }
+
+    private void setCustomContentViewTitleColour(RemoteViews contentView, int color) {
+        contentView.setTextColor(R.id.title, color);
+    }
+
+    private void setCustomContentViewChronometerTitleColour(RemoteViews contentView, String pt_chrono_title_clr, String pt_title_clr) {
+        if (pt_chrono_title_clr != null && !pt_chrono_title_clr.isEmpty()) {
+            contentView.setTextColor(R.id.chronometer, Color.parseColor(pt_chrono_title_clr));
+        } else {
+            if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
+                contentView.setTextColor(R.id.chronometer, Color.parseColor(pt_title_clr));
+            }
+        }
+
+    }
+
+    private void setCustomContentViewExpandedBackgroundColour(RemoteViews contentView, String pt_bg) {
+        if (pt_bg != null && !pt_bg.isEmpty()) {
+            contentView.setInt(R.id.content_view_big, "setBackgroundColor", Color.parseColor(pt_bg));
+        }
+    }
+
+    private void setCustomContentViewCollapsedBackgroundColour(RemoteViews contentView, String pt_bg) {
+        if (pt_bg != null && !pt_bg.isEmpty()) {
+            contentView.setInt(R.id.content_view_small, "setBackgroundColor", Color.parseColor(pt_bg));
+        }
+    }
+
+    private void setCustomContentViewChronometerBackgroundColour(RemoteViews contentView, String pt_bg) {
+        if (pt_bg != null && !pt_bg.isEmpty()) {
+            contentView.setInt(R.id.chronometer, "setBackgroundColor", Color.parseColor(pt_bg));
+
+        }
+    }
+
+    private void setCustomContentViewMessage(RemoteViews contentView, String pt_msg) {
+        if (pt_msg != null && !pt_msg.isEmpty()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                contentView.setTextViewText(R.id.msg, Html.fromHtml(pt_msg, Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                contentView.setTextViewText(R.id.msg, Html.fromHtml(pt_msg));
+            }
+        }
+    }
+
+    private void setCustomContentViewTitle(RemoteViews contentView, String pt_title) {
+        if (pt_title != null && !pt_title.isEmpty()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                contentView.setTextViewText(R.id.title, Html.fromHtml(pt_title, Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                contentView.setTextViewText(R.id.title, Html.fromHtml(pt_title));
+            }
+        }
     }
 
 }
