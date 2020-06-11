@@ -77,16 +77,10 @@ public class VideoActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View view) {
 				Context ctx= VideoActivity.this;
-
 				Intent launchIntent = new Intent(ctx, CTPushNotificationReceiver.class);
-
-
 				if (deepLinkList != null) {
-
-
 					launchIntent.putExtras(extras);
 					launchIntent.putExtra(Constants.PT_NOTIF_ID, Constants.EMPTY_NOTIFICATION_ID);
-
 					if (deepLinkList.get(0) != null) {
 						launchIntent.putExtra("default_dl", true);
 						launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
@@ -94,7 +88,6 @@ public class VideoActivity extends AppCompatActivity {
 					launchIntent.removeExtra(Constants.WZRK_ACTIONS);
 					launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
 					launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-
 					ctx.sendBroadcast(launchIntent);
 					finish();
 				} else {
