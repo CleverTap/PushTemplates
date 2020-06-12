@@ -415,7 +415,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
             if (extras.getBoolean("default_dl", false)) {
                 notificationManager.cancel(notificationId);
-
+                Utils.raiseNotificationClicked(context,extras);
                 Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(pt_rating_default_dl));
                 launchIntent.putExtras(extras);
                 launchIntent.putExtra(Constants.WZRK_DL, pt_rating_default_dl);
@@ -592,6 +592,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
             if (buynow == extras.getBoolean("buynow", false)) {
                 notificationManager.cancel(notificationId);
+                Utils.raiseNotificationClicked(context,extras);
                 context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)); // close the notification drawer
                 String dl = extras.getString(Constants.PT_BUY_NOW_DL, deepLinkList.get(0));
                 Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dl));

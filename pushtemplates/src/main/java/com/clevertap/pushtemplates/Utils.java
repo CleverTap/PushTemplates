@@ -475,4 +475,11 @@ public class Utils {
         }
         return false;
     }
+
+    static void raiseNotificationClicked(Context context, Bundle extras) {
+        CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
+        if (instance != null) {
+            instance.pushNotificationClickedEvent(extras);
+        }
+    }
 }

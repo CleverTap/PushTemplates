@@ -71,6 +71,7 @@ public class PTNotificationIntentService extends IntentService {
                 }
 
             }
+            Utils.raiseNotificationClicked(getApplicationContext(), extras);
             sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)); // close the notification drawer
             startActivity(launchIntent);
         } catch (Throwable t) {
