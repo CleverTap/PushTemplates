@@ -2,12 +2,15 @@ package com.clevertap.pushtemplates;
 
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +22,7 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
@@ -28,6 +32,8 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+
+import java.util.ArrayList;
 
 public class VideoActivity extends AppCompatActivity {
 	Bundle extras;
@@ -40,7 +46,7 @@ public class VideoActivity extends AppCompatActivity {
 	ImageButton openapp_button,close_button;
 	ImageView fullscreenButton;
 	boolean fullscreen = false;
-
+	private ArrayList<String> deepLinkList;
 	@SuppressWarnings("ConstantConditions")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,15 +70,32 @@ public class VideoActivity extends AppCompatActivity {
 
 
 		extras = getIntent().getExtras();
-
+		deepLinkList = Utils.getDeepLinkListFromExtras(extras);
 		setFinishOnTouchOutside(false);
 		openapp_button=videoView.findViewById(R.id.openapp);
 		openapp_button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				Context ctx= VideoActivity.this;
-				Intent i = ctx.getPackageManager().getLaunchIntentForPackage(getPackageName());
-				ctx.startActivity(i);
+				Intent launchIntent = new Intent(ctx, CTPushNotificationReceiver.class);
+				if (deepLinkList != null) {
+					launchIntent.putExtras(extras);
+					launchIntent.putExtra(Constants.PT_NOTIF_ID, Constants.EMPTY_NOTIFICATION_ID);
+					if (deepLinkList.get(0) != null) {
+						launchIntent.putExtra("default_dl", true);
+						launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
+					}
+					launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+					launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
+					launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+					ctx.sendBroadcast(launchIntent);
+					finish();
+				} else {
+					Intent i = ctx.getPackageManager().getLaunchIntentForPackage(getPackageName());
+					ctx.startActivity(i);
+					finish();
+				}
+
 			}
 		});
 		close_button=videoView.findViewById(R.id.exo_close);
