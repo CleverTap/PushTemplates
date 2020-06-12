@@ -46,6 +46,12 @@
         android:layout_below="@id/rel_lyt">
 
         <ImageView
+            android:id="@+id/carousel_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+
+        <ImageView
             android:id="@+id/leftArrowPos0"
             style="@style/ManualCarouselArrowRev" />
 
@@ -73,9 +79,6 @@
             style="@style/ManualCarouselArrowFwd"
             android:visibility="invisible" />
 
-        <ImageView
-            android:id="@+id/carousel_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+
     </RelativeLayout>
 </RelativeLayout>
