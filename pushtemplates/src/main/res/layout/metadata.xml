@@ -6,12 +6,12 @@
 
     <ImageView
         android:id="@+id/small_icon"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
+        android:layout_width="@dimen/metadata_small_icon_x"
+        android:layout_height="@dimen/metadata_small_icon_y"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp" />
+        android:layout_marginEnd="@dimen/metadata_margin_x"
+        android:layout_marginRight="@dimen/metadata_margin_x" />
 
     <TextView
         android:id="@+id/app_name"
@@ -41,8 +41,6 @@
         android:id="@+id/timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
         android:layout_toEndOf="@id/sep"
         android:layout_toRightOf="@id/sep"
         android:text="timestamp"

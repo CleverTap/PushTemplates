@@ -2,42 +2,42 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ct_small_text_only"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="16dp"
-    android:paddingTop="4dp"
-    android:paddingRight="16dp"
-    android:paddingBottom="4dp">
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/padding_horizontal"
+    android:paddingTop="@dimen/padding_vertical"
+    android:paddingRight="@dimen/padding_horizontal"
+    android:paddingBottom="@dimen/padding_vertical">
 
     <ImageView
         android:id="@+id/large_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@dimen/large_icon"
+        android:layout_height="@dimen/large_icon"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:scaleType="centerCrop" />
 
+
     <RelativeLayout
+        android:id="@+id/rel_lyt"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_toEndOf="@+id/large_icon"
-        android:layout_toRightOf="@+id/large_icon">
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/large_icon">
 
         <TextView
             android:id="@+id/app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="@dimen/metadata_title_margin_horizontal"
+            android:layout_marginLeft="@dimen/metadata_title_margin_horizontal"
             android:text="app name"
-            android:textAppearance="@style/MetaData"
-            />
+            android:textAppearance="@style/MetaData" />
 
         <TextView
             android:id="@+id/timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="@dimen/metadata_title_margin_horizontal"
+            android:layout_marginLeft="@dimen/metadata_title_margin_horizontal"
             android:layout_toEndOf="@+id/app_name"
             android:layout_toRightOf="@+id/app_name"
             android:text="app name"
@@ -45,11 +45,11 @@
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/app_name"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="@dimen/metadata_title_margin_horizontal"
+            android:layout_marginLeft="@dimen/metadata_title_margin_horizontal"
             android:ellipsize="end"
             android:maxLines="2"
             android:text="title"

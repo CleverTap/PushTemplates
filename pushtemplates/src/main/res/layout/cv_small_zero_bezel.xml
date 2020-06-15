@@ -8,24 +8,24 @@
         android:id="@+id/big_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop">
-
-    </ImageView>
+        android:scaleType="centerCrop"/>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/bg_image"
+        android:layout_alignBottom="@+id/big_image"
         android:background="@drawable/scrim" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/bg_image"
-        android:paddingLeft="16dp"
-        android:paddingTop="4dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="4dp">
+        android:layout_alignBottom="@+id/big_image"
+        android:paddingLeft="@dimen/padding_horizontal"
+        android:paddingStart="@dimen/padding_horizontal"
+        android:paddingRight="@dimen/padding_horizontal"
+        android:paddingEnd="@dimen/padding_horizontal"
+        android:paddingBottom="@dimen/padding_vertical"
+        android:paddingTop="@dimen/padding_vertical">
 
         <include
             android:id="@+id/metadata"
@@ -36,8 +36,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/metadata"
-            android:layout_alignStart="@id/metadata"
-            android:layout_alignLeft="@id/metadata"
+            android:layout_alignLeft="@+id/metadata"
+            android:layout_alignStart="@+id/metadata"
+            android:layout_marginTop="@dimen/metadata_title_margin_vertical"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="title"
@@ -49,12 +50,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
-            android:layout_alignStart="@+id/title"
             android:layout_alignLeft="@id/title"
-
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="message message message "
+            android:text="message message message"
             android:textAppearance="@style/PushMessage"
             android:textColor="@color/white" />
 

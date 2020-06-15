@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         sendVideoNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              if (cleverTapAPI != null) {
+                if (cleverTapAPI != null) {
                     cleverTapAPI.pushEvent("Send Video Notification");
                 }
             }

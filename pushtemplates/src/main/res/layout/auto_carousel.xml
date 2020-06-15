@@ -3,14 +3,18 @@
     android:id="@+id/content_view_big"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="4dp">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/rel_lyt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:paddingStart="@dimen/padding_horizontal"
+        android:paddingLeft="@dimen/padding_horizontal"
+        android:paddingEnd="@dimen/padding_horizontal"
+        android:paddingRight="@dimen/padding_horizontal"
+        android:paddingTop="@dimen/padding_vertical"
+        android:paddingBottom="@dimen/padding_vertical">
 
         <include
             android:id="@+id/metadata"
@@ -21,14 +25,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/metadata"
-            android:layout_alignStart="@id/metadata"
             android:layout_alignLeft="@id/metadata"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_alignStart="@id/metadata"
+            android:layout_marginTop="@dimen/metadata_title_margin_vertical"
             android:text="title"
-            android:textAppearance="@style/PushTitle"
-            android:textSize="10sp" />
+            android:textAppearance="@style/PushTitle" />
 
         <TextView
             android:id="@+id/msg"
@@ -36,18 +37,16 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_alignLeft="@id/title"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_alignStart="@id/title"
             android:text="message"
-            android:textAppearance="@style/PushMessage"
-            android:textSize="10sp" />
+            android:textAppearance="@style/PushMessage" />
 
     </RelativeLayout>
 
     <ViewFlipper
         android:id="@+id/view_flipper"
         android:layout_width="match_parent"
-        android:layout_height="144dp"
+        android:layout_height="match_parent"
         android:layout_below="@id/rel_lyt"
         android:autoStart="true"
         android:inAnimation="@anim/slide_in_right"
@@ -56,16 +55,20 @@
         <ImageView
             android:id="@+id/flipper_img1"
             android:layout_width="match_parent"
-            android:layout_height="144dp" />
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            />
 
         <ImageView
             android:id="@+id/flipper_img2"
             android:layout_width="match_parent"
-            android:layout_height="144dp" />
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
 
         <ImageView
             android:id="@+id/flipper_img3"
             android:layout_width="match_parent"
-            android:layout_height="144dp" />
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
     </ViewFlipper>
 </RelativeLayout>

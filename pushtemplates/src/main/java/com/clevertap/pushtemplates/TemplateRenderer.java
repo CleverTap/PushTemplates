@@ -862,7 +862,7 @@ public class TemplateRenderer {
             setCustomContentViewBasicKeys(contentViewBig, context);
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-            
+
             setCustomContentViewBasicKeys(contentViewSmall, context);
 
             setCustomContentViewTitle(contentViewBig, pt_title);
@@ -880,7 +880,7 @@ public class TemplateRenderer {
             setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
             setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
 
-            setCustomContentViewMessageSummary(contentViewBig,pt_msg_summary);
+            setCustomContentViewMessageSummary(contentViewBig, pt_msg_summary);
 
             notificationId = setNotificationId(notificationId);
 
@@ -1248,6 +1248,7 @@ public class TemplateRenderer {
 
             setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
 
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
 
             if (!textOnlySmallView) {
                 setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
@@ -1267,11 +1268,11 @@ public class TemplateRenderer {
 
             int timer_end;
 
-            if (pt_timer_threshold!=-1){
+            if (pt_timer_threshold != -1) {
                 timer_end = (pt_timer_threshold * 1000) + 1000;
-            }else if (pt_timer_end >= Constants.PT_TIMER_MIN_THRESHOLD){
-                timer_end = (pt_timer_end *1000) + 1000;
-            } else  {
+            } else if (pt_timer_end >= Constants.PT_TIMER_MIN_THRESHOLD) {
+                timer_end = (pt_timer_end * 1000) + 1000;
+            } else {
                 PTLog.debug("Not rendering notification Timer End value lesser than threshold (10 seconds) from current time: " + Constants.PT_TIMER_END);
                 return;
             }
@@ -1300,19 +1301,19 @@ public class TemplateRenderer {
             setCustomContentViewMessageColour(contentViewTimer, pt_msg_clr);
             setCustomContentViewMessageColour(contentViewTimerCollapsed, pt_msg_clr);
 
-            setCustomContentViewMessageSummary(contentViewTimer,pt_msg_summary);
+            setCustomContentViewMessageSummary(contentViewTimer, pt_msg_summary);
 
             contentViewTimer.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (timer_end), null, true);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 contentViewTimer.setChronometerCountDown(R.id.chronometer, true);
-            }else {
+            } else {
                 //TODO Darshan
             }
 
             contentViewTimerCollapsed.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (timer_end), null, true);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 contentViewTimerCollapsed.setChronometerCountDown(R.id.chronometer, true);
-            }else {
+            } else {
                 //TODO Darshan
             }
 
@@ -1344,7 +1345,7 @@ public class TemplateRenderer {
 
             raiseNotificationViewed(context, extras);
 
-            timerRunner(context,extras, notificationId ,timer_end);
+            timerRunner(context, extras, notificationId, timer_end);
 
         } catch (Throwable t) {
             PTLog.verbose("Error creating Timer notification ", t);
@@ -1434,45 +1435,45 @@ public class TemplateRenderer {
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             setCustomContentViewBasicKeys(contentViewSmall, context);
 
-            setCustomContentViewTitle(contentViewBig,pt_title);
-            setCustomContentViewTitle(contentViewSmall,pt_title);
+            setCustomContentViewTitle(contentViewBig, pt_title);
+            setCustomContentViewTitle(contentViewSmall, pt_title);
 
-            setCustomContentViewMessage(contentViewBig,pt_msg);
-            setCustomContentViewMessage(contentViewSmall,pt_msg);
+            setCustomContentViewMessage(contentViewBig, pt_msg);
+            setCustomContentViewMessage(contentViewSmall, pt_msg);
 
-            setCustomContentViewExpandedBackgroundColour(contentViewBig,pt_bg);
-            setCustomContentViewExpandedBackgroundColour(contentViewSmall,pt_bg);
+            setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
+            setCustomContentViewExpandedBackgroundColour(contentViewSmall, pt_bg);
 
-            setCustomContentViewTitleColour(contentViewBig,pt_title_clr);
-            setCustomContentViewTitleColour(contentViewSmall,pt_title_clr);
+            setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
+            setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
 
-            setCustomContentViewMessageColour(contentViewBig,pt_msg_clr);
-            setCustomContentViewMessageColour(contentViewSmall,pt_msg_clr);
+            setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
+            setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
 
             notificationId = setNotificationId(notificationId);
 
             Intent launchIntent = new Intent(context, VideoActivity.class);
             launchIntent.putExtras(extras);
-            PendingIntent pIntent =null;
-            if (pt_video_url != null ) {
+            PendingIntent pIntent = null;
+            if (pt_video_url != null) {
                 pIntent = PendingIntent.getActivity(context, 0, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             }
 
-            NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId,channelId,context);
+            NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId, channelId, context);
 
-            setNotificationBuilderBasics(notificationBuilder,contentViewSmall, contentViewBig,pt_title, pIntent);
+            setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewBig, pt_title, pIntent);
 
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
 
-            setCustomContentViewBigImage(contentViewBig,pt_big_img,context,notification,notificationId);
+            setCustomContentViewBigImage(contentViewBig, pt_big_img, context, notification, notificationId);
 
-            setCustomContentViewLargeIcon(contentViewSmall,pt_large_icon,context,notification,notificationId);
+            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
 
             setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
             setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
 
-            raiseNotificationViewed(context,extras);
+            raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
             PTLog.verbose("Error creating image only notification", t);
         }
@@ -1561,7 +1562,7 @@ public class TemplateRenderer {
     private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context) {
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
-        if(pt_meta_clr != null && !pt_meta_clr.isEmpty()) {
+        if (pt_meta_clr != null && !pt_meta_clr.isEmpty()) {
             contentView.setTextColor(R.id.app_name, Color.parseColor(pt_meta_clr));
             contentView.setTextColor(R.id.timestamp, Color.parseColor(pt_meta_clr));
             contentView.setTextColor(R.id.sep, Color.parseColor(pt_meta_clr));
@@ -1737,7 +1738,6 @@ public class TemplateRenderer {
                     JSONObject action = actions.getJSONObject(i);
                     String label = action.optString("l");
                     String dl = action.optString("dl");
-                    //Change this shit
                     String ico = action.optString(Constants.PT_NOTIF_ICON);
                     String id = action.optString("id");
                     boolean autoCancel = action.optBoolean("ac", true);
@@ -1802,7 +1802,7 @@ public class TemplateRenderer {
     }
 
 
-    private void timerRunner(final Context context, final Bundle extras, final int notificationId, final int delay){
+    private void timerRunner(final Context context, final Bundle extras, final int notificationId, final int delay) {
         final Handler handler = new Handler(Looper.getMainLooper());
 
         extras.remove("wzrk_rnv");
@@ -1817,7 +1817,7 @@ public class TemplateRenderer {
                 public void run() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         if (Utils.isNotificationInTray(context, notificationId)) {
-                            if(hasAllBasicNotifKeys()) {
+                            if (hasAllBasicNotifKeys()) {
                                 renderBasicTemplateNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
                             }
                         }
