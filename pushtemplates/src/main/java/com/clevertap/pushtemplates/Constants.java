@@ -52,4 +52,21 @@ public class Constants {
     public static final int PT_VIDEO_WIDTH = 350;
     public static final int PT_VIDEO_HEIGHT = 210;
     public static final String WZRK_CLR = "wzrk_clr";
+    public static final String PT_PRODUCT_DISPLAY_ACTION_TEXT_COLOUR = "pt_product_display_action_text_clr";
+    public static final String PT_SMALL_ICON_COLOUR = "pt_small_icon_clr";
+    public static final String WZRK_BIG_PICTURE = "wzrk_bp";
+    public static final String WZRK_MSG_SUMMARY = "wzrk_nms";
+    public static final String NOTIF_PRIORITY = "pr";
+    public static final String PRIORITY_HIGH = "high";
+    public static final String PRIORITY_MAX = "max";
+    public static final String WZRK_COLLAPSE = "wzrk_ck";
+    public static final String WZRK_BADGE_ICON = "wzrk_bi";
+    public static final String WZRK_BADGE_COUNT = "wzrk_bc";
+    public static final String WZRK_SUBTITLE = "wzrk_st";
+    public static final String WZRK_COLOR = "wzrk_clr";
+    public static final String WZRK_SOUND = "wzrk_sound";
+    public static final String WZRK_TIME_TO_LIVE = "wzrk_ttl";
+    public static final String PT_META_CLR = "pt_meta_clr";
+    public static final String NOTIF_MSG = "nm";
+    public static final String NOTIF_TITLE = "nt";
 }

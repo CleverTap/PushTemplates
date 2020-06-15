@@ -7,11 +7,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ServiceInfo;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -82,6 +85,9 @@ public class TemplateRenderer {
     private String pt_big_img_alt;
     private String pt_product_display_linear;
     private String pt_meta_clr;
+    private String pt_product_display_action_text_clr;
+    private String pt_small_icon_clr;
+    private Bitmap pt_small_icon;
 
     @SuppressWarnings({"unused"})
     public enum LogLevel {
@@ -142,7 +148,7 @@ public class TemplateRenderer {
         pt_msg_clr = extras.getString(Constants.PT_MSG_COLOR);
         pt_title = extras.getString(Constants.PT_TITLE);
         pt_title_clr = extras.getString(Constants.PT_TITLE_COLOR);
-        pt_meta_clr = extras.getString(Constants.WZRK_CLR);
+        pt_meta_clr = extras.getString(Constants.PT_META_CLR);
         pt_bg = extras.getString(Constants.PT_BG);
         pt_big_img = extras.getString(Constants.PT_BIG_IMG);
         pt_large_icon = extras.getString(Constants.PT_NOTIF_ICON);
@@ -169,6 +175,10 @@ public class TemplateRenderer {
         pt_msg_alt = extras.getString(Constants.PT_MSG_ALT);
         pt_title_alt = extras.getString(Constants.PT_TITLE_ALT);
         pt_product_display_linear =  extras.getString(Constants.PT_PRODUCT_DISPLAY_LINEAR);
+        pt_product_display_action_text_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_TEXT_COLOUR);
+        pt_small_icon_clr = extras.getString(Constants.PT_SMALL_ICON_COLOUR);
+
+        setKeysFromDashboard(extras);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -238,18 +248,7 @@ public class TemplateRenderer {
             }
         }
 
-        Bundle metaData;
-        try {
-            PackageManager pm = context.getPackageManager();
-            ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-            metaData = ai.metaData;
-            String x = Utils._getManifestStringValueForKey(metaData, Constants.LABEL_NOTIFICATION_ICON);
-            if (x == null) throw new IllegalArgumentException();
-            smallIcon = context.getResources().getIdentifier(x, "drawable", context.getPackageName());
-            if (smallIcon == 0) throw new IllegalArgumentException();
-        } catch (Throwable t) {
-            smallIcon = Utils.getAppIconAsIntId(context);
-        }
+        setSmallIcon(context);
 
         switch (templateType) {
             case BASIC:
@@ -292,6 +291,23 @@ public class TemplateRenderer {
                     renderVideoNotification(context, extras, notificationId);
                 break;
         }
+    }
+
+    private void setSmallIcon(Context context) {
+        Bundle metaData;
+        try {
+            PackageManager pm = context.getPackageManager();
+            ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            metaData = ai.metaData;
+            String x = Utils._getManifestStringValueForKey(metaData, Constants.LABEL_NOTIFICATION_ICON);
+            if (x == null) throw new IllegalArgumentException();
+            smallIcon = context.getResources().getIdentifier(x, "drawable", context.getPackageName());
+            if (smallIcon == 0) throw new IllegalArgumentException();
+        } catch (Throwable t) {
+            smallIcon = Utils.getAppIconAsIntId(context);
+        }
+        pt_small_icon = setSmallIconColour(context,smallIcon,pt_small_icon_clr);
+
     }
 
     private boolean hasAllVideoKeys() {
@@ -846,7 +862,7 @@ public class TemplateRenderer {
             setCustomContentViewBasicKeys(contentViewBig, context);
 
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-
+            
             setCustomContentViewBasicKeys(contentViewSmall, context);
 
             setCustomContentViewTitle(contentViewBig, pt_title);
@@ -883,14 +899,15 @@ public class TemplateRenderer {
             setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewBig, pt_title, pIntent);
 
             Notification notification = notificationBuilder.build();
+
+            setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
+            setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
+
             notificationManager.notify(notificationId, notification);
 
             setCustomContentViewBigImage(contentViewBig, pt_big_img, context, notification, notificationId);
 
             setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
-
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
 
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
@@ -949,6 +966,7 @@ public class TemplateRenderer {
 
             setCustomContentViewButtonLabel(contentViewBig, R.id.product_action, pt_product_display_action);
             setCustomContentViewButtonColour(contentViewBig, R.id.product_action, pt_product_display_action_clr);
+            setCustomContentViewButtonText(contentViewBig, R.id.product_action, pt_product_display_action_text_clr);
 
             notificationId = setNotificationId(notificationId);
 
@@ -1035,7 +1053,7 @@ public class TemplateRenderer {
 
             if(!isLinear) {
                 Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
-                Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+                setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
             }
 
             for (int index = 0; index < imageList.size(); index++) {
@@ -1056,8 +1074,7 @@ public class TemplateRenderer {
                     }
                 }
             }
-
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
+            setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.big_image, imageList.get(0), contentViewBig, notification, notificationId);
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
@@ -1229,11 +1246,11 @@ public class TemplateRenderer {
                 setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
             }
 
+            setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
 
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
 
             if (!textOnlySmallView) {
-                Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+                setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
             }
 
             raiseNotificationViewed(context, extras);
@@ -1322,8 +1339,8 @@ public class TemplateRenderer {
 
             setCustomContentViewBigImage(contentViewTimer, pt_big_img, context, notification, notificationId);
 
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewTimer, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewTimerCollapsed, notification, notificationId);
+            setCustomContentViewSmallIcon(context, contentViewTimer, notification, notificationId);
+            setCustomContentViewSmallIcon(context, contentViewTimerCollapsed, notification, notificationId);
 
             raiseNotificationViewed(context, extras);
 
@@ -1358,6 +1375,8 @@ public class TemplateRenderer {
                     .setContentIntent(pIntent)
                     .setVibrate(new long[]{0L})
                     .setWhen(System.currentTimeMillis())
+                    .setColor(Color.parseColor(pt_small_icon_clr))
+                    .setColorized(true)
                     .setAutoCancel(true);
 
             // Assign big picture notification
@@ -1450,8 +1469,8 @@ public class TemplateRenderer {
 
             setCustomContentViewLargeIcon(contentViewSmall,pt_large_icon,context,notification,notificationId);
 
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+            setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
+            setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
 
             raiseNotificationViewed(context,extras);
         } catch (Throwable t) {
@@ -1549,6 +1568,33 @@ public class TemplateRenderer {
         }
     }
 
+    private Bitmap setSmallIconColour(Context context, int resourceID, String clr) {
+        if (clr != null && !clr.isEmpty()) {
+            int color = Color.parseColor(clr);
+
+            Drawable mDrawable = ContextCompat.getDrawable(context, resourceID).mutate();
+            mDrawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
+            Bitmap nBP = drawableToBitmap(mDrawable);
+            return nBP;
+        }
+        return null;
+    }
+
+    private static Bitmap drawableToBitmap(Drawable drawable)
+            throws NullPointerException {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
     private void setCustomContentViewButtonColour(RemoteViews contentView, int resourceID, String pt_product_display_action_clr) {
         if (pt_product_display_action_clr != null && !pt_product_display_action_clr.isEmpty()) {
             contentView.setInt(resourceID, "setBackgroundColor", Color.parseColor(pt_product_display_action_clr));
@@ -1558,6 +1604,12 @@ public class TemplateRenderer {
     private void setCustomContentViewButtonLabel(RemoteViews contentView, int resourceID, String pt_product_display_action) {
         if (pt_product_display_action != null && !pt_product_display_action.isEmpty()) {
             contentView.setTextViewText(resourceID, pt_product_display_action);
+        }
+    }
+
+    private void setCustomContentViewButtonText(RemoteViews contentView, int resourceID, String pt_product_display_action_text_clr) {
+        if (pt_product_display_action_text_clr != null && !pt_product_display_action_text_clr.isEmpty()) {
+            contentView.setTextColor(resourceID, Color.parseColor(pt_product_display_action_text_clr));
         }
     }
 
@@ -1685,6 +1737,7 @@ public class TemplateRenderer {
                     JSONObject action = actions.getJSONObject(i);
                     String label = action.optString("l");
                     String dl = action.optString("dl");
+                    //Change this shit
                     String ico = action.optString(Constants.PT_NOTIF_ICON);
                     String id = action.optString("id");
                     boolean autoCancel = action.optBoolean("ac", true);
@@ -1772,6 +1825,38 @@ public class TemplateRenderer {
 
                 }
             }, delay - 300);
+        }
+    }
+
+    private void setCustomContentViewSmallIcon(Context context, RemoteViews contentView, Notification notification, int notificationId) {
+        if (pt_small_icon != null){
+            Utils.loadIntoGlide(context, R.id.small_icon, pt_small_icon, contentView, notification, notificationId);
+        }else{
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentView, notification, notificationId);
+        }
+    }
+
+    private void setKeysFromDashboard(Bundle extras){
+        if(pt_title == null || pt_title.isEmpty()){
+            pt_title = extras.getString(Constants.NOTIF_TITLE);
+        }
+        if(pt_msg == null || pt_title.isEmpty()){
+            pt_msg = extras.getString(Constants.NOTIF_MSG);
+        }
+        if(pt_msg_summary == null || pt_msg_summary.isEmpty()){
+            pt_msg_summary = extras.getString(Constants.WZRK_MSG_SUMMARY);
+        }
+        if(pt_big_img == null || pt_big_img.isEmpty()){
+            pt_big_img = extras.getString(Constants.WZRK_BIG_PICTURE);
+        }
+        if(pt_rating_default_dl == null || pt_rating_default_dl.isEmpty()) {
+            pt_rating_default_dl = extras.getString(Constants.WZRK_DL);
+        }
+        if(pt_meta_clr == null || pt_meta_clr.isEmpty()) {
+            pt_meta_clr = extras.getString(Constants.WZRK_CLR);
+        }
+        if(pt_small_icon_clr == null || pt_small_icon_clr.isEmpty()) {
+            pt_small_icon_clr = extras.getString(Constants.WZRK_CLR);
         }
     }
 

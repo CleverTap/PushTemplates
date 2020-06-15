@@ -234,6 +234,18 @@ public class Utils {
                         notificationId));
     }
 
+    static void loadIntoGlide(Context context, int imageResource, Bitmap image,
+                              RemoteViews remoteViews, Notification notification,
+                              int notificationId) {
+        Glide
+                .with(context.getApplicationContext())
+                .asBitmap()
+                .load(image)
+                .centerCrop()
+                .into(buildNotificationTarget(context,imageResource,remoteViews,notification,
+                        notificationId));
+    }
+
     static NotificationTarget buildNotificationTarget(Context context, int imageResource,
                                                       RemoteViews remoteViews,
                                                       Notification notification,

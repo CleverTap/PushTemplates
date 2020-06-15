@@ -9,7 +9,12 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -59,6 +64,9 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private String pt_product_display_action_clr;
     private String pt_product_display_linear;
     private String pt_big_img_alt;
+    private Bitmap pt_small_icon;
+    private String pt_small_icon_clr;
+    private String pt_product_display_action_text_clr;
 
 
     @Override
@@ -88,6 +96,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             cleverTapAPI = CleverTapAPI.getDefaultInstance(context);
             channelId = extras.getString(Constants.WZRK_CHANNEL_ID, "");
             pt_big_img_alt = extras.getString(Constants.PT_BIG_IMG_ALT);
+            pt_small_icon_clr = extras.getString(Constants.PT_SMALL_ICON_COLOUR);
+            pt_product_display_action_text_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_TEXT_COLOUR);
 
             requiresChannelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
 
@@ -277,18 +287,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId, channelId, context);
 
-                Bundle metaData;
-                try {
-                    PackageManager pm = context.getPackageManager();
-                    ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-                    metaData = ai.metaData;
-                    String x = Utils._getManifestStringValueForKey(metaData, Constants.LABEL_NOTIFICATION_ICON);
-                    if (x == null) throw new IllegalArgumentException();
-                    smallIcon = context.getResources().getIdentifier(x, "drawable", context.getPackageName());
-                    if (smallIcon == 0) throw new IllegalArgumentException();
-                } catch (Throwable t) {
-                    smallIcon = Utils.getAppIconAsIntId(context);
-                }
+                setSmallIcon(context);
 
                 setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewManualCarousel, pt_title, pIntent);
 
@@ -341,18 +340,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     repliedNotification = new NotificationCompat.Builder(context);
                 }
 
-                Bundle metaData;
-                try {
-                    PackageManager pm = context.getPackageManager();
-                    ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-                    metaData = ai.metaData;
-                    String x = Utils._getManifestStringValueForKey(metaData, Constants.LABEL_NOTIFICATION_ICON);
-                    if (x == null) throw new IllegalArgumentException();
-                    smallIcon = context.getResources().getIdentifier(x, "drawable", context.getPackageName());
-                    if (smallIcon == 0) throw new IllegalArgumentException();
-                } catch (Throwable t) {
-                    smallIcon = Utils.getAppIconAsIntId(context);
-                }
+                setSmallIcon(context);
 
                 repliedNotification.setSmallIcon(smallIcon)
                         .setContentTitle(pt_title)
@@ -533,18 +521,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star5, R.drawable.pt_star_outline);
             }
 
-            Bundle metaData;
-            try {
-                PackageManager pm = context.getPackageManager();
-                ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-                metaData = ai.metaData;
-                String x = Utils._getManifestStringValueForKey(metaData, Constants.LABEL_NOTIFICATION_ICON);
-                if (x == null) throw new IllegalArgumentException();
-                smallIcon = context.getResources().getIdentifier(x, "drawable", context.getPackageName());
-                if (smallIcon == 0) throw new IllegalArgumentException();
-            } catch (Throwable t) {
-                smallIcon = Utils.getAppIconAsIntId(context);
-            }
+            setSmallIcon(context);
 
             NotificationCompat.Builder notificationBuilder;
             if (requiresChannelId) {
@@ -668,6 +645,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             setCustomContentViewButtonLabel(contentViewBig, R.id.product_action, pt_product_display_action);
             setCustomContentViewButtonColour(contentViewBig, R.id.product_action, pt_product_display_action_clr);
+            setCustomContentViewButtonText(contentViewBig, R.id.product_action, pt_product_display_action_text_clr);
 
             String imageUrl = "", dl = "";
             if (img1 != extras.getBoolean("img1", false)) {
@@ -759,18 +737,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
             contentViewBig.setOnClickPendingIntent(R.id.product_action, contentIntent4);
 
-            Bundle metaData;
-            try {
-                PackageManager pm = context.getPackageManager();
-                ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-                metaData = ai.metaData;
-                String x = Utils._getManifestStringValueForKey(metaData, Constants.LABEL_NOTIFICATION_ICON);
-                if (x == null) throw new IllegalArgumentException();
-                smallIcon = context.getResources().getIdentifier(x, "drawable", context.getPackageName());
-                if (smallIcon == 0) throw new IllegalArgumentException();
-            } catch (Throwable t) {
-                smallIcon = Utils.getAppIconAsIntId(context);
-            }
+            setSmallIcon(context);
 
             NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId, channelId, context);
 
@@ -1000,6 +967,64 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
         notificationBuilder.setStyle(bigPictureStyle);
 
+    }
+
+    private void setCustomContentViewSmallIcon(Context context, RemoteViews contentView, Notification notification, int notificationId) {
+        if (pt_small_icon != null){
+            Utils.loadIntoGlide(context, R.id.small_icon, pt_small_icon, contentView, notification, notificationId);
+        }else{
+            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentView, notification, notificationId);
+        }
+    }
+
+    private void setSmallIcon(Context context) {
+        Bundle metaData;
+        try {
+            PackageManager pm = context.getPackageManager();
+            ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            metaData = ai.metaData;
+            String x = Utils._getManifestStringValueForKey(metaData, Constants.LABEL_NOTIFICATION_ICON);
+            if (x == null) throw new IllegalArgumentException();
+            smallIcon = context.getResources().getIdentifier(x, "drawable", context.getPackageName());
+            if (smallIcon == 0) throw new IllegalArgumentException();
+        } catch (Throwable t) {
+            smallIcon = Utils.getAppIconAsIntId(context);
+        }
+        pt_small_icon = setSmallIconColour(context,smallIcon,pt_small_icon_clr);
+
+    }
+
+    private Bitmap setSmallIconColour(Context context, int resourceID, String clr) {
+        if (clr != null && !clr.isEmpty()) {
+            int color = Color.parseColor(clr);
+
+            Drawable mDrawable = ContextCompat.getDrawable(context, resourceID).mutate();
+            mDrawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
+            Bitmap nBP = drawableToBitmap(mDrawable);
+            return nBP;
+        }
+        return null;
+    }
+
+    private static Bitmap drawableToBitmap(Drawable drawable)
+            throws NullPointerException {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
+    private void setCustomContentViewButtonText(RemoteViews contentView, int resourceID, String pt_product_display_action_text_clr) {
+        if (pt_product_display_action_text_clr != null && !pt_product_display_action_text_clr.isEmpty()) {
+            contentView.setTextColor(resourceID, Color.parseColor(pt_product_display_action_text_clr));
+        }
     }
 
 }
