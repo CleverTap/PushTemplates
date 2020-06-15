@@ -303,8 +303,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
 
-                Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewManualCarousel, notification, notificationId);
-                Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+                setCustomContentViewSmallIcon(context,contentViewManualCarousel,notification,notificationId);
+                setCustomContentViewSmallIcon(context,contentViewSmall,notification,notificationId);
 
 
             } catch (Throwable t) {
@@ -348,6 +348,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                         .setVibrate(new long[]{0L})
                         .setTimeoutAfter(Constants.PT_INPUT_TIMEOUT)
                         .setWhen(System.currentTimeMillis())
+                        .setColor(Color.parseColor(pt_small_icon_clr))
                         .setAutoCancel(true);
 
                 setStandardViewBigImageStyle(pt_big_img_alt,extras,context,repliedNotification);
@@ -540,8 +541,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 Notification notification = notificationBuilder.build();
                 notificationManager.notify(notificationId, notification);
-                Utils.loadIntoGlide(context, R.id.small_icon, pt_img_small, contentViewSmall, notification, notificationId);
-                Utils.loadIntoGlide(context, R.id.small_icon, pt_img_small, contentViewRating, notification, notificationId);
+                setCustomContentViewSmallIcon(context,contentViewSmall,notification,notificationId);
+                setCustomContentViewSmallIcon(context,contentViewRating,notification,notificationId);
                 Thread.sleep(1000);
                 notificationManager.cancel(notificationId);
                 Toast.makeText(context, "Thank you for your feedback", Toast.LENGTH_SHORT).show();
@@ -756,7 +757,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 notificationManager.notify(notificationId, notification);
                 Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
                 if(!isLinear) {
-                    Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+                    setCustomContentViewSmallIcon(context,contentViewSmall,notification,notificationId);
 
                 }
                 for (int index = 0; index < imageList.size(); index++) {
@@ -777,7 +778,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                         }
                     }
                 }
-                Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
+                setCustomContentViewSmallIcon(context,contentViewBig,notification,notificationId);
+
                 Utils.loadIntoGlide(context, R.id.big_image, imageUrl, contentViewBig, notification, notificationId);
             }
 
