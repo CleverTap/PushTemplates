@@ -636,8 +636,8 @@ public class TemplateRenderer {
 
             setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
 
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewRating, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+            setCustomContentViewSmallIcon(context, contentViewRating, notification, notificationId);
+            setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
 
             raiseNotificationViewed(context, extras);
 
@@ -691,7 +691,6 @@ public class TemplateRenderer {
             setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewCarousel, pt_title, pIntent);
 
             Notification notification = notificationBuilder.build();
-            notificationManager.notify(notificationId, notification);
 
             Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
 
@@ -706,8 +705,11 @@ public class TemplateRenderer {
 
             setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
 
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewCarousel, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+            setCustomContentViewSmallIcon(context, contentViewCarousel, notification, notificationId);
+            setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
+
+
+            notificationManager.notify(notificationId, notification);
 
 
             raiseNotificationViewed(context, extras);
@@ -845,9 +847,8 @@ public class TemplateRenderer {
             Utils.loadIntoGlide(context, R.id.carousel_image, imageList.get(0), contentViewManualCarousel, notification, notificationId);
 
             setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
-
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewManualCarousel, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewSmall, notification, notificationId);
+            setCustomContentViewSmallIcon(context, contentViewManualCarousel, notification, notificationId);
+            setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
 
 
             raiseNotificationViewed(context, extras);
