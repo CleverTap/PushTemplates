@@ -348,7 +348,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                         .setVibrate(new long[]{0L})
                         .setTimeoutAfter(Constants.PT_INPUT_TIMEOUT)
                         .setWhen(System.currentTimeMillis())
-                        .setColor(Color.parseColor(pt_small_icon_clr))
                         .setAutoCancel(true);
 
                 setStandardViewBigImageStyle(pt_big_img_alt,extras,context,repliedNotification);
@@ -755,7 +754,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 Notification notification = notificationBuilder.build();
                 notificationManager.notify(notificationId, notification);
-                Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
+
+                setCustomContentViewSmallIcon(context,contentViewSmall,notification,notificationId);
                 if(!isLinear) {
                     setCustomContentViewSmallIcon(context,contentViewSmall,notification,notificationId);
 

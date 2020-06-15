@@ -534,10 +534,6 @@ public class TemplateRenderer {
             PTLog.verbose("Message is missing or empty. Not showing notification");
             result = false;
         }
-        if (pt_msg_summary == null || pt_msg_summary.isEmpty()) {
-            PTLog.verbose("Message is missing or empty. Not showing notification");
-            result = false;
-        }
         if (pt_input_label == null || pt_input_label.isEmpty()) {
             PTLog.verbose("Input Label is missing or empty. Not showing notification");
             result = false;
@@ -1377,8 +1373,6 @@ public class TemplateRenderer {
                     .setContentIntent(pIntent)
                     .setVibrate(new long[]{0L})
                     .setWhen(System.currentTimeMillis())
-                    .setColor(Color.parseColor(pt_small_icon_clr))
-                    .setColorized(true)
                     .setAutoCancel(true);
 
             // Assign big picture notification
