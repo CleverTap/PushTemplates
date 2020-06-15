@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/content_view_small"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="100dp"
     android:padding="8dp">
 
 
@@ -25,39 +24,37 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@id/msg"
         android:layout_marginStart="-85dp"
         android:layout_marginTop="8dp"
         android:layout_toRightOf="@id/large_icon"
-        android:paddingRight="4dp"
+        android:orientation="horizontal"
         android:paddingLeft="4dp"
-        android:orientation="horizontal">
+        android:paddingRight="4dp">
 
         <ImageView
             android:id="@+id/small_image1_collapsed"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_marginLeft="-5dp"
             android:layout_marginRight="2dp"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
 
         <ImageView
             android:id="@+id/small_image2_collapsed"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginRight="2dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_marginLeft="2dp"
-            android:layout_weight="1"
-            />
+            android:layout_marginRight="2dp"
+            android:layout_weight="1" />
+
         <ImageView
             android:id="@+id/small_image3_collapsed"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_marginEnd="-4dp"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
 
     </LinearLayout>
 </RelativeLayout>
