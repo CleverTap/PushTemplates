@@ -88,6 +88,8 @@ public class TemplateRenderer {
     private String pt_product_display_action_text_clr;
     private String pt_small_icon_clr;
     private Bitmap pt_small_icon;
+    private String pt_cancel_notif_id;
+    private ArrayList<Integer> pt_cancel_notif_ids;
 
     @SuppressWarnings({"unused"})
     public enum LogLevel {
@@ -177,9 +179,11 @@ public class TemplateRenderer {
         pt_product_display_linear =  extras.getString(Constants.PT_PRODUCT_DISPLAY_LINEAR);
         pt_product_display_action_text_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_TEXT_COLOUR);
         pt_small_icon_clr = extras.getString(Constants.PT_SMALL_ICON_COLOUR);
-
+        pt_cancel_notif_id = extras.getString(Constants.PT_CANCEL_NOTIF_ID);
+        pt_cancel_notif_ids = Utils.getNotificationIds(context);
         setKeysFromDashboard(extras);
     }
+
 
     @SuppressWarnings("WeakerAccess")
     @SuppressLint("NewApi")
@@ -289,6 +293,9 @@ public class TemplateRenderer {
             case VIDEO:
                 if (hasAllVideoKeys())
                     renderVideoNotification(context, extras, notificationId);
+                break;
+            case CANCEL:
+                renderCancelNotification(context, extras);
                 break;
         }
     }
@@ -543,6 +550,21 @@ public class TemplateRenderer {
             result = false;
         }
         return result;
+    }
+
+    private void renderCancelNotification(Context context, Bundle extras) {
+        if (pt_cancel_notif_id != null && !pt_cancel_notif_id.isEmpty()) {
+            int notificationId = Integer.parseInt(pt_cancel_notif_id);
+            notificationManager.cancel(notificationId);
+        }
+        else{
+            if(pt_cancel_notif_ids.size()>0){
+                for(int i = 0; i<= pt_cancel_notif_ids.size(); i++){
+                    notificationManager.cancel(pt_cancel_notif_ids.get(i));
+                }
+            }
+        }
+        raiseNotificationViewed(context, extras);
     }
 
     private void renderRatingNotification(Context context, Bundle extras, int notificationId) {
@@ -1835,7 +1857,7 @@ public class TemplateRenderer {
         if(pt_title == null || pt_title.isEmpty()){
             pt_title = extras.getString(Constants.NOTIF_TITLE);
         }
-        if(pt_msg == null || pt_title.isEmpty()){
+        if(pt_msg == null || pt_msg.isEmpty()){
             pt_msg = extras.getString(Constants.NOTIF_MSG);
         }
         if(pt_msg_summary == null || pt_msg_summary.isEmpty()){

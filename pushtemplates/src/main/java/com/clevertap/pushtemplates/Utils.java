@@ -465,6 +465,22 @@ public class Utils {
         return false;
     }
 
+
+    public static ArrayList<Integer> getNotificationIds(Context context) {
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        StatusBarNotification[] notifications = new StatusBarNotification[0];
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            notifications = mNotificationManager.getActiveNotifications();
+            for (StatusBarNotification notification : notifications) {
+                if(notification.getPackageName().equalsIgnoreCase(context.getPackageName())){
+                    ids.add(notification.getId());
+                }
+            }
+        }
+        return ids;
+    }
+
     @SuppressWarnings("SameParameterValue")
     static boolean isServiceAvailable(Context context, Class clazz) {
         if (clazz == null) return false;

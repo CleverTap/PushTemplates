@@ -69,4 +69,6 @@ public class Constants {
     public static final String PT_META_CLR = "pt_meta_clr";
     public static final String NOTIF_MSG = "nm";
     public static final String NOTIF_TITLE = "nt";
+    public static final String PT_CANCEL_NOTIF_ID = "pt_cancel_notif_id";
+
 }

@@ -67,6 +67,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private Bitmap pt_small_icon;
     private String pt_small_icon_clr;
     private String pt_product_display_action_text_clr;
+    private String pt_big_img;
+    private String pt_meta_clr;
 
 
     @Override
@@ -98,7 +100,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             pt_big_img_alt = extras.getString(Constants.PT_BIG_IMG_ALT);
             pt_small_icon_clr = extras.getString(Constants.PT_SMALL_ICON_COLOUR);
             pt_product_display_action_text_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_TEXT_COLOUR);
-
+            setKeysFromDashboard(extras);
             requiresChannelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -907,6 +909,12 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context) {
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+
+        if (pt_meta_clr != null && !pt_meta_clr.isEmpty()) {
+            contentView.setTextColor(R.id.app_name, Color.parseColor(pt_meta_clr));
+            contentView.setTextColor(R.id.timestamp, Color.parseColor(pt_meta_clr));
+            contentView.setTextColor(R.id.sep, Color.parseColor(pt_meta_clr));
+        }
     }
 
     private void setCustomContentViewButtonColour(RemoteViews contentView, int resourceID, String pt_product_display_action_clr) {
@@ -1065,6 +1073,30 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private void setCustomContentViewButtonText(RemoteViews contentView, int resourceID, String pt_product_display_action_text_clr) {
         if (pt_product_display_action_text_clr != null && !pt_product_display_action_text_clr.isEmpty()) {
             contentView.setTextColor(resourceID, Color.parseColor(pt_product_display_action_text_clr));
+        }
+    }
+
+    private void setKeysFromDashboard(Bundle extras){
+        if(pt_title == null || pt_title.isEmpty()){
+            pt_title = extras.getString(Constants.NOTIF_TITLE);
+        }
+        if(pt_msg == null || pt_msg.isEmpty()){
+            pt_msg = extras.getString(Constants.NOTIF_MSG);
+        }
+        if(pt_msg_summary == null || pt_msg_summary.isEmpty()){
+            pt_msg_summary = extras.getString(Constants.WZRK_MSG_SUMMARY);
+        }
+        if(pt_big_img == null || pt_big_img.isEmpty()){
+            pt_big_img = extras.getString(Constants.WZRK_BIG_PICTURE);
+        }
+        if(pt_rating_default_dl == null || pt_rating_default_dl.isEmpty()) {
+            pt_rating_default_dl = extras.getString(Constants.WZRK_DL);
+        }
+        if(pt_meta_clr == null || pt_meta_clr.isEmpty()) {
+            pt_meta_clr = extras.getString(Constants.WZRK_CLR);
+        }
+        if(pt_small_icon_clr == null || pt_small_icon_clr.isEmpty()) {
+            pt_small_icon_clr = extras.getString(Constants.WZRK_CLR);
         }
     }
 
