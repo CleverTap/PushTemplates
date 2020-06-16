@@ -403,14 +403,33 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
             if (extras.getBoolean("default_dl", false)) {
                 notificationManager.cancel(notificationId);
+                Intent launchIntent;
+                Class clazz = null;
+                try {
+                    clazz = Class.forName("com.clevertap.pushtemplates.PTNotificationIntentService");
+                } catch (ClassNotFoundException ex) {
+                    PTLog.debug("No Intent Service found");
+                }
 
-                Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(pt_rating_default_dl));
-                launchIntent.putExtras(extras);
-                launchIntent.putExtra(Constants.WZRK_DL, pt_rating_default_dl);
-                launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-                launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
-                launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(launchIntent);
+                boolean isPTIntentServiceAvailable = Utils.isServiceAvailable(context, clazz);
+                if(isPTIntentServiceAvailable) {
+                    launchIntent = new Intent(PTNotificationIntentService.MAIN_ACTION);
+                    launchIntent.setPackage(context.getPackageName());
+                    launchIntent.putExtra("pt_type", PTNotificationIntentService.TYPE_BUTTON_CLICK);
+                    launchIntent.putExtras(extras);
+                    launchIntent.putExtra("dl", pt_rating_default_dl);
+                    context.startService(launchIntent);
+                } else {
+                    launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(pt_rating_default_dl));
+                    launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+                    launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
+                    launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Utils.raiseNotificationClicked(context,extras);
+                    launchIntent.putExtras(extras);
+                    launchIntent.putExtra(Constants.WZRK_DL, pt_rating_default_dl);
+                    context.startActivity(launchIntent);
+                }
+
                 return;
             }
             //Set RemoteViews again
@@ -569,15 +588,35 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
             if (buynow == extras.getBoolean("buynow", false)) {
                 notificationManager.cancel(notificationId);
-                context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)); // close the notification drawer
                 String dl = extras.getString(Constants.PT_BUY_NOW_DL, deepLinkList.get(0));
-                Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dl));
-                launchIntent.putExtras(extras);
-                launchIntent.putExtra(Constants.WZRK_DL, dl);
-                launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-                launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
-                launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(launchIntent);
+                notificationManager.cancel(notificationId);
+                Intent launchIntent;
+
+                Class clazz = null;
+                try {
+                    clazz = Class.forName("com.clevertap.pushtemplates.PTNotificationIntentService");
+                } catch (ClassNotFoundException ex) {
+                    PTLog.debug("No Intent Service found");
+                }
+
+                boolean isPTIntentServiceAvailable = Utils.isServiceAvailable(context, clazz);
+                if(isPTIntentServiceAvailable) {
+                    launchIntent = new Intent(PTNotificationIntentService.MAIN_ACTION);
+                    launchIntent.putExtras(extras);
+                    launchIntent.putExtra("dl", dl);
+                    launchIntent.setPackage(context.getPackageName());
+                    launchIntent.putExtra("pt_type", PTNotificationIntentService.TYPE_BUTTON_CLICK);
+                    context.startService(launchIntent);
+                } else {
+                    launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dl));
+                    launchIntent.putExtras(extras);
+                    launchIntent.putExtra(Constants.WZRK_DL, dl);
+                    launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+                    launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
+                    launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Utils.raiseNotificationClicked(context,extras);
+                    context.startActivity(launchIntent);
+                }
                 return;
             }
 
