@@ -55,7 +55,6 @@ public class Utils {
     }
 
 
-
     @SuppressWarnings("unused")
     static Bitmap getNotificationBitmap(String icoPath, boolean fallbackToAppIcon,
                                         final Context context)
@@ -88,7 +87,7 @@ public class Utils {
         }
     }
 
-    private static Bitmap drawableToBitmap(Drawable drawable)
+    static Bitmap drawableToBitmap(Drawable drawable)
             throws NullPointerException {
         if (drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable) drawable).getBitmap();
