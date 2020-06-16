@@ -64,10 +64,29 @@ public class VideoActivity extends AppCompatActivity {
 
 
 		aspectRatioFrameLayout=findViewById(R.id.video_activity);
-		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)  videoView.getLayoutParams();
-		params.width = (int) (Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
-		params.height = (int) ( Constants.PT_VIDEO_HEIGHT * getApplicationContext().getResources().getDisplayMetrics().density);
 
+		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) aspectRatioFrameLayout.getLayoutParams();
+		float density=getApplicationContext().getResources().getDisplayMetrics().density;
+		if(density>=2.0 && density<2.5) {
+			params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+			params.height = (int) ( 210 * getApplicationContext().getResources().getDisplayMetrics().density);
+		}
+		else if(density ==1)
+		{
+		params.width = (int) (1.5*Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
+			params.height = (int) ( 310 * getApplicationContext().getResources().getDisplayMetrics().density);
+		}
+		else if(density >1 && density <=1.5)
+		{
+			params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+			params.height = (int) ( 210 * getApplicationContext().getResources().getDisplayMetrics().density);
+		}else if(density >=2.5)
+		{
+			params.width = (int) (Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
+			params.height = (int) ( 210 * getApplicationContext().getResources().getDisplayMetrics().density);
+		}
+
+		videoView.setLayoutParams(params);
 
 		extras = getIntent().getExtras();
 		deepLinkList = Utils.getDeepLinkListFromExtras(extras);
@@ -127,8 +146,26 @@ public class VideoActivity extends AppCompatActivity {
 					}
 					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 					FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) aspectRatioFrameLayout.getLayoutParams();
-					params.width = (int) (350*getApplicationContext().getResources().getDisplayMetrics().density);
-					params.height = (int) ( 210 * getApplicationContext().getResources().getDisplayMetrics().density);
+					float density=getApplicationContext().getResources().getDisplayMetrics().density;
+					if(density>=2.0 && density<2.5) {
+						params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+						params.height = (int) ( 210 * getApplicationContext().getResources().getDisplayMetrics().density);
+					}
+					else if(density>1 && density <=1.5)
+					{
+						params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+						params.height = (int) ( 210 * getApplicationContext().getResources().getDisplayMetrics().density);
+					}else if(density >=2.5)
+					{
+						params.width = (int) (Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
+						params.height = (int) ( 210 * getApplicationContext().getResources().getDisplayMetrics().density);
+					}
+					else if(density ==1)
+					{
+						params.width = (int) (1.5*Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
+						params.height = (int) ( 310 * getApplicationContext().getResources().getDisplayMetrics().density);
+					}
+
 					videoView.setLayoutParams(params);
 					fullscreen = false;
 				}else{
@@ -151,7 +188,22 @@ public class VideoActivity extends AppCompatActivity {
 					getWindowManager().getDefaultDisplay().getMetrics(metrics);
 					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 					FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) aspectRatioFrameLayout.getLayoutParams();
+					Log.d("valueofdensity",String.valueOf( getApplicationContext().getResources().getDisplayMetrics().density));
+					float density=getApplicationContext().getResources().getDisplayMetrics().density;
+				if(density>=2.0 && density<2.5) {
+					params.width = (int) (1.5 * Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
+				}
+				else if(density >1 && density <=1.5)
+				{
+					params.width = (int) (1.3 * Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
+				}else if( density >=2.5)
+				{
 					params.width = (int) (2 * Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
+				}
+				else if(density ==1)
+				{
+					params.width = (int) (2.7*Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
+				}
 					params.height = ViewGroup.LayoutParams.MATCH_PARENT;
 
 					videoView.setLayoutParams(params);
