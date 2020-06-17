@@ -70,5 +70,5 @@ public class Constants {
     public static final String NOTIF_MSG = "nm";
     public static final String NOTIF_TITLE = "nt";
     public static final String PT_CANCEL_NOTIF_ID = "pt_cancel_notif_id";
-
+    public static final String PT_ACTION_ID = "actionId";
 }

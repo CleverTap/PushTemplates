@@ -1792,7 +1792,7 @@ public class TemplateRenderer {
                     if (actionLaunchIntent != null) {
                         actionLaunchIntent.putExtras(extras);
                         actionLaunchIntent.removeExtra(Constants.WZRK_ACTIONS);
-                        actionLaunchIntent.putExtra("actionId", id);
+                        actionLaunchIntent.putExtra(Constants.PT_ACTION_ID, id);
                         actionLaunchIntent.putExtra("autoCancel", autoCancel);
                         actionLaunchIntent.putExtra("wzrk_c2a", id);
                         actionLaunchIntent.putExtra("notificationId", notificationId);
