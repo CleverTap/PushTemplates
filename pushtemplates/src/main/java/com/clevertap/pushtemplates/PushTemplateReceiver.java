@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.app.RemoteInput;
@@ -70,13 +71,14 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private String pt_product_display_action_text_clr;
     private String pt_big_img;
     private String pt_meta_clr;
+    private AsyncHelper asyncHelper;
 
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, final Intent intent) {
 
         if (intent.getExtras() != null) {
-            Bundle extras = intent.getExtras();
+            final Bundle extras = intent.getExtras();
             pt_id = intent.getStringExtra(Constants.PT_ID);
             pt_msg = extras.getString(Constants.PT_MSG);
             pt_msg_summary = extras.getString(Constants.PT_MSG_SUMMARY);
@@ -103,6 +105,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             pt_product_display_action_text_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_TEXT_COLOUR);
             setKeysFromDashboard(extras);
             requiresChannelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+            asyncHelper = AsyncHelper.getInstance();
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 String channelIdError = null;
@@ -120,25 +123,36 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             if (pt_id != null) {
                 templateType = TemplateType.fromString(pt_id);
             }
-            if (templateType != null) {
-                switch (templateType) {
-                    case RATING:
-                        handleRatingNotification(context, extras);
-                        break;
-                    case FIVE_ICONS:
-                        handleFiveCTANotification(context, extras);
-                        break;
-                    case PRODUCT_DISPLAY:
-                        handleProductDisplayNotification(context, extras);
-                        break;
-                    case INPUT_BOX:
-                        handleInputBoxNotification(context, extras, intent);
-                        break;
-                    case MANUAL_CAROUSEL:
-                        handleManualCarouselNotification(context, extras);
-                        break;
+            asyncHelper.postAsyncSafely("PushTemplateReceiver#renderTemplate", new Runnable() {
+                @RequiresApi(api = Build.VERSION_CODES.O)
+                @Override
+                public void run() {
+                    try {
+                        if (templateType != null) {
+                            switch (templateType) {
+                                case RATING:
+                                    handleRatingNotification(context, extras);
+                                    break;
+                                case FIVE_ICONS:
+                                    handleFiveCTANotification(context, extras);
+                                    break;
+                                case PRODUCT_DISPLAY:
+                                    handleProductDisplayNotification(context, extras);
+                                    break;
+                                case INPUT_BOX:
+                                    handleInputBoxNotification(context, extras, intent);
+                                    break;
+                                case MANUAL_CAROUSEL:
+                                    handleManualCarouselNotification(context, extras);
+                                    break;
+                            }
+                        }
+                    } catch (Throwable t) {
+                        PTLog.verbose("Couldn't render notification: " + t.getLocalizedMessage());
+                    }
                 }
-            }
+            });
+
         }
     }
 
@@ -336,7 +350,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 Utils.raiseCleverTapEvent(cleverTapAPI, extras, Constants.PT_INPUT_KEY);
 
                 //Update the notification to show that the reply was received.
-                NotificationCompat.Builder repliedNotification;
+                final NotificationCompat.Builder repliedNotification;
                 if (requiresChannelId) {
                     repliedNotification = new NotificationCompat.Builder(context, channelId);
                 } else {
@@ -995,24 +1009,19 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 if (bpMap == null)
                     throw new Exception("Failed to fetch big picture!");
 
-                if (extras.containsKey(Constants.PT_MSG_SUMMARY)) {
-                    String summaryText = pt_msg_summary;
-                    bigPictureStyle = new NotificationCompat.BigPictureStyle()
-                            .setSummaryText(summaryText)
-                            .bigPicture(bpMap);
-                } else {
-                    bigPictureStyle = new NotificationCompat.BigPictureStyle()
-                            .setSummaryText(pt_msg)
-                            .bigPicture(bpMap);
-                }
+
+                bigPictureStyle = new NotificationCompat.BigPictureStyle()
+                        .setSummaryText(extras.getString(Constants.PT_INPUT_FEEDBACK))
+                        .bigPicture(bpMap);
+
             } catch (Throwable t) {
                 bigPictureStyle = new NotificationCompat.BigTextStyle()
-                        .bigText(pt_msg);
+                        .bigText(extras.getString(Constants.PT_INPUT_FEEDBACK));
                 PTLog.verbose("Falling back to big text notification, couldn't fetch big picture", t);
             }
         } else {
             bigPictureStyle = new NotificationCompat.BigTextStyle()
-                    .bigText(pt_msg);
+                    .bigText(extras.getString(Constants.PT_INPUT_FEEDBACK));
         }
 
         notificationBuilder.setStyle(bigPictureStyle);

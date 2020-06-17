@@ -548,10 +548,6 @@ public class TemplateRenderer {
             PTLog.verbose("Message is missing or empty. Not showing notification");
             result = false;
         }
-        if (pt_input_label == null || pt_input_label.isEmpty()) {
-            PTLog.verbose("Input Label is missing or empty. Not showing notification");
-            result = false;
-        }
         if (pt_input_feedback == null || pt_input_feedback.isEmpty()) {
             PTLog.verbose("Feedback Text is missing or empty. Not showing notification");
             result = false;
@@ -1407,35 +1403,35 @@ public class TemplateRenderer {
             // Assign big picture notification
             setStandardViewBigImageStyle(pt_big_img, extras, context, notificationBuilder);
 
-            //Initialise RemoteInput
-            RemoteInput remoteInput = new RemoteInput.Builder(Constants.PT_INPUT_KEY)
-                    .setLabel(pt_input_label)
-                    .build();
+            if (pt_input_label != null && !pt_input_label.isEmpty()) {
+                //Initialise RemoteInput
+                RemoteInput remoteInput = new RemoteInput.Builder(Constants.PT_INPUT_KEY)
+                        .setLabel(pt_input_label)
+                        .build();
 
-            //Set launchIntent to receiver
-            Intent replyIntent = new Intent(context, PushTemplateReceiver.class);
-            replyIntent.putExtra(Constants.PT_INPUT_FEEDBACK, pt_input_feedback);
-            replyIntent.putExtra(Constants.PT_INPUT_AUTO_OPEN, pt_input_auto_open);
+                //Set launchIntent to receiver
+                Intent replyIntent = new Intent(context, PushTemplateReceiver.class);
+                replyIntent.putExtra(Constants.PT_INPUT_FEEDBACK, pt_input_feedback);
+                replyIntent.putExtra(Constants.PT_INPUT_AUTO_OPEN, pt_input_auto_open);
 
-            PendingIntent replyPendingIntent;
-            if (deepLinkList != null) {
-                replyPendingIntent = setPendingIntent(context, notificationId, extras, replyIntent, deepLinkList.get(0));
-            } else {
-                replyPendingIntent = setPendingIntent(context, notificationId, extras, replyIntent, null);
-            }
+                PendingIntent replyPendingIntent;
+                if (deepLinkList != null) {
+                    replyPendingIntent = setPendingIntent(context, notificationId, extras, replyIntent, deepLinkList.get(0));
+                } else {
+                    replyPendingIntent = setPendingIntent(context, notificationId, extras, replyIntent, null);
+                }
 
-            //Notification Action with RemoteInput instance added.
-            NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(
-                    android.R.drawable.sym_action_chat, pt_input_label, replyPendingIntent)
-                    .addRemoteInput(remoteInput)
-                    .setAllowGeneratedReplies(true)
-                    .build();
+                //Notification Action with RemoteInput instance added.
+                NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(
+                        android.R.drawable.sym_action_chat, pt_input_label, replyPendingIntent)
+                        .addRemoteInput(remoteInput)
+                        .setAllowGeneratedReplies(true)
+                        .build();
 
 
-            //Notification.Action instance added to Notification Builder.
-            if (extras.getString(Constants.WZRK_ACTIONS) != null || extras.getString(Constants.WZRK_ACTIONS).isEmpty())
+                //Notification.Action instance added to Notification Builder.
                 notificationBuilder.addAction(replyAction);
-
+            }
             if (pt_dismiss_on_click != null)
                 if (!pt_dismiss_on_click.isEmpty())
                     extras.putString(Constants.PT_DISMISS_ON_CLICK, pt_dismiss_on_click);
