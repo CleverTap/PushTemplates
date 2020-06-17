@@ -71,4 +71,20 @@ public class Constants {
     public static final String NOTIF_TITLE = "nt";
     public static final String PT_CANCEL_NOTIF_ID = "pt_cancel_notif_id";
     public static final String PT_ACTION_ID = "actionId";
+    public static final String PT_RIGHT_SWIPE = "right_swipe";
+    public static final String PT_MANUAL_CAROUSEL_FROM = "manual_carousel_from";
+    public static final String PT_REQUEST_CODE_0 = "pt_reqcode0";
+    public static final String PT_REQUEST_CODE_1 = "pt_reqcode1";
+    public static final String PT_REQUEST_CODE_2 = "pt_reqcode2";
+    public static final String PT_REQUEST_CODE_3 = "pt_reqcode3";
+    public static final String PT_IMAGE_1 = "img1";
+    public static final String PT_IMAGE_2 = "img2";
+    public static final String PT_IMAGE_3 = "img3";
+    public static final String PT_BUY_NOW = "buynow";
+    public static final String TEXT_ONLY = "text_only";
+    public static final String PT_TYPE = "pt_type";
+
+    static final int ONE_SECOND = 1000;
+    static final String DEFAULT_DL = "default_dl";
+
 }

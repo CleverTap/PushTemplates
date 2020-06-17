@@ -27,7 +27,7 @@ public class PTNotificationIntentService extends IntentService {
         Bundle extras = intent.getExtras();
         if (extras == null) return;
 
-        String type = extras.getString("pt_type");
+        String type = extras.getString(Constants.PT_TYPE);
         if (TYPE_BUTTON_CLICK.equals(type)) {
             PTLog.verbose("PTNotificationIntentService handling " + TYPE_BUTTON_CLICK);
             handleActionButtonClick(extras);
