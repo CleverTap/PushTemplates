@@ -124,7 +124,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 templateType = TemplateType.fromString(pt_id);
             }
             asyncHelper.postAsyncSafely("PushTemplateReceiver#renderTemplate", new Runnable() {
-                @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void run() {
                     try {
