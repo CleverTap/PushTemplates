@@ -5,43 +5,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/rel_lyt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/padding_horizontal"
-        android:paddingLeft="@dimen/padding_horizontal"
-        android:paddingEnd="@dimen/padding_horizontal"
-        android:paddingRight="@dimen/padding_horizontal"
-        android:paddingTop="@dimen/padding_vertical"
-        android:paddingBottom="@dimen/padding_vertical">
-
-        <include
-            android:id="@+id/metadata"
-            layout="@layout/metadata" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/metadata"
-            android:layout_alignLeft="@id/metadata"
-            android:layout_alignStart="@id/metadata"
-            android:layout_marginTop="@dimen/metadata_title_margin_vertical"
-            android:text="title"
-            android:textAppearance="@style/PushTitle" />
-
-        <TextView
-            android:id="@+id/msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/title"
-            android:layout_alignLeft="@id/title"
-            android:layout_alignStart="@id/title"
-            android:text="message"
-            android:textAppearance="@style/PushMessage" />
-
-    </RelativeLayout>
+    <include layout="@layout/content_view_small"
+        android:id="@+id/rel_lyt"/>
 
     <ViewFlipper
         android:id="@+id/view_flipper"
@@ -56,8 +21,7 @@
             android:id="@+id/flipper_img1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            />
+            android:scaleType="centerCrop" />
 
         <ImageView
             android:id="@+id/flipper_img2"

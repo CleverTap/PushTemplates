@@ -3,45 +3,10 @@
     android:id="@+id/content_view_big"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:orientation="vertical"
-    android:paddingStart="@dimen/padding_horizontal"
-    android:paddingLeft="@dimen/padding_horizontal"
-    android:paddingTop="@dimen/padding_vertical"
-    android:paddingEnd="@dimen/padding_horizontal"
-    android:paddingRight="@dimen/padding_horizontal"
     android:paddingBottom="@dimen/padding_vertical">
 
-    <RelativeLayout
-        android:id="@+id/rel_lyt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true">
-
-        <include
-            android:id="@+id/metadata"
-            layout="@layout/metadata" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/metadata"
-            android:layout_alignLeft="@id/metadata"
-            android:layout_marginTop="@dimen/metadata_title_margin_vertical"
-            android:text="title"
-            android:textAppearance="@style/PushTitle" />
-
-        <TextView
-            android:id="@+id/msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/title"
-            android:layout_alignLeft="@id/title"
-            android:text="message"
-            android:textAppearance="@style/PushMessage" />
-
-    </RelativeLayout>
+    <include layout="@layout/content_view_small"
+        android:id="@+id/rel_lyt"/>
 
     <ImageView
         android:id="@+id/big_image"
