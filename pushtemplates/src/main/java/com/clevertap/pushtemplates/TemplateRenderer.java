@@ -651,7 +651,6 @@ public class TemplateRenderer {
             setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewRating, pt_title, pIntent);
 
             Notification notification = notificationBuilder.build();
-            notificationManager.notify(notificationId, notification);
 
             setCustomContentViewBigImage(contentViewRating, pt_big_img, context, notification, notificationId);
 
@@ -660,6 +659,7 @@ public class TemplateRenderer {
 
             setCustomContentViewSmallIcon(context, contentViewRating, notification, notificationId);
             setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
+            notificationManager.notify(notificationId, notification);
 
             raiseNotificationViewed(context, extras);
 
@@ -863,7 +863,6 @@ public class TemplateRenderer {
 
 
             Notification notification = notificationBuilder.build();
-            notificationManager.notify(notificationId, notification);
 
             Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
 
@@ -873,6 +872,7 @@ public class TemplateRenderer {
             setCustomContentViewLargeIcon(contentViewManualCarousel, pt_large_icon, context, notification, notificationId);
             setCustomContentViewSmallIcon(context, contentViewManualCarousel, notification, notificationId);
             setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
+            notificationManager.notify(notificationId, notification);
 
 
             raiseNotificationViewed(context, extras);
@@ -928,13 +928,13 @@ public class TemplateRenderer {
             setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
             setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
 
-            notificationManager.notify(notificationId, notification);
 
             setCustomContentViewBigImage(contentViewBig, pt_big_img, context, notification, notificationId);
 
             setCustomContentViewLargeIcon(contentViewBig, pt_large_icon, context, notification, notificationId);
 
             setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
+            notificationManager.notify(notificationId, notification);
 
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
@@ -1076,7 +1076,6 @@ public class TemplateRenderer {
             setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewBig, pt_title, pIntent);
 
             Notification notification = notificationBuilder.build();
-            notificationManager.notify(notificationId, notification);
 
             if(!isLinear) {
                 Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
@@ -1103,6 +1102,9 @@ public class TemplateRenderer {
             }
             setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.big_image, imageList.get(0), contentViewBig, notification, notificationId);
+
+            notificationManager.notify(notificationId, notification);
+
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
             PTLog.verbose("Error creating Product Display Notification ", t);
@@ -1184,7 +1186,6 @@ public class TemplateRenderer {
             notificationBuilder.setOngoing(true);
 
             Notification notification = notificationBuilder.build();
-            notificationManager.notify(notificationId, notification);
 
             for (int imageKey = 0; imageKey < imageList.size(); imageKey++) {
                 if (imageKey == 0) {
@@ -1201,6 +1202,7 @@ public class TemplateRenderer {
 
             }
             Utils.loadIntoGlide(context, R.id.close, R.drawable.pt_close, contentFiveCTAs, notification, notificationId);
+            notificationManager.notify(notificationId, notification);
 
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
@@ -1261,7 +1263,6 @@ public class TemplateRenderer {
             setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewBig, pt_title, pIntent);
 
             Notification notification = notificationBuilder.build();
-            notificationManager.notify(notificationId, notification);
 
 
             setCustomContentViewBigImage(contentViewBig, pt_big_img, context, notification, notificationId);
@@ -1280,6 +1281,7 @@ public class TemplateRenderer {
             if (!textOnlySmallView) {
                 setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
             }
+            notificationManager.notify(notificationId, notification);
 
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
@@ -1363,12 +1365,12 @@ public class TemplateRenderer {
             notificationBuilder.setTimeoutAfter(timer_end);
 
             Notification notification = notificationBuilder.build();
-            notificationManager.notify(notificationId, notification);
 
             setCustomContentViewBigImage(contentViewTimer, pt_big_img, context, notification, notificationId);
 
             setCustomContentViewSmallIcon(context, contentViewTimer, notification, notificationId);
             setCustomContentViewSmallIcon(context, contentViewTimerCollapsed, notification, notificationId);
+            notificationManager.notify(notificationId, notification);
 
             raiseNotificationViewed(context, extras);
 
@@ -1489,7 +1491,6 @@ public class TemplateRenderer {
             setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewBig, pt_title, pIntent);
 
             Notification notification = notificationBuilder.build();
-            notificationManager.notify(notificationId, notification);
 
             setCustomContentViewBigImage(contentViewBig, pt_big_img, context, notification, notificationId);
 
@@ -1498,6 +1499,7 @@ public class TemplateRenderer {
 
             setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
             setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
+            notificationManager.notify(notificationId, notification);
 
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {

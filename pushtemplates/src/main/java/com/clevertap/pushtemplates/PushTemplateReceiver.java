@@ -308,7 +308,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewManualCarousel, pt_title, pIntent);
 
                 Notification notification = notificationBuilder.build();
-                notificationManager.notify(notificationId, notification);
 
 
                 if(currPosition >=0 && currPosition < imageList.size()) {
@@ -322,6 +321,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 setCustomContentViewSmallIcon(context,contentViewManualCarousel,notification,notificationId);
                 setCustomContentViewSmallIcon(context,contentViewSmall,notification,notificationId);
 
+                notificationManager.notify(notificationId, notification);
 
             } catch (Throwable t) {
                 PTLog.verbose("Error creating auto carousel notification ", t);
@@ -574,9 +574,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                         .setAutoCancel(true);
 
                 Notification notification = notificationBuilder.build();
-                notificationManager.notify(notificationId, notification);
                 setCustomContentViewSmallIcon(context,contentViewSmall,notification,notificationId);
                 setCustomContentViewSmallIcon(context,contentViewRating,notification,notificationId);
+                notificationManager.notify(notificationId, notification);
+
                 Thread.sleep(1000);
                 notificationManager.cancel(notificationId);
                 Toast.makeText(context, "Thank you for your feedback", Toast.LENGTH_SHORT).show();
@@ -808,7 +809,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewBig, pt_title, pIntent);
 
                 Notification notification = notificationBuilder.build();
-                notificationManager.notify(notificationId, notification);
 
                 setCustomContentViewSmallIcon(context,contentViewSmall,notification,notificationId);
                 if(!isLinear) {
@@ -836,6 +836,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 setCustomContentViewSmallIcon(context,contentViewBig,notification,notificationId);
 
                 Utils.loadIntoGlide(context, R.id.big_image, imageUrl, contentViewBig, notification, notificationId);
+                notificationManager.notify(notificationId, notification);
+
             }
 
         } catch (Throwable t) {

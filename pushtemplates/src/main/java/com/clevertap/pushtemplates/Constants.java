@@ -31,7 +31,7 @@ public class Constants {
     public static final String PT_INPUT_LABEL = "pt_input_label";
     public static final String PT_INPUT_KEY = "pt_input_reply";
     public static final String PT_INPUT_FEEDBACK = "pt_input_feedback";
-    public static final int PT_INPUT_TIMEOUT = 2000;
+    public static final int PT_INPUT_TIMEOUT = 1300;
     public static final String PT_NOTIF_ID = "notificationId";
     public static final String PT_INPUT_AUTO_OPEN = "pt_input_auto_open";
     public static final String PT_EVENT_NAME_KEY = "pt_event_name";
