@@ -282,7 +282,7 @@ public class TemplateRenderer {
                     renderProductDisplayNotification(context, extras, notificationId);
                 break;
             case ZERO_BEZEL:
-                if (hasAllBasicNotifKeys())
+                if (hasAllZeroBezelNotifKeys())
                     renderZeroBezelNotification(context, extras, notificationId);
             case TIMER:
                 if (hasAllTimerKeys())
@@ -364,17 +364,25 @@ public class TemplateRenderer {
             PTLog.verbose("Message is missing or empty. Not showing notification");
             result = false;
         }
+        return result;
+    }
+
+    private boolean hasAllZeroBezelNotifKeys() {
+        boolean result = true;
+        if (pt_title == null || pt_title.isEmpty()) {
+            PTLog.verbose("Title is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_msg == null || pt_msg.isEmpty()) {
+            PTLog.verbose("Message is missing or empty. Not showing notification");
+            result = false;
+        }
         if (pt_big_img == null || pt_big_img.isEmpty()) {
             PTLog.verbose("Display Image is missing or empty. Not showing notification");
             result = false;
         }
-        if (pt_large_icon == null || pt_large_icon.isEmpty()) {
-            PTLog.verbose("Icon Image is missing or empty. Not showing notification");
-            result = false;
-        }
         return result;
     }
-
     private boolean hasAllCarouselNotifKeys() {
         boolean result = true;
         if (pt_title == null || pt_title.isEmpty()) {
@@ -1077,8 +1085,9 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
 
+            Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
+
             if(!isLinear) {
-                Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
                 setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
             }
 
@@ -1297,7 +1306,7 @@ public class TemplateRenderer {
 
             int timer_end;
 
-            if (pt_timer_threshold != -1) {
+            if (pt_timer_threshold != -1 && pt_timer_threshold >=  Constants.PT_TIMER_MIN_THRESHOLD) {
                 timer_end = (pt_timer_threshold * Constants.ONE_SECOND) + Constants.ONE_SECOND;
             } else if (pt_timer_end >= Constants.PT_TIMER_MIN_THRESHOLD) {
                 timer_end = (pt_timer_end * Constants.ONE_SECOND) + Constants.ONE_SECOND;
@@ -1820,25 +1829,32 @@ public class TemplateRenderer {
 
         extras.remove("wzrk_rnv");
 
-        if (pt_big_img_alt != null || !pt_big_img_alt.isEmpty()) {
-            extras.putString(Constants.PT_BIG_IMG, pt_big_img_alt);
-            extras.putString(Constants.PT_TITLE, pt_msg_alt);
-            extras.putString(Constants.PT_MSG, pt_title_alt);
-            extras.putString(Constants.PT_ID, TemplateType.BASIC.toString());
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (Utils.isNotificationInTray(context, notificationId)) {
-                            if (hasAllBasicNotifKeys()) {
-                                renderBasicTemplateNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
-                            }
+        if (pt_title_alt != null && !pt_title_alt.isEmpty()) {
+            pt_title = pt_title_alt;
+        }
+
+        if (pt_big_img_alt != null && !pt_big_img_alt.isEmpty()) {
+            pt_big_img = pt_big_img_alt;
+        }
+
+        if (pt_msg_alt != null && !pt_msg_alt.isEmpty()) {
+            pt_msg = pt_msg_alt;
+        }
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (Utils.isNotificationInTray(context, notificationId)) {
+                        if (hasAllBasicNotifKeys()) {
+                            renderBasicTemplateNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
                         }
                     }
-
                 }
-            }, delay - 300);
-        }
+
+            }
+        }, delay - 300);
+
     }
 
     private void setCustomContentViewSmallIcon(Context context, RemoteViews contentView, Notification notification, int notificationId) {
