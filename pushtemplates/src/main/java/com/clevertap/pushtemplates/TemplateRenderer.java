@@ -92,6 +92,7 @@ public class TemplateRenderer {
     private Bitmap pt_small_icon;
     private String pt_cancel_notif_id;
     private ArrayList<Integer> pt_cancel_notif_ids;
+    private JSONArray actions;
 
     @SuppressWarnings({"unused"})
     public enum LogLevel {
@@ -183,6 +184,7 @@ public class TemplateRenderer {
         pt_small_icon_clr = extras.getString(Constants.PT_SMALL_ICON_COLOUR);
         pt_cancel_notif_id = extras.getString(Constants.PT_CANCEL_NOTIF_ID);
         pt_cancel_notif_ids = Utils.getNotificationIds(context);
+        actions = Utils.getActionKeys(extras);
         setKeysFromDashboard(extras);
     }
 
@@ -549,8 +551,8 @@ public class TemplateRenderer {
             PTLog.verbose("Message is missing or empty. Not showing notification");
             result = false;
         }
-        if (pt_input_feedback == null || pt_input_feedback.isEmpty()) {
-            PTLog.verbose("Feedback Text is missing or empty. Not showing notification");
+        if ((pt_input_feedback == null || pt_input_feedback.isEmpty()) && actions == null) {
+            PTLog.verbose("Feedback Text or Actions is missing or empty. Not showing notification");
             result = false;
         }
         return result;
@@ -1726,16 +1728,7 @@ public class TemplateRenderer {
     }
 
     private void setActionButtons(Context context, Bundle extras, int notificationId, NotificationCompat.Builder nb) {
-        JSONArray actions = null;
 
-        String actionsString = extras.getString(Constants.WZRK_ACTIONS);
-        if (actionsString != null) {
-            try {
-                actions = new JSONArray(actionsString);
-            } catch (Throwable t) {
-                PTLog.debug("error parsing notification actions: " + t.getLocalizedMessage());
-            }
-        }
 
         Class clazz = null;
         try {

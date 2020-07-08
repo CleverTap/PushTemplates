@@ -509,4 +509,18 @@ public class Utils {
             instance.pushNotificationClickedEvent(extras);
         }
     }
+
+    static JSONArray getActionKeys(Bundle extras){
+        JSONArray actions = null;
+
+        String actionsString = extras.getString(Constants.WZRK_ACTIONS);
+        if (actionsString != null) {
+            try {
+                actions = new JSONArray(actionsString);
+            } catch (Throwable t) {
+                PTLog.debug("error parsing notification actions: " + t.getLocalizedMessage());
+            }
+        }
+        return actions;
+    }
 }
