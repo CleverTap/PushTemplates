@@ -339,10 +339,7 @@ public class TemplateRenderer {
             PTLog.verbose("Display Image is missing or empty. Not showing notification");
             result = false;
         }
-        if (pt_large_icon == null || pt_large_icon.isEmpty()) {
-            PTLog.verbose("Icon Image is missing or empty. Not showing notification");
-            result = false;
-        }
+
         if (pt_video_url == null || pt_video_url.isEmpty()) {
             PTLog.verbose("Video URL is missing or empty. Not showing notification");
             result = false;
@@ -362,6 +359,10 @@ public class TemplateRenderer {
         }
         if (pt_msg == null || pt_msg.isEmpty()) {
             PTLog.verbose("Message is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_bg == null || pt_bg.isEmpty()) {
+            PTLog.verbose("Background colour is missing or empty. Not showing notification");
             result = false;
         }
         return result;
@@ -519,10 +520,6 @@ public class TemplateRenderer {
 
     private boolean hasAllTimerKeys() {
         boolean result = true;
-        if (deepLinkList == null || deepLinkList.size() == 0) {
-            PTLog.verbose("Deeplink not present. Not showing notification");
-            result = false;
-        }
         if (pt_title == null || pt_title.isEmpty()) {
             PTLog.verbose("Title is missing or empty. Not showing notification");
             result = false;
@@ -544,10 +541,6 @@ public class TemplateRenderer {
 
     private boolean hasAllInputBoxKeys() {
         boolean result = true;
-        if (deepLinkList == null || deepLinkList.size() == 0) {
-            PTLog.verbose("Deeplink is not present. Not showing notification");
-            result = false;
-        }
         if (pt_title == null || pt_title.isEmpty()) {
             PTLog.verbose("Title is missing or empty. Not showing notification");
             result = false;
