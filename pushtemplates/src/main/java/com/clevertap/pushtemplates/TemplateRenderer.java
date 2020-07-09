@@ -1638,10 +1638,15 @@ public class TemplateRenderer {
     private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context, int color) {
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
-
-        contentView.setTextColor(R.id.app_name, ContextCompat.getColor(context, color));
-        contentView.setTextColor(R.id.timestamp, ContextCompat.getColor(context, color));
-        contentView.setTextColor(R.id.sep, ContextCompat.getColor(context, color));
+        if (pt_meta_clr != null && !pt_meta_clr.isEmpty()) {
+            contentView.setTextColor(R.id.app_name, Color.parseColor(pt_meta_clr));
+            contentView.setTextColor(R.id.timestamp, Color.parseColor(pt_meta_clr));
+            contentView.setTextColor(R.id.sep, Color.parseColor(pt_meta_clr));
+        } else {
+            contentView.setTextColor(R.id.app_name, ContextCompat.getColor(context, color));
+            contentView.setTextColor(R.id.timestamp, ContextCompat.getColor(context, color));
+            contentView.setTextColor(R.id.sep, ContextCompat.getColor(context, color));
+        }
     }
 
     private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img, Context context, Notification notification, int notificationId) {
