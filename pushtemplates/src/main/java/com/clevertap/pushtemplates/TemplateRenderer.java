@@ -517,6 +517,10 @@ public class TemplateRenderer {
             PTLog.verbose("Button colour is missing or empty. Not showing notification");
             result = false;
         }
+        if ((pt_large_icon == null || pt_large_icon.isEmpty()) ) {
+            PTLog.verbose("Large Icon is missing or empty. Not showing notification");
+            result = false;
+        }
         return result;
     }
 
@@ -916,7 +920,7 @@ public class TemplateRenderer {
 
             PendingIntent pIntent;
 
-            if (deepLinkList != null) {
+            if (deepLinkList != null && deepLinkList.size() > 0) {
                 pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
             } else {
                 pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
@@ -1395,7 +1399,7 @@ public class TemplateRenderer {
 
             PendingIntent pIntent;
 
-            if (deepLinkList != null) {
+            if (deepLinkList != null && deepLinkList.size() > 0) {
                 pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
             } else {
                 pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);

@@ -901,7 +901,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 .setCustomBigContentView(contentViewBig)
                 .setContentTitle(pt_title)
                 .setContentIntent(pIntent)
-                .setVibrate(new long[]{0L})
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true);
     }
