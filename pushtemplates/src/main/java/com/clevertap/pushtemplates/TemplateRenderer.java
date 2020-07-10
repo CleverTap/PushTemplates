@@ -187,7 +187,7 @@ public class TemplateRenderer {
         pt_cancel_notif_id = extras.getString(Constants.PT_CANCEL_NOTIF_ID);
         pt_cancel_notif_ids = Utils.getNotificationIds(context);
         actions = Utils.getActionKeys(extras);
-        pt_subtitle = extras.getString(Constants.WZRK_SUBTITLE);
+        pt_subtitle = extras.getString(Constants.PT_SUBTITLE);
         setKeysFromDashboard(extras);
     }
 
@@ -1879,6 +1879,10 @@ public class TemplateRenderer {
         }
         if(pt_small_icon_clr == null || pt_small_icon_clr.isEmpty()) {
             pt_small_icon_clr = extras.getString(Constants.WZRK_CLR);
+        }
+
+        if(pt_subtitle == null || pt_subtitle.isEmpty()){
+            pt_subtitle = extras.getString(Constants.WZRK_SUBTITLE);
         }
     }
 

@@ -83,6 +83,7 @@ public class Constants {
     public static final String PT_BUY_NOW = "buynow";
     public static final String TEXT_ONLY = "text_only";
     public static final String PT_TYPE = "pt_type";
+    public static final String PT_SUBTITLE = "pt_subtitle";
 
     static final int ONE_SECOND = 1000;
     static final String DEFAULT_DL = "default_dl";
