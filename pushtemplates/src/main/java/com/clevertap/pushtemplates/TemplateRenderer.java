@@ -93,6 +93,8 @@ public class TemplateRenderer {
     private String pt_cancel_notif_id;
     private ArrayList<Integer> pt_cancel_notif_ids;
     private JSONArray actions;
+    private String pt_subtitle;
+
 
     @SuppressWarnings({"unused"})
     public enum LogLevel {
@@ -185,6 +187,7 @@ public class TemplateRenderer {
         pt_cancel_notif_id = extras.getString(Constants.PT_CANCEL_NOTIF_ID);
         pt_cancel_notif_ids = Utils.getNotificationIds(context);
         actions = Utils.getActionKeys(extras);
+        pt_subtitle = extras.getString(Constants.WZRK_SUBTITLE);
         setKeysFromDashboard(extras);
     }
 
@@ -1222,7 +1225,7 @@ public class TemplateRenderer {
     private void renderZeroBezelNotification(Context context, Bundle extras, int notificationId) {
         try {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.zero_bezel);
-            setCustomContentViewBasicKeys(contentViewBig, context, R.color.white);
+            setCustomContentViewBasicKeys(contentViewBig, context);
 
             boolean textOnlySmallView = pt_small_view != null && pt_small_view.equals(Constants.TEXT_ONLY);
 
@@ -1231,7 +1234,7 @@ public class TemplateRenderer {
                 setCustomContentViewBasicKeys(contentViewSmall, context);
             } else {
                 contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.cv_small_zero_bezel);
-                setCustomContentViewBasicKeys(contentViewSmall, context, R.color.white);
+                setCustomContentViewBasicKeys(contentViewSmall, context);
             }
 
             setCustomContentViewTitle(contentViewBig, pt_title);
@@ -1286,9 +1289,8 @@ public class TemplateRenderer {
 
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
 
-            if (!textOnlySmallView) {
-                setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
-            }
+            setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
+
             notificationManager.notify(notificationId, notification);
 
             raiseNotificationViewed(context, extras);
@@ -1598,10 +1600,18 @@ public class TemplateRenderer {
     private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context) {
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+        if(pt_subtitle != null && !pt_subtitle.isEmpty()) {
+            contentView.setTextViewText(R.id.subtitle, pt_subtitle);
+        } else {
+            contentView.setViewVisibility(R.id.subtitle, View.GONE);
+            contentView.setViewVisibility(R.id.sep_subtitle,View.GONE);
+        }
         if (pt_meta_clr != null && !pt_meta_clr.isEmpty()) {
             contentView.setTextColor(R.id.app_name, Color.parseColor(pt_meta_clr));
             contentView.setTextColor(R.id.timestamp, Color.parseColor(pt_meta_clr));
+            contentView.setTextColor(R.id.subtitle, Color.parseColor(pt_meta_clr));
             contentView.setTextColor(R.id.sep, Color.parseColor(pt_meta_clr));
+            contentView.setTextColor(R.id.sep_subtitle, Color.parseColor(pt_meta_clr));
         }
     }
 
@@ -1635,19 +1645,7 @@ public class TemplateRenderer {
         }
     }
 
-    private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context, int color) {
-        contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
-        contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
-        if (pt_meta_clr != null && !pt_meta_clr.isEmpty()) {
-            contentView.setTextColor(R.id.app_name, Color.parseColor(pt_meta_clr));
-            contentView.setTextColor(R.id.timestamp, Color.parseColor(pt_meta_clr));
-            contentView.setTextColor(R.id.sep, Color.parseColor(pt_meta_clr));
-        } else {
-            contentView.setTextColor(R.id.app_name, ContextCompat.getColor(context, color));
-            contentView.setTextColor(R.id.timestamp, ContextCompat.getColor(context, color));
-            contentView.setTextColor(R.id.sep, ContextCompat.getColor(context, color));
-        }
-    }
+
 
     private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img, Context context, Notification notification, int notificationId) {
         if (pt_big_img != null && !pt_big_img.isEmpty()) {

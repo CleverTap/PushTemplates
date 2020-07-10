@@ -69,7 +69,6 @@
         android:layout_height="match_parent"
         android:layout_below="@id/rel_lyt"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="@dimen/padding_vertical"
         android:scaleType="centerCrop" />
 
 </RelativeLayout>
