@@ -296,7 +296,15 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 PendingIntent pIntent;
 
                 if (deepLinkList != null) {
-                    pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
+                    if( currPosition == 0 && deepLinkList.get(0) != null) {
+                        pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
+                    } else if (currPosition == 1 && deepLinkList.get(1) != null){
+                        pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(1));
+                    } else if(deepLinkList.get(2) != null) {
+                        pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(2));
+                    } else {
+                        pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
+                    }
                 } else {
                     pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
                 }
