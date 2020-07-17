@@ -813,8 +813,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 setCustomContentViewSmallIcon(context,contentViewSmall,notification,notificationId);
                 if(!isLinear) {
                     setCustomContentViewSmallIcon(context,contentViewSmall,notification,notificationId);
-
                 }
+
+                notificationManager.notify(notificationId, notification);
+
                 for (int index = 0; index < imageList.size(); index++) {
                     if (index == 0) {
                         Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
@@ -836,7 +838,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 setCustomContentViewSmallIcon(context,contentViewBig,notification,notificationId);
 
                 Utils.loadIntoGlide(context, R.id.big_image, imageUrl, contentViewBig, notification, notificationId);
-                notificationManager.notify(notificationId, notification);
+
 
             }
 
@@ -900,7 +902,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 .setCustomContentView(contentViewSmall)
                 .setCustomBigContentView(contentViewBig)
                 .setContentTitle(pt_title)
-                .setContentIntent(pIntent)
+                .setContentIntent(pIntent).setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
+                .setVibrate(new long[]{0L})
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true);
     }

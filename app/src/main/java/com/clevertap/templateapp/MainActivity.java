@@ -15,8 +15,11 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button sendBasicPush, sendCarouselPush, sendRatingPush, sendProductDisplayNotification,
-            sendCTANotification, sendZeroBezel, sendTimerNotification,sendInputBoxNotification,sendVideoNotification;
+    Button sendBasicPush, sendCarouselPush,sendManualCarouselPush,
+            sendRatingPush, sendProductDisplayNotification,
+            sendLinearProductDisplayNotification,
+            sendCTANotification, sendZeroBezel, sendTimerNotification,
+            sendInputBoxNotification,sendVideoNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        sendManualCarouselPush = findViewById(R.id.manualCarouselPush);
+        sendManualCarouselPush.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cleverTapAPI != null) {
+                    cleverTapAPI.pushEvent("Send Manual Carousel Push");
+                }
+            }
+        });
+
         sendRatingPush = findViewById(R.id.ratingPush);
         sendRatingPush.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +86,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (cleverTapAPI != null) {
                     cleverTapAPI.pushEvent("Send Product Display Notification");
+                }
+            }
+        });
+
+        sendLinearProductDisplayNotification = findViewById(R.id.linearProductDisplay);
+        sendLinearProductDisplayNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cleverTapAPI != null) {
+                    cleverTapAPI.pushEvent("Send Linear Product Display Push");
                 }
             }
         });

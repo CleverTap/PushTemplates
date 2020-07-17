@@ -33,6 +33,7 @@ import android.widget.RemoteViews;
 
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
+import com.clevertap.android.sdk.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +48,37 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class TemplateRenderer {
+
+    private static boolean hasVideoPlayerSupport;
+
+    static {
+        hasVideoPlayerSupport = checkForExoPlayer();
+    }
+
+    /**
+     * Method to check whether app has ExoPlayer dependencies
+     *
+     * @return boolean - true/false depending on app's availability of ExoPlayer dependencies
+     */
+    private static boolean checkForExoPlayer() {
+        boolean exoPlayerPresent = false;
+        Class className = null;
+        try {
+            className = Class.forName("com.google.android.exoplayer2.ExoPlayerFactory");
+            className = Class.forName("com.google.android.exoplayer2.source.hls.HlsMediaSource");
+            className = Class.forName("com.google.android.exoplayer2.ui.PlayerView");
+            Logger.d("ExoPlayer is present");
+            exoPlayerPresent = true;
+        } catch (Throwable t) {
+            PTLog.debug("ExoPlayer library files are missing!!!");
+            PTLog.debug("Please add ExoPlayer dependencies to render Push notifications playing video. For more information checkout Push Templates documentation.");
+            if (className != null)
+                Logger.d("ExoPlayer classes not found " + className.getName());
+            else
+                Logger.d("ExoPlayer classes not found");
+        }
+        return exoPlayerPresent;
+    }
 
     private static int debugLevel = TemplateRenderer.LogLevel.INFO.intValue();
     private String pt_id;
@@ -290,14 +322,23 @@ public class TemplateRenderer {
                 if (hasAllZeroBezelNotifKeys())
                     renderZeroBezelNotification(context, extras, notificationId);
             case TIMER:
-                if (hasAllTimerKeys())
-                    renderTimerNotification(context, extras, notificationId);
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                    if (hasAllTimerKeys()) {
+                        renderTimerNotification(context, extras, notificationId);
+                    }
+                }else{
+                    PTLog.debug("Push Templates SDK supports Timer Notifications only on or above Android Nougat");
+                }
                 break;
             case INPUT_BOX:
                 if (hasAllInputBoxKeys())
                     renderInputBoxNotification(context, extras, notificationId);
                 break;
             case VIDEO:
+                if(!hasVideoPlayerSupport){
+                    PTLog.debug("Dropping Video PN as the app doesn't have ExoPlayer libraries.");
+                    return;
+                }
                 if (hasAllVideoKeys())
                     renderVideoNotification(context, extras, notificationId);
                 break;
@@ -1093,6 +1134,8 @@ public class TemplateRenderer {
                 setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
             }
 
+            notificationManager.notify(notificationId, notification);
+
             for (int index = 0; index < imageList.size(); index++) {
                 if (index == 0) {
                     Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
@@ -1114,7 +1157,7 @@ public class TemplateRenderer {
             setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.big_image, imageList.get(0), contentViewBig, notification, notificationId);
 
-            notificationManager.notify(notificationId, notification);
+
 
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
@@ -1299,6 +1342,7 @@ public class TemplateRenderer {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void renderTimerNotification(final Context context, Bundle extras, int notificationId) {
         try {
 
@@ -1343,18 +1387,14 @@ public class TemplateRenderer {
             setCustomContentViewMessageSummary(contentViewTimer, pt_msg_summary);
 
             contentViewTimer.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (timer_end), null, true);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                contentViewTimer.setChronometerCountDown(R.id.chronometer, true);
-            } else {
-                //TODO Darshan
-            }
+
+            contentViewTimer.setChronometerCountDown(R.id.chronometer, true);
+
 
             contentViewTimerCollapsed.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (timer_end), null, true);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                contentViewTimerCollapsed.setChronometerCountDown(R.id.chronometer, true);
-            } else {
-                //TODO Darshan
-            }
+
+            contentViewTimerCollapsed.setChronometerCountDown(R.id.chronometer, true);
+
 
             notificationId = setNotificationId(notificationId);
 
