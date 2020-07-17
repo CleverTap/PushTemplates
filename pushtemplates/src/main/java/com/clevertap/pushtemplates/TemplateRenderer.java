@@ -765,8 +765,6 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
 
-            Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
-
             ArrayList<Integer> layoutIds = new ArrayList<>();
             layoutIds.add(0, R.id.flipper_img1);
             layoutIds.add(1, R.id.flipper_img2);
@@ -914,8 +912,6 @@ public class TemplateRenderer {
 
 
             Notification notification = notificationBuilder.build();
-
-            Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
 
             Utils.loadIntoGlide(context, R.id.carousel_image, imageList.get(0), contentViewManualCarousel, notification, notificationId);
 
