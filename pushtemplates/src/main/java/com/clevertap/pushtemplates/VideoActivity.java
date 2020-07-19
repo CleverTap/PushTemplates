@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat;
 
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -37,7 +38,6 @@ public class VideoActivity extends AppCompatActivity {
 	Bundle extras;
 	private SimpleExoPlayer player;
 	PlayerView playerView;
-	private boolean playWhenReady = true;
 	private int currentWindow = 0;
 	FrameLayout aspectRatioFrameLayout;
 	private long playbackPosition = 0;
@@ -161,15 +161,20 @@ public class VideoActivity extends AppCompatActivity {
 		playerView = new PlayerView(context);
 		playerView.hideController();
 		playerView.setUseController(false);
+		playerView.setShowBuffering(PlayerView.SHOW_BUFFERING_ALWAYS);
+
 		fullscreenButton = new ImageView(this);
 		fullscreenButton.setImageDrawable(context.getResources().getDrawable(R.drawable.pt_video_fullscreen_open));
 		setPositionOfView(fullscreenButton, Gravity.END|Gravity.BOTTOM, "bottomRight");
+
 		openapp_button= new ImageView(this);
 		openapp_button.setImageDrawable(context.getResources().getDrawable(R.drawable.pt_open_app));
 		setPositionOfView(openapp_button, Gravity.START|Gravity.BOTTOM, "bottomLeft");
+
 		close_button= new ImageView(this);
 		close_button.setImageDrawable(context.getResources().getDrawable(R.drawable.pt_video_close));
 		setPositionOfView(close_button, Gravity.END|Gravity.TOP, "topRight");
+
 		initializePlayer(extras.getString(Constants.PT_VIDEO_URL));
 		aspectRatioFrameLayout.addView(playerView);
 		aspectRatioFrameLayout.addView(fullscreenButton,1);
@@ -230,7 +235,6 @@ public class VideoActivity extends AppCompatActivity {
 		if (player != null) {
 			playbackPosition = player.getCurrentPosition();
 			currentWindow = player.getCurrentWindowIndex();
-			playWhenReady = player.getPlayWhenReady();
 			player.release();
 			player = null;
 		}
