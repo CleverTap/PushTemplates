@@ -22,7 +22,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/metadata"
         android:layout_marginEnd="@dimen/padding_vertical"
-        android:layout_marginRight="@dimen/padding_vertical"
         android:layout_toLeftOf="@+id/chronometer">
 
 
@@ -51,7 +50,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:textAlignment="center"
         android:textSize="@dimen/chronometer_font_size" />

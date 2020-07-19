@@ -18,7 +18,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/metadata"
         android:layout_alignStart="@+id/metadata"
-        android:layout_alignLeft="@+id/metadata"
         android:id="@+id/rel_lyt">
 
         <TextView
@@ -27,10 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/metadata_title_margin_vertical"
             android:layout_marginEnd="@dimen/metadata_title_margin_horizontal"
-            android:layout_marginRight="@dimen/metadata_title_margin_horizontal"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@+id/large_icon"
             android:layout_toStartOf="@+id/large_icon"
             android:text="title"
             android:textAppearance="@style/PushTitle" />
@@ -41,10 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_alignStart="@id/title"
-            android:layout_alignLeft="@id/title"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@+id/large_icon"
             android:layout_toStartOf="@+id/large_icon"
             android:text="message message "
             android:textAppearance="@style/PushMessage" />
@@ -55,8 +48,6 @@
         android:layout_width="@dimen/large_icon"
         android:layout_height="@dimen/large_icon"
         android:layout_marginStart="@dimen/metadata_title_margin_horizontal"
-        android:layout_marginLeft="@dimen/metadata_title_margin_horizontal"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:scaleType="centerCrop" />
     </RelativeLayout>
