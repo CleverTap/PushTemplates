@@ -588,7 +588,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 Thread.sleep(1000);
                 notificationManager.cancel(notificationId);
-                Toast.makeText(context, "Thank you for your feedback", Toast.LENGTH_SHORT).show();
+                Utils.showToast(context, "Thank you for your feedback", Toast.LENGTH_SHORT);
 
                 Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
                 context.sendBroadcast(it);
