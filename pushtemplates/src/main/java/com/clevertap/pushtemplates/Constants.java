@@ -84,6 +84,11 @@ public class Constants {
     public static final String TEXT_ONLY = "text_only";
     public static final String PT_TYPE = "pt_type";
     public static final String PT_SUBTITLE = "pt_subtitle";
+    public static final String PT_DISMISS_INTENT = "pt_dismiss_intent";
+    public static final String PT_SILENT_CHANNEL_ID = "pt_silent_channel_id";
+    public static final CharSequence PT_SILENT_CHANNEL_NAME = "Silent Channel";
+    public static final String PT_SILENT_CHANNEL_DESC = "A channel to silently update notifications";
+    public static final String PT_RATING_TOAST = "pt_rating_toast";
 
     static final int ONE_SECOND = 1000;
     static final String DEFAULT_DL = "default_dl";
