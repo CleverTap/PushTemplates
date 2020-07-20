@@ -13,7 +13,6 @@
         android:layout_width="@dimen/large_icon"
         android:layout_height="@dimen/large_icon"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:scaleType="centerCrop" />
 
 
@@ -21,35 +20,18 @@
         android:id="@+id/rel_lyt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/large_icon">
+        android:layout_toEndOf="@id/large_icon">
 
-        <TextView
-            android:id="@+id/app_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/metadata_title_margin_horizontal"
-            android:layout_marginLeft="@dimen/metadata_title_margin_horizontal"
-            android:text="app name"
-            android:textAppearance="@style/MetaData" />
-
-        <TextView
-            android:id="@+id/timestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/metadata_title_margin_horizontal"
-            android:layout_marginLeft="@dimen/metadata_title_margin_horizontal"
-            android:layout_toEndOf="@+id/app_name"
-            android:layout_toRightOf="@+id/app_name"
-            android:text="app name"
-            android:textAppearance="@style/MetaData" />
+        <include
+            android:id="@+id/metadata"
+            layout="@layout/metadata" />
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/app_name"
+            android:layout_below="@+id/metadata"
             android:layout_marginStart="@dimen/metadata_title_margin_horizontal"
-            android:layout_marginLeft="@dimen/metadata_title_margin_horizontal"
             android:ellipsize="end"
             android:maxLines="2"
             android:text="title"

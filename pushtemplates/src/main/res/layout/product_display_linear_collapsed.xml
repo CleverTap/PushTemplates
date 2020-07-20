@@ -28,7 +28,7 @@
         android:layout_below="@id/msg"
         android:layout_marginStart="-85dp"
         android:layout_marginTop="8dp"
-        android:layout_toRightOf="@id/large_icon"
+        android:layout_toEndOf="@id/large_icon"
         android:orientation="horizontal"
         android:paddingLeft="4dp"
         android:paddingRight="4dp">
@@ -37,8 +37,8 @@
             android:id="@+id/small_image1_collapsed"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="-5dp"
-            android:layout_marginRight="2dp"
+            android:layout_marginStart="-5dp"
+            android:layout_marginEnd="2dp"
             android:layout_weight="1" />
 
         <ImageView

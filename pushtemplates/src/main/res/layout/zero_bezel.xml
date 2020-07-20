@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/metadata"
-            android:layout_alignLeft="@id/metadata"
+            android:layout_alignStart="@id/metadata"
             android:layout_marginTop="@dimen/metadata_title_margin_vertical"
             android:text="title"
             android:textAppearance="@style/PushTitle"
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
-            android:layout_alignLeft="@id/title"
+            android:layout_alignStart="@id/title"
             android:text="message"
             android:textAppearance="@style/PushMessage"
             android:textColor="@color/white" />

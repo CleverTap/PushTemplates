@@ -9,11 +9,9 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -33,6 +31,7 @@ import android.widget.RemoteViews;
 
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
+import com.clevertap.android.sdk.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,11 +41,41 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
-import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class TemplateRenderer {
+
+    private static boolean hasVideoPlayerSupport;
+
+    static {
+        hasVideoPlayerSupport = checkForExoPlayer();
+    }
+
+    /**
+     * Method to check whether app has ExoPlayer dependencies
+     *
+     * @return boolean - true/false depending on app's availability of ExoPlayer dependencies
+     */
+    private static boolean checkForExoPlayer() {
+        boolean exoPlayerPresent = false;
+        Class className = null;
+        try {
+            className = Class.forName("com.google.android.exoplayer2.ExoPlayerFactory");
+            className = Class.forName("com.google.android.exoplayer2.source.hls.HlsMediaSource");
+            className = Class.forName("com.google.android.exoplayer2.ui.PlayerView");
+            Logger.d("ExoPlayer is present");
+            exoPlayerPresent = true;
+        } catch (Throwable t) {
+            PTLog.debug("ExoPlayer library files are missing!!!");
+            PTLog.debug("Please add ExoPlayer dependencies to render Push notifications playing video. For more information checkout Push Templates documentation.");
+            if (className != null)
+                Logger.d("ExoPlayer classes not found " + className.getName());
+            else
+                Logger.d("ExoPlayer classes not found");
+        }
+        return exoPlayerPresent;
+    }
 
     private static int debugLevel = TemplateRenderer.LogLevel.INFO.intValue();
     private String pt_id;
@@ -92,6 +121,9 @@ public class TemplateRenderer {
     private Bitmap pt_small_icon;
     private String pt_cancel_notif_id;
     private ArrayList<Integer> pt_cancel_notif_ids;
+    private JSONArray actions;
+    private String pt_subtitle;
+
 
     @SuppressWarnings({"unused"})
     public enum LogLevel {
@@ -183,6 +215,8 @@ public class TemplateRenderer {
         pt_small_icon_clr = extras.getString(Constants.PT_SMALL_ICON_COLOUR);
         pt_cancel_notif_id = extras.getString(Constants.PT_CANCEL_NOTIF_ID);
         pt_cancel_notif_ids = Utils.getNotificationIds(context);
+        actions = Utils.getActionKeys(extras);
+        pt_subtitle = extras.getString(Constants.PT_SUBTITLE);
         setKeysFromDashboard(extras);
     }
 
@@ -282,17 +316,26 @@ public class TemplateRenderer {
                     renderProductDisplayNotification(context, extras, notificationId);
                 break;
             case ZERO_BEZEL:
-                if (hasAllBasicNotifKeys())
+                if (hasAllZeroBezelNotifKeys())
                     renderZeroBezelNotification(context, extras, notificationId);
             case TIMER:
-                if (hasAllTimerKeys())
-                    renderTimerNotification(context, extras, notificationId);
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                    if (hasAllTimerKeys()) {
+                        renderTimerNotification(context, extras, notificationId);
+                    }
+                }else{
+                    PTLog.debug("Push Templates SDK supports Timer Notifications only on or above Android Nougat");
+                }
                 break;
             case INPUT_BOX:
                 if (hasAllInputBoxKeys())
                     renderInputBoxNotification(context, extras, notificationId);
                 break;
             case VIDEO:
+                if(!hasVideoPlayerSupport){
+                    PTLog.debug("Dropping Video PN as the app doesn't have ExoPlayer libraries.");
+                    return;
+                }
                 if (hasAllVideoKeys())
                     renderVideoNotification(context, extras, notificationId);
                 break;
@@ -339,10 +382,7 @@ public class TemplateRenderer {
             PTLog.verbose("Display Image is missing or empty. Not showing notification");
             result = false;
         }
-        if (pt_large_icon == null || pt_large_icon.isEmpty()) {
-            PTLog.verbose("Icon Image is missing or empty. Not showing notification");
-            result = false;
-        }
+
         if (pt_video_url == null || pt_video_url.isEmpty()) {
             PTLog.verbose("Video URL is missing or empty. Not showing notification");
             result = false;
@@ -364,17 +404,29 @@ public class TemplateRenderer {
             PTLog.verbose("Message is missing or empty. Not showing notification");
             result = false;
         }
-        if (pt_big_img == null || pt_big_img.isEmpty()) {
-            PTLog.verbose("Display Image is missing or empty. Not showing notification");
-            result = false;
-        }
-        if (pt_large_icon == null || pt_large_icon.isEmpty()) {
-            PTLog.verbose("Icon Image is missing or empty. Not showing notification");
+        if (pt_bg == null || pt_bg.isEmpty()) {
+            PTLog.verbose("Background colour is missing or empty. Not showing notification");
             result = false;
         }
         return result;
     }
 
+    private boolean hasAllZeroBezelNotifKeys() {
+        boolean result = true;
+        if (pt_title == null || pt_title.isEmpty()) {
+            PTLog.verbose("Title is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_msg == null || pt_msg.isEmpty()) {
+            PTLog.verbose("Message is missing or empty. Not showing notification");
+            result = false;
+        }
+        if (pt_big_img == null || pt_big_img.isEmpty()) {
+            PTLog.verbose("Display Image is missing or empty. Not showing notification");
+            result = false;
+        }
+        return result;
+    }
     private boolean hasAllCarouselNotifKeys() {
         boolean result = true;
         if (pt_title == null || pt_title.isEmpty()) {
@@ -506,15 +558,15 @@ public class TemplateRenderer {
             PTLog.verbose("Button colour is missing or empty. Not showing notification");
             result = false;
         }
+        if ((pt_large_icon == null || pt_large_icon.isEmpty()) ) {
+            PTLog.verbose("Large Icon is missing or empty. Not showing notification");
+            result = false;
+        }
         return result;
     }
 
     private boolean hasAllTimerKeys() {
         boolean result = true;
-        if (deepLinkList == null || deepLinkList.size() == 0) {
-            PTLog.verbose("Deeplink not present. Not showing notification");
-            result = false;
-        }
         if (pt_title == null || pt_title.isEmpty()) {
             PTLog.verbose("Title is missing or empty. Not showing notification");
             result = false;
@@ -536,10 +588,6 @@ public class TemplateRenderer {
 
     private boolean hasAllInputBoxKeys() {
         boolean result = true;
-        if (deepLinkList == null || deepLinkList.size() == 0) {
-            PTLog.verbose("Deeplink is not present. Not showing notification");
-            result = false;
-        }
         if (pt_title == null || pt_title.isEmpty()) {
             PTLog.verbose("Title is missing or empty. Not showing notification");
             result = false;
@@ -548,8 +596,8 @@ public class TemplateRenderer {
             PTLog.verbose("Message is missing or empty. Not showing notification");
             result = false;
         }
-        if (pt_input_feedback == null || pt_input_feedback.isEmpty()) {
-            PTLog.verbose("Feedback Text is missing or empty. Not showing notification");
+        if ((pt_input_feedback == null || pt_input_feedback.isEmpty()) && actions == null) {
+            PTLog.verbose("Feedback Text or Actions is missing or empty. Not showing notification");
             result = false;
         }
         return result;
@@ -714,8 +762,6 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
 
-            Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
-
             ArrayList<Integer> layoutIds = new ArrayList<>();
             layoutIds.add(0, R.id.flipper_img1);
             layoutIds.add(1, R.id.flipper_img2);
@@ -864,8 +910,6 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
 
-            Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
-
             Utils.loadIntoGlide(context, R.id.carousel_image, imageList.get(0), contentViewManualCarousel, notification, notificationId);
 
             setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
@@ -913,7 +957,7 @@ public class TemplateRenderer {
 
             PendingIntent pIntent;
 
-            if (deepLinkList != null) {
+            if (deepLinkList != null && deepLinkList.size() > 0) {
                 pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
             } else {
                 pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
@@ -978,10 +1022,9 @@ public class TemplateRenderer {
                 setCustomContentViewTitle(contentViewBig, pt_title);
                 setCustomContentViewTitle(contentViewSmall, pt_title);
                 setCustomContentViewMessage(contentViewBig, pt_msg);
-                setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
-                setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
+                setCustomContentViewElementColour(contentViewBig,R.id.product_description, pt_msg_clr);
+                setCustomContentViewElementColour(contentViewBig,R.id.product_name, pt_title_clr);
                 setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
-
             }
 
             setCustomContentViewMessage(contentViewSmall, pt_msg);
@@ -1077,10 +1120,13 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
 
+            Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
+
             if(!isLinear) {
-                Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentViewSmall, notification, notificationId);
                 setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
             }
+
+            notificationManager.notify(notificationId, notification);
 
             for (int index = 0; index < imageList.size(); index++) {
                 if (index == 0) {
@@ -1103,7 +1149,7 @@ public class TemplateRenderer {
             setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
             Utils.loadIntoGlide(context, R.id.big_image, imageList.get(0), contentViewBig, notification, notificationId);
 
-            notificationManager.notify(notificationId, notification);
+
 
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
@@ -1214,7 +1260,7 @@ public class TemplateRenderer {
     private void renderZeroBezelNotification(Context context, Bundle extras, int notificationId) {
         try {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.zero_bezel);
-            setCustomContentViewBasicKeys(contentViewBig, context, R.color.white);
+            setCustomContentViewBasicKeys(contentViewBig, context);
 
             boolean textOnlySmallView = pt_small_view != null && pt_small_view.equals(Constants.TEXT_ONLY);
 
@@ -1223,7 +1269,7 @@ public class TemplateRenderer {
                 setCustomContentViewBasicKeys(contentViewSmall, context);
             } else {
                 contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.cv_small_zero_bezel);
-                setCustomContentViewBasicKeys(contentViewSmall, context, R.color.white);
+                setCustomContentViewBasicKeys(contentViewSmall, context);
             }
 
             setCustomContentViewTitle(contentViewBig, pt_title);
@@ -1278,9 +1324,8 @@ public class TemplateRenderer {
 
             Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentViewBig, notification, notificationId);
 
-            if (!textOnlySmallView) {
-                setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
-            }
+            setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
+
             notificationManager.notify(notificationId, notification);
 
             raiseNotificationViewed(context, extras);
@@ -1289,6 +1334,7 @@ public class TemplateRenderer {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void renderTimerNotification(final Context context, Bundle extras, int notificationId) {
         try {
 
@@ -1297,7 +1343,7 @@ public class TemplateRenderer {
 
             int timer_end;
 
-            if (pt_timer_threshold != -1) {
+            if (pt_timer_threshold != -1 && pt_timer_threshold >=  Constants.PT_TIMER_MIN_THRESHOLD) {
                 timer_end = (pt_timer_threshold * Constants.ONE_SECOND) + Constants.ONE_SECOND;
             } else if (pt_timer_end >= Constants.PT_TIMER_MIN_THRESHOLD) {
                 timer_end = (pt_timer_end * Constants.ONE_SECOND) + Constants.ONE_SECOND;
@@ -1333,18 +1379,14 @@ public class TemplateRenderer {
             setCustomContentViewMessageSummary(contentViewTimer, pt_msg_summary);
 
             contentViewTimer.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (timer_end), null, true);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                contentViewTimer.setChronometerCountDown(R.id.chronometer, true);
-            } else {
-                //TODO Darshan
-            }
+
+            contentViewTimer.setChronometerCountDown(R.id.chronometer, true);
+
 
             contentViewTimerCollapsed.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (timer_end), null, true);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                contentViewTimerCollapsed.setChronometerCountDown(R.id.chronometer, true);
-            } else {
-                //TODO Darshan
-            }
+
+            contentViewTimerCollapsed.setChronometerCountDown(R.id.chronometer, true);
+
 
             notificationId = setNotificationId(notificationId);
 
@@ -1391,7 +1433,7 @@ public class TemplateRenderer {
 
             PendingIntent pIntent;
 
-            if (deepLinkList != null) {
+            if (deepLinkList != null && deepLinkList.size() > 0) {
                 pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
             } else {
                 pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
@@ -1590,10 +1632,18 @@ public class TemplateRenderer {
     private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context) {
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
+        if(pt_subtitle != null && !pt_subtitle.isEmpty()) {
+            contentView.setTextViewText(R.id.subtitle, pt_subtitle);
+        } else {
+            contentView.setViewVisibility(R.id.subtitle, View.GONE);
+            contentView.setViewVisibility(R.id.sep_subtitle,View.GONE);
+        }
         if (pt_meta_clr != null && !pt_meta_clr.isEmpty()) {
             contentView.setTextColor(R.id.app_name, Color.parseColor(pt_meta_clr));
             contentView.setTextColor(R.id.timestamp, Color.parseColor(pt_meta_clr));
+            contentView.setTextColor(R.id.subtitle, Color.parseColor(pt_meta_clr));
             contentView.setTextColor(R.id.sep, Color.parseColor(pt_meta_clr));
+            contentView.setTextColor(R.id.sep_subtitle, Color.parseColor(pt_meta_clr));
         }
     }
 
@@ -1627,14 +1677,7 @@ public class TemplateRenderer {
         }
     }
 
-    private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context, int color) {
-        contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
-        contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
 
-        contentView.setTextColor(R.id.app_name, ContextCompat.getColor(context, color));
-        contentView.setTextColor(R.id.timestamp, ContextCompat.getColor(context, color));
-        contentView.setTextColor(R.id.sep, ContextCompat.getColor(context, color));
-    }
 
     private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img, Context context, Notification notification, int notificationId) {
         if (pt_big_img != null && !pt_big_img.isEmpty()) {
@@ -1670,6 +1713,12 @@ public class TemplateRenderer {
     private void setCustomContentViewTitleColour(RemoteViews contentView, String pt_title_clr) {
         if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
             contentView.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+        }
+    }
+
+    private void setCustomContentViewElementColour(RemoteViews contentView,int rId , String colour) {
+        if (colour != null && !colour.isEmpty()) {
+            contentView.setTextColor(rId, Color.parseColor(colour));
         }
     }
 
@@ -1724,16 +1773,7 @@ public class TemplateRenderer {
     }
 
     private void setActionButtons(Context context, Bundle extras, int notificationId, NotificationCompat.Builder nb) {
-        JSONArray actions = null;
 
-        String actionsString = extras.getString(Constants.WZRK_ACTIONS);
-        if (actionsString != null) {
-            try {
-                actions = new JSONArray(actionsString);
-            } catch (Throwable t) {
-                PTLog.debug("error parsing notification actions: " + t.getLocalizedMessage());
-            }
-        }
 
         Class clazz = null;
         try {
@@ -1820,25 +1860,32 @@ public class TemplateRenderer {
 
         extras.remove("wzrk_rnv");
 
-        if (pt_big_img_alt != null || !pt_big_img_alt.isEmpty()) {
-            extras.putString(Constants.PT_BIG_IMG, pt_big_img_alt);
-            extras.putString(Constants.PT_TITLE, pt_msg_alt);
-            extras.putString(Constants.PT_MSG, pt_title_alt);
-            extras.putString(Constants.PT_ID, TemplateType.BASIC.toString());
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (Utils.isNotificationInTray(context, notificationId)) {
-                            if (hasAllBasicNotifKeys()) {
-                                renderBasicTemplateNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
-                            }
+        if (pt_title_alt != null && !pt_title_alt.isEmpty()) {
+            pt_title = pt_title_alt;
+        }
+
+        if (pt_big_img_alt != null && !pt_big_img_alt.isEmpty()) {
+            pt_big_img = pt_big_img_alt;
+        }
+
+        if (pt_msg_alt != null && !pt_msg_alt.isEmpty()) {
+            pt_msg = pt_msg_alt;
+        }
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (Utils.isNotificationInTray(context, notificationId)) {
+                        if (hasAllBasicNotifKeys()) {
+                            renderBasicTemplateNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
                         }
                     }
-
                 }
-            }, delay - 300);
-        }
+
+            }
+        }, delay - 300);
+
     }
 
     private void setCustomContentViewSmallIcon(Context context, RemoteViews contentView, Notification notification, int notificationId) {
@@ -1870,6 +1917,10 @@ public class TemplateRenderer {
         }
         if(pt_small_icon_clr == null || pt_small_icon_clr.isEmpty()) {
             pt_small_icon_clr = extras.getString(Constants.WZRK_CLR);
+        }
+
+        if(pt_subtitle == null || pt_subtitle.isEmpty()){
+            pt_subtitle = extras.getString(Constants.WZRK_SUBTITLE);
         }
     }
 

@@ -36,6 +36,7 @@
     <dimen name="chronometer_font_size">12sp</dimen>
 
     <dimen name="product_display_button_height">24dp</dimen>
+    <dimen name="rating_big_img">96dp</dimen>
 
 
 </resources>

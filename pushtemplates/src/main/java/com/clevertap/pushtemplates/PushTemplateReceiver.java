@@ -9,17 +9,14 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.app.RemoteInput;
@@ -296,7 +293,15 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 PendingIntent pIntent;
 
                 if (deepLinkList != null) {
-                    pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
+                    if( currPosition == 0 && deepLinkList.get(0) != null) {
+                        pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
+                    } else if (currPosition == 1 && deepLinkList.get(1) != null){
+                        pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(1));
+                    } else if(deepLinkList.get(2) != null) {
+                        pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(2));
+                    } else {
+                        pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
+                    }
                 } else {
                     pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
                 }
@@ -580,7 +585,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 Thread.sleep(1000);
                 notificationManager.cancel(notificationId);
-                Toast.makeText(context, "Thank you for your feedback", Toast.LENGTH_SHORT).show();
+                Utils.showToast(context, "Thank you for your feedback", Toast.LENGTH_SHORT);
 
                 Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
                 context.sendBroadcast(it);
@@ -813,8 +818,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 setCustomContentViewSmallIcon(context,contentViewSmall,notification,notificationId);
                 if(!isLinear) {
                     setCustomContentViewSmallIcon(context,contentViewSmall,notification,notificationId);
-
                 }
+
+                notificationManager.notify(notificationId, notification);
+
                 for (int index = 0; index < imageList.size(); index++) {
                     if (index == 0) {
                         Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
@@ -836,7 +843,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 setCustomContentViewSmallIcon(context,contentViewBig,notification,notificationId);
 
                 Utils.loadIntoGlide(context, R.id.big_image, imageUrl, contentViewBig, notification, notificationId);
-                notificationManager.notify(notificationId, notification);
+
 
             }
 
@@ -900,8 +907,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 .setCustomContentView(contentViewSmall)
                 .setCustomBigContentView(contentViewBig)
                 .setContentTitle(pt_title)
-                .setContentIntent(pIntent)
-                .setVibrate(new long[]{0L})
+                .setContentIntent(pIntent).setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true);
     }

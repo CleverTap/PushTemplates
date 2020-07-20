@@ -17,8 +17,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 
 import androidx.annotation.RequiresApi;
@@ -508,5 +510,39 @@ public class Utils {
         if (instance != null) {
             instance.pushNotificationClickedEvent(extras);
         }
+    }
+
+    static JSONArray getActionKeys(Bundle extras){
+        JSONArray actions = null;
+
+        String actionsString = extras.getString(Constants.WZRK_ACTIONS);
+        if (actionsString != null) {
+            try {
+                actions = new JSONArray(actionsString);
+            } catch (Throwable t) {
+                PTLog.debug("error parsing notification actions: " + t.getLocalizedMessage());
+            }
+        }
+        return actions;
+    }
+
+    static void showToast(final Context context, final String message, final int duration) {
+        AsyncHelper.getMainThreadHandler().post(new Runnable() {
+
+            Toast toast;
+
+            @Override
+            public void run() {
+                if (!TextUtils.isEmpty(message)) {
+                    if (toast != null) {
+                        toast.cancel(); //dismiss current toast if visible
+                        toast.setText(message);
+                    } else {
+                        toast = Toast.makeText(context, message, duration);
+                    }
+                    toast.show();
+                }
+            }
+        });
     }
 }

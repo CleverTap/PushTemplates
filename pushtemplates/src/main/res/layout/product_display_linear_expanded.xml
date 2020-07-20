@@ -35,7 +35,7 @@
             android:layout_height="30dp"
             android:orientation="horizontal"
             android:layout_marginTop="8dp"
-            android:layout_weight="0.1">
+            android:layout_weight="3">
 
             <TextView
                 android:id="@+id/product_name"
@@ -45,15 +45,6 @@
                 android:gravity="center"
                 android:textAppearance="@style/PushTitle"
                 android:layout_weight="2"/>
-
-            <!--            <TextView-->
-            <!--                android:id="@+id/product_price"-->
-            <!--                android:layout_width="0dp"-->
-            <!--                android:layout_height="match_parent"-->
-            <!--                android:layout_weight="4"-->
-            <!--                android:text="1234567890123456"-->
-            <!--                android:textAppearance="@style/PushTitle"-->
-            <!--                android:gravity="center"/>-->
 
             <Button
                 android:id="@+id/product_action"
@@ -70,19 +61,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/buy_price"
             android:layout_marginTop="8dp"
             android:paddingRight="4dp"
             android:paddingLeft="4dp"
             android:orientation="horizontal"
-            android:layout_weight="1.5">
+            android:layout_weight="3">
 
             <ImageView
                 android:id="@+id/small_image1"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_marginLeft="-5dp"
-                android:layout_marginRight="2dp"
+                android:layout_marginStart="-5dp"
+                android:layout_marginEnd="2dp"
                 android:layout_weight="1"
                 />
 

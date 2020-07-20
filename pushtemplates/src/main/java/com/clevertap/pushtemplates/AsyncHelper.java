@@ -1,5 +1,9 @@
 package com.clevertap.pushtemplates;
 
+import android.os.Handler;
+import android.os.Looper;
+
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -45,4 +49,14 @@ class AsyncHelper {
             PTLog.verbose("Failed to submit task to the executor service");
         }
     }
+    public static Handler getMainThreadHandler() {
+
+        Handler mainThreadHandler;
+
+        mainThreadHandler = new Handler(Looper.getMainLooper());
+
+        return mainThreadHandler;
+    }
+
+
 }
