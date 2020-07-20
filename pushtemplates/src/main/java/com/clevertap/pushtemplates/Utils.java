@@ -16,9 +16,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.service.notification.StatusBarNotification;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 
 import androidx.annotation.RequiresApi;
@@ -522,5 +526,34 @@ public class Utils {
             }
         }
         return actions;
+    }
+
+    private static Handler getMainThreadHandler() {
+
+        Handler mainThreadHandler;
+
+        mainThreadHandler = new Handler(Looper.getMainLooper());
+
+        return mainThreadHandler;
+    }
+
+    static void showToast(final Context context, final String message, final int duration) {
+        getMainThreadHandler().post(new Runnable() {
+
+            Toast toast;
+
+            @Override
+            public void run() {
+                if (!TextUtils.isEmpty(message)) {
+                    if (toast != null) {
+                        toast.cancel(); //dismiss current toast if visible
+                        toast.setText(message);
+                    } else {
+                        toast = Toast.makeText(context, message, duration);
+                    }
+                    toast.show();
+                }
+            }
+        });
     }
 }
