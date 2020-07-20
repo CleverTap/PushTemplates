@@ -9,17 +9,14 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.app.RemoteInput;
@@ -911,7 +908,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 .setCustomBigContentView(contentViewBig)
                 .setContentTitle(pt_title)
                 .setContentIntent(pIntent).setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
-                .setVibrate(new long[]{0L})
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true);
     }

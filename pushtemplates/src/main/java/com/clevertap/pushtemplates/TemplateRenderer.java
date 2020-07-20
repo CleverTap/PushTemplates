@@ -9,11 +9,9 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -43,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
-import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 @SuppressWarnings("FieldCanBeLocal")
@@ -1025,10 +1022,9 @@ public class TemplateRenderer {
                 setCustomContentViewTitle(contentViewBig, pt_title);
                 setCustomContentViewTitle(contentViewSmall, pt_title);
                 setCustomContentViewMessage(contentViewBig, pt_msg);
-                setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
-                setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
+                setCustomContentViewElementColour(contentViewBig,R.id.product_description, pt_msg_clr);
+                setCustomContentViewElementColour(contentViewBig,R.id.product_name, pt_title_clr);
                 setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
-
             }
 
             setCustomContentViewMessage(contentViewSmall, pt_msg);
@@ -1717,6 +1713,12 @@ public class TemplateRenderer {
     private void setCustomContentViewTitleColour(RemoteViews contentView, String pt_title_clr) {
         if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
             contentView.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+        }
+    }
+
+    private void setCustomContentViewElementColour(RemoteViews contentView,int rId , String colour) {
+        if (colour != null && !colour.isEmpty()) {
+            contentView.setTextColor(rId, Color.parseColor(colour));
         }
     }
 

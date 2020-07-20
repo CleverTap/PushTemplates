@@ -16,8 +16,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -528,17 +526,8 @@ public class Utils {
         return actions;
     }
 
-    private static Handler getMainThreadHandler() {
-
-        Handler mainThreadHandler;
-
-        mainThreadHandler = new Handler(Looper.getMainLooper());
-
-        return mainThreadHandler;
-    }
-
     static void showToast(final Context context, final String message, final int duration) {
-        getMainThreadHandler().post(new Runnable() {
+        AsyncHelper.getMainThreadHandler().post(new Runnable() {
 
             Toast toast;
 
