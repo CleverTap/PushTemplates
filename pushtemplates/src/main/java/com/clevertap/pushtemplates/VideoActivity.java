@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -21,12 +20,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -39,9 +40,12 @@ public class VideoActivity extends AppCompatActivity {
 	private SimpleExoPlayer player;
 	PlayerView playerView;
 	private int currentWindow = 0;
-	FrameLayout aspectRatioFrameLayout;
+	FixedAspectRatioFrameLayout aspectRatioFrameLayout;
+	FrameLayout fullscreenButton;
 	private long playbackPosition = 0;
-	ImageView openapp_button,close_button,fullscreenButton;
+	ImageButton openapp_button,close_button;
+	ImageView fullscreenicon;
+
 	boolean fullscreen = false;
 	private ArrayList<String> deepLinkList;
 	private Context context;
@@ -62,8 +66,14 @@ public class VideoActivity extends AppCompatActivity {
 		}
 		extras = getIntent().getExtras();
 		deepLinkList = Utils.getDeepLinkListFromExtras(extras);
-
 		prepareMedia();
+
+		playMedia();
+	openapp_button=findViewById(R.id.openapp2);
+	close_button=findViewById(R.id.exo_close2);
+	fullscreenButton=findViewById(R.id.exo_fullscreen_button2);
+	fullscreenicon=findViewById(R.id.exo_fullscreen_icon);
+
 
 		fullscreen_layout(false);
 
@@ -109,7 +119,7 @@ public class VideoActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View view) {
 				if(fullscreen) {
-					fullscreenButton.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.pt_video_fullscreen_open));
+					fullscreenicon.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.pt_video_fullscreen_open));
 					ViewGroup.LayoutParams params1 = openapp_button.getLayoutParams();
 					ViewGroup.LayoutParams params2 = close_button.getLayoutParams();
 					params1.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
@@ -118,17 +128,27 @@ public class VideoActivity extends AppCompatActivity {
 					params2.height=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
 					openapp_button.setLayoutParams(params1);
 					close_button.setLayoutParams(params2);
-
+					playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
 					getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 					if(getSupportActionBar() != null){
-						getSupportActionBar().show();
+						getSupportActionBar().hide();
 					}
 					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 					fullscreen_layout(false);
 
 					fullscreen = false;
 				}else{
-					fullscreenButton.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.pt_video_fullscreen_close));
+				//	playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+				/*
+					player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT);*/
+					//FixedAspectRatioFrameLayout.LayoutParams a = (FixedAspectRatioFrameLayout.LayoutParams) aspectRatioFrameLayout.getLayoutParams();
+					//playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+
+
+
+
+					fullscreenicon.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.pt_video_fullscreen_close));
 					ViewGroup.LayoutParams params1 = openapp_button.getLayoutParams();
 					ViewGroup.LayoutParams params2 = close_button.getLayoutParams();
 					params1.width = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
@@ -151,19 +171,27 @@ public class VideoActivity extends AppCompatActivity {
 			}
 		});
 
-		playMedia();
+
 	}
 
 	private void prepareMedia(){
 		aspectRatioFrameLayout=findViewById(R.id.video_layout);
 		aspectRatioFrameLayout.setVisibility(View.VISIBLE);
-
 		playerView = new PlayerView(context);
-		playerView.hideController();
-		playerView.setUseController(false);
-		playerView.setShowBuffering(PlayerView.SHOW_BUFFERING_ALWAYS);
+		PlayerControlView playerControlView = new PlayerControlView(context);
+		playerControlView.setId(R.layout.exo_player_control_view);
+		playerControlView.show();
 
-		fullscreenButton = new ImageView(this);
+		//PlayerView.switchTargetView();
+		playerView.setUseController(true);
+		playerView.setControllerAutoShow(true);
+		playerView.setShowBuffering(PlayerView.SHOW_BUFFERING_ALWAYS);
+		initializePlayer(extras.getString(Constants.PT_VIDEO_URL));
+		aspectRatioFrameLayout.addView(playerView);
+		//
+
+
+	/*	fullscreenButton = new ImageView(this);
 		fullscreenButton.setImageDrawable(context.getResources().getDrawable(R.drawable.pt_video_fullscreen_open));
 		setPositionOfView(fullscreenButton, Gravity.END|Gravity.BOTTOM, "bottomRight");
 
@@ -175,11 +203,11 @@ public class VideoActivity extends AppCompatActivity {
 		close_button.setImageDrawable(context.getResources().getDrawable(R.drawable.pt_video_close));
 		setPositionOfView(close_button, Gravity.END|Gravity.TOP, "topRight");
 
-		initializePlayer(extras.getString(Constants.PT_VIDEO_URL));
-		aspectRatioFrameLayout.addView(playerView);
+
+
 		aspectRatioFrameLayout.addView(fullscreenButton,1);
 		aspectRatioFrameLayout.addView(openapp_button,2);
-		aspectRatioFrameLayout.addView(close_button,3);
+		aspectRatioFrameLayout.addView(close_button,3);*/
 	}
 
 	private void setPositionOfView(ImageView imageView, int gravity, String position){
@@ -256,7 +284,7 @@ public class VideoActivity extends AppCompatActivity {
 	public void onResume() {
 		super.onResume();
 		hideSystemUi();
-		initializePlayer(extras.getString(Constants.PT_VIDEO_URL));
+		//initializePlayer(extras.getString(Constants.PT_VIDEO_URL));
 	}
 
 	@Override
@@ -268,8 +296,14 @@ public class VideoActivity extends AppCompatActivity {
 	@Override
 	public void onStop() {
 		super.onStop();
+		releasePlayer();
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		releasePlayer();
+	}
 
 	@SuppressLint("InlinedApi")
 	private void hideSystemUi() {
@@ -287,7 +321,8 @@ public class VideoActivity extends AppCompatActivity {
 		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) aspectRatioFrameLayout.getLayoutParams();
 		float density=getApplicationContext().getResources().getDisplayMetrics().density;
 		if(isFullScreen) {
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+			//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+			//playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
 			if(density ==1) {
 				params.width = (int) (2.7*Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
 			}
@@ -300,28 +335,38 @@ public class VideoActivity extends AppCompatActivity {
 			else if(density >=2.5) {
 				params.width = (int) (1.7 * Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
 			}
+		//	params.width=ViewGroup.LayoutParams.MATCH_PARENT;
 			params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+			//params.width=ViewGroup.LayoutParams.MATCH_PARENT;
 
 			playerView.setLayoutParams(params);
 
 		} else {
-			if(density ==1) {
+			//FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) aspectRatioFrameLayout.getLayoutParams();
+			params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+			params.width=ViewGroup.LayoutParams.MATCH_PARENT;
+
+			playerView.setLayoutParams(params);
+			//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+		/*	if(density ==1) {
 				params.width = (int) (1.5*Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
-				params.height = (int) ( 310 * getApplicationContext().getResources().getDisplayMetrics().density);
+				params.height = (int) ( 300 * getApplicationContext().getResources().getDisplayMetrics().density);
 			}
 			else if(density >1 && density <=1.5) {
 				params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-				params.height = (int) ( 210 * getApplicationContext().getResources().getDisplayMetrics().density);
+				params.height = (int) ( 200 * getApplicationContext().getResources().getDisplayMetrics().density);
 			}
 			else if(density>1.5 && density<2.5) {
 				params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-				params.height = (int) ( 210 * getApplicationContext().getResources().getDisplayMetrics().density);
+				params.height = (int) ( 200 * getApplicationContext().getResources().getDisplayMetrics().density);
 			}
 			else if(density >=2.5) {
 				params.width = (int) (Constants.PT_VIDEO_WIDTH * getApplicationContext().getResources().getDisplayMetrics().density);
-				params.height = (int) ( 210 * getApplicationContext().getResources().getDisplayMetrics().density);
+				params.height = (int) ( 200 * getApplicationContext().getResources().getDisplayMetrics().density);
 			}
-			playerView.setLayoutParams(params);
+//params.width=ViewGroup.LayoutParams.MATCH_PARENT;
+		//	params.height=ViewGroup.LayoutParams.MATCH_PARENT;
+			playerView.setLayoutParams(params);*/
 		}
 	}
 }

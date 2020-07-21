@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.clevertap.pushtemplates.FixedAspectRatioFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/video_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_weight="80"
     android:background="#00000000"
     android:gravity="center"
+    app:aspectRatioHeight="9"
+    app:aspectRatioWidth="16"
     android:visibility="visible">
 
 
-</FrameLayout>
+</com.clevertap.pushtemplates.FixedAspectRatioFrameLayout>
