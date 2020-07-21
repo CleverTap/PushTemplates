@@ -1,6 +1,7 @@
 package com.clevertap.pushtemplates;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -544,5 +545,28 @@ public class Utils {
                 }
             }
         });
+    }
+
+    static void createSilentNotificationChannel(Context context){
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        if (notificationManager == null) return;
+        NotificationChannel notificationChannel = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notificationChannel = new NotificationChannel(Constants.PT_SILENT_CHANNEL_ID, Constants.PT_SILENT_CHANNEL_NAME, NotificationManager.IMPORTANCE_NONE);
+            notificationChannel.setDescription(Constants.PT_SILENT_CHANNEL_DESC);
+            notificationChannel.setShowBadge(false);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+
+    }
+
+    static void deleteSilentNotificationChannel(Context context){
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        if (notificationManager == null) return;
+        NotificationChannel notificationChannel = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notificationManager.deleteNotificationChannel(Constants.PT_SILENT_CHANNEL_ID);
+        }
+
     }
 }

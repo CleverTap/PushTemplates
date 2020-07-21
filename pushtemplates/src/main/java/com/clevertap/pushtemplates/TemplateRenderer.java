@@ -324,7 +324,10 @@ public class TemplateRenderer {
                         renderTimerNotification(context, extras, notificationId);
                     }
                 }else{
-                    PTLog.debug("Push Templates SDK supports Timer Notifications only on or above Android Nougat");
+                    PTLog.debug("Push Templates SDK supports Timer Notifications only on or above Android Nougat, reverting to basic template");
+                    if (hasAllBasicNotifKeys()) {
+                        renderBasicTemplateNotification(context, extras, notificationId);
+                    }
                 }
                 break;
             case INPUT_BOX:
@@ -333,8 +336,10 @@ public class TemplateRenderer {
                 break;
             case VIDEO:
                 if(!hasVideoPlayerSupport){
-                    PTLog.debug("Dropping Video PN as the app doesn't have ExoPlayer libraries.");
-                    return;
+                    PTLog.debug("ExoPlayer libraries not found, reverting to basic template");
+                    if (hasAllBasicNotifKeys()) {
+                        renderBasicTemplateNotification(context, extras, notificationId);
+                    }
                 }
                 if (hasAllVideoKeys())
                     renderVideoNotification(context, extras, notificationId);

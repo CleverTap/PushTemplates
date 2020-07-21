@@ -68,7 +68,8 @@
                 android:layout_weight="0.4"
                 android:orientation="vertical"
                 android:padding="8dp"
-                android:weightSum="3">
+                android:weightSum="3"
+                android:gravity="center">
 
 
                 <TextView
@@ -77,7 +78,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Rs: 5,000,000"
-                    android:textAppearance="@style/PushTitle" />
+                    android:textAppearance="@style/PushTitle"
+                    android:textAlignment="center"/>
 
                 <Button
                     android:id="@+id/product_action"
