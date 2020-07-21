@@ -25,7 +25,7 @@
     <dimen name="metadata_margin_x">4dp</dimen>
 
 
-    <dimen name="large_icon">48dp</dimen>
+    <dimen name="large_icon">36dp</dimen>
 
     <dimen name="five_cta_icon_margin">4dp</dimen>
 
