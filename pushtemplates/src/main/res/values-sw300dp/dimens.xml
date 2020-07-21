@@ -10,7 +10,7 @@
     <dimen name="auto_carousel_padding_vertical">8dp</dimen>
     <dimen name="auto_carousel_padding_horizontal">16dp</dimen>
 
-    <dimen name="large_icon">48dp</dimen>
+    <dimen name="large_icon">36dp</dimen>
 
     <dimen name="five_cta_icon_margin">6dp</dimen>
 
