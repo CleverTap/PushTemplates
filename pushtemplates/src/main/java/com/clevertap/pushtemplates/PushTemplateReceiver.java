@@ -56,6 +56,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private String pt_bg;
     private String channelId;
     private int smallIcon = 0;
+    private int pt_dot = 0;
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
     private CleverTapAPI cleverTapAPI;
@@ -64,6 +65,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private String pt_product_display_linear;
     private String pt_big_img_alt;
     private Bitmap pt_small_icon;
+    private Bitmap pt_dot_sep;
     private String pt_small_icon_clr;
     private String pt_product_display_action_text_clr;
     private String pt_big_img;
@@ -71,6 +73,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private AsyncHelper asyncHelper;
     private boolean pt_dismiss_intent;
     private String pt_rating_toast;
+    private String pt_subtitle;
 
 
     @Override
@@ -103,11 +106,12 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             pt_big_img_alt = extras.getString(Constants.PT_BIG_IMG_ALT);
             pt_small_icon_clr = extras.getString(Constants.PT_SMALL_ICON_COLOUR);
             pt_product_display_action_text_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_TEXT_COLOUR);
-            setKeysFromDashboard(extras);
             requiresChannelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
             asyncHelper = AsyncHelper.getInstance();
             pt_dismiss_intent = extras.getBoolean(Constants.PT_DISMISS_INTENT, false);
             pt_rating_toast = extras.getString(Constants.PT_RATING_TOAST);
+            pt_subtitle = extras.getString(Constants.PT_SUBTITLE);
+            setKeysFromDashboard(extras);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 String channelIdError = null;
@@ -341,6 +345,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             setCustomContentViewSmallIcon(context, contentViewManualCarousel, notification, notificationId);
             setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
 
+            setCustomContentViewDotSep(context, contentViewManualCarousel, notification, notificationId);
+            setCustomContentViewDotSep(context, contentViewSmall, notification, notificationId);
             notificationManager.notify(notificationId, notification);
 
         } catch (Throwable t) {
@@ -603,6 +609,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 Notification notification = notificationBuilder.build();
                 setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
                 setCustomContentViewSmallIcon(context, contentViewRating, notification, notificationId);
+
+                setCustomContentViewDotSep(context, contentViewSmall, notification, notificationId);
+                setCustomContentViewDotSep(context, contentViewRating, notification, notificationId);
+
                 notificationManager.notify(notificationId, notification);
 
                 Thread.sleep(1000);
@@ -839,13 +849,16 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewBig, pt_title, pIntent, dIntent);
 
-
                 Notification notification = notificationBuilder.build();
 
                 setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
                 if (!isLinear) {
                     setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
+                    setCustomContentViewDotSep(context, contentViewSmall, notification, notificationId);
+
                 }
+
+                setCustomContentViewDotSep(context, contentViewBig, notification, notificationId);
 
                 notificationManager.notify(notificationId, notification);
 
@@ -973,20 +986,33 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         }
     }
 
+    private void setCustomContentViewDotSep(Context context, RemoteViews contentView, Notification notification, int notificationId) {
+        if (pt_dot_sep != null) {
+            Utils.loadIntoGlide(context, R.id.sep, pt_dot_sep, contentView, notification, notificationId);
+            Utils.loadIntoGlide(context, R.id.sep_subtitle, pt_dot_sep, contentView, notification, notificationId);
+        }
+    }
+
     private void setCustomContentViewBasicKeys(RemoteViews contentView, Context context) {
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
-
+        if (pt_subtitle != null && !pt_subtitle.isEmpty()) {
+            contentView.setTextViewText(R.id.subtitle, pt_subtitle);
+        } else {
+            contentView.setViewVisibility(R.id.subtitle, View.GONE);
+            contentView.setViewVisibility(R.id.sep_subtitle, View.GONE);
+        }
         if (pt_meta_clr != null && !pt_meta_clr.isEmpty()) {
-            contentView.setTextColor(R.id.app_name, Color.parseColor(pt_meta_clr));
-            contentView.setTextColor(R.id.timestamp, Color.parseColor(pt_meta_clr));
-            contentView.setTextColor(R.id.sep, Color.parseColor(pt_meta_clr));
+            contentView.setTextColor(R.id.app_name, Utils.getColour(pt_meta_clr, Constants.PT_META_CLR_DEFAULTS));
+            contentView.setTextColor(R.id.timestamp, Utils.getColour(pt_meta_clr, Constants.PT_META_CLR_DEFAULTS));
+            contentView.setTextColor(R.id.subtitle, Utils.getColour(pt_meta_clr, Constants.PT_META_CLR_DEFAULTS));
+            setDotSep(context);
         }
     }
 
     private void setCustomContentViewButtonColour(RemoteViews contentView, int resourceID, String pt_product_display_action_clr) {
         if (pt_product_display_action_clr != null && !pt_product_display_action_clr.isEmpty()) {
-            contentView.setInt(resourceID, "setBackgroundColor", Color.parseColor(pt_product_display_action_clr));
+            contentView.setInt(resourceID, "setBackgroundColor", Utils.getColour(pt_product_display_action_clr, Constants.PT_PRODUCT_DISPLAY_ACTION_TEXT_CLR_DEFAULT));
         }
     }
 
@@ -1009,25 +1035,25 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
     private void setCustomContentViewMessageColour(RemoteViews contentView, String pt_msg_clr) {
         if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
-            contentView.setTextColor(R.id.msg, Color.parseColor(pt_msg_clr));
+            contentView.setTextColor(R.id.msg, Utils.getColour(pt_msg_clr, Constants.PT_COLOUR_BLACK));
         }
     }
 
     private void setCustomContentViewTitleColour(RemoteViews contentView, String pt_title_clr) {
         if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
-            contentView.setTextColor(R.id.title, Color.parseColor(pt_title_clr));
+            contentView.setTextColor(R.id.title, Utils.getColour(pt_title_clr,Constants.PT_COLOUR_BLACK));
         }
     }
 
     private void setCustomContentViewExpandedBackgroundColour(RemoteViews contentView, String pt_bg) {
         if (pt_bg != null && !pt_bg.isEmpty()) {
-            contentView.setInt(R.id.content_view_big, "setBackgroundColor", Color.parseColor(pt_bg));
+            contentView.setInt(R.id.content_view_big, "setBackgroundColor", Utils.getColour(pt_bg, Constants.PT_COLOUR_WHITE));
         }
     }
 
     private void setCustomContentViewCollapsedBackgroundColour(RemoteViews contentView, String pt_bg) {
         if (pt_bg != null && !pt_bg.isEmpty()) {
-            contentView.setInt(R.id.content_view_small, "setBackgroundColor", Color.parseColor(pt_bg));
+            contentView.setInt(R.id.content_view_small, "setBackgroundColor", Utils.getColour(pt_bg, Constants.PT_COLOUR_WHITE));
         }
     }
 
@@ -1102,27 +1128,16 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             smallIcon = Utils.getAppIconAsIntId(context);
         }
         try {
-            pt_small_icon = setSmallIconColour(context, smallIcon, pt_small_icon_clr);
+            pt_small_icon = Utils.setBitMapColour(context, smallIcon, pt_small_icon_clr);
         } catch (NullPointerException e) {
             PTLog.debug("NPE while setting small icon color");
         }
 
     }
 
-    private Bitmap setSmallIconColour(Context context, int resourceID, String clr) {
-        if (clr != null && !clr.isEmpty()) {
-            int color = Color.parseColor(clr);
-
-            Drawable mDrawable = Objects.requireNonNull(ContextCompat.getDrawable(context, resourceID)).mutate();
-            mDrawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
-            return Utils.drawableToBitmap(mDrawable);
-        }
-        return null;
-    }
-
     private void setCustomContentViewButtonText(RemoteViews contentView, int resourceID, String pt_product_display_action_text_clr) {
         if (pt_product_display_action_text_clr != null && !pt_product_display_action_text_clr.isEmpty()) {
-            contentView.setTextColor(resourceID, Color.parseColor(pt_product_display_action_text_clr));
+            contentView.setTextColor(resourceID, Utils.getColour(pt_product_display_action_text_clr, Constants.PT_PRODUCT_DISPLAY_ACTION_TEXT_CLR_DEFAULT));
         }
     }
 
@@ -1148,11 +1163,23 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         if (pt_small_icon_clr == null || pt_small_icon_clr.isEmpty()) {
             pt_small_icon_clr = extras.getString(Constants.WZRK_CLR);
         }
+        if (pt_subtitle == null || pt_subtitle.isEmpty()) {
+            pt_subtitle = extras.getString(Constants.WZRK_SUBTITLE);
+        }
     }
 
     private void setToast(Context context, String message) {
         if (message != null && !message.isEmpty()) {
             Utils.showToast(context, message, Toast.LENGTH_SHORT);
+        }
+    }
+
+    private void setDotSep(Context context){
+        try {
+            pt_dot = context.getResources().getIdentifier(Constants.PT_DOT_SEP, "drawable", context.getPackageName());
+            pt_dot_sep = Utils.setBitMapColour(context, pt_dot, pt_meta_clr);
+        } catch (NullPointerException e) {
+            PTLog.debug("NPE while setting dot sep color");
         }
     }
 

@@ -19,43 +19,38 @@
         android:text="app name"
         android:textAppearance="@style/MetaData" />
 
-    <TextView
+    <ImageView
         android:id="@+id/sep_subtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/app_name"
-        android:textAppearance="@style/MetaData"
-        android:text="."
-        android:layout_marginStart="1dp"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginStart="2dp"
         android:layout_marginEnd="1dp"
-        android:textSize="30sp"
-        android:includeFontPadding="false"
-        android:layout_marginTop="-19dp"
-        />
+        android:layout_marginTop="6.5dp"
+        android:padding="1dp"
+        android:layout_toEndOf="@id/app_name"
+        android:src="@drawable/pt_dot_sep"
+         />
 
     <TextView
         android:id="@+id/subtitle"
         android:layout_width="wrap_content"
-        android:maxWidth="120dp"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/sep_subtitle"
-        android:text="This is a subtitle that will clip"
-        android:maxLines="1"
         android:ellipsize="end"
+        android:maxWidth="120dp"
+        android:maxLines="1"
+        android:text="This is a subtitle that will clip"
         android:textAppearance="@style/MetaData" />
-
-    <TextView
+    <ImageView
         android:id="@+id/sep"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/subtitle"
-        android:textAppearance="@style/MetaData"
-        android:text="."
-        android:layout_marginStart="1dp"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginStart="2dp"
         android:layout_marginEnd="1dp"
-        android:textSize="30sp"
-        android:includeFontPadding="false"
-        android:layout_marginTop="-19dp"
+        android:layout_marginTop="6.5dp"
+        android:padding="1dp"
+        android:layout_toEndOf="@id/subtitle"
+        android:src="@drawable/pt_dot_sep"
         />
 
     <TextView
@@ -63,8 +58,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/sep"
-        android:maxLines="1"
         android:ellipsize="end"
+        android:maxLines="1"
         android:text="timestamp"
         android:textAppearance="@style/MetaData" />
 </RelativeLayout>

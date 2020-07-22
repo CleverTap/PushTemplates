@@ -89,6 +89,14 @@ public class Constants {
     public static final CharSequence PT_SILENT_CHANNEL_NAME = "Silent Channel";
     public static final String PT_SILENT_CHANNEL_DESC = "A channel to silently update notifications";
     public static final String PT_RATING_TOAST = "pt_rating_toast";
+    public static final String PT_DOT_SEP = "pt_dot_sep";
+    public static final String PT_COLOUR_WHITE = "#FFFFFF";
+    public static final String PT_COLOUR_GREY = "#A6A6A6";
+    public static final String PT_COLOUR_BLACK = "#000000";
+    public static final String PT_META_CLR_DEFAULTS = PT_COLOUR_GREY;
+    public static final String PT_PRODUCT_DISPLAY_ACTION_CLR_DEFAULTS = "#FFBB33";
+    public static final String PT_PRODUCT_DISPLAY_ACTION_TEXT_CLR_DEFAULT = PT_COLOUR_WHITE;
+
 
     static final int ONE_SECOND = 1000;
     static final String DEFAULT_DL = "default_dl";

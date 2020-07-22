@@ -13,6 +13,9 @@ import android.content.pm.ServiceInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -25,6 +28,7 @@ import android.widget.Toast;
 
 
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
@@ -42,6 +46,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -568,5 +573,26 @@ public class Utils {
             notificationManager.deleteNotificationChannel(Constants.PT_SILENT_CHANNEL_ID);
         }
 
+    }
+
+    static Bitmap setBitMapColour(Context context, int resourceID, String clr)
+            throws NullPointerException {
+        if (clr != null && !clr.isEmpty()) {
+            int color = getColour(clr, Constants.PT_COLOUR_GREY);
+
+            Drawable mDrawable = Objects.requireNonNull(ContextCompat.getDrawable(context, resourceID)).mutate();
+            mDrawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
+            return Utils.drawableToBitmap(mDrawable);
+        }
+        return null;
+    }
+
+    static int getColour(String clr, String default_clr){
+        try{
+            return Color.parseColor(clr);
+        }
+        catch (Exception e){
+            return Color.parseColor(default_clr);
+        }
     }
 }
