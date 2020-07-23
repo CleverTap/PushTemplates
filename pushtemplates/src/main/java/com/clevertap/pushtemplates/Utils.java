@@ -38,6 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -121,11 +122,36 @@ public class Utils {
             URL url = new URL(srcUrl);
             connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
+            connection.setConnectTimeout(Constants.PT_CONNECTION_TIMEOUT);
             connection.connect();
-            InputStream input = connection.getInputStream();
-            return BitmapFactory.decodeStream(input);
-        } catch (IOException e) {
+            // expect HTTP 200 OK, so we don't mistakenly save error report
+            // instead of the file
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                PTLog.debug("File not loaded completely not going forward. URL was: " + srcUrl);
+                return null;
+            }
 
+            // might be -1: server did not report the length
+            int fileLength = connection.getContentLength();
+
+            // download the file
+            InputStream input = connection.getInputStream();
+
+            byte[] data = new byte[16384];
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+            long total = 0;
+            int count;
+            while ((count = input.read(data)) != -1) {
+                total += count;
+                buffer.write(data, 0, count);
+            }
+            if (fileLength != total) {
+                PTLog.debug("File not loaded completely not going forward. URL was: " + srcUrl);
+                return null;
+            }
+            return BitmapFactory.decodeByteArray(buffer.toByteArray(), 0, fileLength);
+        } catch (IOException e) {
             PTLog.verbose("Couldn't download the notification icon. URL was: " + srcUrl);
             return null;
         } finally {
@@ -262,7 +288,14 @@ public class Utils {
     static void loadImageURLIntoRemoteView(int imageViewID, String imageUrl,
                                            RemoteViews remoteViews) {
         Bitmap image = getBitmapFromURL(imageUrl);
-        remoteViews.setImageViewBitmap(imageViewID, image);
+
+        if (image != null) {
+            remoteViews.setImageViewBitmap(imageViewID, image);
+        } else {
+            PTLog.debug("Image was not perfect. URL:" + imageUrl + " hiding image view");
+            setFallback(true);
+        }
+
     }
 
     static void loadImageRidIntoRemoteView(int imageViewID, int resourceID,
@@ -610,5 +643,22 @@ public class Utils {
             PTLog.debug("Can not parse colour value: " + clr + " Switching to default colour: " + default_clr);
             return Color.parseColor(default_clr);
         }
+    }
+
+    static void addToDoNotEditList(int viewId){
+        ArrayList<Integer> list = getDoNotEditList();
+        list.add(viewId);
+    }
+
+    static ArrayList<Integer> getDoNotEditList(){
+        return Constants.PT_DO_NOT_EDIT_LIST;
+    }
+
+    static void setFallback(Boolean val){
+        Constants.PT_FALLBACK = val;
+    }
+
+    static boolean getFallback(){
+        return Constants.PT_FALLBACK;
     }
 }

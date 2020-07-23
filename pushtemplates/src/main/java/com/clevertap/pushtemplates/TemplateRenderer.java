@@ -366,7 +366,7 @@ public class TemplateRenderer {
         }
     }
 
-    private void setDotSep(Context context){
+    private void setDotSep(Context context) {
         try {
             pt_dot = context.getResources().getIdentifier(Constants.PT_DOT_SEP, "drawable", context.getPackageName());
             pt_dot_sep = Utils.setBitMapColour(context, pt_dot, pt_meta_clr);
@@ -708,16 +708,16 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
 
-            setCustomContentViewBigImage(contentViewRating, pt_big_img, context, notification, notificationId);
+            setCustomContentViewBigImage(contentViewRating, pt_big_img);
 
-            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
-            setCustomContentViewLargeIcon(contentViewRating, pt_large_icon, context, notification, notificationId);
+            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
+            setCustomContentViewLargeIcon(contentViewRating, pt_large_icon);
 
-            setCustomContentViewSmallIcon(context, contentViewRating, notification, notificationId);
-            setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
+            setCustomContentViewSmallIcon(contentViewRating);
+            setCustomContentViewSmallIcon(contentViewSmall);
 
-            setCustomContentViewDotSep(context, contentViewRating, notification, notificationId);
-            setCustomContentViewDotSep(context, contentViewSmall, notification, notificationId);
+            setCustomContentViewDotSep(contentViewRating);
+            setCustomContentViewDotSep(contentViewSmall);
 
             notificationManager.notify(notificationId, notification);
 
@@ -783,14 +783,14 @@ public class TemplateRenderer {
                 Utils.loadImageURLIntoRemoteView(layoutIds.get(index), imageList.get(index), contentViewCarousel);
             }
 
-            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
-            setCustomContentViewLargeIcon(contentViewCarousel, pt_large_icon, context, notification, notificationId);
+            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
+            setCustomContentViewLargeIcon(contentViewCarousel, pt_large_icon);
 
-            setCustomContentViewSmallIcon(context, contentViewCarousel, notification, notificationId);
-            setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
+            setCustomContentViewSmallIcon(contentViewCarousel);
+            setCustomContentViewSmallIcon(contentViewSmall);
 
-            setCustomContentViewDotSep(context, contentViewCarousel, notification, notificationId);
-            setCustomContentViewDotSep(context, contentViewSmall, notification, notificationId);
+            setCustomContentViewDotSep(contentViewCarousel);
+            setCustomContentViewDotSep(contentViewSmall);
 
             notificationManager.notify(notificationId, notification);
 
@@ -922,16 +922,16 @@ public class TemplateRenderer {
             setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewManualCarousel, pt_title, pIntent);
 
             Notification notification = notificationBuilder.build();
-            Utils.loadImageURLIntoRemoteView( R.id.carousel_image, imageList.get(0), contentViewManualCarousel);
+            Utils.loadImageURLIntoRemoteView(R.id.carousel_image, imageList.get(0), contentViewManualCarousel);
 
-            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
-            setCustomContentViewLargeIcon(contentViewManualCarousel, pt_large_icon, context, notification, notificationId);
+            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
+            setCustomContentViewLargeIcon(contentViewManualCarousel, pt_large_icon);
 
-            setCustomContentViewSmallIcon(context, contentViewManualCarousel, notification, notificationId);
-            setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
+            setCustomContentViewSmallIcon(contentViewManualCarousel);
+            setCustomContentViewSmallIcon(contentViewSmall);
 
-            setCustomContentViewDotSep(context, contentViewManualCarousel, notification, notificationId);
-            setCustomContentViewDotSep(context, contentViewSmall, notification, notificationId);
+            setCustomContentViewDotSep(contentViewManualCarousel);
+            setCustomContentViewDotSep(contentViewSmall);
 
             notificationManager.notify(notificationId, notification);
 
@@ -986,16 +986,16 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
 
-            setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
-            setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
+            setCustomContentViewSmallIcon(contentViewBig);
+            setCustomContentViewSmallIcon(contentViewSmall);
 
-            setCustomContentViewDotSep(context, contentViewBig, notification, notificationId);
-            setCustomContentViewDotSep(context, contentViewSmall, notification, notificationId);
+            setCustomContentViewDotSep(contentViewBig);
+            setCustomContentViewDotSep(contentViewSmall);
 
-            setCustomContentViewBigImage(contentViewBig, pt_big_img, context, notification, notificationId);
+            setCustomContentViewBigImage(contentViewBig, pt_big_img);
 
-            setCustomContentViewLargeIcon(contentViewBig, pt_large_icon, context, notification, notificationId);
-            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
+            setCustomContentViewLargeIcon(contentViewBig, pt_large_icon);
+            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
 
             notificationManager.notify(notificationId, notification);
 
@@ -1120,7 +1120,6 @@ public class TemplateRenderer {
                 Intent notificationSmallIntent3 = new Intent(context, CTPushNotificationReceiver.class);
                 PendingIntent contentSmallIntent3 = setPendingIntent(context, notificationId, extras, notificationSmallIntent3, deepLinkList.get(2));
                 contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentSmallIntent3);
-
             }
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
@@ -1139,43 +1138,79 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
 
-            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
+            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
 
             if (!isLinear) {
-                setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
-                setCustomContentViewDotSep(context, contentViewSmall, notification, notificationId);
+                setCustomContentViewSmallIcon(contentViewSmall);
+                setCustomContentViewDotSep(contentViewSmall);
             }
 
-
+            int imageCounter = 0;
+            int imageOKIndex = 0;
+            boolean isFirstImageOK = true;
             for (int index = 0; index < imageList.size(); index++) {
                 if (index == 0) {
-                    Utils.loadImageURLIntoRemoteView( R.id.small_image1, imageList.get(0), contentViewBig);
+                    Utils.loadImageURLIntoRemoteView(R.id.small_image1, imageList.get(0), contentViewBig);
                     if (isLinear) {
-                        Utils.loadImageURLIntoRemoteView( R.id.small_image1_collapsed, imageList.get(0), contentViewSmall);
+                        Utils.loadImageURLIntoRemoteView(R.id.small_image1_collapsed, imageList.get(0), contentViewSmall);
+                    }
+                    if (Utils.getFallback()) {
+                        contentViewBig.setViewVisibility(R.id.small_image1, View.GONE);
+                        contentViewSmall.setViewVisibility(R.id.small_image1_collapsed, View.GONE);
+                        imageCounter++;
+                        Utils.setFallback(false);
+                        isFirstImageOK = false;
                     }
                 } else if (index == 1) {
                     Utils.loadImageURLIntoRemoteView(R.id.small_image2, imageList.get(1), contentViewBig);
                     if (isLinear) {
                         Utils.loadImageURLIntoRemoteView(R.id.small_image2_collapsed, imageList.get(1), contentViewSmall);
                     }
+                    if (Utils.getFallback()) {
+                        contentViewBig.setViewVisibility(R.id.small_image2, View.GONE);
+                        contentViewSmall.setViewVisibility(R.id.small_image2_collapsed, View.GONE);
+                        imageCounter++;
+                        Utils.setFallback(false);
+                    } else {
+                        imageOKIndex = 1;
+                    }
                 } else if (index == 2) {
                     Utils.loadImageURLIntoRemoteView(R.id.small_image3, imageList.get(2), contentViewBig);
                     if (isLinear) {
-                        Utils.loadImageURLIntoRemoteView( R.id.small_image3_collapsed, imageList.get(2), contentViewSmall);
+                        Utils.loadImageURLIntoRemoteView(R.id.small_image3_collapsed, imageList.get(2), contentViewSmall);
+                    }
+                    if (Utils.getFallback()) {
+                        contentViewBig.setViewVisibility(R.id.small_image3, View.GONE);
+                        contentViewSmall.setViewVisibility(R.id.small_image3_collapsed, View.GONE);
+                        imageCounter++;
+                        Utils.setFallback(false);
+                    } else {
+                        imageOKIndex = 2;
                     }
                 }
             }
-            setCustomContentViewDotSep(context, contentViewBig, notification, notificationId);
 
-            setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
-            Utils.loadImageURLIntoRemoteView(R.id.big_image, imageList.get(0), contentViewBig);
+            setCustomContentViewDotSep(contentViewBig);
 
+            setCustomContentViewSmallIcon(contentViewBig);
+
+            if (isFirstImageOK) {
+                setCustomContentViewBigImage(contentViewBig, imageList.get(0), false);
+            } else {
+                setCustomContentViewBigImage(contentViewBig, imageList.get(imageOKIndex), false);
+            }
+
+            if (imageCounter >= 2) {
+                PTLog.debug("2 or more images are not retrievable, not displaying the notification.");
+                return;
+            }
             notificationManager.notify(notificationId, notification);
 
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
             PTLog.verbose("Error creating Product Display Notification ", t);
         }
+
     }
 
     private void renderFiveIconNotification(Context context, Bundle extras, int notificationId) {
@@ -1253,22 +1288,52 @@ public class TemplateRenderer {
             notificationBuilder.setOngoing(true);
 
             Notification notification = notificationBuilder.build();
-
+            int imageCounter = 0;
             for (int imageKey = 0; imageKey < imageList.size(); imageKey++) {
                 if (imageKey == 0) {
                     Utils.loadImageURLIntoRemoteView(R.id.cta1, imageList.get(imageKey), contentFiveCTAs);
+                    if (Utils.getFallback()) {
+                        contentFiveCTAs.setViewVisibility(R.id.cta1, View.GONE);
+                        imageCounter++;
+                        Utils.setFallback(false);
+                    }
                 } else if (imageKey == 1) {
                     Utils.loadImageURLIntoRemoteView(R.id.cta2, imageList.get(imageKey), contentFiveCTAs);
+                    if (Utils.getFallback()) {
+                        imageCounter++;
+                        contentFiveCTAs.setViewVisibility(R.id.cta2, View.GONE);
+                        Utils.setFallback(false);
+                    }
                 } else if (imageKey == 2) {
                     Utils.loadImageURLIntoRemoteView(R.id.cta3, imageList.get(imageKey), contentFiveCTAs);
+                    if (Utils.getFallback()) {
+                        imageCounter++;
+                        contentFiveCTAs.setViewVisibility(R.id.cta3, View.GONE);
+                        Utils.setFallback(false);
+                    }
                 } else if (imageKey == 3) {
                     Utils.loadImageURLIntoRemoteView(R.id.cta4, imageList.get(imageKey), contentFiveCTAs);
+                    if (Utils.getFallback()) {
+                        imageCounter++;
+                        contentFiveCTAs.setViewVisibility(R.id.cta4, View.GONE);
+                        Utils.setFallback(false);
+                    }
                 } else if (imageKey == 4) {
                     Utils.loadImageURLIntoRemoteView(R.id.cta5, imageList.get(imageKey), contentFiveCTAs);
+                    if (Utils.getFallback()) {
+                        imageCounter++;
+                        contentFiveCTAs.setViewVisibility(R.id.cta5, View.GONE);
+                        Utils.setFallback(false);
+                    }
                 }
 
             }
             Utils.loadImageRidIntoRemoteView(R.id.close, R.drawable.pt_close, contentFiveCTAs);
+
+            if (imageCounter > 2) {
+                PTLog.debug("More than 2 images were not retrieved in 5CTA Notification, not displaying Notification.");
+                return;
+            }
             notificationManager.notify(notificationId, notification);
 
             raiseNotificationViewed(context, extras);
@@ -1287,11 +1352,10 @@ public class TemplateRenderer {
 
             if (textOnlySmallView) {
                 contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.cv_small_text_only);
-                setCustomContentViewBasicKeys(contentViewSmall, context);
             } else {
                 contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.cv_small_zero_bezel);
-                setCustomContentViewBasicKeys(contentViewSmall, context);
             }
+            setCustomContentViewBasicKeys(contentViewSmall, context);
 
             setCustomContentViewTitle(contentViewBig, pt_title);
             setCustomContentViewTitle(contentViewSmall, pt_title);
@@ -1331,26 +1395,32 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
 
+            setCustomContentViewBigImage(contentViewBig, pt_big_img);
 
-            setCustomContentViewBigImage(contentViewBig, pt_big_img, context, notification, notificationId);
             if (!textOnlySmallView) {
-                setCustomContentViewBigImage(contentViewSmall, pt_big_img, context, notification, notificationId);
+                setCustomContentViewBigImage(contentViewSmall, pt_big_img);
             }
 
             if (textOnlySmallView) {
-                setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
+                setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
             }
 
-            setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
+            setCustomContentViewSmallIcon(contentViewBig);
+            setCustomContentViewSmallIcon(contentViewSmall);
 
-            setCustomContentViewDotSep(context, contentViewBig, notification, notificationId);
-            setCustomContentViewDotSep(context, contentViewSmall, notification, notificationId);
+            setCustomContentViewDotSep(contentViewBig);
+            setCustomContentViewDotSep(contentViewSmall);
 
-            setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
 
-            notificationManager.notify(notificationId, notification);
+            if (Utils.getFallback()) {
+                PTLog.debug("Image not fetched, falling back to Basic Template");
+                renderBasicTemplateNotification(context, extras, notificationId);
+                Utils.setFallback(false);
+            } else {
+                notificationManager.notify(notificationId, notification);
 
-            raiseNotificationViewed(context, extras);
+                raiseNotificationViewed(context, extras);
+            }
         } catch (Throwable t) {
             PTLog.verbose("Error creating image only notification", t);
         }
@@ -1430,13 +1500,13 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
 
-            setCustomContentViewBigImage(contentViewTimer, pt_big_img, context, notification, notificationId);
+            setCustomContentViewBigImage(contentViewTimer, pt_big_img);
 
-            setCustomContentViewSmallIcon(context, contentViewTimer, notification, notificationId);
-            setCustomContentViewSmallIcon(context, contentViewTimerCollapsed, notification, notificationId);
+            setCustomContentViewSmallIcon(contentViewTimer);
+            setCustomContentViewSmallIcon(contentViewTimerCollapsed);
 
-            setCustomContentViewDotSep(context, contentViewTimer, notification, notificationId);
-            setCustomContentViewDotSep(context, contentViewTimerCollapsed, notification, notificationId);
+            setCustomContentViewDotSep(contentViewTimer);
+            setCustomContentViewDotSep(contentViewTimerCollapsed);
 
             notificationManager.notify(notificationId, notification);
 
@@ -1561,16 +1631,16 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
 
-            setCustomContentViewBigImage(contentViewBig, pt_big_img, context, notification, notificationId);
+            setCustomContentViewBigImage(contentViewBig, pt_big_img);
 
-            setCustomContentViewLargeIcon(contentViewBig, pt_large_icon, context, notification, notificationId);
-            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
+            setCustomContentViewLargeIcon(contentViewBig, pt_large_icon);
+            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
 
-            setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
-            setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
+            setCustomContentViewSmallIcon(contentViewBig);
+            setCustomContentViewSmallIcon(contentViewSmall);
 
-            setCustomContentViewDotSep(context, contentViewBig, notification, notificationId);
-            setCustomContentViewDotSep(context, contentViewSmall, notification, notificationId);
+            setCustomContentViewDotSep(contentViewBig);
+            setCustomContentViewDotSep(contentViewSmall);
 
             notificationManager.notify(notificationId, notification);
 
@@ -1638,7 +1708,7 @@ public class TemplateRenderer {
 
     }
 
-    private void setCustomContentViewLargeIcon(RemoteViews contentView, String pt_large_icon, Context context, Notification notification, int notificationId) {
+    private void setCustomContentViewLargeIcon(RemoteViews contentView, String pt_large_icon) {
         if (pt_large_icon != null && !pt_large_icon.isEmpty()) {
             Utils.loadImageURLIntoRemoteView(R.id.large_icon, pt_large_icon, contentView);
         } else {
@@ -1697,9 +1767,27 @@ public class TemplateRenderer {
     }
 
 
-    private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img, Context context, Notification notification, int notificationId) {
+    private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img) {
         if (pt_big_img != null && !pt_big_img.isEmpty()) {
             Utils.loadImageURLIntoRemoteView(R.id.big_image, pt_big_img, contentView);
+            if (Utils.getFallback()) {
+                contentView.setViewVisibility(R.id.big_image, View.GONE);
+                Utils.setFallback(false);
+            }
+        } else {
+            contentView.setViewVisibility(R.id.big_image, View.GONE);
+        }
+    }
+
+    private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img, boolean hideBigImageView) {
+        if (pt_big_img != null && !pt_big_img.isEmpty()) {
+            Utils.loadImageURLIntoRemoteView(R.id.big_image, pt_big_img, contentView);
+            if (Utils.getFallback()) {
+                if (hideBigImageView) {
+                    contentView.setViewVisibility(R.id.big_image, View.GONE);
+                }
+                Utils.setFallback(false);
+            }
         } else {
             contentView.setViewVisibility(R.id.big_image, View.GONE);
         }
@@ -1724,28 +1812,28 @@ public class TemplateRenderer {
 
     private void setCustomContentViewMessageColour(RemoteViews contentView, String pt_msg_clr) {
         if (pt_msg_clr != null && !pt_msg_clr.isEmpty()) {
-            contentView.setTextColor(R.id.msg, Utils.getColour(pt_msg_clr,Constants.PT_COLOUR_BLACK));
+            contentView.setTextColor(R.id.msg, Utils.getColour(pt_msg_clr, Constants.PT_COLOUR_BLACK));
         }
     }
 
     private void setCustomContentViewTitleColour(RemoteViews contentView, String pt_title_clr) {
         if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
-            contentView.setTextColor(R.id.title, Utils.getColour(pt_title_clr,Constants.PT_COLOUR_BLACK));
+            contentView.setTextColor(R.id.title, Utils.getColour(pt_title_clr, Constants.PT_COLOUR_BLACK));
         }
     }
 
     private void setCustomContentViewElementColour(RemoteViews contentView, int rId, String colour) {
         if (colour != null && !colour.isEmpty()) {
-            contentView.setTextColor(rId, Utils.getColour(colour,Constants.PT_COLOUR_BLACK));
+            contentView.setTextColor(rId, Utils.getColour(colour, Constants.PT_COLOUR_BLACK));
         }
     }
 
     private void setCustomContentViewChronometerTitleColour(RemoteViews contentView, String pt_chrono_title_clr, String pt_title_clr) {
         if (pt_chrono_title_clr != null && !pt_chrono_title_clr.isEmpty()) {
-            contentView.setTextColor(R.id.chronometer, Utils.getColour(pt_chrono_title_clr,Constants.PT_COLOUR_BLACK));
+            contentView.setTextColor(R.id.chronometer, Utils.getColour(pt_chrono_title_clr, Constants.PT_COLOUR_BLACK));
         } else {
             if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
-                contentView.setTextColor(R.id.chronometer, Utils.getColour(pt_title_clr,Constants.PT_COLOUR_BLACK));
+                contentView.setTextColor(R.id.chronometer, Utils.getColour(pt_title_clr, Constants.PT_COLOUR_BLACK));
             }
         }
 
@@ -1753,7 +1841,7 @@ public class TemplateRenderer {
 
     private void setCustomContentViewExpandedBackgroundColour(RemoteViews contentView, String pt_bg) {
         if (pt_bg != null && !pt_bg.isEmpty()) {
-            contentView.setInt(R.id.content_view_big, "setBackgroundColor", Utils.getColour(pt_bg,Constants.PT_COLOUR_WHITE));
+            contentView.setInt(R.id.content_view_big, "setBackgroundColor", Utils.getColour(pt_bg, Constants.PT_COLOUR_WHITE));
         }
     }
 
@@ -1765,7 +1853,7 @@ public class TemplateRenderer {
 
     private void setCustomContentViewChronometerBackgroundColour(RemoteViews contentView, String pt_bg) {
         if (pt_bg != null && !pt_bg.isEmpty()) {
-            contentView.setInt(R.id.chronometer, "setBackgroundColor", Utils.getColour(pt_bg,Constants.PT_COLOUR_WHITE));
+            contentView.setInt(R.id.chronometer, "setBackgroundColor", Utils.getColour(pt_bg, Constants.PT_COLOUR_WHITE));
 
         }
     }
@@ -1906,7 +1994,7 @@ public class TemplateRenderer {
 
     }
 
-    private void setCustomContentViewSmallIcon(Context context, RemoteViews contentView, Notification notification, int notificationId) {
+    private void setCustomContentViewSmallIcon(RemoteViews contentView) {
         if (pt_small_icon != null) {
             Utils.loadImageBitmapLIntoRemoteView(R.id.small_icon, pt_small_icon, contentView);
         } else {
@@ -1914,7 +2002,7 @@ public class TemplateRenderer {
         }
     }
 
-    private void setCustomContentViewDotSep(Context context, RemoteViews contentView, Notification notification, int notificationId) {
+    private void setCustomContentViewDotSep(RemoteViews contentView) {
         if (pt_dot_sep != null) {
             Utils.loadImageBitmapLIntoRemoteView(R.id.sep, pt_dot_sep, contentView);
             Utils.loadImageBitmapLIntoRemoteView(R.id.sep_subtitle, pt_dot_sep, contentView);

@@ -1,8 +1,14 @@
 package com.clevertap.pushtemplates;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("WeakerAccess")
 public class Constants {
     public static final String LOG_TAG = "PTLog";
+    public static final ArrayList<Integer> PT_DO_NOT_EDIT_LIST = new ArrayList<>() ;
+    public static boolean PT_FALLBACK = false;
+    static final int ONE_SECOND = 1000;
+    static final String DEFAULT_DL = "default_dl";
     public static final String WZRK_ACTIONS = "wzrk_acts";
     public static final String WZRK_CHANNEL_ID = "wzrk_cid";
     public static final String WZRK_PUSH_ID = "wzrk_pid";
@@ -96,9 +102,5 @@ public class Constants {
     public static final String PT_META_CLR_DEFAULTS = PT_COLOUR_GREY;
     public static final String PT_PRODUCT_DISPLAY_ACTION_CLR_DEFAULTS = "#FFBB33";
     public static final String PT_PRODUCT_DISPLAY_ACTION_TEXT_CLR_DEFAULT = PT_COLOUR_WHITE;
-
-
-    static final int ONE_SECOND = 1000;
-    static final String DEFAULT_DL = "default_dl";
-
+    public static final int PT_CONNECTION_TIMEOUT = 10 * ONE_SECOND;
 }
