@@ -780,7 +780,7 @@ public class TemplateRenderer {
             layoutIds.add(2, R.id.flipper_img3);
 
             for (int index = 0; index < imageList.size(); index++) {
-                Utils.loadIntoGlide(context, layoutIds.get(index), imageList.get(index), contentViewCarousel, notification, notificationId);
+                Utils.loadImageURLIntoRemoteView(layoutIds.get(index), imageList.get(index), contentViewCarousel);
             }
 
             setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
@@ -921,10 +921,8 @@ public class TemplateRenderer {
 
             setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewManualCarousel, pt_title, pIntent);
 
-
             Notification notification = notificationBuilder.build();
-
-            Utils.loadIntoGlide(context, R.id.carousel_image, imageList.get(0), contentViewManualCarousel, notification, notificationId);
+            Utils.loadImageURLIntoRemoteView( R.id.carousel_image, imageList.get(0), contentViewManualCarousel);
 
             setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon, context, notification, notificationId);
             setCustomContentViewLargeIcon(contentViewManualCarousel, pt_large_icon, context, notification, notificationId);
@@ -1148,31 +1146,31 @@ public class TemplateRenderer {
                 setCustomContentViewDotSep(context, contentViewSmall, notification, notificationId);
             }
 
-            notificationManager.notify(notificationId, notification);
 
             for (int index = 0; index < imageList.size(); index++) {
                 if (index == 0) {
-                    Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
+                    Utils.loadImageURLIntoRemoteView( R.id.small_image1, imageList.get(0), contentViewBig);
                     if (isLinear) {
-                        Utils.loadIntoGlide(context, R.id.small_image1_collapsed, imageList.get(0), contentViewSmall, notification, notificationId);
+                        Utils.loadImageURLIntoRemoteView( R.id.small_image1_collapsed, imageList.get(0), contentViewSmall);
                     }
                 } else if (index == 1) {
-                    Utils.loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewBig, notification, notificationId);
+                    Utils.loadImageURLIntoRemoteView(R.id.small_image2, imageList.get(1), contentViewBig);
                     if (isLinear) {
-                        Utils.loadIntoGlide(context, R.id.small_image2_collapsed, imageList.get(1), contentViewSmall, notification, notificationId);
+                        Utils.loadImageURLIntoRemoteView(R.id.small_image2_collapsed, imageList.get(1), contentViewSmall);
                     }
                 } else if (index == 2) {
-                    Utils.loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewBig, notification, notificationId);
+                    Utils.loadImageURLIntoRemoteView(R.id.small_image3, imageList.get(2), contentViewBig);
                     if (isLinear) {
-                        Utils.loadIntoGlide(context, R.id.small_image3_collapsed, imageList.get(2), contentViewSmall, notification, notificationId);
+                        Utils.loadImageURLIntoRemoteView( R.id.small_image3_collapsed, imageList.get(2), contentViewSmall);
                     }
                 }
             }
             setCustomContentViewDotSep(context, contentViewBig, notification, notificationId);
 
             setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.big_image, imageList.get(0), contentViewBig, notification, notificationId);
+            Utils.loadImageURLIntoRemoteView(R.id.big_image, imageList.get(0), contentViewBig);
 
+            notificationManager.notify(notificationId, notification);
 
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
@@ -1258,19 +1256,19 @@ public class TemplateRenderer {
 
             for (int imageKey = 0; imageKey < imageList.size(); imageKey++) {
                 if (imageKey == 0) {
-                    Utils.loadIntoGlide(context, R.id.cta1, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                    Utils.loadImageURLIntoRemoteView(R.id.cta1, imageList.get(imageKey), contentFiveCTAs);
                 } else if (imageKey == 1) {
-                    Utils.loadIntoGlide(context, R.id.cta2, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                    Utils.loadImageURLIntoRemoteView(R.id.cta2, imageList.get(imageKey), contentFiveCTAs);
                 } else if (imageKey == 2) {
-                    Utils.loadIntoGlide(context, R.id.cta3, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                    Utils.loadImageURLIntoRemoteView(R.id.cta3, imageList.get(imageKey), contentFiveCTAs);
                 } else if (imageKey == 3) {
-                    Utils.loadIntoGlide(context, R.id.cta4, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                    Utils.loadImageURLIntoRemoteView(R.id.cta4, imageList.get(imageKey), contentFiveCTAs);
                 } else if (imageKey == 4) {
-                    Utils.loadIntoGlide(context, R.id.cta5, imageList.get(imageKey), contentFiveCTAs, notification, notificationId);
+                    Utils.loadImageURLIntoRemoteView(R.id.cta5, imageList.get(imageKey), contentFiveCTAs);
                 }
 
             }
-            Utils.loadIntoGlide(context, R.id.close, R.drawable.pt_close, contentFiveCTAs, notification, notificationId);
+            Utils.loadImageRidIntoRemoteView(R.id.close, R.drawable.pt_close, contentFiveCTAs);
             notificationManager.notify(notificationId, notification);
 
             raiseNotificationViewed(context, extras);
@@ -1642,7 +1640,7 @@ public class TemplateRenderer {
 
     private void setCustomContentViewLargeIcon(RemoteViews contentView, String pt_large_icon, Context context, Notification notification, int notificationId) {
         if (pt_large_icon != null && !pt_large_icon.isEmpty()) {
-            Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentView, notification, notificationId);
+            Utils.loadImageURLIntoRemoteView(R.id.large_icon, pt_large_icon, contentView);
         } else {
             contentView.setViewVisibility(R.id.large_icon, View.GONE);
         }
@@ -1701,7 +1699,7 @@ public class TemplateRenderer {
 
     private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img, Context context, Notification notification, int notificationId) {
         if (pt_big_img != null && !pt_big_img.isEmpty()) {
-            Utils.loadIntoGlide(context, R.id.big_image, pt_big_img, contentView, notification, notificationId);
+            Utils.loadImageURLIntoRemoteView(R.id.big_image, pt_big_img, contentView);
         } else {
             contentView.setViewVisibility(R.id.big_image, View.GONE);
         }
@@ -1910,16 +1908,16 @@ public class TemplateRenderer {
 
     private void setCustomContentViewSmallIcon(Context context, RemoteViews contentView, Notification notification, int notificationId) {
         if (pt_small_icon != null) {
-            Utils.loadIntoGlide(context, R.id.small_icon, pt_small_icon, contentView, notification, notificationId);
+            Utils.loadImageBitmapLIntoRemoteView(R.id.small_icon, pt_small_icon, contentView);
         } else {
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentView, notification, notificationId);
+            Utils.loadImageRidIntoRemoteView(R.id.small_icon, smallIcon, contentView);
         }
     }
 
     private void setCustomContentViewDotSep(Context context, RemoteViews contentView, Notification notification, int notificationId) {
         if (pt_dot_sep != null) {
-            Utils.loadIntoGlide(context, R.id.sep, pt_dot_sep, contentView, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.sep_subtitle, pt_dot_sep, contentView, notification, notificationId);
+            Utils.loadImageBitmapLIntoRemoteView(R.id.sep, pt_dot_sep, contentView);
+            Utils.loadImageBitmapLIntoRemoteView(R.id.sep_subtitle, pt_dot_sep, contentView);
         }
     }
 

@@ -54,8 +54,8 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 @SuppressWarnings("WeakerAccess")
 public class Utils {
 
-    public static boolean isPNFromCleverTap(Bundle extras){
-        if(extras == null) return false;
+    public static boolean isPNFromCleverTap(Bundle extras) {
+        if (extras == null) return false;
 
         boolean fromCleverTap = extras.containsKey(Constants.NOTIF_TAG);
         boolean shouldRender = fromCleverTap && extras.containsKey("nm");
@@ -154,10 +154,10 @@ public class Utils {
         return ai.icon;
     }
 
-    static ArrayList<String> getImageListFromExtras(Bundle extras){
+    static ArrayList<String> getImageListFromExtras(Bundle extras) {
         ArrayList<String> imageList = new ArrayList<>();
-        for(String key : extras.keySet()){
-            if(key.contains("pt_img")){
+        for (String key : extras.keySet()) {
+            if (key.contains("pt_img")) {
                 imageList.add(extras.getString(key));
             }
         }
@@ -165,49 +165,50 @@ public class Utils {
     }
 
     @SuppressWarnings("unused")
-    static ArrayList<String> getCTAListFromExtras(Bundle extras){
+    static ArrayList<String> getCTAListFromExtras(Bundle extras) {
         ArrayList<String> ctaList = new ArrayList<>();
-        for(String key : extras.keySet()){
-            if(key.contains("pt_cta")){
+        for (String key : extras.keySet()) {
+            if (key.contains("pt_cta")) {
                 ctaList.add(extras.getString(key));
             }
         }
         return ctaList;
     }
 
-    static ArrayList<String> getDeepLinkListFromExtras(Bundle extras){
+    static ArrayList<String> getDeepLinkListFromExtras(Bundle extras) {
         ArrayList<String> dlList = new ArrayList<>();
-        for(String key : extras.keySet()){
-            if(key.contains("pt_dl")){
+        for (String key : extras.keySet()) {
+            if (key.contains("pt_dl")) {
                 dlList.add(extras.getString(key));
             }
         }
         return dlList;
     }
 
-    static ArrayList<String> getBigTextFromExtras(Bundle extras){
+    static ArrayList<String> getBigTextFromExtras(Bundle extras) {
         ArrayList<String> btList = new ArrayList<>();
-        for(String key : extras.keySet()){
-            if(key.contains("pt_bt")){
+        for (String key : extras.keySet()) {
+            if (key.contains("pt_bt")) {
                 btList.add(extras.getString(key));
             }
         }
         return btList;
     }
-    static ArrayList<String> getSmallTextFromExtras(Bundle extras){
+
+    static ArrayList<String> getSmallTextFromExtras(Bundle extras) {
         ArrayList<String> stList = new ArrayList<>();
-        for(String key : extras.keySet()){
-            if(key.contains("pt_st")){
+        for (String key : extras.keySet()) {
+            if (key.contains("pt_st")) {
                 stList.add(extras.getString(key));
             }
         }
         return stList;
     }
 
-    static ArrayList<String> getPriceFromExtras(Bundle extras){
+    static ArrayList<String> getPriceFromExtras(Bundle extras) {
         ArrayList<String> stList = new ArrayList<>();
-        for(String key : extras.keySet()){
-            if(key.contains("pt_price")){
+        for (String key : extras.keySet()) {
+            if (key.contains("pt_price")) {
                 stList.add(extras.getString(key));
             }
         }
@@ -225,7 +226,7 @@ public class Utils {
                 .asBitmap()
                 .load(imageURL)
                 .centerCrop()
-                .into(buildNotificationTarget(context,imageResource,remoteViews,notification,
+                .into(buildNotificationTarget(context, imageResource, remoteViews, notification,
                         notificationId));
     }
 
@@ -237,7 +238,7 @@ public class Utils {
                 .asBitmap()
                 .load(identifier)
                 .centerCrop()
-                .into(buildNotificationTarget(context,imageResource,remoteViews,notification,
+                .into(buildNotificationTarget(context, imageResource, remoteViews, notification,
                         notificationId));
     }
 
@@ -249,14 +250,31 @@ public class Utils {
                 .asBitmap()
                 .load(image)
                 .centerCrop()
-                .into(buildNotificationTarget(context,imageResource,remoteViews,notification,
+                .into(buildNotificationTarget(context, imageResource, remoteViews, notification,
                         notificationId));
     }
+
+    static void loadImageBitmapLIntoRemoteView(int imageViewID, Bitmap image,
+                                               RemoteViews remoteViews) {
+        remoteViews.setImageViewBitmap(imageViewID, image);
+    }
+
+    static void loadImageURLIntoRemoteView(int imageViewID, String imageUrl,
+                                           RemoteViews remoteViews) {
+        Bitmap image = getBitmapFromURL(imageUrl);
+        remoteViews.setImageViewBitmap(imageViewID, image);
+    }
+
+    static void loadImageRidIntoRemoteView(int imageViewID, int resourceID,
+                                           RemoteViews remoteViews) {
+        remoteViews.setImageViewResource(imageViewID, resourceID);
+    }
+
 
     static NotificationTarget buildNotificationTarget(Context context, int imageResource,
                                                       RemoteViews remoteViews,
                                                       Notification notification,
-                                                      int notificationId ){
+                                                      int notificationId) {
         return new NotificationTarget(
                 context,
                 imageResource,
@@ -310,7 +328,7 @@ public class Utils {
         for (String key : keys) {
             try {
                 json.put(key, extras.get(key));
-            } catch(JSONException e) {
+            } catch (JSONException e) {
                 //Handle exception here
             }
         }
@@ -323,22 +341,22 @@ public class Utils {
         nMgr.cancel(notifyId);
     }
 
-    static int getTimerThreshold(Bundle extras){
+    static int getTimerThreshold(Bundle extras) {
         String val = "-1";
-        for(String key : extras.keySet()){
-            if(key.contains(Constants.PT_TIMER_THRESHOLD)){
-                val =  extras.getString(key);
+        for (String key : extras.keySet()) {
+            if (key.contains(Constants.PT_TIMER_THRESHOLD)) {
+                val = extras.getString(key);
             }
         }
         return Integer.parseInt(val);
     }
 
-    static void setPackageNameFromResolveInfoList(Context context, Intent launchIntent){
-        List<ResolveInfo> resolveInfoList = context.getPackageManager().queryIntentActivities(launchIntent,0);
-        if(resolveInfoList != null){
+    static void setPackageNameFromResolveInfoList(Context context, Intent launchIntent) {
+        List<ResolveInfo> resolveInfoList = context.getPackageManager().queryIntentActivities(launchIntent, 0);
+        if (resolveInfoList != null) {
             String appPackageName = context.getPackageName();
-            for(ResolveInfo resolveInfo : resolveInfoList){
-                if(appPackageName.equals(resolveInfo.activityInfo.packageName)){
+            for (ResolveInfo resolveInfo : resolveInfoList) {
+                if (appPackageName.equals(resolveInfo.activityInfo.packageName)) {
                     launchIntent.setPackage(appPackageName);
                     break;
                 }
@@ -353,7 +371,7 @@ public class Utils {
 
         String eName = getEventNameFromExtras(extras);
 
-        if (eName != null || !eName.isEmpty()){
+        if (eName != null || !eName.isEmpty()) {
             if (eProps != null)
                 cleverTapAPI.pushEvent(eName, eProps);
             else
@@ -362,16 +380,16 @@ public class Utils {
 
     }
 
-    static void raiseCleverTapEvent(CleverTapAPI cleverTapAPI, Bundle extras,String key) {
+    static void raiseCleverTapEvent(CleverTapAPI cleverTapAPI, Bundle extras, String key) {
 
         HashMap<String, Object> eProps;
         String value = extras.getString(key);
 
-        eProps = getEventPropertiesFromExtras(extras,key,value);
+        eProps = getEventPropertiesFromExtras(extras, key, value);
 
         String eName = getEventNameFromExtras(extras);
 
-        if (eName != null || !eName.isEmpty()){
+        if (eName != null || !eName.isEmpty()) {
             if (eProps != null)
                 cleverTapAPI.pushEvent(eName, eProps);
             else
@@ -382,34 +400,33 @@ public class Utils {
 
     static String getEventNameFromExtras(Bundle extras) {
         String eName = null;
-        for(String key : extras.keySet()){
-            if(key.contains(Constants.PT_EVENT_NAME_KEY)){
+        for (String key : extras.keySet()) {
+            if (key.contains(Constants.PT_EVENT_NAME_KEY)) {
                 eName = extras.getString(key);
             }
         }
         return eName;
     }
 
-    static HashMap<String, Object> getEventPropertiesFromExtras(Bundle extras,String pkey, String value) {
+    static HashMap<String, Object> getEventPropertiesFromExtras(Bundle extras, String pkey, String value) {
         HashMap<String, Object> eProps = new HashMap<>();
 
         String[] eProp;
-        for(String key : extras.keySet()){
-            if(key.contains(Constants.PT_EVENT_PROPERTY_KEY)){
+        for (String key : extras.keySet()) {
+            if (key.contains(Constants.PT_EVENT_PROPERTY_KEY)) {
                 if (extras.getString(key) != null || !extras.getString(key).isEmpty()) {
-                    if(key.contains(Constants.PT_EVENT_PROPERTY_SEPERATOR)){
+                    if (key.contains(Constants.PT_EVENT_PROPERTY_SEPERATOR)) {
                         eProp = key.split(Constants.PT_EVENT_PROPERTY_SEPERATOR);
-                        if(extras.getString(key).equalsIgnoreCase(pkey)) {
-                            eProps.put(eProp[1],value);
+                        if (extras.getString(key).equalsIgnoreCase(pkey)) {
+                            eProps.put(eProp[1], value);
                             continue;
                         }
-                        eProps.put(eProp[1],extras.getString(key));
-                    }else{
+                        eProps.put(eProp[1], extras.getString(key));
+                    } else {
                         PTLog.verbose("Property " + key + " does not have the separator");
                     }
 
-                }
-                else{
+                } else {
                     PTLog.verbose("Property Key is Empty. Skipping Property: " + key);
                 }
 
@@ -423,18 +440,17 @@ public class Utils {
         HashMap<String, Object> eProps = new HashMap<>();
 
         String[] eProp;
-        for(String key : extras.keySet()){
-            if(key.contains(Constants.PT_EVENT_PROPERTY_KEY)){
+        for (String key : extras.keySet()) {
+            if (key.contains(Constants.PT_EVENT_PROPERTY_KEY)) {
                 if (extras.getString(key) != null || !extras.getString(key).isEmpty()) {
-                    if(key.contains(Constants.PT_EVENT_PROPERTY_SEPERATOR)){
+                    if (key.contains(Constants.PT_EVENT_PROPERTY_SEPERATOR)) {
                         eProp = key.split(Constants.PT_EVENT_PROPERTY_SEPERATOR);
-                        eProps.put(eProp[1],extras.getString(key));
-                    }else{
+                        eProps.put(eProp[1], extras.getString(key));
+                    } else {
                         PTLog.verbose("Property " + key + " does not have the separator");
                     }
 
-                }
-                else{
+                } else {
                     PTLog.verbose("Property Key is Empty. Skipping Property: " + key);
                 }
 
@@ -445,17 +461,17 @@ public class Utils {
 
     public static int getTimerEnd(Bundle extras) {
         String val = "-1";
-        for(String key : extras.keySet()){
-            if(key.contains(Constants.PT_TIMER_END)){
-                val =  extras.getString(key);
+        for (String key : extras.keySet()) {
+            if (key.contains(Constants.PT_TIMER_END)) {
+                val = extras.getString(key);
             }
         }
-        if (val.contains("$D_")){
-            String[] temp =  val.split(Constants.PT_TIMER_SPLIT);
+        if (val.contains("$D_")) {
+            String[] temp = val.split(Constants.PT_TIMER_SPLIT);
             val = temp[1];
         }
-        long currentts =  System.currentTimeMillis();
-        int diff = (int) (Long.parseLong(val) - (currentts/1000));
+        long currentts = System.currentTimeMillis();
+        int diff = (int) (Long.parseLong(val) - (currentts / 1000));
         return diff;
     }
 
@@ -480,7 +496,7 @@ public class Utils {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             notifications = mNotificationManager.getActiveNotifications();
             for (StatusBarNotification notification : notifications) {
-                if(notification.getPackageName().equalsIgnoreCase(context.getPackageName())){
+                if (notification.getPackageName().equalsIgnoreCase(context.getPackageName())) {
                     ids.add(notification.getId());
                 }
             }
@@ -518,7 +534,7 @@ public class Utils {
         }
     }
 
-    static JSONArray getActionKeys(Bundle extras){
+    static JSONArray getActionKeys(Bundle extras) {
         JSONArray actions = null;
 
         String actionsString = extras.getString(Constants.WZRK_ACTIONS);
@@ -552,12 +568,12 @@ public class Utils {
         });
     }
 
-    static void createSilentNotificationChannel(Context context){
+    static void createSilentNotificationChannel(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager == null) return;
         NotificationChannel notificationChannel = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            notificationChannel = new NotificationChannel(Constants.PT_SILENT_CHANNEL_ID, Constants.PT_SILENT_CHANNEL_NAME, NotificationManager.IMPORTANCE_NONE);
+            notificationChannel = new NotificationChannel(Constants.PT_SILENT_CHANNEL_ID, Constants.PT_SILENT_CHANNEL_NAME, NotificationManager.IMPORTANCE_MIN);
             notificationChannel.setDescription(Constants.PT_SILENT_CHANNEL_DESC);
             notificationChannel.setShowBadge(false);
             notificationManager.createNotificationChannel(notificationChannel);
@@ -565,7 +581,7 @@ public class Utils {
 
     }
 
-    static void deleteSilentNotificationChannel(Context context){
+    static void deleteSilentNotificationChannel(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager == null) return;
         NotificationChannel notificationChannel = null;
@@ -587,11 +603,11 @@ public class Utils {
         return null;
     }
 
-    static int getColour(String clr, String default_clr){
-        try{
+    static int getColour(String clr, String default_clr) {
+        try {
             return Color.parseColor(clr);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
+            PTLog.debug("Can not parse colour value: " + clr + " Switching to default colour: " + default_clr);
             return Color.parseColor(default_clr);
         }
     }

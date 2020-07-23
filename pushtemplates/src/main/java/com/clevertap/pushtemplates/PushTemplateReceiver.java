@@ -9,16 +9,11 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.app.RemoteInput;
 
 import android.text.Html;
@@ -26,12 +21,10 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -303,7 +296,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos2, contentLeftPos2Intent);
 
 
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
             PendingIntent pIntent;
 
             if (deepLinkList != null && deepLinkList.size() >= 3) {
@@ -716,15 +709,15 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             }
 
             if (isLinear) {
-                Intent notificationSmallIntent1 = new Intent(context, CTPushNotificationReceiver.class);
+                Intent notificationSmallIntent1 = new Intent(context, PTPushNotificationReceiver.class);
                 PendingIntent contentSmallIntent1 = setPendingIntent(context, notificationId, extras, notificationSmallIntent1, deepLinkList.get(0));
                 contentViewSmall.setOnClickPendingIntent(R.id.small_image1_collapsed, contentSmallIntent1);
 
-                Intent notificationSmallIntent2 = new Intent(context, CTPushNotificationReceiver.class);
+                Intent notificationSmallIntent2 = new Intent(context, PTPushNotificationReceiver.class);
                 PendingIntent contentSmallIntent2 = setPendingIntent(context, notificationId, extras, notificationSmallIntent2, deepLinkList.get(1));
                 contentViewSmall.setOnClickPendingIntent(R.id.small_image2_collapsed, contentSmallIntent2);
 
-                Intent notificationSmallIntent3 = new Intent(context, CTPushNotificationReceiver.class);
+                Intent notificationSmallIntent3 = new Intent(context, PTPushNotificationReceiver.class);
                 PendingIntent contentSmallIntent3 = setPendingIntent(context, notificationId, extras, notificationSmallIntent3, deepLinkList.get(2));
                 contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentSmallIntent3);
 
@@ -773,7 +766,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 dl = deepLinkList.get(2);
             }
 
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
 
             PendingIntent pIntent;
 
