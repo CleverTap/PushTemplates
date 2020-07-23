@@ -853,7 +853,7 @@ public class TemplateRenderer {
                     currentPosition = index;
                     imageCounter++;
                 } else {
-                    if (deepLinkList != null && deepLinkList.size() == imageList.size()){
+                    if (deepLinkList != null && deepLinkList.size() == imageList.size()) {
                         deepLinkList.remove(index);
                     }
                     imageList.remove(index);
@@ -1955,7 +1955,7 @@ public class TemplateRenderer {
 
     private void setCustomContentViewSmallIcon(RemoteViews contentView) {
         if (pt_small_icon != null) {
-            Utils.loadImageBitmapLIntoRemoteView(R.id.small_icon, pt_small_icon, contentView);
+            Utils.loadImageBitmapIntoRemoteView(R.id.small_icon, pt_small_icon, contentView);
         } else {
             Utils.loadImageRidIntoRemoteView(R.id.small_icon, smallIcon, contentView);
         }
@@ -1963,8 +1963,8 @@ public class TemplateRenderer {
 
     private void setCustomContentViewDotSep(RemoteViews contentView) {
         if (pt_dot_sep != null) {
-            Utils.loadImageBitmapLIntoRemoteView(R.id.sep, pt_dot_sep, contentView);
-            Utils.loadImageBitmapLIntoRemoteView(R.id.sep_subtitle, pt_dot_sep, contentView);
+            Utils.loadImageBitmapIntoRemoteView(R.id.sep, pt_dot_sep, contentView);
+            Utils.loadImageBitmapIntoRemoteView(R.id.sep_subtitle, pt_dot_sep, contentView);
         }
     }
 

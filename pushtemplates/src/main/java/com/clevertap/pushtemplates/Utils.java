@@ -280,8 +280,8 @@ public class Utils {
                         notificationId));
     }
 
-    static void loadImageBitmapLIntoRemoteView(int imageViewID, Bitmap image,
-                                               RemoteViews remoteViews) {
+    static void loadImageBitmapIntoRemoteView(int imageViewID, Bitmap image,
+                                              RemoteViews remoteViews) {
         remoteViews.setImageViewBitmap(imageViewID, image);
     }
 
