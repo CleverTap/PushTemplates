@@ -795,7 +795,7 @@ public class TemplateRenderer {
             setCustomContentViewDotSep(contentViewSmall);
 
             if (imageCounter < 2) {
-                PTLog.debug("Need at least 2 images to display Auto Carousel found - " + imageCounter + ", not displaying the notification.");
+                PTLog.debug("Need at least 2 images to display Auto Carousel, found - " + imageCounter + ", not displaying the notification.");
                 return;
             }
 
@@ -834,101 +834,62 @@ public class TemplateRenderer {
 
             setCustomContentViewMessageSummary(contentViewManualCarousel, pt_msg_summary);
 
-            int reqCodePos0 = new Random().nextInt();
-            int reqCodePos1 = new Random().nextInt();
-            int reqCodePos2 = new Random().nextInt();
-
             contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos0, View.VISIBLE);
             contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos0, View.VISIBLE);
 
-            contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos1, View.INVISIBLE);
-            contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos1, View.INVISIBLE);
+            int imageCounter = 0;
+            String dl = null;
+            int currentPosition = imageList.size() - 1;
+            for (int index = imageList.size() - 1; index >= 0; index--) {
+                Utils.loadImageURLIntoRemoteView(R.id.carousel_image, imageList.get(index), contentViewManualCarousel);
+                if (!Utils.getFallback()) {
+                    if (deepLinkList != null && deepLinkList.size() == 1) {
+                        dl = deepLinkList.get(0);
+                    } else if (deepLinkList != null && deepLinkList.size() > index) {
+                        dl = deepLinkList.get(index);
+                    } else if (deepLinkList != null && deepLinkList.size() < index) {
+                        dl = deepLinkList.get(0);
+                    }
+                    currentPosition = index;
+                    imageCounter++;
+                } else {
+                    if (deepLinkList != null && deepLinkList.size() == imageList.size()){
+                        deepLinkList.remove(index);
+                    }
+                    imageList.remove(index);
+                    PTLog.debug("Skipping Image in Manual Carousel.");
+                }
+            }
 
-            contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos2, View.INVISIBLE);
-            contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos2, View.INVISIBLE);
-
+            extras.putInt(Constants.PT_MANUAL_CAROUSEL_CURRENT, currentPosition);
+            extras.putStringArrayList(Constants.PT_IMAGE_LIST, imageList);
+            extras.putStringArrayList(Constants.PT_DEEPLINK_LIST, deepLinkList);
 
             Intent rightArrowPos0Intent = new Intent(context, PushTemplateReceiver.class);
             rightArrowPos0Intent.putExtra(Constants.PT_RIGHT_SWIPE, true);
             rightArrowPos0Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 0);
-            rightArrowPos0Intent.putExtra(Constants.PT_REQUEST_CODE_0, reqCodePos0);
-            rightArrowPos0Intent.putExtra(Constants.PT_REQUEST_CODE_1, reqCodePos1);
-            rightArrowPos0Intent.putExtra(Constants.PT_REQUEST_CODE_2, reqCodePos2);
             rightArrowPos0Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
             rightArrowPos0Intent.putExtras(extras);
-            PendingIntent contentRightPos0Intent = PendingIntent.getBroadcast(context, reqCodePos1, rightArrowPos0Intent, 0);
+            PendingIntent contentRightPos0Intent = setPendingIntent(context, notificationId, extras, rightArrowPos0Intent, dl);
             contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos0, contentRightPos0Intent);
-
-            Intent rightArrowPos1Intent = new Intent(context, PushTemplateReceiver.class);
-            rightArrowPos1Intent.putExtra(Constants.PT_RIGHT_SWIPE, true);
-            rightArrowPos1Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 1);
-            rightArrowPos1Intent.putExtra(Constants.PT_REQUEST_CODE_0, reqCodePos0);
-            rightArrowPos1Intent.putExtra(Constants.PT_REQUEST_CODE_1, reqCodePos1);
-            rightArrowPos1Intent.putExtra(Constants.PT_REQUEST_CODE_2, reqCodePos2);
-            rightArrowPos1Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
-            rightArrowPos1Intent.putExtras(extras);
-            PendingIntent contentRightPos1Intent = PendingIntent.getBroadcast(context, reqCodePos2, rightArrowPos1Intent, 0);
-            contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos1, contentRightPos1Intent);
-
-            Intent rightArrowPos2Intent = new Intent(context, PushTemplateReceiver.class);
-            rightArrowPos2Intent.putExtra(Constants.PT_RIGHT_SWIPE, true);
-            rightArrowPos2Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 2);
-            rightArrowPos2Intent.putExtra(Constants.PT_REQUEST_CODE_0, reqCodePos0);
-            rightArrowPos2Intent.putExtra(Constants.PT_REQUEST_CODE_1, reqCodePos1);
-            rightArrowPos2Intent.putExtra(Constants.PT_REQUEST_CODE_2, reqCodePos2);
-            rightArrowPos2Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
-            rightArrowPos2Intent.putExtras(extras);
-            PendingIntent contentRightPos2Intent = PendingIntent.getBroadcast(context, reqCodePos0, rightArrowPos2Intent, 0);
-            contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos2, contentRightPos2Intent);
 
             Intent leftArrowPos0Intent = new Intent(context, PushTemplateReceiver.class);
             leftArrowPos0Intent.putExtra(Constants.PT_RIGHT_SWIPE, false);
             leftArrowPos0Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 0);
-            leftArrowPos0Intent.putExtra(Constants.PT_REQUEST_CODE_0, reqCodePos0);
-            leftArrowPos0Intent.putExtra(Constants.PT_REQUEST_CODE_1, reqCodePos1);
-            leftArrowPos0Intent.putExtra(Constants.PT_REQUEST_CODE_2, reqCodePos2);
             leftArrowPos0Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
             leftArrowPos0Intent.putExtras(extras);
-            PendingIntent contentLeftPos0Intent = PendingIntent.getBroadcast(context, reqCodePos2, leftArrowPos0Intent, 0);
+            PendingIntent contentLeftPos0Intent = setPendingIntent(context, notificationId, extras, leftArrowPos0Intent, dl);
             contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos0, contentLeftPos0Intent);
-
-            Intent leftArrowPos1Intent = new Intent(context, PushTemplateReceiver.class);
-            leftArrowPos1Intent.putExtra(Constants.PT_RIGHT_SWIPE, false);
-            leftArrowPos1Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 1);
-            leftArrowPos1Intent.putExtra(Constants.PT_REQUEST_CODE_0, reqCodePos0);
-            leftArrowPos1Intent.putExtra(Constants.PT_REQUEST_CODE_1, reqCodePos1);
-            leftArrowPos1Intent.putExtra(Constants.PT_REQUEST_CODE_2, reqCodePos2);
-            leftArrowPos1Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
-            leftArrowPos1Intent.putExtras(extras);
-            PendingIntent contentLeftPos1Intent = PendingIntent.getBroadcast(context, reqCodePos0, leftArrowPos1Intent, 0);
-            contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos1, contentLeftPos1Intent);
-
-            Intent leftArrowPos2Intent = new Intent(context, PushTemplateReceiver.class);
-            leftArrowPos2Intent.putExtra(Constants.PT_RIGHT_SWIPE, false);
-            leftArrowPos2Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 2);
-            leftArrowPos2Intent.putExtra(Constants.PT_REQUEST_CODE_0, reqCodePos0);
-            leftArrowPos2Intent.putExtra(Constants.PT_REQUEST_CODE_1, reqCodePos1);
-            leftArrowPos2Intent.putExtra(Constants.PT_REQUEST_CODE_2, reqCodePos2);
-            leftArrowPos2Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
-            leftArrowPos2Intent.putExtras(extras);
-            PendingIntent contentLeftPos2Intent = PendingIntent.getBroadcast(context, reqCodePos1, leftArrowPos2Intent, 0);
-            contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos2, contentLeftPos2Intent);
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
 
-            PendingIntent pIntent;
+            PendingIntent pIntent = setPendingIntent(context, notificationId, extras, launchIntent, dl);
 
-            if (deepLinkList != null) {
-                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
-            } else {
-                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
-            }
             NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId, channelId, context);
 
             setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewManualCarousel, pt_title, pIntent);
 
             Notification notification = notificationBuilder.build();
-            Utils.loadImageURLIntoRemoteView(R.id.carousel_image, imageList.get(0), contentViewManualCarousel);
 
             setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
             setCustomContentViewLargeIcon(contentViewManualCarousel, pt_large_icon);
@@ -939,12 +900,15 @@ public class TemplateRenderer {
             setCustomContentViewDotSep(contentViewManualCarousel);
             setCustomContentViewDotSep(contentViewSmall);
 
+            if (imageCounter < 2) {
+                PTLog.debug("Need at least 2 images to display Manual Carousel, found - " + imageCounter + ", not displaying the notification.");
+                return;
+            }
             notificationManager.notify(notificationId, notification);
-
 
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {
-            PTLog.verbose("Error creating auto carousel notification ", t);
+            PTLog.verbose("Error creating Manual carousel notification ", t);
         }
     }
 

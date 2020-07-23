@@ -23,28 +23,8 @@
             style="@style/ManualCarouselArrowRev" />
 
         <ImageView
-            android:id="@+id/leftArrowPos1"
-            style="@style/ManualCarouselArrowRev"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/leftArrowPos2"
-            style="@style/ManualCarouselArrowRev"
-            android:visibility="invisible" />
-
-        <ImageView
             android:id="@+id/rightArrowPos0"
             style="@style/ManualCarouselArrowFwd" />
-
-        <ImageView
-            android:id="@+id/rightArrowPos1"
-            style="@style/ManualCarouselArrowFwd"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/rightArrowPos2"
-            style="@style/ManualCarouselArrowFwd"
-            android:visibility="invisible" />
 
 
     </RelativeLayout>

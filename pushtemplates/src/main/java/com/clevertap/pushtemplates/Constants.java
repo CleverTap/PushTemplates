@@ -6,6 +6,9 @@ import java.util.ArrayList;
 public class Constants {
     public static final String LOG_TAG = "PTLog";
     public static final ArrayList<Integer> PT_DO_NOT_EDIT_LIST = new ArrayList<>() ;
+    public static final String PT_MANUAL_CAROUSEL_CURRENT = "pt_manual_carousel_current";
+    public static final String PT_IMAGE_LIST = "pt_image_list";
+    public static final String PT_DEEPLINK_LIST = "pt_deeplink_list";
     public static boolean PT_FALLBACK = false;
     static final int ONE_SECOND = 1000;
     static final String DEFAULT_DL = "default_dl";

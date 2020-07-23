@@ -167,7 +167,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
             setCustomContentViewBasicKeys(contentViewSmall, context);
 
-
             setCustomContentViewTitle(contentViewManualCarousel, pt_title);
             setCustomContentViewTitle(contentViewSmall, pt_title);
 
@@ -187,133 +186,58 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
 
-            int positionFrom = extras.getInt(Constants.PT_MANUAL_CAROUSEL_FROM);
-
             final boolean rightSwipe = extras.getBoolean(Constants.PT_RIGHT_SWIPE);
-            int currPosition;
+
+            imageList = extras.getStringArrayList(Constants.PT_IMAGE_LIST);
+            deepLinkList = extras.getStringArrayList(Constants.PT_DEEPLINK_LIST);
+
+            int currPosition = extras.getInt(Constants.PT_MANUAL_CAROUSEL_CURRENT);
+            int newPosition;
             if (rightSwipe) {
-                currPosition = (positionFrom + 1) % 3;
+                if (currPosition == imageList.size() - 1 ) {
+                    newPosition = 0;
+                } else {
+                    newPosition = currPosition + 1;
+                }
             } else {
-                currPosition = (positionFrom - 1) % 3;
+                if (currPosition == 0) {
+                    newPosition = imageList.size() - 1;
+                } else {
+                    newPosition = currPosition - 1;
+                }
+            }
+            String dl = "";
+
+            if (deepLinkList != null && deepLinkList.size() == imageList.size()){
+                dl = deepLinkList.get(newPosition);
+            } else if (deepLinkList != null && deepLinkList.size() == 1) {
+                dl = deepLinkList.get(0);
+            } else if (deepLinkList != null && deepLinkList.size() > newPosition) {
+                dl = deepLinkList.get(newPosition);
+            } else if (deepLinkList != null && deepLinkList.size() < newPosition) {
+                dl = deepLinkList.get(0);
             }
 
-            int reqCodePos0 = extras.getInt(Constants.PT_REQUEST_CODE_0);
-            int reqCodePos1 = extras.getInt(Constants.PT_REQUEST_CODE_1);
-            int reqCodePos2 = extras.getInt(Constants.PT_REQUEST_CODE_2);
-            if (currPosition == 0) {
-                contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos0, View.VISIBLE);
-                contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos0, View.VISIBLE);
-
-                contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos1, View.INVISIBLE);
-                contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos1, View.INVISIBLE);
-
-                contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos2, View.INVISIBLE);
-                contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos2, View.INVISIBLE);
-            } else if (currPosition == 1) {
-                contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos0, View.INVISIBLE);
-                contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos0, View.INVISIBLE);
-
-                contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos1, View.VISIBLE);
-                contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos1, View.VISIBLE);
-
-                contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos2, View.INVISIBLE);
-                contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos2, View.INVISIBLE);
-            } else if (currPosition == 2) {
-                contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos0, View.INVISIBLE);
-                contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos0, View.INVISIBLE);
-
-                contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos1, View.INVISIBLE);
-                contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos1, View.INVISIBLE);
-
-                contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos2, View.VISIBLE);
-                contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos2, View.VISIBLE);
-            }
+            extras.putInt(Constants.PT_MANUAL_CAROUSEL_CURRENT, newPosition);
 
             Intent rightArrowPos0Intent = new Intent(context, PushTemplateReceiver.class);
             rightArrowPos0Intent.putExtra(Constants.PT_RIGHT_SWIPE, true);
             rightArrowPos0Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 0);
-            rightArrowPos0Intent.putExtra(Constants.PT_REQUEST_CODE_0, reqCodePos0);
-            rightArrowPos0Intent.putExtra(Constants.PT_REQUEST_CODE_1, reqCodePos1);
-            rightArrowPos0Intent.putExtra(Constants.PT_REQUEST_CODE_2, reqCodePos2);
             rightArrowPos0Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
             rightArrowPos0Intent.putExtras(extras);
-            PendingIntent contentRightPos0Intent = PendingIntent.getBroadcast(context, reqCodePos1, rightArrowPos0Intent, 0);
+            PendingIntent contentRightPos0Intent = setPendingIntent(context, notificationId, extras, rightArrowPos0Intent, dl);
             contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos0, contentRightPos0Intent);
-
-            Intent rightArrowPos1Intent = new Intent(context, PushTemplateReceiver.class);
-            rightArrowPos1Intent.putExtra(Constants.PT_RIGHT_SWIPE, true);
-            rightArrowPos1Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 1);
-            rightArrowPos1Intent.putExtra(Constants.PT_REQUEST_CODE_0, reqCodePos0);
-            rightArrowPos1Intent.putExtra(Constants.PT_REQUEST_CODE_1, reqCodePos1);
-            rightArrowPos1Intent.putExtra(Constants.PT_REQUEST_CODE_2, reqCodePos2);
-            rightArrowPos1Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
-            rightArrowPos1Intent.putExtras(extras);
-            PendingIntent contentRightPos1Intent = PendingIntent.getBroadcast(context, reqCodePos2, rightArrowPos1Intent, 0);
-            contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos1, contentRightPos1Intent);
-
-            Intent rightArrowPos2Intent = new Intent(context, PushTemplateReceiver.class);
-            rightArrowPos2Intent.putExtra(Constants.PT_RIGHT_SWIPE, true);
-            rightArrowPos2Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 2);
-            rightArrowPos2Intent.putExtra(Constants.PT_REQUEST_CODE_0, reqCodePos0);
-            rightArrowPos2Intent.putExtra(Constants.PT_REQUEST_CODE_1, reqCodePos1);
-            rightArrowPos2Intent.putExtra(Constants.PT_REQUEST_CODE_2, reqCodePos2);
-            rightArrowPos2Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
-            rightArrowPos2Intent.putExtras(extras);
-            PendingIntent contentRightPos2Intent = PendingIntent.getBroadcast(context, reqCodePos0, rightArrowPos2Intent, 0);
-            contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos2, contentRightPos2Intent);
 
             Intent leftArrowPos0Intent = new Intent(context, PushTemplateReceiver.class);
             leftArrowPos0Intent.putExtra(Constants.PT_RIGHT_SWIPE, false);
             leftArrowPos0Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 0);
-            leftArrowPos0Intent.putExtra(Constants.PT_REQUEST_CODE_0, reqCodePos0);
-            leftArrowPos0Intent.putExtra(Constants.PT_REQUEST_CODE_1, reqCodePos1);
-            leftArrowPos0Intent.putExtra(Constants.PT_REQUEST_CODE_2, reqCodePos2);
             leftArrowPos0Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
             leftArrowPos0Intent.putExtras(extras);
-            PendingIntent contentLeftPos0Intent = PendingIntent.getBroadcast(context, reqCodePos2, leftArrowPos0Intent, 0);
+            PendingIntent contentLeftPos0Intent = setPendingIntent(context, notificationId, extras, leftArrowPos0Intent, dl);
             contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos0, contentLeftPos0Intent);
 
-            Intent leftArrowPos1Intent = new Intent(context, PushTemplateReceiver.class);
-            leftArrowPos1Intent.putExtra(Constants.PT_RIGHT_SWIPE, false);
-            leftArrowPos1Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 1);
-            leftArrowPos1Intent.putExtra(Constants.PT_REQUEST_CODE_0, reqCodePos0);
-            leftArrowPos1Intent.putExtra(Constants.PT_REQUEST_CODE_1, reqCodePos1);
-            leftArrowPos1Intent.putExtra(Constants.PT_REQUEST_CODE_2, reqCodePos2);
-            leftArrowPos1Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
-            leftArrowPos1Intent.putExtras(extras);
-            PendingIntent contentLeftPos1Intent = PendingIntent.getBroadcast(context, reqCodePos0, leftArrowPos1Intent, 0);
-            contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos1, contentLeftPos1Intent);
-
-            Intent leftArrowPos2Intent = new Intent(context, PushTemplateReceiver.class);
-            leftArrowPos2Intent.putExtra(Constants.PT_RIGHT_SWIPE, false);
-            leftArrowPos2Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 2);
-            leftArrowPos2Intent.putExtra(Constants.PT_REQUEST_CODE_0, reqCodePos0);
-            leftArrowPos2Intent.putExtra(Constants.PT_REQUEST_CODE_1, reqCodePos1);
-            leftArrowPos2Intent.putExtra(Constants.PT_REQUEST_CODE_2, reqCodePos2);
-            leftArrowPos2Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
-            leftArrowPos2Intent.putExtras(extras);
-            PendingIntent contentLeftPos2Intent = PendingIntent.getBroadcast(context, reqCodePos1, leftArrowPos2Intent, 0);
-            contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos2, contentLeftPos2Intent);
-
-
             Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
-            PendingIntent pIntent;
-
-            if (deepLinkList != null && deepLinkList.size() >= 3) {
-                if (currPosition == 0 && deepLinkList.get(0) != null) {
-                    pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
-                } else if (currPosition == 1 && deepLinkList.get(1) != null) {
-                    pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(1));
-                } else if (deepLinkList.get(2) != null) {
-                    pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(2));
-                } else {
-                    pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
-                }
-            } else if (deepLinkList != null && deepLinkList.size() > 0) {
-                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
-            } else {
-                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
-            }
+            PendingIntent pIntent = setPendingIntent(context, notificationId, extras, launchIntent, dl);
 
             NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId, Constants.PT_SILENT_CHANNEL_ID, context);
             Intent dismissIntent = new Intent(context, PushTemplateReceiver.class);
@@ -326,10 +250,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             Notification notification = notificationBuilder.build();
 
-
-            if (currPosition >= 0 && currPosition < imageList.size()) {
-                Utils.loadIntoGlide(context, R.id.carousel_image, imageList.get(currPosition), contentViewManualCarousel, notification, notificationId);
-            }
+            Utils.loadIntoGlide(context, R.id.carousel_image, imageList.get(newPosition), contentViewManualCarousel, notification, notificationId);
 
             Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
 
@@ -1034,7 +955,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
     private void setCustomContentViewTitleColour(RemoteViews contentView, String pt_title_clr) {
         if (pt_title_clr != null && !pt_title_clr.isEmpty()) {
-            contentView.setTextColor(R.id.title, Utils.getColour(pt_title_clr,Constants.PT_COLOUR_BLACK));
+            contentView.setTextColor(R.id.title, Utils.getColour(pt_title_clr, Constants.PT_COLOUR_BLACK));
         }
     }
 
@@ -1167,7 +1088,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         }
     }
 
-    private void setDotSep(Context context){
+    private void setDotSep(Context context) {
         try {
             pt_dot = context.getResources().getIdentifier(Constants.PT_DOT_SEP, "drawable", context.getPackageName());
             pt_dot_sep = Utils.setBitMapColour(context, pt_dot, pt_meta_clr);
