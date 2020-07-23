@@ -1164,7 +1164,6 @@ public class TemplateRenderer {
                         contentViewBig.setViewVisibility(R.id.small_image1, View.GONE);
                         contentViewSmall.setViewVisibility(R.id.small_image1_collapsed, View.GONE);
                         imageCounter++;
-                        Utils.setFallback(false);
                         isFirstImageOK = false;
                     }
                 } else if (index == 1) {
@@ -1176,7 +1175,6 @@ public class TemplateRenderer {
                         contentViewBig.setViewVisibility(R.id.small_image2, View.GONE);
                         contentViewSmall.setViewVisibility(R.id.small_image2_collapsed, View.GONE);
                         imageCounter++;
-                        Utils.setFallback(false);
                     } else {
                         imageOKIndex = 1;
                     }
@@ -1189,7 +1187,6 @@ public class TemplateRenderer {
                         contentViewBig.setViewVisibility(R.id.small_image3, View.GONE);
                         contentViewSmall.setViewVisibility(R.id.small_image3_collapsed, View.GONE);
                         imageCounter++;
-                        Utils.setFallback(false);
                     } else {
                         imageOKIndex = 2;
                     }
@@ -1301,35 +1298,30 @@ public class TemplateRenderer {
                     if (Utils.getFallback()) {
                         contentFiveCTAs.setViewVisibility(R.id.cta1, View.GONE);
                         imageCounter++;
-                        Utils.setFallback(false);
                     }
                 } else if (imageKey == 1) {
                     Utils.loadImageURLIntoRemoteView(R.id.cta2, imageList.get(imageKey), contentFiveCTAs);
                     if (Utils.getFallback()) {
                         imageCounter++;
                         contentFiveCTAs.setViewVisibility(R.id.cta2, View.GONE);
-                        Utils.setFallback(false);
                     }
                 } else if (imageKey == 2) {
                     Utils.loadImageURLIntoRemoteView(R.id.cta3, imageList.get(imageKey), contentFiveCTAs);
                     if (Utils.getFallback()) {
                         imageCounter++;
                         contentFiveCTAs.setViewVisibility(R.id.cta3, View.GONE);
-                        Utils.setFallback(false);
                     }
                 } else if (imageKey == 3) {
                     Utils.loadImageURLIntoRemoteView(R.id.cta4, imageList.get(imageKey), contentFiveCTAs);
                     if (Utils.getFallback()) {
                         imageCounter++;
                         contentFiveCTAs.setViewVisibility(R.id.cta4, View.GONE);
-                        Utils.setFallback(false);
                     }
                 } else if (imageKey == 4) {
                     Utils.loadImageURLIntoRemoteView(R.id.cta5, imageList.get(imageKey), contentFiveCTAs);
                     if (Utils.getFallback()) {
                         imageCounter++;
                         contentFiveCTAs.setViewVisibility(R.id.cta5, View.GONE);
-                        Utils.setFallback(false);
                     }
                 }
 
@@ -1421,7 +1413,6 @@ public class TemplateRenderer {
             if (Utils.getFallback()) {
                 PTLog.debug("Image not fetched, falling back to Basic Template");
                 renderBasicTemplateNotification(context, extras, notificationId);
-                Utils.setFallback(false);
             } else {
                 notificationManager.notify(notificationId, notification);
 
@@ -1778,7 +1769,6 @@ public class TemplateRenderer {
             Utils.loadImageURLIntoRemoteView(R.id.big_image, pt_big_img, contentView);
             if (Utils.getFallback()) {
                 contentView.setViewVisibility(R.id.big_image, View.GONE);
-                Utils.setFallback(false);
             }
         } else {
             contentView.setViewVisibility(R.id.big_image, View.GONE);
@@ -1792,7 +1782,6 @@ public class TemplateRenderer {
                 if (hideBigImageView) {
                     contentView.setViewVisibility(R.id.big_image, View.GONE);
                 }
-                Utils.setFallback(false);
             }
         } else {
             contentView.setViewVisibility(R.id.big_image, View.GONE);

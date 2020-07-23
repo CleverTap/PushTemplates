@@ -288,7 +288,7 @@ public class Utils {
     static void loadImageURLIntoRemoteView(int imageViewID, String imageUrl,
                                            RemoteViews remoteViews) {
         Bitmap image = getBitmapFromURL(imageUrl);
-
+        setFallback(false);
         if (image != null) {
             remoteViews.setImageViewBitmap(imageViewID, image);
         } else {
