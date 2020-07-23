@@ -132,7 +132,7 @@ public class Utils {
             }
 
             // might be -1: server did not report the length
-            int fileLength = connection.getContentLength();
+            long fileLength = connection.getContentLength();
 
             // download the file
             InputStream input = connection.getInputStream();
@@ -146,11 +146,11 @@ public class Utils {
                 total += count;
                 buffer.write(data, 0, count);
             }
-            if (fileLength != total) {
+            if (fileLength != -1 && fileLength != total) {
                 PTLog.debug("File not loaded completely not going forward. URL was: " + srcUrl);
                 return null;
             }
-            return BitmapFactory.decodeByteArray(buffer.toByteArray(), 0, fileLength);
+            return BitmapFactory.decodeByteArray(buffer.toByteArray(), 0, (int) total);
         } catch (IOException e) {
             PTLog.verbose("Couldn't download the notification icon. URL was: " + srcUrl);
             return null;
