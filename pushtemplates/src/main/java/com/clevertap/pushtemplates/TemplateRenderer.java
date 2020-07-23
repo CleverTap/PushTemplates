@@ -33,7 +33,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -774,13 +773,16 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
 
-            ArrayList<Integer> layoutIds = new ArrayList<>();
-            layoutIds.add(0, R.id.flipper_img1);
-            layoutIds.add(1, R.id.flipper_img2);
-            layoutIds.add(2, R.id.flipper_img3);
-
+            int imageCounter = 0;
             for (int index = 0; index < imageList.size(); index++) {
-                Utils.loadImageURLIntoRemoteView(layoutIds.get(index), imageList.get(index), contentViewCarousel);
+                RemoteViews nrv = new RemoteViews(context.getPackageName(), R.layout.image_view);
+                Utils.loadImageURLIntoRemoteView(R.id.fimg, imageList.get(index), nrv);
+                if (!Utils.getFallback()) {
+                    contentViewCarousel.addView(R.id.view_flipper, nrv);
+                    imageCounter++;
+                } else {
+                    PTLog.debug("Skipping Image in Auto Carousel.");
+                }
             }
 
             setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
@@ -792,8 +794,12 @@ public class TemplateRenderer {
             setCustomContentViewDotSep(contentViewCarousel);
             setCustomContentViewDotSep(contentViewSmall);
 
-            notificationManager.notify(notificationId, notification);
+            if (imageCounter < 2) {
+                PTLog.debug("Need at least 2 images to display Auto Carousel found - " + imageCounter + ", not displaying the notification.");
+                return;
+            }
 
+            notificationManager.notify(notificationId, notification);
 
             raiseNotificationViewed(context, extras);
         } catch (Throwable t) {

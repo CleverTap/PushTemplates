@@ -645,20 +645,20 @@ public class Utils {
         }
     }
 
-    static void addToDoNotEditList(int viewId){
+    static void addToDoNotEditList(int viewId) {
         ArrayList<Integer> list = getDoNotEditList();
         list.add(viewId);
     }
 
-    static ArrayList<Integer> getDoNotEditList(){
+    static ArrayList<Integer> getDoNotEditList() {
         return Constants.PT_DO_NOT_EDIT_LIST;
     }
 
-    static void setFallback(Boolean val){
+    static void setFallback(Boolean val) {
         Constants.PT_FALLBACK = val;
     }
 
-    static boolean getFallback(){
+    static boolean getFallback() {
         return Constants.PT_FALLBACK;
     }
 }
