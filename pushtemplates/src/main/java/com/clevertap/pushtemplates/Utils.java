@@ -38,6 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +50,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -66,7 +68,7 @@ public class Utils {
     public static boolean isForPushTemplates(Bundle extras) {
         if (extras == null) return false;
         String pt_id = extras.getString(Constants.PT_ID);
-        return ! (("0").equals(pt_id) || pt_id == null || pt_id.isEmpty());
+        return !(("0").equals(pt_id) || pt_id == null || pt_id.isEmpty());
     }
 
 
@@ -128,6 +130,9 @@ public class Utils {
             URL url = new URL(srcUrl);
             connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
+            connection.setUseCaches(false);
+            connection.addRequestProperty("Content-Type", "application/json");
+            connection.addRequestProperty("Accept-Encoding", "gzip, deflate");
             connection.setConnectTimeout(Constants.PT_CONNECTION_TIMEOUT);
             connection.connect();
             // expect HTTP 200 OK, so we don't mistakenly save error report
@@ -139,6 +144,7 @@ public class Utils {
 
             // might be -1: server did not report the length
             long fileLength = connection.getContentLength();
+            boolean isGZipEncoded = (connection.getContentEncoding() != null && connection.getContentEncoding().contains("gzip"));
 
             // download the file
             InputStream input = connection.getInputStream();
@@ -152,13 +158,34 @@ public class Utils {
                 total += count;
                 buffer.write(data, 0, count);
             }
-            if (fileLength != -1 && fileLength != total) {
+
+            byte[] tmpByteArray = new byte[16384];
+            long totalDownloaded = total;
+
+            if (isGZipEncoded) {
+                InputStream is = new ByteArrayInputStream(buffer.toByteArray());
+                ByteArrayOutputStream decompressedFile = new ByteArrayOutputStream();
+                GZIPInputStream gzipInputStream = new GZIPInputStream(is);
+                total = 0;
+                int counter;
+                while ((counter = gzipInputStream.read(tmpByteArray)) != -1) {
+                    total += counter;
+                    decompressedFile.write(tmpByteArray, 0, counter);
+                }
+                if (fileLength != -1 && fileLength != totalDownloaded) {
+                    PTLog.debug("File not loaded completely not going forward. URL was: " + srcUrl);
+                    return null;
+                }
+                return BitmapFactory.decodeByteArray(decompressedFile.toByteArray(), 0, (int) total);
+            }
+
+            if (fileLength != -1 && fileLength != totalDownloaded) {
                 PTLog.debug("File not loaded completely not going forward. URL was: " + srcUrl);
                 return null;
             }
-            return BitmapFactory.decodeByteArray(buffer.toByteArray(), 0, (int) total);
+            return BitmapFactory.decodeByteArray(buffer.toByteArray(), 0, (int) totalDownloaded);
         } catch (IOException e) {
-            PTLog.verbose("Couldn't download the notification icon. URL was: " + srcUrl);
+            PTLog.verbose("Couldn't download the file. URL was: " + srcUrl);
             return null;
         } finally {
             try {

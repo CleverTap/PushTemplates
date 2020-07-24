@@ -34,11 +34,6 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             CleverTapAPI.createNotificationChannel(this,"PTTesting","Push Template App Channel","Channel for Push Template App", NotificationManager.IMPORTANCE_HIGH,true);
         }
-        HashMap<String, Object> profileUpdate = new HashMap<String, Object>();
-        profileUpdate.put("Email", "test1@clevertap.com");
-        if (cleverTapAPI != null) {
-            cleverTapAPI.onUserLogin(profileUpdate);
-        }
 
         sendBasicPush = findViewById(R.id.basicPush);
         sendBasicPush.setOnClickListener(new View.OnClickListener() {
