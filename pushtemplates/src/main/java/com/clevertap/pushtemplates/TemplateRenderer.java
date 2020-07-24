@@ -119,7 +119,7 @@ public class TemplateRenderer {
     private ArrayList<Integer> pt_cancel_notif_ids;
     private JSONArray actions;
     private String pt_subtitle;
-
+    private int pt_flip_interval;
 
     @SuppressWarnings({"unused"})
     public enum LogLevel {
@@ -213,6 +213,7 @@ public class TemplateRenderer {
         pt_cancel_notif_ids = Utils.getNotificationIds(context);
         actions = Utils.getActionKeys(extras);
         pt_subtitle = extras.getString(Constants.PT_SUBTITLE);
+        pt_flip_interval = Utils.getFlipInterval(extras);
         setKeysFromDashboard(extras);
     }
 
@@ -755,7 +756,7 @@ public class TemplateRenderer {
 
             setCustomContentViewMessageSummary(contentViewCarousel, pt_msg_summary);
 
-            contentViewCarousel.setInt(R.id.view_flipper, "setFlipInterval", 4000);
+            setCustomContentViewViewFlipperInterval(contentViewCarousel, pt_flip_interval);
 
             Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
 
@@ -805,6 +806,10 @@ public class TemplateRenderer {
         } catch (Throwable t) {
             PTLog.verbose("Error creating auto carousel notification ", t);
         }
+    }
+
+    private void setCustomContentViewViewFlipperInterval( RemoteViews contentView, int interval) {
+       contentView.setInt(R.id.view_flipper, "setFlipInterval", interval);
     }
 
     private void renderManualCarouselNotification(Context context, Bundle extras, int notificationId) {

@@ -9,6 +9,8 @@ public class Constants {
     public static final String PT_MANUAL_CAROUSEL_CURRENT = "pt_manual_carousel_current";
     public static final String PT_IMAGE_LIST = "pt_image_list";
     public static final String PT_DEEPLINK_LIST = "pt_deeplink_list";
+    public static final String PT_FLIP_INTERVAL = "pt_flip_interval";
+    public static final String PT_FLIP_INTERVAL_TIME = "4000";
     public static boolean PT_FALLBACK = false;
     static final int ONE_SECOND = 1000;
     static final String DEFAULT_DL = "default_dl";

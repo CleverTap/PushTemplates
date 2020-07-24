@@ -417,6 +417,10 @@ public class Utils {
         return Integer.parseInt(val);
     }
 
+    static int getInt(String data) {
+        return Integer.parseInt(data);
+    }
+
     static void setPackageNameFromResolveInfoList(Context context, Intent launchIntent) {
         List<ResolveInfo> resolveInfoList = context.getPackageManager().queryIntentActivities(launchIntent, 0);
         if (resolveInfoList != null) {
@@ -693,5 +697,16 @@ public class Utils {
 
     static boolean getFallback() {
         return Constants.PT_FALLBACK;
+    }
+
+    public static int getFlipInterval(Bundle extras) {
+        String interval = extras.getString(Constants.PT_FLIP_INTERVAL, Constants.PT_FLIP_INTERVAL_TIME);
+        int t = Integer.parseInt(interval);
+        if (t < Integer.parseInt(Constants.PT_FLIP_INTERVAL_TIME)) {
+            return Integer.parseInt(Constants.PT_FLIP_INTERVAL_TIME);
+        } else {
+            return t;
+        }
+
     }
 }
