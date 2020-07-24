@@ -63,6 +63,12 @@ public class Utils {
         return fromCleverTap && shouldRender;
     }
 
+    public static boolean isForPushTemplates(Bundle extras) {
+        if (extras == null) return false;
+        String pt_id = extras.getString(Constants.PT_ID);
+        return ! (("0").equals(pt_id) || pt_id == null || pt_id.isEmpty());
+    }
+
 
     @SuppressWarnings("unused")
     static Bitmap getNotificationBitmap(String icoPath, boolean fallbackToAppIcon,
