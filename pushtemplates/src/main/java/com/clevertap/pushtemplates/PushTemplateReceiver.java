@@ -249,7 +249,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             Notification notification = notificationBuilder.build();
 
-            contentViewManualCarousel.setImageViewBitmap(R.id.carousel_image,Utils.loadImageFromStorage(pt_id + "_" + newPosition));
+            contentViewManualCarousel.setImageViewBitmap(R.id.carousel_image,Utils.loadImageFromStorage(imageList.get(newPosition)));
 
             Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
 
@@ -687,7 +687,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 img3 = false;
                 dl = deepLinkList.get(2);
             }
-            contentViewBig.setImageViewBitmap(R.id.big_image,Utils.loadImageFromStorage(pt_id + "_" + currentPosition));
+            contentViewBig.setImageViewBitmap(R.id.big_image,Utils.loadImageFromStorage(imageList.get(currentPosition)));
 
             Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
 
@@ -779,19 +779,19 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 for (int index = 0; index < imageList.size(); index++) {
                     if (index == 0) {
-                        contentViewBig.setImageViewBitmap(R.id.small_image1,Utils.loadImageFromStorage(pt_id + "_" + index));
+                        contentViewBig.setImageViewBitmap(R.id.small_image1,Utils.loadImageFromStorage(imageList.get(index)));
                         if (isLinear) {
-                            contentViewSmall.setImageViewBitmap(R.id.small_image1_collapsed,Utils.loadImageFromStorage(pt_id + "_" + index));
+                            contentViewSmall.setImageViewBitmap(R.id.small_image1_collapsed,Utils.loadImageFromStorage(imageList.get(index)));
                         }
                     } else if (index == 1) {
-                        contentViewBig.setImageViewBitmap(R.id.small_image2,Utils.loadImageFromStorage(pt_id + "_" + index));
+                        contentViewBig.setImageViewBitmap(R.id.small_image2,Utils.loadImageFromStorage(imageList.get(index)));
                         if (isLinear) {
-                            contentViewSmall.setImageViewBitmap(R.id.small_image2_collapsed,Utils.loadImageFromStorage(pt_id + "_" + index));
+                            contentViewSmall.setImageViewBitmap(R.id.small_image2_collapsed,Utils.loadImageFromStorage(imageList.get(index)));
                         }
                     } else if (index == 2) {
-                        contentViewBig.setImageViewBitmap(R.id.small_image3,Utils.loadImageFromStorage(pt_id + "_" + index));
+                        contentViewBig.setImageViewBitmap(R.id.small_image3,Utils.loadImageFromStorage(imageList.get(index)));
                         if (isLinear) {
-                            contentViewSmall.setImageViewBitmap(R.id.small_image3_collapsed,Utils.loadImageFromStorage(pt_id + "_" + index));
+                            contentViewSmall.setImageViewBitmap(R.id.small_image3_collapsed,Utils.loadImageFromStorage(imageList.get(index)));
                         }
                     }
                 }

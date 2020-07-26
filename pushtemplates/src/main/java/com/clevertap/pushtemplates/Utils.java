@@ -337,12 +337,12 @@ public class Utils {
     }
 
     static void loadImageURLIntoRemoteView(int imageViewID, String imageUrl,
-                                           RemoteViews remoteViews, Context context, int index, String pId) {
+                                           RemoteViews remoteViews, Context context) {
         Bitmap image = getBitmapFromURL(imageUrl);
         setFallback(false);
         if (image != null) {
             remoteViews.setImageViewBitmap(imageViewID, image);
-            saveBitmapToInternalStorage(context, image, pId + "_" + index);
+            saveBitmapToInternalStorage(context, image, getImageFileNameFromURL(imageUrl));
         } else {
             PTLog.debug("Image was not perfect. URL:" + imageUrl + " hiding image view");
             setFallback(true);
@@ -756,11 +756,11 @@ public class Utils {
             addImagePathToList(directory.getAbsolutePath());
     }
 
-    public static Bitmap loadImageFromStorage(String fileName) {
+    public static Bitmap loadImageFromStorage(String url) {
         Bitmap b = null;
 
         try {
-            File f = new File(getImagePathFromList(), fileName + ".jpg");
+            File f = new File(getImagePathFromList(), getImageFileNameFromURL(url) + ".jpg");
             b = BitmapFactory.decodeStream(new FileInputStream(f));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -768,12 +768,15 @@ public class Utils {
         return b;
     }
 
-    static void addImagePathToList(String path){
+    static void addImagePathToList(String path) {
         Constants.PT_IMAGE_PATH_LIST = path;
     }
 
-    static String getImagePathFromList(){
+    static String getImagePathFromList() {
         return Constants.PT_IMAGE_PATH_LIST;
     }
 
+    static String getImageFileNameFromURL(String URL) {
+        return URL.substring(URL.lastIndexOf("/") + 1, URL.lastIndexOf("."));
+    }
 }

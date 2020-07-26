@@ -846,7 +846,7 @@ public class TemplateRenderer {
             String dl = null;
             int currentPosition = imageList.size() - 1;
             for (int index = imageList.size() - 1; index >= 0; index--) {
-                Utils.loadImageURLIntoRemoteView(R.id.carousel_image, imageList.get(index), contentViewManualCarousel, context, index, pt_id);
+                Utils.loadImageURLIntoRemoteView(R.id.carousel_image, imageList.get(index), contentViewManualCarousel, context);
                 if (!Utils.getFallback()) {
                     if (deepLinkList != null && deepLinkList.size() == 1) {
                         dl = deepLinkList.get(0);
@@ -1125,9 +1125,9 @@ public class TemplateRenderer {
             boolean isFirstImageOK = true;
             for (int index = 0; index < imageList.size(); index++) {
                 if (index == 0) {
-                    Utils.loadImageURLIntoRemoteView(R.id.small_image1, imageList.get(0), contentViewBig, context , index, pt_id);
+                    Utils.loadImageURLIntoRemoteView(R.id.small_image1, imageList.get(0), contentViewBig, context);
                     if (isLinear) {
-                        Utils.loadImageURLIntoRemoteView(R.id.small_image1_collapsed, imageList.get(0), contentViewSmall, context , index, pt_id);
+                        Utils.loadImageURLIntoRemoteView(R.id.small_image1_collapsed, imageList.get(0), contentViewSmall, context);
                     }
                     if (Utils.getFallback()) {
                         contentViewBig.setViewVisibility(R.id.small_image1, View.GONE);
@@ -1136,9 +1136,9 @@ public class TemplateRenderer {
                         isFirstImageOK = false;
                     }
                 } else if (index == 1) {
-                    Utils.loadImageURLIntoRemoteView(R.id.small_image2, imageList.get(1), contentViewBig, context , index, pt_id);
+                    Utils.loadImageURLIntoRemoteView(R.id.small_image2, imageList.get(1), contentViewBig, context);
                     if (isLinear) {
-                        Utils.loadImageURLIntoRemoteView(R.id.small_image2_collapsed, imageList.get(1), contentViewSmall, context , index, pt_id);
+                        Utils.loadImageURLIntoRemoteView(R.id.small_image2_collapsed, imageList.get(1), contentViewSmall, context);
                     }
                     if (Utils.getFallback()) {
                         contentViewBig.setViewVisibility(R.id.small_image2, View.GONE);
@@ -1148,9 +1148,9 @@ public class TemplateRenderer {
                         imageOKIndex = 1;
                     }
                 } else if (index == 2) {
-                    Utils.loadImageURLIntoRemoteView(R.id.small_image3, imageList.get(2), contentViewBig, context , index, pt_id);
+                    Utils.loadImageURLIntoRemoteView(R.id.small_image3, imageList.get(2), contentViewBig, context);
                     if (isLinear) {
-                        Utils.loadImageURLIntoRemoteView(R.id.small_image3_collapsed, imageList.get(2), contentViewSmall, context , index, pt_id);
+                        Utils.loadImageURLIntoRemoteView(R.id.small_image3_collapsed, imageList.get(2), contentViewSmall, context);
                     }
                     if (Utils.getFallback()) {
                         contentViewBig.setViewVisibility(R.id.small_image3, View.GONE);
