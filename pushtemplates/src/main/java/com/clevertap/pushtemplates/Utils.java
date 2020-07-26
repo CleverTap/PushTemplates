@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -40,6 +41,10 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -130,7 +135,7 @@ public class Utils {
             URL url = new URL(srcUrl);
             connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
-            connection.setUseCaches(false);
+            connection.setUseCaches(true);
             connection.addRequestProperty("Content-Type", "application/json");
             connection.addRequestProperty("Accept-Encoding", "gzip, deflate");
             connection.setConnectTimeout(Constants.PT_CONNECTION_TIMEOUT);
@@ -324,6 +329,20 @@ public class Utils {
         setFallback(false);
         if (image != null) {
             remoteViews.setImageViewBitmap(imageViewID, image);
+        } else {
+            PTLog.debug("Image was not perfect. URL:" + imageUrl + " hiding image view");
+            setFallback(true);
+        }
+
+    }
+
+    static void loadImageURLIntoRemoteView(int imageViewID, String imageUrl,
+                                           RemoteViews remoteViews, Context context, int index, String pId) {
+        Bitmap image = getBitmapFromURL(imageUrl);
+        setFallback(false);
+        if (image != null) {
+            remoteViews.setImageViewBitmap(imageViewID, image);
+            saveBitmapToInternalStorage(context, image, pId + "_" + index);
         } else {
             PTLog.debug("Image was not perfect. URL:" + imageUrl + " hiding image view");
             setFallback(true);
@@ -709,4 +728,52 @@ public class Utils {
         }
 
     }
+
+    public static void saveBitmapToInternalStorage(Context context, Bitmap bitmapImage, String fileName) {
+        boolean fileSaved = false;
+        ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir(Constants.PT_DIR, Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath = new File(directory, fileName + ".jpg");
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fileSaved = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (fileSaved)
+            addImagePathToList(directory.getAbsolutePath());
+    }
+
+    public static Bitmap loadImageFromStorage(String fileName) {
+        Bitmap b = null;
+
+        try {
+            File f = new File(getImagePathFromList(), fileName + ".jpg");
+            b = BitmapFactory.decodeStream(new FileInputStream(f));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return b;
+    }
+
+    static void addImagePathToList(String path){
+        Constants.PT_IMAGE_PATH_LIST = path;
+    }
+
+    static String getImagePathFromList(){
+        return Constants.PT_IMAGE_PATH_LIST;
+    }
+
 }
