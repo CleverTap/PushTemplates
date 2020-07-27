@@ -380,7 +380,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
   pt_event_property_p2 | Optional | Value for event property p2
   pt_input_label | Optional | Label text to be shown on the input
   pt_input_auto_open | Optional | Auto open the app after feedback
-  pt_input_feedbac | Optionalk | Feedback 
+  pt_input_feedback | Optional | Feedback 
   pt_dl1 | Optional | Deep Link
   pt_title_clr | Optional | Title Color in HEX
   pt_msg_clr | Optional | Message Color in HEX
