@@ -9,6 +9,7 @@ public class PTPushNotificationReceiver extends CTPushNotificationReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
+
         Utils.deleteSilentNotificationChannel(context);
     }
 }

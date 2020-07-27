@@ -194,7 +194,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             int currPosition = extras.getInt(Constants.PT_MANUAL_CAROUSEL_CURRENT);
             int newPosition;
             if (rightSwipe) {
-                if (currPosition == imageList.size() - 1 ) {
+                if (currPosition == imageList.size() - 1) {
                     newPosition = 0;
                 } else {
                     newPosition = currPosition + 1;
@@ -208,7 +208,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             }
             String dl = "";
 
-            if (deepLinkList != null && deepLinkList.size() == imageList.size()){
+            if (deepLinkList != null && deepLinkList.size() == imageList.size()) {
                 dl = deepLinkList.get(newPosition);
             } else if (deepLinkList != null && deepLinkList.size() == 1) {
                 dl = deepLinkList.get(0);
@@ -219,6 +219,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             }
 
             extras.putInt(Constants.PT_MANUAL_CAROUSEL_CURRENT, newPosition);
+            extras.remove(Constants.PT_RIGHT_SWIPE);
 
             Intent rightArrowPos0Intent = new Intent(context, PushTemplateReceiver.class);
             rightArrowPos0Intent.putExtra(Constants.PT_RIGHT_SWIPE, true);
@@ -250,7 +251,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             Notification notification = notificationBuilder.build();
 
-            Utils.loadIntoGlide(context, R.id.carousel_image, imageList.get(newPosition), contentViewManualCarousel, notification, notificationId);
+            contentViewManualCarousel.setImageViewBitmap(R.id.carousel_image, Utils.loadImageFromStorage(imageList.get(newPosition)));
 
             Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
 
@@ -655,9 +656,11 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             setCustomContentViewButtonColour(contentViewBig, R.id.product_action, pt_product_display_action_clr);
             setCustomContentViewButtonText(contentViewBig, R.id.product_action, pt_product_display_action_text_clr);
 
+            int currentPosition = 0;
             String imageUrl = "", dl = "";
             if (img1 != extras.getBoolean(Constants.PT_IMAGE_1, false)) {
                 imageUrl = imageList.get(0);
+                currentPosition = 0;
                 if (!bigTextList.isEmpty()) {
                     contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
                     contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(0));
@@ -668,6 +671,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             }
             if (img2 != extras.getBoolean(Constants.PT_IMAGE_2, false)) {
                 imageUrl = imageList.get(1);
+                currentPosition = 1;
                 if (!bigTextList.isEmpty()) {
                     contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(1));
                     contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(1));
@@ -678,6 +682,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             }
             if (img3 != extras.getBoolean(Constants.PT_IMAGE_3, false)) {
                 imageUrl = imageList.get(2);
+                currentPosition = 2;
                 if (!bigTextList.isEmpty()) {
                     contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(2));
                     contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(2));
@@ -686,6 +691,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 img3 = false;
                 dl = deepLinkList.get(2);
             }
+            contentViewBig.setImageViewBitmap(R.id.big_image, Utils.loadImageFromStorage(imageList.get(currentPosition)));
 
             Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
 
@@ -774,23 +780,21 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 setCustomContentViewDotSep(context, contentViewBig, notification, notificationId);
 
-                notificationManager.notify(notificationId, notification);
-
                 for (int index = 0; index < imageList.size(); index++) {
                     if (index == 0) {
-                        Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewBig, notification, notificationId);
+                        contentViewBig.setImageViewBitmap(R.id.small_image1, Utils.loadImageFromStorage(imageList.get(index)));
                         if (isLinear) {
-                            Utils.loadIntoGlide(context, R.id.small_image1, imageList.get(0), contentViewSmall, notification, notificationId);
+                            contentViewSmall.setImageViewBitmap(R.id.small_image1_collapsed, Utils.loadImageFromStorage(imageList.get(index)));
                         }
                     } else if (index == 1) {
-                        Utils.loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewBig, notification, notificationId);
+                        contentViewBig.setImageViewBitmap(R.id.small_image2, Utils.loadImageFromStorage(imageList.get(index)));
                         if (isLinear) {
-                            Utils.loadIntoGlide(context, R.id.small_image2, imageList.get(1), contentViewSmall, notification, notificationId);
+                            contentViewSmall.setImageViewBitmap(R.id.small_image2_collapsed, Utils.loadImageFromStorage(imageList.get(index)));
                         }
                     } else if (index == 2) {
-                        Utils.loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewBig, notification, notificationId);
+                        contentViewBig.setImageViewBitmap(R.id.small_image3, Utils.loadImageFromStorage(imageList.get(index)));
                         if (isLinear) {
-                            Utils.loadIntoGlide(context, R.id.small_image3, imageList.get(2), contentViewSmall, notification, notificationId);
+                            contentViewSmall.setImageViewBitmap(R.id.small_image3_collapsed, Utils.loadImageFromStorage(imageList.get(index)));
                         }
                     }
                 }
@@ -798,7 +802,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 Utils.loadIntoGlide(context, R.id.big_image, imageUrl, contentViewBig, notification, notificationId);
 
-
+                notificationManager.notify(notificationId, notification);
             }
 
         } catch (Throwable t) {
