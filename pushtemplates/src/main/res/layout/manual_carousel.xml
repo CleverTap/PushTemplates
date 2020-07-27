@@ -20,10 +20,12 @@
 
         <ImageView
             android:id="@+id/leftArrowPos0"
+            android:background="@drawable/btn_ripple_background"
             style="@style/ManualCarouselArrowRev" />
 
         <ImageView
             android:id="@+id/rightArrowPos0"
+            android:background="@drawable/btn_ripple_background"
             style="@style/ManualCarouselArrowFwd" />
 
 
