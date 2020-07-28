@@ -176,97 +176,225 @@ Five icons template is a sticky push notification with no text, just 5 icons and
 
 ## Basic Template
 
- Basic Template Keys | Description 
- :---:|:---:| 
- pt_id* | Value - `pt_basic`
- pt_title* | Title 
- pt_msg* | Message 
- pt_big_img* | Image
- pt_ico* | Large Icon 
- pt_bg | Background Color in HEX
- pt_title_clr | Title Color in HEX
- pt_msg_clr | Message Color in HEX
- pt_dl1 | One Deep Link (minimum)
- pt_json | Above keys in JSON format
+ Basic Template Keys | Required | Description 
+ ---:|:---:|:---| 
+ pt_id | Required | Value - `pt_basic`
+ pt_title | Required | Title 
+ pt_msg | Required | Message 
+ pt_msg_summary | Required | Message line when Notification is expanded
+ pt_subtitle | Optional  | Subtitle
+ pt_bg | Required | Background Color in HEX
+ pt_big_img | Optional | Image
+ pt_ico | Optional | Large Icon 
+ pt_dl1 | Optional | One Deep Link (minimum)
+ pt_title_clr | Optional | Title Color in HEX
+ pt_msg_clr | Optional | Message Color in HEX
+ pt_small_icon_clr | Optional | Small Icon Color in HEX
+ pt_json | Optional | Above keys in JSON format
  
 ## Auto Carousel Template
  
- Auto Carousel Template Keys | Description 
-  :---:|:---:| 
-  pt_id* | Value - `pt_carousel`
-  pt_title* | Title 
-  pt_msg* | Message
-  pt_dl1* | One Deep Link (minimum)
-  pt_img1* | Image One
-  pt_img2* | Image Two
-  pt_img3* | Image Three
-  pt_img4 | Image Four
-  pt_img5 | Image Five 
-  pt_bg | Background Color in HEX
-  pt_title_clr | Title Color in HEX
-  pt_msg_clr | Message Color in HEX
-  pt_msg_summary | Message line when Notification is expanded
-  pt_json | Above keys in JSON format
+ Auto Carousel Template Keys | Required | Description 
+  ---:|:---:|:--- 
+  pt_id | Required | Value - `pt_carousel`
+  pt_title | Required | Title 
+  pt_msg | Required | Message
+  pt_msg_summary | Optional | Message line when Notification is expanded
+  pt_subtitle | Optional | Subtitle
+  pt_dl1 | Required | Deep Link (Max one) 
+  pt_img1 | Required | Image One
+  pt_img2 | Required | Image Two
+  pt_img3 | Required | Image Three
+  pt_bg | Required | Background Color in HEX
+  pt_ico | Optional | Large Icon
+  pt_title_clr | Optional | Title Color in HEX
+  pt_msg_clr | Optional | Message Color in HEX
+  pt_small_icon_clr | Optional | Small Icon Color in HEX
+  pt_json | Optional | Above keys in JSON format
+  
+## Manual Carousel Template
+ 
+ Manual Carousel Template Keys | Required | Description 
+  ---:|:---:|:--- 
+  pt_id | Required | Value - `pt_manual_carousel`
+  pt_title | Required | Title 
+  pt_msg | Required | Message
+  pt_msg_summary | Optional | Message line when Notification is expanded
+  pt_subtitle | Optional | Subtitle
+  pt_dl1 | Required | Deep Link One
+  pt_dl2 | Optional | Deep Link Two
+  pt_dl3 | Optional | Deep Link Three 
+  pt_img1 | Required | Image One
+  pt_img2 | Required | Image Two
+  pt_img3 | Required | Image Three
+  pt_bg | Required | Background Color in HEX
+  pt_ico | Optional | Large Icon
+  pt_title_clr | Optional | Title Color in HEX
+  pt_msg_clr | Optional | Message Color in HEX
+  pt_small_icon_clr | Optional | Small Icon Color in HEX
+  pt_json | Optional | Above keys in JSON format
   
 ## Rating Template
 
- Rating Template Keys | Description 
- :---:|:---:| 
- pt_id* | Value - `pt_rating`
- pt_title* | Title 
- pt_msg* | Message 
- pt_default_dl* | Default Deep Link for Push Notification
- pt_dl1* | Deep Link for first/all star(s)
- pt_dl2 | Deep Link for second star
- pt_dl3 | Deep Link for third star
- pt_dl4 | Deep Link for fourth star
- pt_dl5 | Deep Link for fifth star
- pt_bg | Background Color in HEX
- pt_title_clr | Title Color in HEX
- pt_msg_clr | Message Color in HEX
- pt_msg_summary | Message line when Notification is expanded
- pt_json | Above keys in JSON format
+ Rating Template Keys | Required | Description 
+ ---:|:---:|:--- 
+ pt_id | Required  | Value - `pt_rating`
+ pt_title | Required  | Title 
+ pt_msg | Required  | Message 
+ pt_msg_summary | Optional | Message line when Notification is expanded
+ pt_subtitle | Optional | Subtitle
+ pt_default_dl | Required  | Default Deep Link for Push Notification
+ pt_dl1 | Required  | Deep Link for first/all star(s)
+ pt_dl2 | Optional | Deep Link for second star
+ pt_dl3 | Optional | Deep Link for third star
+ pt_dl4 | Optional | Deep Link for fourth star
+ pt_dl5 | Optional | Deep Link for fifth star
+ pt_bg | Required  | Background Color in HEX
+ pt_ico | Optional | Large Icon
+ pt_title_clr | Optional | Title Color in HEX
+ pt_msg_clr | Optional | Message Color in HEX
+ pt_small_icon_clr | Optional | Small Icon Color in HEX
+ pt_json | Optional | Above keys in JSON format
  
 ## Product Catalog Template
 
- Product Catalog Template Keys | Description 
- :---:|:---:| 
- pt_id* | Value - `pt_product_display`
- pt_title* | Title 
- pt_msg* | Message
- pt_img1* | Image One
- pt_img2* | Image Two
- pt_img3* | Image Three
- pt_bt1* | Big text for first image
- pt_bt2* | Big text for second image
- pt_bt3* | Big text for third image
- pt_st1* | Small text for first image
- pt_st2* | Small text for second image
- pt_st3* | Small text for third image
- pt_dl1* | Deep Link for first image
- pt_dl2* | Deep Link for second image
- pt_dl3* | Deep Link for third image
- pt_bg | Background Color in HEX
- pt_title_clr | Title Color in HEX
- pt_msg_clr | Message Color in HEX
- pt_json | Above keys in JSON format
+ Product Catalog Template Keys | Required | Description 
+ ---:|:---:|:--- 
+ pt_id | Required  | Value - `pt_product_display`
+ pt_title | Required  | Title 
+ pt_msg | Required  | Message
+ pt_subtitle | Optional  | Subtitle
+ pt_img1 | Required  | Image One
+ pt_img2 | Required  | Image Two
+ pt_img3 | Required  | Image Three
+ pt_bt1 | Required  | Big text for first image
+ pt_bt2 | Required  | Big text for second image
+ pt_bt3 | Required  | Big text for third image
+ pt_st1 | Required  | Small text for first image
+ pt_st2 | Required  | Small text for second image
+ pt_st3 | Required  | Small text for third image
+ pt_dl1 | Required  | Deep Link for first image
+ pt_dl2 | Required  | Deep Link for second image
+ pt_dl3 | Required  | Deep Link for third image
+ pt_bg | Required  | Background Color in HEX
+ pt_product_display_action | Required  | Action Button Label Text
+ pt_product_display_linear | Optional  | Linear Layout Template ("true"/"false")
+ pt_product_display_action_clr | Required  | Action Button Background Color in HEX
+ pt_title_clr | Optional  | Title Color in HEX
+ pt_msg_clr | Optional  | Message Color in HEX
+ pt_small_icon_clr | Optional  | Small Icon Color in HEX
+ pt_json | Optional  | Above keys in JSON format
  
 ## Five Icons Template
 
- Five Icons Template Keys | Description 
-  :---:|:---:| 
-  pt_id* | Value - `pt_five_icons`
-  pt_img1* | Icon One
-  pt_img2* | Icon Two
-  pt_img3* | Icon Three
-  pt_img4* | Icon Four
-  pt_img5* | Icon Five
-  pt_dl1* | Deep Link for first icon
-  pt_dl2* | Deep Link for second icon
-  pt_dl3* | Deep Link for third icon
-  pt_dl4* | Deep Link for fourth icon
-  pt_dl5* | Deep Link for fifth icon
-  pt_json | Above keys in JSON format
+ Five Icons Template Keys | Required | Description 
+  ---:|:---:|:--- 
+  pt_id | Required  | Value - `pt_five_icons`
+  pt_img1 | Required  | Icon One
+  pt_img2 | Required  | Icon Two
+  pt_img3 | Required  | Icon Three
+  pt_img4 | Required  | Icon Four
+  pt_img5 | Required  | Icon Five
+  pt_dl1 | Required  | Deep Link for first icon
+  pt_dl2 | Required  | Deep Link for second icon
+  pt_dl3 | Required  | Deep Link for third icon
+  pt_dl4 | Required  | Deep Link for fourth icon
+  pt_dl5 | Required  | Deep Link for fifth icon
+  pt_bg | Required  | Background Color in HEX
+  pt_small_icon_clr | Optional | Small Icon Color in HEX
+  pt_json | Optional | Above keys in JSON format
+  
+## Timer Template
+ 
+ Timer Template Keys | Required | Description 
+  ---:|:---:|:--- 
+  pt_id | Required | Value - `pt_timer`
+  pt_title | Required | Title 
+  pt_title_alt | Optional | Title to show after timer expires 
+  pt_msg | Required | Message
+  pt_msg_alt | Optional | Message to show after timer expires
+  pt_msg_summary | Optional | Message line when Notification is expanded
+  pt_subtitle | Optional | Subtitle
+  pt_dl1 | Optional | Deep Link
+  pt_big_img | Optional | Image
+  pt_big_img_alt | Optional | Image to show when timer expires
+  pt_bg | Required | Background Color in HEX
+  pt_timer_threshold | Required | Timer duration in seconds (minimum 10)
+  pt_timer_end | Required | Epoch Timestamp to countdown to (for example, $D_1595871380 or 1595871380). Not needed if pt_timer_threshold is specified. 
+  pt_title_clr | Optional | Title Color in HEX
+  pt_msg_clr | Optional | Message Color in HEX
+  pt_small_icon_clr | Optional | Small Icon Color in HEX
+  pt_json | Optional | Above keys in JSON format
+  
+## Videp Template
+ 
+ Video Template Keys | Required | Description 
+  ---:|:---:|:--- 
+  pt_id | Required | Value - `pt_video`
+  pt_title | Required | Title 
+  pt_msg | Required | Message
+  pt_msg_summary | Optional | Message line when Notification is expanded
+  pt_subtitle | Optional | Subtitle
+  pt_big_img | Optional | Required | Image
+  pt_video_url | Optional | Required | Video URL (https only)
+  pt_bg | Required | Background Color in HEX
+  pt_dl1 | Optional | Deep Link
+  pt_title_clr | Optional | Title Color in HEX
+  pt_msg_clr | Optional | Message Color in HEX
+  pt_small_icon_clr | Optional | Small Icon Color in HEX
+  pt_ico | Optional | Large Icon
+  pt_json | Optional | Above keys in JSON format
+  
+## Zero Bezel Template
+ 
+ Zero Bezel Template Keys | Required | Description 
+  ---:|:---:|:--- 
+  pt_id | Required | Value - `pt_zero_bezel`
+  pt_title | Required | Title 
+  pt_msg | Required | Message
+  pt_msg_summary | Optional | Message line when Notification is expanded
+  pt_subtitle | Optional | Subtitle
+  pt_big_img | Required | Image
+  pt_small_view | Optional | Select text-only small view layout (`text_only`)
+  pt_dl1 | Optional | Deep Link
+  pt_title_clr | Optional | Title Color in HEX
+  pt_msg_clr | Optional | Message Color in HEX
+  pt_small_icon_clr | Optional | Small Icon Color in HEX
+  pt_ico | Optional | Large Icon
+  pt_json | Optional | Above keys in JSON format
+  
+## Input Box Template
+ 
+ Input Box Template Keys | Required | Description 
+  ---:|:---:|:--- 
+  pt_id | Required | Value - `pt_input`
+  pt_title | Required | Title 
+  pt_msg | Required | Message
+  pt_msg_summary | Optional | Message line when Notification is expanded
+  pt_subtitle | Optional | Subtitle
+  pt_big_img | Required | Image
+  pt_big_img_alt | Optional | Image to be shown after feedback is collected
+  wzrk_acts | Optional | Action Buttons; Sample `[{'l':'Yes','id':'2'},{'l':'No','id':'1'},{'l':'Remind Later','id':'remind'}]`
+  pt_event_name | Optional | Name of Event to be raised
+  pt_event_property_p1 | Optional | Value for event property p1  
+  pt_event_property_p2 | Optional | Value for event property p2
+  pt_input_label | Optional | Label text to be shown on the input
+  pt_input_auto_open | Optional | Auto open the app after feedback
+  pt_input_feedback | Optional | Feedback 
+  pt_dl1 | Optional | Deep Link
+  pt_title_clr | Optional | Title Color in HEX
+  pt_msg_clr | Optional | Message Color in HEX
+  pt_small_icon_clr | Optional | Small Icon Color in HEX
+  pt_ico | Optional | Large Icon
+  pt_dismiss_on_click | Optional | Dismiss notification on click
+  pt_json | Optional | Above keys in JSON format
+  
+## Cancel Notifications 
+ 
+ Cancel Notification Keys | Required | Description 
+  :---:|:---:|:---: 
+  pt_id | Required | Value - `pt_cancel`
+  
   
   ### NOTE
   * (*) - Mandatory
