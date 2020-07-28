@@ -66,6 +66,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private boolean pt_dismiss_intent;
     private String pt_rating_toast;
     private String pt_subtitle;
+    private String pID;
 
 
     @Override
@@ -75,6 +76,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         if (intent.getExtras() != null) {
             final Bundle extras = intent.getExtras();
             pt_id = intent.getStringExtra(Constants.PT_ID);
+            pID = extras.getString(Constants.WZRK_PUSH_ID);
             pt_msg = extras.getString(Constants.PT_MSG);
             pt_msg_summary = extras.getString(Constants.PT_MSG_SUMMARY);
             pt_msg_clr = extras.getString(Constants.PT_MSG_COLOR);
@@ -118,11 +120,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 }
             }
 
-            if (pt_dismiss_intent) {
-                Utils.deleteSilentNotificationChannel(context);
-                return;
-            }
-
             if (pt_id != null) {
                 templateType = TemplateType.fromString(pt_id);
             }
@@ -130,6 +127,11 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 @Override
                 public void run() {
                     try {
+                        if (pt_dismiss_intent) {
+                            Utils.deleteSilentNotificationChannel(context);
+                            Utils.deleteImageFromStorage(context, intent);
+                            return;
+                        }
                         if (templateType != null) {
                             switch (templateType) {
                                 case RATING:
@@ -250,7 +252,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             Notification notification = notificationBuilder.build();
 
-            contentViewManualCarousel.setImageViewBitmap(R.id.carousel_image, Utils.loadImageFromStorage(imageList.get(newPosition)));
+            contentViewManualCarousel.setImageViewBitmap(R.id.carousel_image, Utils.loadImageFromStorage(imageList.get(newPosition), pID));
 
             Utils.loadIntoGlide(context, R.id.small_icon, pt_large_icon, contentViewSmall, notification, notificationId);
 
@@ -680,7 +682,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 img3 = false;
                 dl = deepLinkList.get(2);
             }
-            contentViewBig.setImageViewBitmap(R.id.big_image, Utils.loadImageFromStorage(imageList.get(currentPosition)));
+            contentViewBig.setImageViewBitmap(R.id.big_image, Utils.loadImageFromStorage(imageList.get(currentPosition), pID));
 
             Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
 
@@ -767,24 +769,26 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 setCustomContentViewDotSep(context, contentViewBig, notification, notificationId);
 
-                for (int index = 0; index < imageList.size(); index++) {
-                    if (index == 0) {
-                        contentViewBig.setImageViewBitmap(R.id.small_image1, Utils.loadImageFromStorage(imageList.get(index)));
-                        if (isLinear) {
-                            contentViewSmall.setImageViewBitmap(R.id.small_image1_collapsed, Utils.loadImageFromStorage(imageList.get(index)));
-                        }
-                    } else if (index == 1) {
-                        contentViewBig.setImageViewBitmap(R.id.small_image2, Utils.loadImageFromStorage(imageList.get(index)));
-                        if (isLinear) {
-                            contentViewSmall.setImageViewBitmap(R.id.small_image2_collapsed, Utils.loadImageFromStorage(imageList.get(index)));
-                        }
-                    } else if (index == 2) {
-                        contentViewBig.setImageViewBitmap(R.id.small_image3, Utils.loadImageFromStorage(imageList.get(index)));
-                        if (isLinear) {
-                            contentViewSmall.setImageViewBitmap(R.id.small_image3_collapsed, Utils.loadImageFromStorage(imageList.get(index)));
-                        }
+                ArrayList<Integer> smallImageLayoutIds = new ArrayList<>();
+                smallImageLayoutIds.add(R.id.small_image1);
+                smallImageLayoutIds.add(R.id.small_image2);
+                smallImageLayoutIds.add(R.id.small_image3);
+
+                if (isLinear) {
+                    ArrayList<Integer> smallCollapsedImageLayoutIds = new ArrayList<>();
+                    smallCollapsedImageLayoutIds.add(R.id.small_image1_collapsed);
+                    smallCollapsedImageLayoutIds.add(R.id.small_image2_collapsed);
+                    smallCollapsedImageLayoutIds.add(R.id.small_image3_collapsed);
+                    for (int index = 0; index < imageList.size(); index++) {
+                        contentViewSmall.setImageViewBitmap(smallCollapsedImageLayoutIds.get(index), Utils.loadImageFromStorage(imageList.get(index), pID));
+                        contentViewBig.setImageViewBitmap(smallImageLayoutIds.get(index), Utils.loadImageFromStorage(imageList.get(index), pID));
+                    }
+                } else {
+                    for (int index = 0; index < imageList.size(); index++) {
+                        contentViewBig.setImageViewBitmap(smallImageLayoutIds.get(index), Utils.loadImageFromStorage(imageList.get(index), pID));
                     }
                 }
+
                 setCustomContentViewSmallIcon(context, contentViewBig, notification, notificationId);
 
                 Utils.loadIntoGlide(context, R.id.big_image, imageUrl, contentViewBig, notification, notificationId);

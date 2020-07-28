@@ -26,7 +26,6 @@ import android.widget.RemoteViews;
 
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
-import com.clevertap.android.sdk.CleverTapInstanceConfig;
 import com.clevertap.android.sdk.Logger;
 
 import org.json.JSONArray;
@@ -120,6 +119,7 @@ public class TemplateRenderer {
     private ArrayList<Integer> pt_cancel_notif_ids;
     private JSONArray actions;
     private String pt_subtitle;
+    private String pID;
     private int pt_flip_interval;
 
     @SuppressWarnings({"unused"})
@@ -215,6 +215,7 @@ public class TemplateRenderer {
         actions = Utils.getActionKeys(extras);
         pt_subtitle = extras.getString(Constants.PT_SUBTITLE);
         pt_flip_interval = Utils.getFlipInterval(extras);
+        pID = extras.getString(Constants.WZRK_PUSH_ID);
         setKeysFromDashboard(extras);
     }
 
@@ -843,7 +844,7 @@ public class TemplateRenderer {
             String dl = null;
             int currentPosition = imageList.size() - 1;
             for (int index = imageList.size() - 1; index >= 0; index--) {
-                Utils.loadImageURLIntoRemoteView(R.id.carousel_image, imageList.get(index), contentViewManualCarousel, context);
+                Utils.loadImageURLIntoRemoteView(R.id.carousel_image, imageList.get(index), contentViewManualCarousel, context, pID);
                 if (!Utils.getFallback()) {
                     if (deepLinkList != null && deepLinkList.size() == 1) {
                         dl = deepLinkList.get(0);
@@ -883,13 +884,17 @@ public class TemplateRenderer {
             PendingIntent contentLeftPos0Intent = setPendingIntent(context, notificationId, extras, leftArrowPos0Intent, dl);
             contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos0, contentLeftPos0Intent);
 
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
 
             PendingIntent pIntent = setPendingIntent(context, notificationId, extras, launchIntent, dl);
 
             NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId, channelId, context);
 
-            setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewManualCarousel, pt_title, pIntent);
+            Intent dismissIntent = new Intent(context, PushTemplateReceiver.class);
+            PendingIntent dIntent;
+            dIntent = setDismissIntent(context, extras, dismissIntent);
+
+            setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewManualCarousel, pt_title, pIntent, dIntent);
 
             Notification notification = notificationBuilder.build();
 
@@ -1093,7 +1098,11 @@ public class TemplateRenderer {
                 contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentSmallIntent3);
             }
 
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            Intent dismissIntent = new Intent(context, PushTemplateReceiver.class);
+            PendingIntent dIntent;
+            dIntent = setDismissIntent(context, extras, dismissIntent);
+
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
 
             PendingIntent pIntent;
 
@@ -1105,7 +1114,7 @@ public class TemplateRenderer {
 
             NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId, channelId, context);
 
-            setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewBig, pt_title, pIntent);
+            setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewBig, pt_title, pIntent, dIntent);
 
             Notification notification = notificationBuilder.build();
 
@@ -1119,41 +1128,41 @@ public class TemplateRenderer {
             int imageCounter = 0;
             int imageOKIndex = 0;
             boolean isFirstImageOK = true;
-            for (int index = 0; index < imageList.size(); index++) {
-                if (index == 0) {
-                    Utils.loadImageURLIntoRemoteView(R.id.small_image1, imageList.get(0), contentViewBig, context);
-                    if (isLinear) {
-                        Utils.loadImageURLIntoRemoteView(R.id.small_image1_collapsed, imageList.get(0), contentViewSmall, context);
-                    }
+            ArrayList<Integer> smallImageLayoutIds = new ArrayList<>();
+            smallImageLayoutIds.add(R.id.small_image1);
+            smallImageLayoutIds.add(R.id.small_image2);
+            smallImageLayoutIds.add(R.id.small_image3);
+
+            if (isLinear) {
+                ArrayList<Integer> smallCollapsedImageLayoutIds = new ArrayList<>();
+                smallCollapsedImageLayoutIds.add(R.id.small_image1_collapsed);
+                smallCollapsedImageLayoutIds.add(R.id.small_image2_collapsed);
+                smallCollapsedImageLayoutIds.add(R.id.small_image3_collapsed);
+                for (int index = 0; index < imageList.size(); index++) {
+                    Utils.loadImageURLIntoRemoteView(smallCollapsedImageLayoutIds.get(index), imageList.get(index), contentViewSmall, context, pID);
+                    contentViewBig.setImageViewBitmap(smallImageLayoutIds.get(index), Utils.loadImageFromStorage(imageList.get(index), pID));
                     if (Utils.getFallback()) {
-                        contentViewBig.setViewVisibility(R.id.small_image1, View.GONE);
-                        contentViewSmall.setViewVisibility(R.id.small_image1_collapsed, View.GONE);
+                        contentViewBig.setViewVisibility(smallImageLayoutIds.get(index), View.GONE);
+                        contentViewSmall.setViewVisibility(smallCollapsedImageLayoutIds.get(index), View.GONE);
                         imageCounter++;
-                        isFirstImageOK = false;
-                    }
-                } else if (index == 1) {
-                    Utils.loadImageURLIntoRemoteView(R.id.small_image2, imageList.get(1), contentViewBig, context);
-                    if (isLinear) {
-                        Utils.loadImageURLIntoRemoteView(R.id.small_image2_collapsed, imageList.get(1), contentViewSmall, context);
-                    }
-                    if (Utils.getFallback()) {
-                        contentViewBig.setViewVisibility(R.id.small_image2, View.GONE);
-                        contentViewSmall.setViewVisibility(R.id.small_image2_collapsed, View.GONE);
-                        imageCounter++;
+                        if (index == 0) {
+                            isFirstImageOK = false;
+                        }
                     } else {
-                        imageOKIndex = 1;
+                        imageOKIndex = index;
                     }
-                } else if (index == 2) {
-                    Utils.loadImageURLIntoRemoteView(R.id.small_image3, imageList.get(2), contentViewBig, context);
-                    if (isLinear) {
-                        Utils.loadImageURLIntoRemoteView(R.id.small_image3_collapsed, imageList.get(2), contentViewSmall, context);
-                    }
+                }
+            } else {
+                for (int index = 0; index < imageList.size(); index++) {
+                    Utils.loadImageURLIntoRemoteView(smallImageLayoutIds.get(index), imageList.get(index), contentViewBig, context, pID);
                     if (Utils.getFallback()) {
-                        contentViewBig.setViewVisibility(R.id.small_image3, View.GONE);
-                        contentViewSmall.setViewVisibility(R.id.small_image3_collapsed, View.GONE);
+                        contentViewBig.setViewVisibility(smallImageLayoutIds.get(index), View.GONE);
                         imageCounter++;
+                        if (index == 0) {
+                            isFirstImageOK = false;
+                        }
                     } else {
-                        imageOKIndex = 2;
+                        imageOKIndex = index;
                     }
                 }
             }
@@ -1962,6 +1971,17 @@ public class TemplateRenderer {
         }
     }
 
+    private void setNotificationBuilderBasics(NotificationCompat.Builder notificationBuilder, RemoteViews contentViewSmall, RemoteViews contentViewBig, String pt_title, PendingIntent pIntent, PendingIntent dIntent) {
+        notificationBuilder.setSmallIcon(smallIcon)
+                .setCustomContentView(contentViewSmall)
+                .setCustomBigContentView(contentViewBig)
+                .setContentTitle(pt_title)
+                .setDeleteIntent(dIntent)
+                .setContentIntent(pIntent).setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
+                .setWhen(System.currentTimeMillis())
+                .setAutoCancel(true);
+    }
+
     private void setKeysFromDashboard(Bundle extras) {
         if (pt_title == null || pt_title.isEmpty()) {
             pt_title = extras.getString(Constants.NOTIF_TITLE);
@@ -1987,6 +2007,13 @@ public class TemplateRenderer {
         if (pt_subtitle == null || pt_subtitle.isEmpty()) {
             pt_subtitle = extras.getString(Constants.WZRK_SUBTITLE);
         }
+    }
+
+    private PendingIntent setDismissIntent(Context context, Bundle extras, Intent intent) {
+        intent.putExtras(extras);
+        intent.putExtra(Constants.PT_DISMISS_INTENT, true);
+        return PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
+                intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
 }

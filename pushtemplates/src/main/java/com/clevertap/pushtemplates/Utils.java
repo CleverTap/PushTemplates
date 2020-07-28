@@ -343,12 +343,12 @@ public class Utils {
     }
 
     static void loadImageURLIntoRemoteView(int imageViewID, String imageUrl,
-                                           RemoteViews remoteViews, Context context) {
+                                           RemoteViews remoteViews, Context context, String pId) {
         Bitmap image = getBitmapFromURL(imageUrl);
         setFallback(false);
         if (image != null) {
             remoteViews.setImageViewBitmap(imageViewID, image);
-            saveBitmapToInternalStorage(context, image, getImageFileNameFromURL(imageUrl));
+            saveBitmapToInternalStorage(context, image, getImageFileNameFromURL(imageUrl) + "_" + pId);
         } else {
             PTLog.debug("Image was not perfect. URL:" + imageUrl + " hiding image view");
             setFallback(true);
@@ -636,6 +636,7 @@ public class Utils {
     static void showToast(final Context context, final String message) {
         AsyncHelper.getMainThreadHandler().post(new Runnable() {
             Toast toast;
+
             @SuppressLint("ShowToast")
             @Override
             public void run() {
@@ -668,9 +669,10 @@ public class Utils {
     static void deleteSilentNotificationChannel(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager == null) return;
-        NotificationChannel notificationChannel = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            notificationManager.deleteNotificationChannel(Constants.PT_SILENT_CHANNEL_ID);
+            if (notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID) != null) {
+                notificationManager.deleteNotificationChannel(Constants.PT_SILENT_CHANNEL_ID);
+            }
         }
 
     }
@@ -714,7 +716,7 @@ public class Utils {
         }
 
     }
-    //TODO Add delete image also
+
     public static void saveBitmapToInternalStorage(Context context, Bitmap bitmapImage, String fileName) {
         boolean fileSaved = false;
         ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
@@ -742,11 +744,11 @@ public class Utils {
             addImagePathToList(directory.getAbsolutePath());
     }
 
-    public static Bitmap loadImageFromStorage(String url) {
+    public static Bitmap loadImageFromStorage(String url, String pId) {
         Bitmap b = null;
 
         try {
-            File f = new File(getImagePathFromList(), getImageFileNameFromURL(url) + ".jpg");
+            File f = new File(getImagePathFromList(), getImageFileNameFromURL(url) + "_" + pId + ".jpg");
             b = BitmapFactory.decodeStream(new FileInputStream(f));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -764,5 +766,26 @@ public class Utils {
 
     static String getImageFileNameFromURL(String URL) {
         return URL.substring(URL.lastIndexOf("/") + 1, URL.lastIndexOf("."));
+    }
+
+    static void deleteImageFromStorage(Context context, Intent intent) {
+        String pId = intent.getStringExtra(Constants.WZRK_PUSH_ID);
+
+        ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
+        File MyDirectory = cw.getDir(Constants.PT_DIR, Context.MODE_PRIVATE);
+        String path = MyDirectory.getAbsolutePath();
+        String[] fileList = MyDirectory.list();
+
+        if (fileList != null) {
+            for (String fileName : fileList) {
+                if (pId != null && fileName.contains(pId)) {
+                    File fileToBeDeleted = new File(path + "/" + fileName);
+                    boolean wasDeleted = fileToBeDeleted.delete();
+                    if (!wasDeleted) {
+                        PTLog.debug("Failed to clean up the following file: " + fileName);
+                    }
+                }
+            }
+        }
     }
 }
