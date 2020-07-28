@@ -26,6 +26,7 @@ import android.widget.RemoteViews;
 
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
+import com.clevertap.android.sdk.CleverTapInstanceConfig;
 import com.clevertap.android.sdk.Logger;
 
 import org.json.JSONArray;
@@ -56,7 +57,7 @@ public class TemplateRenderer {
         Class className = null;
         try {
             className = Class.forName("com.google.android.exoplayer2.ExoPlayerFactory");
-            className = Class.forName("com.google.android.exoplayer2.source.hls.HlsMediaSource");
+            //className = Class.forName("com.google.android.exoplayer2.source.hls.HlsMediaSource");
             className = Class.forName("com.google.android.exoplayer2.ui.PlayerView");
             Logger.d("ExoPlayer is present");
             exoPlayerPresent = true;
@@ -340,7 +341,7 @@ public class TemplateRenderer {
                     renderVideoNotification(context, extras, notificationId);
                 break;
             case CANCEL:
-                renderCancelNotification(context, extras);
+                renderCancelNotification();
                 break;
         }
     }
@@ -612,7 +613,7 @@ public class TemplateRenderer {
         return result;
     }
 
-    private void renderCancelNotification(Context context, Bundle extras) {
+    private void renderCancelNotification() {
         if (pt_cancel_notif_id != null && !pt_cancel_notif_id.isEmpty()) {
             int notificationId = Integer.parseInt(pt_cancel_notif_id);
             notificationManager.cancel(notificationId);
@@ -623,7 +624,6 @@ public class TemplateRenderer {
                 }
             }
         }
-        raiseNotificationViewed(context, extras);
     }
 
     private void renderRatingNotification(Context context, Bundle extras, int notificationId) {
@@ -796,7 +796,8 @@ public class TemplateRenderer {
             setCustomContentViewDotSep(contentViewSmall);
 
             if (imageCounter < 2) {
-                PTLog.debug("Need at least 2 images to display Auto Carousel, found - " + imageCounter + ", not displaying the notification.");
+                PTLog.debug("Need at least 2 images to display Auto Carousel, found - "
+                        + imageCounter + ", not displaying the notification.");
                 return;
             }
 
@@ -1024,7 +1025,6 @@ public class TemplateRenderer {
             setCustomContentViewMessage(contentViewSmall, pt_msg);
             setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
 
-
             setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
             setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
 
@@ -1195,7 +1195,6 @@ public class TemplateRenderer {
 
             setCustomContentViewExpandedBackgroundColour(contentFiveCTAs, pt_bg);
 
-
             notificationId = setNotificationId(notificationId);
 
             int reqCode1 = new Random().nextInt();
@@ -1204,7 +1203,6 @@ public class TemplateRenderer {
             int reqCode4 = new Random().nextInt();
             int reqCode5 = new Random().nextInt();
             int reqCode6 = new Random().nextInt();
-
 
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("cta1", true);
@@ -1732,7 +1730,6 @@ public class TemplateRenderer {
         }
     }
 
-
     private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img) {
         if (pt_big_img != null && !pt_big_img.isEmpty()) {
             Utils.loadImageURLIntoRemoteView(R.id.big_image, pt_big_img, contentView);
@@ -1844,7 +1841,6 @@ public class TemplateRenderer {
 
     private void setActionButtons(Context context, Bundle extras, int notificationId, NotificationCompat.Builder nb) {
 
-
         Class clazz = null;
         try {
             clazz = Class.forName("com.clevertap.pushtemplates.PTNotificationIntentService");
@@ -1853,7 +1849,6 @@ public class TemplateRenderer {
         }
 
         boolean isPTIntentServiceAvailable = Utils.isServiceAvailable(context, clazz);
-
 
         if (actions != null && actions.length() > 0) {
             for (int i = 0; i < actions.length(); i++) {
@@ -1943,16 +1938,14 @@ public class TemplateRenderer {
         }
 
         handler.postDelayed(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void run() {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (Utils.isNotificationInTray(context, notificationId)) {
-                        if (hasAllBasicNotifKeys()) {
-                            renderBasicTemplateNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
-                        }
+                if (Utils.isNotificationInTray(context, notificationId)) {
+                    if (hasAllBasicNotifKeys()) {
+                        renderBasicTemplateNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
                     }
                 }
-
             }
         }, delay - 300);
 

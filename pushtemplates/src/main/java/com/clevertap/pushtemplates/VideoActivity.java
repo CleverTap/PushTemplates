@@ -72,7 +72,7 @@ public class VideoActivity extends AppCompatActivity {
         fullscreenButton = findViewById(R.id.pt_video_fullscreen_btn);
         fullscreenIcon = findViewById(R.id.pt_video_fullscreen_icon);
 
-        fullscreen_layout(false);
+        setFullScreenLayout(false);
 
         setFinishOnTouchOutside(true);
 
@@ -128,7 +128,7 @@ public class VideoActivity extends AppCompatActivity {
                         getSupportActionBar().hide();
                     }
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    fullscreen_layout(false);
+                    setFullScreenLayout(false);
                     fullscreen = false;
                 } else {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
@@ -149,7 +149,7 @@ public class VideoActivity extends AppCompatActivity {
                     }
                     DisplayMetrics metrics = new DisplayMetrics();
                     getWindowManager().getDefaultDisplay().getMetrics(metrics);
-                    fullscreen_layout(true);
+                    setFullScreenLayout(true);
                     fullscreen = true;
                 }
             }
@@ -260,19 +260,17 @@ public class VideoActivity extends AppCompatActivity {
     }
 
 
-    public void fullscreen_layout(boolean isFullScreen) {
-
+    public void setFullScreenLayout(boolean isFullScreen) {
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) aspectRatioFrameLayout.getLayoutParams();
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
         if (isFullScreen) {
             playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
-            DisplayMetrics dm = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(dm);
-
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
             params.width = (int) (1.3 * dm.widthPixels);
         } else {
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.width = (int) (0.9 * dm.widthPixels);
         }
         playerView.setLayoutParams(params);
     }

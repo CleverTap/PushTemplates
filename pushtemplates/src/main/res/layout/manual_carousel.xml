@@ -28,6 +28,5 @@
             android:background="@drawable/btn_ripple_background"
             style="@style/ManualCarouselArrowFwd" />
 
-
     </RelativeLayout>
 </RelativeLayout>

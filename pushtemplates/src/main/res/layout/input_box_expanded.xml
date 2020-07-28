@@ -87,6 +87,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:paddingEnd="3.5dp"
+        android:paddingStart="3.5dp"
         android:paddingTop="8dp"
         />
 

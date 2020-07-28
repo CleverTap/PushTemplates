@@ -49,14 +49,10 @@ class AsyncHelper {
             PTLog.verbose("Failed to submit task to the executor service");
         }
     }
+
     public static Handler getMainThreadHandler() {
-
         Handler mainThreadHandler;
-
         mainThreadHandler = new Handler(Looper.getMainLooper());
-
         return mainThreadHandler;
     }
-
-
 }

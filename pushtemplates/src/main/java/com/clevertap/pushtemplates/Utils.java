@@ -1,5 +1,6 @@
 package com.clevertap.pushtemplates;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -420,8 +421,7 @@ public class Utils {
     }
 
     static void cancelNotification(Context ctx, int notifyId) {
-        String ns = NOTIFICATION_SERVICE;
-        NotificationManager nMgr = (NotificationManager) ctx.getSystemService(ns);
+        NotificationManager nMgr = (NotificationManager) ctx.getSystemService(NOTIFICATION_SERVICE);
         nMgr.cancel(notifyId);
     }
 
@@ -432,7 +432,7 @@ public class Utils {
                 val = extras.getString(key);
             }
         }
-        return Integer.parseInt(val);
+        return Integer.parseInt(val != null ? val : "-1");
     }
 
     static int getInt(String data) {
@@ -563,7 +563,6 @@ public class Utils {
         return diff;
     }
 
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static boolean isNotificationInTray(Context context, int notificationId) {
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
@@ -576,13 +575,11 @@ public class Utils {
         return false;
     }
 
-
     public static ArrayList<Integer> getNotificationIds(Context context) {
         ArrayList<Integer> ids = new ArrayList<Integer>();
-        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-        StatusBarNotification[] notifications = new StatusBarNotification[0];
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            notifications = mNotificationManager.getActiveNotifications();
+            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+            StatusBarNotification[] notifications = mNotificationManager.getActiveNotifications();
             for (StatusBarNotification notification : notifications) {
                 if (notification.getPackageName().equalsIgnoreCase(context.getPackageName())) {
                     ids.add(notification.getId());
@@ -636,11 +633,10 @@ public class Utils {
         return actions;
     }
 
-    static void showToast(final Context context, final String message, final int duration) {
+    static void showToast(final Context context, final String message) {
         AsyncHelper.getMainThreadHandler().post(new Runnable() {
-
             Toast toast;
-
+            @SuppressLint("ShowToast")
             @Override
             public void run() {
                 if (!TextUtils.isEmpty(message)) {
@@ -648,7 +644,7 @@ public class Utils {
                         toast.cancel(); //dismiss current toast if visible
                         toast.setText(message);
                     } else {
-                        toast = Toast.makeText(context, message, duration);
+                        toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
                     }
                     toast.show();
                 }
@@ -700,15 +696,6 @@ public class Utils {
         }
     }
 
-    static void addToDoNotEditList(int viewId) {
-        ArrayList<Integer> list = getDoNotEditList();
-        list.add(viewId);
-    }
-
-    static ArrayList<Integer> getDoNotEditList() {
-        return Constants.PT_DO_NOT_EDIT_LIST;
-    }
-
     static void setFallback(Boolean val) {
         Constants.PT_FALLBACK = val;
     }
@@ -727,7 +714,7 @@ public class Utils {
         }
 
     }
-
+    //TODO Add delete image also
     public static void saveBitmapToInternalStorage(Context context, Bitmap bitmapImage, String fileName) {
         boolean fileSaved = false;
         ContextWrapper cw = new ContextWrapper(context.getApplicationContext());

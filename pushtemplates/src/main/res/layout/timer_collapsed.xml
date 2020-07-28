@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/metadata"
         android:layout_marginEnd="@dimen/padding_vertical"
-        android:layout_toLeftOf="@+id/chronometer">
+        android:layout_toStartOf="@+id/chronometer">
 
 
         <TextView
@@ -39,7 +39,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_alignStart="@+id/title"
-            android:layout_alignLeft="@+id/title"
             android:text="message"
             android:textAppearance="@style/PushMessage" />
 

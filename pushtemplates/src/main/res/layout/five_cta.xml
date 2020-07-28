@@ -27,7 +27,6 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_margin="4dip"
-
         android:src="@drawable/pt_image" />
 
     <ImageView
@@ -36,7 +35,6 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_margin="4dip"
-
         android:src="@drawable/pt_image" />
 
     <ImageView
@@ -45,8 +43,6 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_margin="4dip"
-
-
         android:src="@drawable/pt_image" />
 
     <ImageView
@@ -55,7 +51,6 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_margin="4dip"
-
         android:src="@drawable/pt_close" />
 
 </LinearLayout>

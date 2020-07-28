@@ -12,7 +12,6 @@ import java.util.Map;
 public class PushTemplateMessagingService extends FirebaseMessagingService {
 
     Context context;
-    CleverTapAPI instance;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -24,8 +23,6 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
                 for (Map.Entry<String, String> entry : remoteMessage.getData().entrySet()) {
                     extras.putString(entry.getKey(), entry.getValue());
                 }
-
-                instance = CleverTapAPI.getDefaultInstance(getApplicationContext());
 
                 boolean processCleverTapPN = Utils.isPNFromCleverTap(extras);
 

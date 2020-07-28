@@ -19,7 +19,6 @@ import androidx.core.app.RemoteInput;
 import android.text.Html;
 import android.view.View;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.clevertap.android.sdk.CleverTapAPI;
 
@@ -287,11 +286,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             if (reply != null) {
 
                 PTLog.verbose("Processing Input from Input Template");
-
                 extras.putString(Constants.PT_INPUT_KEY, reply.toString());
-
                 Utils.raiseCleverTapEvent(cleverTapAPI, extras, Constants.PT_INPUT_KEY);
-
                 //Update the notification to show that the reply was received.
                 final NotificationCompat.Builder repliedNotification;
                 if (requiresChannelId) {
@@ -299,9 +295,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 } else {
                     repliedNotification = new NotificationCompat.Builder(context);
                 }
-
                 setSmallIcon(context);
-
                 repliedNotification.setSmallIcon(smallIcon)
                         .setContentTitle(pt_title)
                         .setContentText(extras.getString(Constants.PT_INPUT_FEEDBACK))
@@ -356,9 +350,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
     }
 
-
     private void handleRatingNotification(Context context, Bundle extras) {
-
         try {
             int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
             if (extras.getBoolean(Constants.DEFAULT_DL, false)) {
@@ -589,7 +581,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 return;
             }
 
-
             boolean isLinear = false;
             if (pt_product_display_linear == null || pt_product_display_linear.isEmpty()) {
                 contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
@@ -642,12 +633,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 Intent notificationSmallIntent3 = new Intent(context, PTPushNotificationReceiver.class);
                 PendingIntent contentSmallIntent3 = setPendingIntent(context, notificationId, extras, notificationSmallIntent3, deepLinkList.get(2));
                 contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentSmallIntent3);
-
             }
 
             setCustomContentViewMessage(contentViewSmall, pt_msg);
             setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
-
 
             setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
             setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
@@ -700,7 +689,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             if (bigimage == extras.getBoolean("bigimage", false)) {
                 bigimage = false;
             }
-
 
             int requestCode1 = extras.getInt(Constants.PT_REQUEST_CODE_1);
             int requestCode2 = extras.getInt(Constants.PT_REQUEST_CODE_2);
@@ -760,7 +748,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
             }
 
-
             if (notificationManager != null) {
                 //Use the Builder to build notification
                 Intent dismissIntent = new Intent(context, PushTemplateReceiver.class);
@@ -806,7 +793,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             }
 
         } catch (Throwable t) {
-            PTLog.verbose("Error creating rating notification ", t);
+            PTLog.verbose("Error creating product display notification ", t);
         }
     }
 
@@ -865,16 +852,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         intent.putExtra(Constants.PT_DISMISS_INTENT, true);
         return PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
                 intent, PendingIntent.FLAG_CANCEL_CURRENT);
-    }
-
-    private void setNotificationBuilderBasics(NotificationCompat.Builder notificationBuilder, RemoteViews contentViewSmall, RemoteViews contentViewBig, String pt_title, PendingIntent pIntent) {
-        notificationBuilder.setSmallIcon(smallIcon)
-                .setCustomContentView(contentViewSmall)
-                .setCustomBigContentView(contentViewBig)
-                .setContentTitle(pt_title)
-                .setContentIntent(pIntent).setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
-                .setWhen(System.currentTimeMillis())
-                .setAutoCancel(true);
     }
 
     private void setNotificationBuilderBasics(NotificationCompat.Builder notificationBuilder, RemoteViews contentViewSmall, RemoteViews contentViewBig, String pt_title, PendingIntent pIntent, PendingIntent dIntent) {
@@ -995,7 +972,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         }
     }
 
-
     private void setStandardViewBigImageStyle(String imgUrl, Bundle extras, Context context, NotificationCompat.Builder notificationBuilder) {
         NotificationCompat.Style bigPictureStyle;
         if (imgUrl != null && imgUrl.startsWith("http")) {
@@ -1088,7 +1064,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
     private void setToast(Context context, String message) {
         if (message != null && !message.isEmpty()) {
-            Utils.showToast(context, message, Toast.LENGTH_SHORT);
+            Utils.showToast(context, message);
         }
     }
 
