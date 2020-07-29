@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 
 import com.clevertap.android.sdk.CleverTapAPI;
+import com.clevertap.android.sdk.CleverTapInstanceConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +68,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private String pt_rating_toast;
     private String pt_subtitle;
     private String pID;
+    private CleverTapInstanceConfig config;
 
 
     @Override
@@ -356,6 +358,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         try {
             int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
             if (extras.getBoolean(Constants.DEFAULT_DL, false)) {
+                config = extras.getParcelable("config");
                 notificationManager.cancel(notificationId);
                 Intent launchIntent;
                 Class clazz = null;
@@ -378,7 +381,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     launchIntent.removeExtra(Constants.WZRK_ACTIONS);
                     launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
                     launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    Utils.raiseNotificationClicked(context, extras);
+                    Utils.raiseNotificationClicked(context, extras, config);
                     launchIntent.putExtras(extras);
                     launchIntent.putExtra(Constants.WZRK_DL, pt_rating_default_dl);
                     context.startActivity(launchIntent);
@@ -552,6 +555,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             if (buynow == extras.getBoolean(Constants.PT_BUY_NOW, false)) {
                 notificationManager.cancel(notificationId);
                 String dl = extras.getString(Constants.PT_BUY_NOW_DL, deepLinkList.get(0));
+                config = extras.getParcelable("config");
                 notificationManager.cancel(notificationId);
                 Intent launchIntent;
 
@@ -577,7 +581,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     launchIntent.removeExtra(Constants.WZRK_ACTIONS);
                     launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
                     launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    Utils.raiseNotificationClicked(context, extras);
+                    Utils.raiseNotificationClicked(context, extras,config);
                     context.startActivity(launchIntent);
                 }
                 return;

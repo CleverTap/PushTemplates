@@ -35,6 +35,7 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
 import com.clevertap.android.sdk.CleverTapAPI;
+import com.clevertap.android.sdk.CleverTapInstanceConfig;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -612,11 +613,30 @@ public class Utils {
         return false;
     }
 
-    static void raiseNotificationClicked(Context context, Bundle extras) {
-        CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
+    static void raiseNotificationClicked(Context context, Bundle extras, CleverTapInstanceConfig config) {
+        CleverTapAPI instance;
+        if(config != null){
+            instance = CleverTapAPI.instanceWithConfig(context,config);
+        }else{
+            instance = CleverTapAPI.getDefaultInstance(context);
+        }
         if (instance != null) {
             instance.pushNotificationClickedEvent(extras);
         }
+
+    }
+
+    static void raiseNotificationViewed(Context context, Bundle extras, CleverTapInstanceConfig config) {
+        CleverTapAPI instance;
+        if(config != null){
+            instance = CleverTapAPI.instanceWithConfig(context,config);
+        }else{
+            instance = CleverTapAPI.getDefaultInstance(context);
+        }
+        if (instance != null) {
+            instance.pushNotificationViewedEvent(extras);
+        }
+
     }
 
     static JSONArray getActionKeys(Bundle extras) {
