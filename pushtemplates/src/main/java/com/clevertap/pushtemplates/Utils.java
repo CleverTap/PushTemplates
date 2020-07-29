@@ -746,9 +746,14 @@ public class Utils {
 
     public static Bitmap loadImageFromStorage(String url, String pId) {
         Bitmap b = null;
+        File f = null;
 
         try {
-            File f = new File(getImagePathFromList(), getImageFileNameFromURL(url) + "_" + pId + ".jpg");
+            if (pId != null) {
+                f = new File(getImagePathFromList(), getImageFileNameFromURL(url) + "_" + pId + ".jpg");
+            } else {
+                f = new File(getImagePathFromList(), getImageFileNameFromURL(url) + "_null.jpg");
+            }
             b = BitmapFactory.decodeStream(new FileInputStream(f));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -775,11 +780,17 @@ public class Utils {
         File MyDirectory = cw.getDir(Constants.PT_DIR, Context.MODE_PRIVATE);
         String path = MyDirectory.getAbsolutePath();
         String[] fileList = MyDirectory.list();
-
+        File fileToBeDeleted = null;
         if (fileList != null) {
             for (String fileName : fileList) {
-                if ((pId != null && fileName.contains(pId)) || fileName.contains("null")) {
-                    File fileToBeDeleted = new File(path + "/" + fileName);
+                if (pId != null && fileName.contains(pId)) {
+                    fileToBeDeleted = new File(path + "/" + fileName);
+                    boolean wasDeleted = fileToBeDeleted.delete();
+                    if (!wasDeleted) {
+                        PTLog.debug("Failed to clean up the following file: " + fileName);
+                    }
+                } else if (pId == null && fileName.contains("null")){
+                    fileToBeDeleted = new File(path + "/" + fileName);
                     boolean wasDeleted = fileToBeDeleted.delete();
                     if (!wasDeleted) {
                         PTLog.debug("Failed to clean up the following file: " + fileName);
