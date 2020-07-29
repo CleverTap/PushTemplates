@@ -183,9 +183,10 @@ Product catalog template lets you show case different images of a product (or a 
 
 ### Linear View
 
+Use the following keys to enable linear view variant of this template.
 Template Key | Required | Value
 ---:|:---:|:---
-pt_event_name | Required | for e.g. `Remind Later`,
+pt_product_display_linear | Required | `true`
 
 ![Product Display](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/productdisplay.gif)
 
