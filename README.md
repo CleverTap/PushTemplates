@@ -25,9 +25,10 @@ This library is in public beta, for any issues, queries and concerns please open
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.2'
-implementation 'com.clevertap.android:clevertap-android-sdk:3.8.0'
+implementation 'com.clevertap.android:push-templates:0.0.3'
+implementation 'com.clevertap.android:clevertap-android-sdk:3.8.2'
 implementation 'com.github.bumptech.glide:glide:4.11.0'
+implementation 'com.google.android.exoplayer:exoplayer:2.10.2' // required only if you plan on using the Video Template
 ```
 
 2. Add the Service to your `AndroidManifest.xml`
@@ -45,6 +46,12 @@ implementation 'com.github.bumptech.glide:glide:4.11.0'
 
 ```xml
 <receiver
+    android:name="com.clevertap.pushtemplates.PTPushNotificationReceiver"
+    android:exported="false"
+    android:enabled="true">
+</receiver>
+
+<receiver
     android:name="com.clevertap.pushtemplates.PushTemplateReceiver"
     android:exported="false"
     android:enabled="true">
@@ -56,33 +63,40 @@ implementation 'com.github.bumptech.glide:glide:4.11.0'
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.2'
-implementation 'com.clevertap.android:clevertap-android-sdk:3.8.0'
+implementation 'com.clevertap.android:push-templates:0.0.3'
+implementation 'com.clevertap.android:clevertap-android-sdk:3.8.2'
 implementation 'com.github.bumptech.glide:glide:4.11.0'
+implementation 'com.google.android.exoplayer:exoplayer:2.10.2' // required only if you plan on using the Video Template
 ```
 
 2. Add the Receiver to your `AndroidManifest.xml`
 
 ```xml
-<receiver
-    android:name="com.clevertap.pushtemplates.PushTemplateReceiver"
-    android:exported="false"
-    android:enabled="true">
-</receiver>
+    <receiver
+        android:name="com.clevertap.pushtemplates.PTPushNotificationReceiver"
+        android:exported="false"
+        android:enabled="true">
+    </receiver>
+    
+    <receiver
+        android:name="com.clevertap.pushtemplates.PushTemplateReceiver"
+        android:exported="false"
+        android:enabled="true">
+    </receiver>
 ```
 
 
 3. Add the following code in your custom FirebaseMessageService class
 
 ```java
-public class MyMessagingService extends FirebaseMessagingService {
+public class PushTemplateMessagingService extends FirebaseMessagingService {
 
     Context context;
-    CleverTapAPI instance;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        try{
+        try {
+            PTLog.debug("Inside Push Templates");
             context = getApplicationContext();
             if (remoteMessage.getData().size() > 0) {
                 Bundle extras = new Bundle();
@@ -90,24 +104,18 @@ public class MyMessagingService extends FirebaseMessagingService {
                     extras.putString(entry.getKey(), entry.getValue());
                 }
 
-                instance = CleverTapAPI.getDefaultInstance(getApplicationContext());
-
                 boolean processCleverTapPN = Utils.isPNFromCleverTap(extras);
 
-                if(processCleverTapPN){
-                    String pt_id = extras.getString(Constants.PT_ID);
-                    if(pt_id == null || pt_id.isEmpty()){
-                        CleverTapAPI.createNotification(context,extras);
-                    }else{
-                        TemplateRenderer.setDebugLevel(2); //-1 for OFF, 0, for INFO, 2 for DEBUG, 3 for VERBOSE (errors)
-                        TemplateRenderer.createNotification(context,extras);
+                if (processCleverTapPN) {
+                    if (Utils.isForPushTemplates(extras)) {
+                        TemplateRenderer.createNotification(context, extras);
+                    } else {
+                        CleverTapAPI.createNotification(context, extras);
                     }
-                }else{
-                    //Other providers
                 }
             }
-        }catch (Throwable throwable){
-            PTLog.verbose("Error parsing FCM payload",throwable);
+        } catch (Throwable throwable) {
+            PTLog.verbose("Error parsing FCM payload", throwable);
         }
     }
 }
@@ -150,6 +158,15 @@ Auto carousel is an automatic revolving carousel push notification.
 <br/>(Expanded and unexpanded example)<br/><br/>
 ![Auto Carousel](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/autocarousel.gif)
 
+
+## Manual Carousel Template
+
+This is the manual version of the carousel. The user can navigate to the next image by clicking on the arrows.
+<br/>(Expanded and unexpanded example)<br/><br/>
+![Auto Carousel](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/autocarousel.gif)
+
+If only one image can be downloaded, this template falls back to the Basic Template
+
 ## Rating Template
 
 Rating template lets your users give you feedback, this feedback is captures as an event in CleverTap with the rating as the event property so that it can later be actionable.<br/>(Expanded and unexpanded example)<br/>
@@ -158,8 +175,18 @@ Rating template lets your users give you feedback, this feedback is captures as 
 
 ## Product Catalog Template
 
-Product catalog template lets you show case different images of a product (or a product catalog) before the user can decide to click on the "BUY NOW" option which can take them directly to the product via deep links. 
-<br/>(Expanded and unexpanded example)
+Product catalog template lets you show case different images of a product (or a product catalog) before the user can decide to click on the "BUY NOW" option which can take them directly to the product via deep links. This template has two variants. 
+
+### Vertical View (Expanded and unexpanded example)
+
+![Product Display](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/productdisplay.gif)
+
+### Linear View
+
+Use the following keys to enable linear view variant of this template.
+Template Key | Required | Value
+---:|:---:|:---
+pt_product_display_linear | Required | `true`
 
 ![Product Display](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/productdisplay.gif)
 
@@ -167,14 +194,100 @@ Product catalog template lets you show case different images of a product (or a 
 ## Five Icons Template
 
 Five icons template is a sticky push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
+<br/> If at least 3 icons are not retrieved, the library falls back to the Basic Template.
 
 <img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+
+## Timer Template
+
+This template features a live countdown timer. You can even choose to show different title, message, and background image after the timer expires.  
+<br/> Timer notification is only supported for Android N (7) and above. For OS versions below N, the library falls back to the Basic Template.
+
+<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+
+## Video Template
+
+The Video template plays a video when the user clicks on the notification. 
+<br/> If your app does not include the Exo Player library, the library falls back to the Basic Template.
+
+<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+
+## Zero Bezel Template
+
+The Zero Bezel template ensures that the background image covers the entire available surface area of the push notification. All the text is overlayed on the image.
+<br/> The library will fallback to the Basic Template if the image can't be downloaded.
+
+<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+
+## Input Box Template
+
+The Input Box Template lets you collect any kind of input including feedback from your users. It has four variants.
+
+### With CTAs
+
+The CTA variant of the Input Box Template use action buttons on the notification to collect input from the user. 
+<br/> To set the CTAs use the Advanced Options when setting up the campaign on the dashboard.
+
+<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+
+Template Key | Required | Value
+---:|:---:|:---
+pt_dismiss_on_click | Optional | Dismisses the notification without opening the app
+
+### CTAs with Remind Later option
+
+This variant of the Input Box Template is particularly useful if the user wants to be reminded of the notification after sometime. Clicking on the remind later button raises an event to the user profiles, with a custom user property p2 whose value is a future time stamp. You can have a campaign running on the dashboard that will send a reminded notification at the timestamp in the event property.
+<br/> To set one of the CTAs as a Remind Later button set the action id to `remind` from the dashboard.
+
+Template Key | Required | Value
+---:|:---:|:---
+pt_event_name | Required | for e.g. `Remind Later`,
+pt_event_property_<property_name_1> | Optional | for e.g. `<property_value>`,
+pt_event_property_<property_name_2> | Required | future epoch timestamp. For e.g., `$D_1592503813`
+pt_dismiss_on_click | Optional | Dismisses the notification without opening the app
+
+<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+
+### Reply as an Event
+
+This variant raises an event capturing the user's input as an event property. The app is not opened after the user sends the reply. 
+<br/> To use this variant, use the following values for the keys.
+
+Template Key | Required | Value
+---:|:---:|:---
+pt_input_label | Required | for e.g., `Search`
+pt_input_feedback | Required | for e.g., `Thanks for your feedback`
+pt_event_name | Required | for e.g. `Searched`,
+pt_event_property_<property_name_1> | Optional | for e.g. `<property_value>`,
+pt_event_property_<property_name_2> | Required to capture input | fixed value - `pt_input_reply`
+            
+<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+
+### Reply as an Intent
+
+This variant passes the reply to the app as an Intent. The app can then process the reply and take appropriate actions. 
+
+<br/> To use this variant, use the following values for the keys.
+
+Template Key | Required | Value
+---:|:---:|:---
+pt_input_label | Required | for e.g., `Search`
+pt_input_feedback | Required | for e.g., `Thanks for your feedback`
+pt_input_auto_open | Required | fixed value - `true`
+
+<br/> To capture the input, the app can get the `pt_input_reply` key from the Intent extras.
+
+<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+
+## Cancel Notifications
+
+This template removes all the currently displayed notifications associated with your app. This template can be used to prevent the user from seeing or clicking on a wrongly sent notification.
 
 # Template Keys
 
 [(Back to top)](#table-of-contents)
 
-## Basic Template
+### Basic Template
 
  Basic Template Keys | Required | Description 
  ---:|:---:|:---| 
@@ -192,7 +305,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
  pt_small_icon_clr | Optional | Small Icon Color in HEX
  pt_json | Optional | Above keys in JSON format
  
-## Auto Carousel Template
+### Auto Carousel Template
  
  Auto Carousel Template Keys | Required | Description 
   ---:|:---:|:--- 
@@ -204,7 +317,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
   pt_dl1 | Required | Deep Link (Max one) 
   pt_img1 | Required | Image One
   pt_img2 | Required | Image Two
-  pt_img3 | Required | Image Three
+  pt_img`n` | Optional | Image `N`
   pt_bg | Required | Background Color in HEX
   pt_ico | Optional | Large Icon
   pt_title_clr | Optional | Title Color in HEX
@@ -212,7 +325,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
   pt_small_icon_clr | Optional | Small Icon Color in HEX
   pt_json | Optional | Above keys in JSON format
   
-## Manual Carousel Template
+### Manual Carousel Template
  
  Manual Carousel Template Keys | Required | Description 
   ---:|:---:|:--- 
@@ -223,10 +336,10 @@ Five icons template is a sticky push notification with no text, just 5 icons and
   pt_subtitle | Optional | Subtitle
   pt_dl1 | Required | Deep Link One
   pt_dl2 | Optional | Deep Link Two
-  pt_dl3 | Optional | Deep Link Three 
+  pt_dl`n` | Optional | Deep Link for the nth image 
   pt_img1 | Required | Image One
   pt_img2 | Required | Image Two
-  pt_img3 | Required | Image Three
+  pt_img`n` | Optional | Image `N`
   pt_bg | Required | Background Color in HEX
   pt_ico | Optional | Large Icon
   pt_title_clr | Optional | Title Color in HEX
@@ -234,7 +347,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
   pt_small_icon_clr | Optional | Small Icon Color in HEX
   pt_json | Optional | Above keys in JSON format
   
-## Rating Template
+### Rating Template
 
  Rating Template Keys | Required | Description 
  ---:|:---:|:--- 
@@ -256,7 +369,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
  pt_small_icon_clr | Optional | Small Icon Color in HEX
  pt_json | Optional | Above keys in JSON format
  
-## Product Catalog Template
+### Product Catalog Template
 
  Product Catalog Template Keys | Required | Description 
  ---:|:---:|:--- 
@@ -266,7 +379,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
  pt_subtitle | Optional  | Subtitle
  pt_img1 | Required  | Image One
  pt_img2 | Required  | Image Two
- pt_img3 | Required  | Image Three
+ pt_img3 | Optional  | Image Three
  pt_bt1 | Required  | Big text for first image
  pt_bt2 | Required  | Big text for second image
  pt_bt3 | Required  | Big text for third image
@@ -285,7 +398,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
  pt_small_icon_clr | Optional  | Small Icon Color in HEX
  pt_json | Optional  | Above keys in JSON format
  
-## Five Icons Template
+### Five Icons Template
 
  Five Icons Template Keys | Required | Description 
   ---:|:---:|:--- 
@@ -304,7 +417,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
   pt_small_icon_clr | Optional | Small Icon Color in HEX
   pt_json | Optional | Above keys in JSON format
   
-## Timer Template
+### Timer Template
  
  Timer Template Keys | Required | Description 
   ---:|:---:|:--- 
@@ -326,7 +439,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
   pt_small_icon_clr | Optional | Small Icon Color in HEX
   pt_json | Optional | Above keys in JSON format
   
-## Videp Template
+### Video Template
  
  Video Template Keys | Required | Description 
   ---:|:---:|:--- 
@@ -345,7 +458,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
   pt_ico | Optional | Large Icon
   pt_json | Optional | Above keys in JSON format
   
-## Zero Bezel Template
+### Zero Bezel Template
  
  Zero Bezel Template Keys | Required | Description 
   ---:|:---:|:--- 
@@ -363,7 +476,7 @@ Five icons template is a sticky push notification with no text, just 5 icons and
   pt_ico | Optional | Large Icon
   pt_json | Optional | Above keys in JSON format
   
-## Input Box Template
+### Input Box Template
  
  Input Box Template Keys | Required | Description 
   ---:|:---:|:--- 
@@ -374,10 +487,10 @@ Five icons template is a sticky push notification with no text, just 5 icons and
   pt_subtitle | Optional | Subtitle
   pt_big_img | Required | Image
   pt_big_img_alt | Optional | Image to be shown after feedback is collected
-  wzrk_acts | Optional | Action Buttons; Sample `[{'l':'Yes','id':'2'},{'l':'No','id':'1'},{'l':'Remind Later','id':'remind'}]`
   pt_event_name | Optional | Name of Event to be raised
-  pt_event_property_p1 | Optional | Value for event property p1  
-  pt_event_property_p2 | Optional | Value for event property p2
+  pt_event_property_<property_name_1> | Optional | Value for event property <property_name_1>  
+  pt_event_property_<property_name_2> | Optional | Value for event property <property_name_2>
+  pt_event_property_<property_name_n> | Optional | Value for event property <property_name_n>
   pt_input_label | Optional | Label text to be shown on the input
   pt_input_auto_open | Optional | Auto open the app after feedback
   pt_input_feedback | Optional | Feedback 
@@ -389,17 +502,18 @@ Five icons template is a sticky push notification with no text, just 5 icons and
   pt_dismiss_on_click | Optional | Dismiss notification on click
   pt_json | Optional | Above keys in JSON format
   
-## Cancel Notifications 
- 
- Cancel Notification Keys | Required | Description 
-  :---:|:---:|:---: 
-  pt_id | Required | Value - `pt_cancel`
-  
   
   ### NOTE
-  * (*) - Mandatory
   * `pt_title` and `pt_msg` in all the templates support HTML elements like bold `<b>`, italics `<i>` and underline `<u>`
-
+  
+  ### DEVELOPER NOTE
+  * This library uses local file system to download images for better performance. /data/data/<yourapp>/app_data/\*pt_dir\*. 
+  * These images are stored at a notification id level.
+  * These images are deleted whenever the notification is dismissed or clicked.
+  * A silent notification channel with importance: low is created every time on an interaction with the Rating, Manual Carousel, and Product Catalog templates. This prevents the notification sound from playing when the notification is rerendered.
+  * The silent notification channel is deleted whenever the notification is dismissed or clicked.   
+ 
+ 
 # Sample App
 
 [(Back to top)](#table-of-contents)
