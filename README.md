@@ -31,7 +31,7 @@ implementation 'com.github.bumptech.glide:glide:4.11.0'
 implementation 'com.google.android.exoplayer:exoplayer:2.10.2' // required only if you plan on using the Video Template
 ```
 
-2. Add the Service to your `AndroidManifest.xml`
+2. Add the Services to your `AndroidManifest.xml`
 
 ```xml
 <service
@@ -40,9 +40,17 @@ implementation 'com.google.android.exoplayer:exoplayer:2.10.2' // required only 
         <action android:name="com.google.firebase.MESSAGING_EVENT"/>
     </intent-filter>
 </service>
+
+<service
+    android:name="com.clevertap.pushtemplates.PTNotificationIntentService"
+    android:exported="false">
+        <intent-filter>
+            <action android:name="com.clevertap.PT_PUSH_EVENT"/>
+        </intent-filter>
+</service>
 ```
 
-3. Add the Receiver to your `AndroidManifest.xml`
+3. Add the Receivers to your `AndroidManifest.xml`
 
 ```xml
 <receiver
@@ -68,8 +76,19 @@ implementation 'com.clevertap.android:clevertap-android-sdk:3.8.2'
 implementation 'com.github.bumptech.glide:glide:4.11.0'
 implementation 'com.google.android.exoplayer:exoplayer:2.10.2' // required only if you plan on using the Video Template
 ```
+2. Add the Service to your `AndroidManifest.xml`
 
-2. Add the Receiver to your `AndroidManifest.xml`
+```xml
+<service
+    android:name="com.clevertap.pushtemplates.PTNotificationIntentService"
+    android:exported="false">
+        <intent-filter>
+            <action android:name="com.clevertap.PT_PUSH_EVENT"/>
+        </intent-filter>
+</service>
+```
+
+3. Add the Receiver to your `AndroidManifest.xml`
 
 ```xml
     <receiver
@@ -86,7 +105,7 @@ implementation 'com.google.android.exoplayer:exoplayer:2.10.2' // required only 
 ```
 
 
-3. Add the following code in your custom FirebaseMessageService class
+4. Add the following code in your custom FirebaseMessageService class
 
 ```java
 public class PushTemplateMessagingService extends FirebaseMessagingService {
