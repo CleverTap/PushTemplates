@@ -44,6 +44,7 @@ public class VideoActivity extends AppCompatActivity {
     private long playbackPosition = 0;
     ImageButton openAppButton, closeVideoButton;
     ImageView fullscreenIcon;
+    int portraitWidth;
 
     boolean fullscreen = false;
     private ArrayList<String> deepLinkList;
@@ -66,13 +67,43 @@ public class VideoActivity extends AppCompatActivity {
 
         prepareMedia();
         playMedia();
+        int orientation = getResources().getConfiguration().orientation;
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
 
         openAppButton = findViewById(R.id.pt_open_app_btn);
         closeVideoButton = findViewById(R.id.pt_video_close);
         fullscreenButton = findViewById(R.id.pt_video_fullscreen_btn);
         fullscreenIcon = findViewById(R.id.pt_video_fullscreen_icon);
 
-        setFullScreenLayout(false);
+        if (orientation == 1){
+            //ORIENTATION_PORTRAIT
+            portraitWidth = dm.widthPixels;
+            setFullScreenLayout(false);
+        } else if (orientation == 2){
+            //ORIENTATION_LANDSCAPE
+            fullscreen = true;
+            fullscreenIcon.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.pt_video_fullscreen_close));
+            ViewGroup.LayoutParams params1 = openAppButton.getLayoutParams();
+            ViewGroup.LayoutParams params2 = closeVideoButton.getLayoutParams();
+            params1.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+            params1.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+            params2.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+            params2.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+            openAppButton.setLayoutParams(params1);
+            closeVideoButton.setLayoutParams(params2);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().hide();
+            }
+            portraitWidth = dm.heightPixels;
+            setFullScreenLayout(true);
+        }
+
+
+
 
         setFinishOnTouchOutside(true);
 
@@ -267,10 +298,10 @@ public class VideoActivity extends AppCompatActivity {
         if (isFullScreen) {
             playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.width = (int) (1.3 * dm.widthPixels);
+            params.width = (int) (1.3 * portraitWidth);
         } else {
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.width = (int) (0.9 * dm.widthPixels);
+            params.width = (int) (0.9 * portraitWidth);
         }
         playerView.setLayoutParams(params);
     }
