@@ -778,7 +778,7 @@ public class Utils {
 
         if (fileList != null) {
             for (String fileName : fileList) {
-                if (pId != null && fileName.contains(pId)) {
+                if ((pId != null && fileName.contains(pId)) || fileName.contains("null")) {
                     File fileToBeDeleted = new File(path + "/" + fileName);
                     boolean wasDeleted = fileToBeDeleted.delete();
                     if (!wasDeleted) {
