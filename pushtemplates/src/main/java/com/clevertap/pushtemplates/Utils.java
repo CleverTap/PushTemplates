@@ -660,15 +660,17 @@ public class Utils {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager == null) return;
         NotificationChannel notificationChannel = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) { ;
-            Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/" + Constants.PT_SOUND_FILE_NAME);
-            notificationChannel = new NotificationChannel(Constants.PT_SILENT_CHANNEL_ID, Constants.PT_SILENT_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
-            if (soundUri != null) {
-                notificationChannel.setSound(soundUri, new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build());
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID) == null || (notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID) != null && !isNotificationChannelEnabled(notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID)))) {
+                Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/" + Constants.PT_SOUND_FILE_NAME);
+                notificationChannel = new NotificationChannel(Constants.PT_SILENT_CHANNEL_ID, Constants.PT_SILENT_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
+                if (soundUri != null) {
+                    notificationChannel.setSound(soundUri, new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build());
+                }
+                notificationChannel.setDescription(Constants.PT_SILENT_CHANNEL_DESC);
+                notificationChannel.setShowBadge(false);
+                notificationManager.createNotificationChannel(notificationChannel);
             }
-            notificationChannel.setDescription(Constants.PT_SILENT_CHANNEL_DESC);
-            notificationChannel.setShowBadge(false);
-            notificationManager.createNotificationChannel(notificationChannel);
         }
 
     }
@@ -677,11 +679,18 @@ public class Utils {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager == null) return;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            if (notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID) != null) {
+            if (notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID) != null && isNotificationChannelEnabled(notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID))) {
                 notificationManager.deleteNotificationChannel(Constants.PT_SILENT_CHANNEL_ID);
             }
         }
 
+    }
+
+    static boolean isNotificationChannelEnabled(NotificationChannel channel) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return channel.getImportance() != NotificationManager.IMPORTANCE_NONE;
+        }
+        return false;
     }
 
     static Bitmap setBitMapColour(Context context, int resourceID, String clr)
