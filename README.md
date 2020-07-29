@@ -149,21 +149,21 @@ While creating a Push Notification campaign on CleverTap, just follow the steps 
 
 Basic Template is the basic push notification received on apps.
 <br/>(Expanded and unexpanded example)<br/><br/>
-![Basic with color](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic%20color.png)
+![Basic with color](https://github.com/CleverTap/PushTemplates/blob/readme-images/screens/basic%20color.png)
 
 
 ## Auto Carousel Template
 
 Auto carousel is an automatic revolving carousel push notification.
 <br/>(Expanded and unexpanded example)<br/><br/>
-![Auto Carousel](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/autocarousel.gif)
+![Auto Carousel](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/autocarouselv0.0.3.gif)
 
 
 ## Manual Carousel Template
 
 This is the manual version of the carousel. The user can navigate to the next image by clicking on the arrows.
 <br/>(Expanded and unexpanded example)<br/><br/>
-![Auto Carousel](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/autocarousel.gif)
+![Auto Carousel](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/manual.gif)
 
 If only one image can be downloaded, this template falls back to the Basic Template
 
@@ -171,7 +171,7 @@ If only one image can be downloaded, this template falls back to the Basic Templ
 
 Rating template lets your users give you feedback, this feedback is captures as an event in CleverTap with the rating as the event property so that it can later be actionable.<br/>(Expanded and unexpanded example)<br/>
 
-![Rating](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/rating.gif)
+![Rating](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/rating.gif)
 
 ## Product Catalog Template
 
@@ -179,7 +179,7 @@ Product catalog template lets you show case different images of a product (or a 
 
 ### Vertical View (Expanded and unexpanded example)
 
-![Product Display](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/productdisplay.gif)
+![Product Display](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/productdisplay.gif)
 
 ### Linear View
 
@@ -188,7 +188,7 @@ Template Key | Required | Value
 ---:|:---:|:---
 pt_product_display_linear | Required | `true`
 
-![Product Display](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/productdisplay.gif)
+![Product Display](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/productdisplay.gif)
 
 
 ## Five Icons Template
@@ -196,28 +196,28 @@ pt_product_display_linear | Required | `true`
 Five icons template is a sticky push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
 <br/> If at least 3 icons are not retrieved, the library falls back to the Basic Template.
 
-<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+<img src="https://raw.githubusercontent.com/CleverTap/PushTemplates/Readme_changes/screens/fiveicon.png" width="412" height="100">
 
 ## Timer Template
 
 This template features a live countdown timer. You can even choose to show different title, message, and background image after the timer expires.  
 <br/> Timer notification is only supported for Android N (7) and above. For OS versions below N, the library falls back to the Basic Template.
 
-<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+![Timer](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/timer.gif)
 
 ## Video Template
 
 The Video template plays a video when the user clicks on the notification. 
 <br/> If your app does not include the Exo Player library, the library falls back to the Basic Template.
 
-<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+![Video](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/video.gif)
 
 ## Zero Bezel Template
 
 The Zero Bezel template ensures that the background image covers the entire available surface area of the push notification. All the text is overlayed on the image.
 <br/> The library will fallback to the Basic Template if the image can't be downloaded.
 
-<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+![Zero Bezel](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/zerobezel.gif)
 
 ## Input Box Template
 
@@ -228,7 +228,7 @@ The Input Box Template lets you collect any kind of input including feedback fro
 The CTA variant of the Input Box Template use action buttons on the notification to collect input from the user. 
 <br/> To set the CTAs use the Advanced Options when setting up the campaign on the dashboard.
 
-<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/Readme_changes/screens/fiveicon.png" width="412" height="100">
 
 Template Key | Required | Value
 ---:|:---:|:---
@@ -246,7 +246,7 @@ pt_event_property_<property_name_1> | Optional | for e.g. `<property_value>`,
 pt_event_property_<property_name_2> | Required | future epoch timestamp. For e.g., `$D_1592503813`
 pt_dismiss_on_click | Optional | Dismisses the notification without opening the app
 
-<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/Readme_changes/screens/fiveicon.png" width="412" height="100">
 
 ### Reply as an Event
 
@@ -261,7 +261,7 @@ pt_event_name | Required | for e.g. `Searched`,
 pt_event_property_<property_name_1> | Optional | for e.g. `<property_value>`,
 pt_event_property_<property_name_2> | Required to capture input | fixed value - `pt_input_reply`
             
-<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/Readme_changes/screens/fiveicon.png" width="412" height="100">
 
 ### Reply as an Intent
 
@@ -277,7 +277,7 @@ pt_input_auto_open | Required | fixed value - `true`
 
 <br/> To capture the input, the app can get the `pt_input_reply` key from the Intent extras.
 
-<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/readme-images/screens/fiveicon.png" width="412" height="100">
+<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/Readme_changes/screens/fiveicon.png" width="412" height="100">
 
 ## Cancel Notifications
 
