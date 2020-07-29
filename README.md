@@ -502,12 +502,6 @@ This template removes all the currently displayed notifications associated with 
   pt_dismiss_on_click | Optional | Dismiss notification on click
   pt_json | Optional | Above keys in JSON format
   
-### Cancel Notifications 
- 
- Cancel Notification Keys | Required | Description 
-  :---:|:---:|:---: 
-  pt_id | Required | Value - `pt_cancel`
-  
   
   ### NOTE
   * `pt_title` and `pt_msg` in all the templates support HTML elements like bold `<b>`, italics `<i>` and underline `<u>`
