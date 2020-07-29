@@ -12,6 +12,7 @@ public class Constants {
     public static final String PT_FLIP_INTERVAL = "pt_flip_interval";
     public static final String PT_FLIP_INTERVAL_TIME = "4000";
     public static final String PT_DIR = "pt_dir";
+    public static final String PT_SOUND_FILE_NAME = "pt_silent_sound";
     public static boolean PT_FALLBACK = false;
     public static String PT_IMAGE_PATH_LIST = "" ;
     static final int ONE_SECOND = 1000;
@@ -98,7 +99,7 @@ public class Constants {
     public static final String PT_TYPE = "pt_type";
     public static final String PT_SUBTITLE = "pt_subtitle";
     public static final String PT_DISMISS_INTENT = "pt_dismiss_intent";
-    public static final String PT_SILENT_CHANNEL_ID = "pt_silent_channel_id";
+    public static final String PT_SILENT_CHANNEL_ID = "pt_silent_sound_channel";
     public static final CharSequence PT_SILENT_CHANNEL_NAME = "Silent Channel";
     public static final String PT_SILENT_CHANNEL_DESC = "A channel to silently update notifications";
     public static final String PT_RATING_TOAST = "pt_rating_toast";
