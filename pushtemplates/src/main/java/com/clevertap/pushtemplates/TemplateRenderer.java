@@ -1965,12 +1965,17 @@ public class TemplateRenderer {
             @Override
             public void run() {
                 if (Utils.isNotificationInTray(context, notificationId)) {
-                    if (hasAllBasicNotifKeys()) {
-                        renderBasicTemplateNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
-                    }
+                    asyncHelper.postAsyncSafely("TemplateRenderer#timerRunner", new Runnable() {
+                        @Override
+                        public void run() {
+                            if (hasAllBasicNotifKeys()) {
+                                renderBasicTemplateNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+                            }
+                        }
+                    });
                 }
             }
-        }, delay - 300);
+        }, delay - 100);
 
     }
 
