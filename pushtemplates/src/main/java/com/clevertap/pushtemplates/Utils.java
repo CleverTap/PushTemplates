@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -20,6 +21,8 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.AudioAttributes;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
@@ -657,8 +660,12 @@ public class Utils {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager == null) return;
         NotificationChannel notificationChannel = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            notificationChannel = new NotificationChannel(Constants.PT_SILENT_CHANNEL_ID, Constants.PT_SILENT_CHANNEL_NAME, NotificationManager.IMPORTANCE_MIN);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) { ;
+            Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/" + Constants.PT_SOUND_FILE_NAME);
+            notificationChannel = new NotificationChannel(Constants.PT_SILENT_CHANNEL_ID, Constants.PT_SILENT_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
+            if (soundUri != null) {
+                notificationChannel.setSound(soundUri, new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build());
+            }
             notificationChannel.setDescription(Constants.PT_SILENT_CHANNEL_DESC);
             notificationChannel.setShowBadge(false);
             notificationManager.createNotificationChannel(notificationChannel);
@@ -770,7 +777,14 @@ public class Utils {
     }
 
     static String getImageFileNameFromURL(String URL) {
-        return URL.substring(URL.lastIndexOf("/") + 1, URL.lastIndexOf("."));
+        if (URL.lastIndexOf(".") > URL.lastIndexOf("/") + 1) {
+            return URL.substring(URL.lastIndexOf("/") + 1, URL.lastIndexOf("."));
+        } else if (URL.length() > URL.lastIndexOf("/") + 1) {
+            return URL.substring(URL.lastIndexOf("/") + 1);
+        } else {
+            URL = URL.substring(0, URL.length() - 1);
+            return URL.substring(URL.lastIndexOf("/") + 1);
+        }
     }
 
     static void deleteImageFromStorage(Context context, Intent intent) {
@@ -789,7 +803,7 @@ public class Utils {
                     if (!wasDeleted) {
                         PTLog.debug("Failed to clean up the following file: " + fileName);
                     }
-                } else if (pId == null && fileName.contains("null")){
+                } else if (pId == null && fileName.contains("null")) {
                     fileToBeDeleted = new File(path + "/" + fileName);
                     boolean wasDeleted = fileToBeDeleted.delete();
                     if (!wasDeleted) {
