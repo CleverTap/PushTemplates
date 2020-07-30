@@ -26,6 +26,7 @@ import android.widget.RemoteViews;
 
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.clevertap.android.sdk.CleverTapAPI;
+import com.clevertap.android.sdk.CleverTapInstanceConfig;
 import com.clevertap.android.sdk.Logger;
 
 import org.json.JSONArray;
@@ -121,6 +122,7 @@ public class TemplateRenderer {
     private String pt_subtitle;
     private String pID;
     private int pt_flip_interval;
+    private CleverTapInstanceConfig config;
 
     @SuppressWarnings({"unused"})
     public enum LogLevel {
@@ -162,6 +164,14 @@ public class TemplateRenderer {
     }
 
     private TemplateRenderer(Context context, Bundle extras) {
+        setUp(context,extras,null);
+    }
+
+    private TemplateRenderer(Context context, Bundle extras, CleverTapInstanceConfig config){
+        setUp(context,extras,config);
+    }
+
+    private void setUp(Context context, Bundle extras, CleverTapInstanceConfig config){
         pt_id = extras.getString(Constants.PT_ID);
         String pt_json = extras.getString(Constants.PT_JSON);
         if (pt_id != null) {
@@ -216,6 +226,9 @@ public class TemplateRenderer {
         pt_subtitle = extras.getString(Constants.PT_SUBTITLE);
         pt_flip_interval = Utils.getFlipInterval(extras);
         pID = extras.getString(Constants.WZRK_PUSH_ID);
+        if(config != null){
+            this.config = config;
+        }
         setKeysFromDashboard(extras);
     }
 
@@ -225,6 +238,12 @@ public class TemplateRenderer {
     public static void createNotification(Context context, Bundle extras) {
         PTLog.verbose("Creating notification...");
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
+        templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+    }
+
+    public static void createNotification(Context context, Bundle extras, CleverTapInstanceConfig config) {
+        PTLog.verbose("Creating notification with config...");
+        TemplateRenderer templateRenderer = new TemplateRenderer(context, extras,config);
         templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
 
@@ -663,6 +682,7 @@ public class TemplateRenderer {
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent1.putExtra("click1", true);
             notificationIntent1.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent1.putExtra("config", config);
             notificationIntent1.putExtras(extras);
             PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent1, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star1, contentIntent1);
@@ -670,6 +690,7 @@ public class TemplateRenderer {
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent2.putExtra("click2", true);
             notificationIntent2.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent2.putExtra("config", config);
             notificationIntent2.putExtras(extras);
             PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent2, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star2, contentIntent2);
@@ -677,6 +698,7 @@ public class TemplateRenderer {
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent3.putExtra("click3", true);
             notificationIntent3.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent3.putExtra("config", config);
             notificationIntent3.putExtras(extras);
             PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent3, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star3, contentIntent3);
@@ -684,6 +706,7 @@ public class TemplateRenderer {
             Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent4.putExtra("click4", true);
             notificationIntent4.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent4.putExtra("config", config);
             notificationIntent4.putExtras(extras);
             PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star4, contentIntent4);
@@ -691,6 +714,7 @@ public class TemplateRenderer {
             Intent notificationIntent5 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent5.putExtra("click5", true);
             notificationIntent5.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent5.putExtra("config", config);
             notificationIntent5.putExtras(extras);
             PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent5, 0);
             contentViewRating.setOnClickPendingIntent(R.id.star5, contentIntent5);
@@ -718,7 +742,7 @@ public class TemplateRenderer {
 
             notificationManager.notify(notificationId, notification);
 
-            raiseNotificationViewed(context, extras);
+            Utils.raiseNotificationViewed(context, extras,config);
 
         } catch (Throwable t) {
             PTLog.verbose("Error creating rating notification ", t);
@@ -800,7 +824,7 @@ public class TemplateRenderer {
 
             notificationManager.notify(notificationId, notification);
 
-            raiseNotificationViewed(context, extras);
+            Utils.raiseNotificationViewed(context, extras,config);
         } catch (Throwable t) {
             PTLog.verbose("Error creating auto carousel notification ", t);
         }
@@ -913,7 +937,7 @@ public class TemplateRenderer {
             }
             notificationManager.notify(notificationId, notification);
 
-            raiseNotificationViewed(context, extras);
+            Utils.raiseNotificationViewed(context, extras,config);
         } catch (Throwable t) {
             PTLog.verbose("Error creating Manual carousel notification ", t);
         }
@@ -976,7 +1000,7 @@ public class TemplateRenderer {
 
             notificationManager.notify(notificationId, notification);
 
-            raiseNotificationViewed(context, extras);
+            Utils.raiseNotificationViewed(context, extras,config);
         } catch (Throwable t) {
             PTLog.verbose("Error creating image only notification", t);
         }
@@ -1080,6 +1104,7 @@ public class TemplateRenderer {
             notificationIntent4.putExtra(Constants.PT_REQUEST_CODE_2, requestCode2);
             notificationIntent4.putExtra(Constants.PT_REQUEST_CODE_3, requestCode3);
             notificationIntent4.putExtra(Constants.PT_BUY_NOW, true);
+            notificationIntent4.putExtra("config", config);
             notificationIntent4.putExtras(extras);
             PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
             contentViewBig.setOnClickPendingIntent(R.id.product_action, contentIntent4);
@@ -1183,7 +1208,7 @@ public class TemplateRenderer {
             }
             notificationManager.notify(notificationId, notification);
 
-            raiseNotificationViewed(context, extras);
+            Utils.raiseNotificationViewed(context, extras,config);
         } catch (Throwable t) {
             PTLog.verbose("Error creating Product Display Notification ", t);
         }
@@ -1306,7 +1331,7 @@ public class TemplateRenderer {
             }
             notificationManager.notify(notificationId, notification);
 
-            raiseNotificationViewed(context, extras);
+            Utils.raiseNotificationViewed(context, extras,config);
         } catch (Throwable t) {
             PTLog.verbose("Error creating image only notification", t);
         }
@@ -1388,7 +1413,7 @@ public class TemplateRenderer {
             } else {
                 notificationManager.notify(notificationId, notification);
 
-                raiseNotificationViewed(context, extras);
+                Utils.raiseNotificationViewed(context, extras,config);
             }
         } catch (Throwable t) {
             PTLog.verbose("Error creating image only notification", t);
@@ -1479,7 +1504,7 @@ public class TemplateRenderer {
 
             notificationManager.notify(notificationId, notification);
 
-            raiseNotificationViewed(context, extras);
+            Utils.raiseNotificationViewed(context, extras,config);
 
             timerRunner(context, extras, notificationId, timer_end);
 
@@ -1555,7 +1580,7 @@ public class TemplateRenderer {
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
 
-            raiseNotificationViewed(context, extras);
+            Utils.raiseNotificationViewed(context, extras,config);
 
         } catch (Throwable t) {
             PTLog.verbose("Error creating Input Box notification ", t);
@@ -1613,7 +1638,7 @@ public class TemplateRenderer {
 
             notificationManager.notify(notificationId, notification);
 
-            raiseNotificationViewed(context, extras);
+            Utils.raiseNotificationViewed(context, extras,config);
         } catch (Throwable t) {
             PTLog.verbose("Error creating image only notification", t);
         }
@@ -1682,13 +1707,6 @@ public class TemplateRenderer {
             Utils.loadImageURLIntoRemoteView(R.id.large_icon, pt_large_icon, contentView);
         } else {
             contentView.setViewVisibility(R.id.large_icon, View.GONE);
-        }
-    }
-
-    private void raiseNotificationViewed(Context context, Bundle extras) {
-        CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
-        if (instance != null) {
-            instance.pushNotificationViewedEvent(extras);
         }
     }
 
@@ -1947,12 +1965,17 @@ public class TemplateRenderer {
             @Override
             public void run() {
                 if (Utils.isNotificationInTray(context, notificationId)) {
-                    if (hasAllBasicNotifKeys()) {
-                        renderBasicTemplateNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
-                    }
+                    asyncHelper.postAsyncSafely("TemplateRenderer#timerRunner", new Runnable() {
+                        @Override
+                        public void run() {
+                            if (hasAllBasicNotifKeys()) {
+                                renderBasicTemplateNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+                            }
+                        }
+                    });
                 }
             }
-        }, delay - 300);
+        }, delay - 100);
 
     }
 

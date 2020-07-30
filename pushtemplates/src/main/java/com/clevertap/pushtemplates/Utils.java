@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -20,6 +21,8 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.AudioAttributes;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
@@ -35,6 +38,7 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
 import com.clevertap.android.sdk.CleverTapAPI;
+import com.clevertap.android.sdk.CleverTapInstanceConfig;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -612,11 +616,30 @@ public class Utils {
         return false;
     }
 
-    static void raiseNotificationClicked(Context context, Bundle extras) {
-        CleverTapAPI instance = CleverTapAPI.getDefaultInstance(context);
+    static void raiseNotificationClicked(Context context, Bundle extras, CleverTapInstanceConfig config) {
+        CleverTapAPI instance;
+        if(config != null){
+            instance = CleverTapAPI.instanceWithConfig(context,config);
+        }else{
+            instance = CleverTapAPI.getDefaultInstance(context);
+        }
         if (instance != null) {
             instance.pushNotificationClickedEvent(extras);
         }
+
+    }
+
+    static void raiseNotificationViewed(Context context, Bundle extras, CleverTapInstanceConfig config) {
+        CleverTapAPI instance;
+        if(config != null){
+            instance = CleverTapAPI.instanceWithConfig(context,config);
+        }else{
+            instance = CleverTapAPI.getDefaultInstance(context);
+        }
+        if (instance != null) {
+            instance.pushNotificationViewedEvent(extras);
+        }
+
     }
 
     static JSONArray getActionKeys(Bundle extras) {
@@ -658,10 +681,16 @@ public class Utils {
         if (notificationManager == null) return;
         NotificationChannel notificationChannel = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            notificationChannel = new NotificationChannel(Constants.PT_SILENT_CHANNEL_ID, Constants.PT_SILENT_CHANNEL_NAME, NotificationManager.IMPORTANCE_MIN);
-            notificationChannel.setDescription(Constants.PT_SILENT_CHANNEL_DESC);
-            notificationChannel.setShowBadge(false);
-            notificationManager.createNotificationChannel(notificationChannel);
+            if (notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID) == null || (notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID) != null && !isNotificationChannelEnabled(notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID)))) {
+                Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/" + Constants.PT_SOUND_FILE_NAME);
+                notificationChannel = new NotificationChannel(Constants.PT_SILENT_CHANNEL_ID, Constants.PT_SILENT_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
+                if (soundUri != null) {
+                    notificationChannel.setSound(soundUri, new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build());
+                }
+                notificationChannel.setDescription(Constants.PT_SILENT_CHANNEL_DESC);
+                notificationChannel.setShowBadge(false);
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
         }
 
     }
@@ -670,11 +699,18 @@ public class Utils {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager == null) return;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            if (notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID) != null) {
+            if (notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID) != null && isNotificationChannelEnabled(notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID))) {
                 notificationManager.deleteNotificationChannel(Constants.PT_SILENT_CHANNEL_ID);
             }
         }
 
+    }
+
+    static boolean isNotificationChannelEnabled(NotificationChannel channel) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return channel.getImportance() != NotificationManager.IMPORTANCE_NONE;
+        }
+        return false;
     }
 
     static Bitmap setBitMapColour(Context context, int resourceID, String clr)
@@ -770,7 +806,14 @@ public class Utils {
     }
 
     static String getImageFileNameFromURL(String URL) {
-        return URL.substring(URL.lastIndexOf("/") + 1, URL.lastIndexOf("."));
+        if (URL.lastIndexOf(".") > URL.lastIndexOf("/") + 1) {
+            return URL.substring(URL.lastIndexOf("/") + 1, URL.lastIndexOf("."));
+        } else if (URL.length() > URL.lastIndexOf("/") + 1) {
+            return URL.substring(URL.lastIndexOf("/") + 1);
+        } else {
+            URL = URL.substring(0, URL.length() - 1);
+            return URL.substring(URL.lastIndexOf("/") + 1);
+        }
     }
 
     static void deleteImageFromStorage(Context context, Intent intent) {
@@ -789,7 +832,7 @@ public class Utils {
                     if (!wasDeleted) {
                         PTLog.debug("Failed to clean up the following file: " + fileName);
                     }
-                } else if (pId == null && fileName.contains("null")){
+                } else if (pId == null && fileName.contains("null")) {
                     fileToBeDeleted = new File(path + "/" + fileName);
                     boolean wasDeleted = fileToBeDeleted.delete();
                     if (!wasDeleted) {
