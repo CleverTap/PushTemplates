@@ -2,6 +2,7 @@ package com.clevertap.pushtemplates;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -16,7 +17,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
@@ -34,7 +34,7 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 
-public class VideoActivity extends AppCompatActivity {
+public class VideoActivity extends Activity {
     Bundle extras;
     private SimpleExoPlayer player;
     PlayerView playerView;
@@ -57,11 +57,6 @@ public class VideoActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.video);
         context = VideoActivity.this;
-        try {
-            this.getSupportActionBar().hide();
-        } catch (NullPointerException e) {
-            PTLog.debug("NPE during hiding action bar");
-        }
         extras = getIntent().getExtras();
         deepLinkList = Utils.getDeepLinkListFromExtras(extras);
 
@@ -95,9 +90,6 @@ public class VideoActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().hide();
-            }
             portraitWidth = dm.heightPixels;
             setFullScreenLayout(true);
         }
@@ -155,9 +147,6 @@ public class VideoActivity extends AppCompatActivity {
                     closeVideoButton.setLayoutParams(params2);
                     playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
                     getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-                    if (getSupportActionBar() != null) {
-                        getSupportActionBar().hide();
-                    }
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                     setFullScreenLayout(false);
                     fullscreen = false;
@@ -175,9 +164,6 @@ public class VideoActivity extends AppCompatActivity {
                     getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-                    if (getSupportActionBar() != null) {
-                        getSupportActionBar().hide();
-                    }
                     DisplayMetrics metrics = new DisplayMetrics();
                     getWindowManager().getDefaultDisplay().getMetrics(metrics);
                     setFullScreenLayout(true);
@@ -199,7 +185,7 @@ public class VideoActivity extends AppCompatActivity {
         playerControlView.show();
 
         playerView.setUseController(true);
-        playerView.setControllerAutoShow(true);
+        playerView.setControllerAutoShow(false);
         playerView.setShowBuffering(PlayerView.SHOW_BUFFERING_ALWAYS);
 
         initializePlayer(extras.getString(Constants.PT_VIDEO_URL));
