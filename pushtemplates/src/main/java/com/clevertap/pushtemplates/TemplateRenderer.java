@@ -24,8 +24,6 @@ import android.text.Html;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.clevertap.android.sdk.CTPushNotificationReceiver;
-import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.CleverTapInstanceConfig;
 import com.clevertap.android.sdk.Logger;
 
@@ -241,6 +239,7 @@ public class TemplateRenderer {
         templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
 
+    @SuppressWarnings("unused")
     public static void createNotification(Context context, Bundle extras, CleverTapInstanceConfig config) {
         PTLog.verbose("Creating notification with config...");
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras,config);
@@ -643,6 +642,7 @@ public class TemplateRenderer {
     }
 
     private void renderRatingNotification(Context context, Bundle extras, int notificationId) {
+        PTLog.debug("Rendering Rating Template Push Notification with extras - "+ extras.toString());
         try {
             contentViewRating = new RemoteViews(context.getPackageName(), R.layout.rating);
             setCustomContentViewBasicKeys(contentViewRating, context);
@@ -750,6 +750,7 @@ public class TemplateRenderer {
     }
 
     private void renderAutoCarouselNotification(Context context, Bundle extras, int notificationId) {
+        PTLog.debug("Rendering Auto Carousel Template Push Notification with extras - "+ extras.toString());
         try {
             notificationId = setNotificationId(notificationId);
 
@@ -779,7 +780,7 @@ public class TemplateRenderer {
 
             setCustomContentViewViewFlipperInterval(contentViewCarousel, pt_flip_interval);
 
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
 
             PendingIntent pIntent;
 
@@ -835,6 +836,7 @@ public class TemplateRenderer {
     }
 
     private void renderManualCarouselNotification(Context context, Bundle extras, int notificationId) {
+        PTLog.debug("Rendering Manual Carousel Template Push Notification with extras - "+ extras.toString());
         try {
             notificationId = setNotificationId(notificationId);
 
@@ -944,6 +946,7 @@ public class TemplateRenderer {
     }
 
     private void renderBasicTemplateNotification(Context context, Bundle extras, int notificationId) {
+        PTLog.debug("Rendering Basic Template Push Notification with extras - "+ extras.toString());
         try {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
             setCustomContentViewBasicKeys(contentViewBig, context);
@@ -971,7 +974,7 @@ public class TemplateRenderer {
 
             notificationId = setNotificationId(notificationId);
 
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
 
             PendingIntent pIntent;
 
@@ -1007,6 +1010,7 @@ public class TemplateRenderer {
     }
 
     private void renderProductDisplayNotification(Context context, Bundle extras, int notificationId) {
+        PTLog.debug("Rendering Product Display Template Push Notification with extras - "+ extras.toString());
         try {
             boolean isLinear = false;
 
@@ -1110,15 +1114,15 @@ public class TemplateRenderer {
             contentViewBig.setOnClickPendingIntent(R.id.product_action, contentIntent4);
 
             if (isLinear) {
-                Intent notificationSmallIntent1 = new Intent(context, CTPushNotificationReceiver.class);
+                Intent notificationSmallIntent1 = new Intent(context, PTPushNotificationReceiver.class);
                 PendingIntent contentSmallIntent1 = setPendingIntent(context, notificationId, extras, notificationSmallIntent1, deepLinkList.get(0));
                 contentViewSmall.setOnClickPendingIntent(R.id.small_image1_collapsed, contentSmallIntent1);
 
-                Intent notificationSmallIntent2 = new Intent(context, CTPushNotificationReceiver.class);
+                Intent notificationSmallIntent2 = new Intent(context, PTPushNotificationReceiver.class);
                 PendingIntent contentSmallIntent2 = setPendingIntent(context, notificationId, extras, notificationSmallIntent2, deepLinkList.get(1));
                 contentViewSmall.setOnClickPendingIntent(R.id.small_image2_collapsed, contentSmallIntent2);
 
-                Intent notificationSmallIntent3 = new Intent(context, CTPushNotificationReceiver.class);
+                Intent notificationSmallIntent3 = new Intent(context, PTPushNotificationReceiver.class);
                 PendingIntent contentSmallIntent3 = setPendingIntent(context, notificationId, extras, notificationSmallIntent3, deepLinkList.get(2));
                 contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentSmallIntent3);
             }
@@ -1216,6 +1220,7 @@ public class TemplateRenderer {
     }
 
     private void renderFiveIconNotification(Context context, Bundle extras, int notificationId) {
+        PTLog.debug("Rendering Five Icon Template Push Notification with extras - "+ extras.toString());
         try {
 
             if (pt_title == null || pt_title.isEmpty()) {
@@ -1277,7 +1282,7 @@ public class TemplateRenderer {
             contentFiveCTAs.setOnClickPendingIntent(R.id.close, contentIntent6);
 
 
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
 
             PendingIntent pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
 
@@ -1339,6 +1344,7 @@ public class TemplateRenderer {
     }
 
     private void renderZeroBezelNotification(Context context, Bundle extras, int notificationId) {
+        PTLog.debug("Rendering Zero Bezel Template Push Notification with extras - "+ extras.toString());
         try {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.zero_bezel);
             setCustomContentViewBasicKeys(contentViewBig, context);
@@ -1374,7 +1380,7 @@ public class TemplateRenderer {
 
             notificationId = setNotificationId(notificationId);
 
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
 
             PendingIntent pIntent;
 
@@ -1422,6 +1428,7 @@ public class TemplateRenderer {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void renderTimerNotification(final Context context, Bundle extras, int notificationId) {
+        PTLog.debug("Rendering Timer Template Push Notification with extras - "+ extras.toString());
         try {
 
             contentViewTimer = new RemoteViews(context.getPackageName(), R.layout.timer);
@@ -1476,7 +1483,7 @@ public class TemplateRenderer {
 
             notificationId = setNotificationId(notificationId);
 
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
 
             PendingIntent pIntent;
 
@@ -1514,12 +1521,13 @@ public class TemplateRenderer {
     }
 
     private void renderInputBoxNotification(final Context context, Bundle extras, int notificationId) {
+        PTLog.debug("Rendering Input Box Template Push Notification with extras - "+ extras.toString());
         try {
             //Fetch Notif ID
             notificationId = setNotificationId(notificationId);
 
             //Set launchIntent to receiver
-            Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
 
             PendingIntent pIntent;
 
@@ -1552,6 +1560,7 @@ public class TemplateRenderer {
                 Intent replyIntent = new Intent(context, PushTemplateReceiver.class);
                 replyIntent.putExtra(Constants.PT_INPUT_FEEDBACK, pt_input_feedback);
                 replyIntent.putExtra(Constants.PT_INPUT_AUTO_OPEN, pt_input_auto_open);
+                replyIntent.putExtra("config",config);
 
                 PendingIntent replyPendingIntent;
                 if (deepLinkList != null) {
@@ -1588,6 +1597,7 @@ public class TemplateRenderer {
     }
 
     private void renderVideoNotification(final Context context, Bundle extras, int notificationId) {
+        PTLog.debug("Rendering Video Template Push Notification with extras - "+ extras.toString());
         try {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
             setCustomContentViewBasicKeys(contentViewBig, context);

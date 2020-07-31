@@ -13,13 +13,13 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.core.content.ContextCompat;
 
-import com.clevertap.android.sdk.CTPushNotificationReceiver;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
@@ -50,7 +50,7 @@ public class VideoActivity extends Activity {
     private ArrayList<String> deepLinkList;
     private Context context;
 
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "SuspiciousNameCombination"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +65,7 @@ public class VideoActivity extends Activity {
         int orientation = getResources().getConfiguration().orientation;
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         openAppButton = findViewById(R.id.pt_open_app_btn);
         closeVideoButton = findViewById(R.id.pt_video_close);
@@ -94,15 +95,12 @@ public class VideoActivity extends Activity {
             setFullScreenLayout(true);
         }
 
-
-
-
         setFinishOnTouchOutside(true);
 
         openAppButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent launchIntent = new Intent(context, CTPushNotificationReceiver.class);
+                Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
                 if (deepLinkList != null) {
                     launchIntent.putExtras(extras);
                     launchIntent.putExtra(Constants.PT_NOTIF_ID, Constants.EMPTY_NOTIFICATION_ID);
@@ -122,7 +120,6 @@ public class VideoActivity extends Activity {
             }
         });
 
-
         closeVideoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,8 +127,7 @@ public class VideoActivity extends Activity {
                 finish();
             }
         });
-
-
+        
         fullscreenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

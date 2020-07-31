@@ -154,7 +154,8 @@ public class Utils {
 
             // might be -1: server did not report the length
             long fileLength = connection.getContentLength();
-            boolean isGZipEncoded = (connection.getContentEncoding() != null && connection.getContentEncoding().contains("gzip"));
+            boolean isGZipEncoded = (connection.getContentEncoding() != null &&
+                    connection.getContentEncoding().contains("gzip"));
 
             // download the file
             InputStream input = connection.getInputStream();
@@ -439,40 +440,49 @@ public class Utils {
         return Integer.parseInt(val != null ? val : "-1");
     }
 
-    static int getInt(String data) {
-        return Integer.parseInt(data);
-    }
-
     static void setPackageNameFromResolveInfoList(Context context, Intent launchIntent) {
         List<ResolveInfo> resolveInfoList = context.getPackageManager().queryIntentActivities(launchIntent, 0);
-        if (resolveInfoList != null) {
-            String appPackageName = context.getPackageName();
-            for (ResolveInfo resolveInfo : resolveInfoList) {
-                if (appPackageName.equals(resolveInfo.activityInfo.packageName)) {
-                    launchIntent.setPackage(appPackageName);
-                    break;
-                }
+        String appPackageName = context.getPackageName();
+        for (ResolveInfo resolveInfo : resolveInfoList) {
+            if (appPackageName.equals(resolveInfo.activityInfo.packageName)) {
+                launchIntent.setPackage(appPackageName);
+                break;
             }
         }
     }
 
-    static void raiseCleverTapEvent(CleverTapAPI cleverTapAPI, Bundle extras) {
+    static void raiseCleverTapEvent(Context context, CleverTapInstanceConfig config, Bundle extras) {
+
+        CleverTapAPI instance;
+        if(config != null){
+            instance = CleverTapAPI.instanceWithConfig(context,config);
+        }else{
+            instance = CleverTapAPI.getDefaultInstance(context);
+        }
 
         HashMap<String, Object> eProps;
         eProps = getEventPropertiesFromExtras(extras);
 
         String eName = getEventNameFromExtras(extras);
 
-        if (eName != null || !eName.isEmpty()) {
-            if (eProps != null)
-                cleverTapAPI.pushEvent(eName, eProps);
-            else
-                cleverTapAPI.pushEvent(eName);
+        if (eName != null && !eName.isEmpty()) {
+            if (instance != null) {
+                instance.pushEvent(eName, eProps);
+            }else{
+                PTLog.debug("CleverTap instance is NULL, not raising the event");
+            }
         }
 
     }
 
-    static void raiseCleverTapEvent(CleverTapAPI cleverTapAPI, Bundle extras, String key) {
+    static void raiseCleverTapEvent(Context context, CleverTapInstanceConfig config, Bundle extras, String key) {
+
+        CleverTapAPI instance;
+        if(config != null){
+            instance = CleverTapAPI.instanceWithConfig(context,config);
+        }else{
+            instance = CleverTapAPI.getDefaultInstance(context);
+        }
 
         HashMap<String, Object> eProps;
         String value = extras.getString(key);
@@ -481,11 +491,12 @@ public class Utils {
 
         String eName = getEventNameFromExtras(extras);
 
-        if (eName != null || !eName.isEmpty()) {
-            if (eProps != null)
-                cleverTapAPI.pushEvent(eName, eProps);
-            else
-                cleverTapAPI.pushEvent(eName);
+        if (eName != null && !eName.isEmpty()) {
+            if (instance != null) {
+                instance.pushEvent(eName, eProps);
+            }else{
+                PTLog.debug("CleverTap instance is NULL, not raising the event");
+            }
         }
 
     }
@@ -506,7 +517,7 @@ public class Utils {
         String[] eProp;
         for (String key : extras.keySet()) {
             if (key.contains(Constants.PT_EVENT_PROPERTY_KEY)) {
-                if (extras.getString(key) != null || !extras.getString(key).isEmpty()) {
+                if (extras.getString(key) != null && !extras.getString(key).isEmpty()) {
                     if (key.contains(Constants.PT_EVENT_PROPERTY_SEPERATOR)) {
                         eProp = key.split(Constants.PT_EVENT_PROPERTY_SEPERATOR);
                         if (extras.getString(key).equalsIgnoreCase(pkey)) {
@@ -534,7 +545,7 @@ public class Utils {
         String[] eProp;
         for (String key : extras.keySet()) {
             if (key.contains(Constants.PT_EVENT_PROPERTY_KEY)) {
-                if (extras.getString(key) != null || !extras.getString(key).isEmpty()) {
+                if (extras.getString(key) != null && !extras.getString(key).isEmpty()) {
                     if (key.contains(Constants.PT_EVENT_PROPERTY_SEPERATOR)) {
                         eProp = key.split(Constants.PT_EVENT_PROPERTY_SEPERATOR);
                         eProps.put(eProp[1], extras.getString(key));
@@ -593,7 +604,7 @@ public class Utils {
         return ids;
     }
 
-    @SuppressWarnings("SameParameterValue")
+    @SuppressWarnings({"SameParameterValue", "rawtypes"})
     static boolean isServiceAvailable(Context context, Class clazz) {
         if (clazz == null) return false;
 
@@ -745,11 +756,7 @@ public class Utils {
     public static int getFlipInterval(Bundle extras) {
         String interval = extras.getString(Constants.PT_FLIP_INTERVAL, Constants.PT_FLIP_INTERVAL_TIME);
         int t = Integer.parseInt(interval);
-        if (t < Integer.parseInt(Constants.PT_FLIP_INTERVAL_TIME)) {
-            return Integer.parseInt(Constants.PT_FLIP_INTERVAL_TIME);
-        } else {
-            return t;
-        }
+        return Math.max(t, Integer.parseInt(Constants.PT_FLIP_INTERVAL_TIME));
 
     }
 

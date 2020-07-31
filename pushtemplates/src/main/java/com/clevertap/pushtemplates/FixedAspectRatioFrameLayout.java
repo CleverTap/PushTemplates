@@ -2,6 +2,7 @@ package com.clevertap.pushtemplates;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 

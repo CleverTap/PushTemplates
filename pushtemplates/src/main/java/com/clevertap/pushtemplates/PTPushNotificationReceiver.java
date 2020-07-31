@@ -16,11 +16,8 @@ public class PTPushNotificationReceiver extends CTPushNotificationReceiver {
             @Override
             public void run() {
                 try {
-
                     Utils.deleteImageFromStorage(context, intent);
-
                     Utils.deleteSilentNotificationChannel(context);
-
                 } catch (Throwable t) {
                     PTLog.verbose("Couldn't clean up images and/or couldn't delete silent notification channel: " + t.getLocalizedMessage());
                 }

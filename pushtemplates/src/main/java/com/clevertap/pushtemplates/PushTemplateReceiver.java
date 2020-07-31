@@ -279,6 +279,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         Intent dismissIntent = new Intent(context, PushTemplateReceiver.class);
         PendingIntent dIntent;
         dIntent = setDismissIntent(context, extras, dismissIntent);
+        config = extras.getParcelable("config");
 
         if (remoteInput != null) {
             //Fetch Reply
@@ -291,7 +292,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
                 PTLog.verbose("Processing Input from Input Template");
                 extras.putString(Constants.PT_INPUT_KEY, reply.toString());
-                Utils.raiseCleverTapEvent(cleverTapAPI, extras, Constants.PT_INPUT_KEY);
+                Utils.raiseCleverTapEvent(context, config, extras, Constants.PT_INPUT_KEY);
                 //Update the notification to show that the reply was received.
                 final NotificationCompat.Builder repliedNotification;
                 if (requiresChannelId) {

@@ -36,7 +36,6 @@
             android:layout_gravity="start"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:contentDescription="TODO"
             android:scaleType="fitXY"
             android:src="@drawable/pt_video_close" />
 
