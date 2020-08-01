@@ -250,7 +250,7 @@ The Input Box Template lets you collect any kind of input including feedback fro
 The CTA variant of the Input Box Template use action buttons on the notification to collect input from the user. 
 <br/> To set the CTAs use the Advanced Options when setting up the campaign on the dashboard.
 
-<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/Readme_changes/screens/fiveicon.png" width="412" height="100">
+![Input_Box_CTAs](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/inputctabasicdismiss.gif)
 
 Template Key | Required | Value
 ---:|:---:|:---
@@ -268,7 +268,7 @@ pt_event_property_<property_name_1> | Optional | for e.g. `<property_value>`,
 pt_event_property_<property_name_2> | Required | future epoch timestamp. For e.g., `$D_1592503813`
 pt_dismiss_on_click | Optional | Dismisses the notification without opening the app
 
-<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/Readme_changes/screens/fiveicon.png" width="412" height="100">
+![Input_Box_CTA_Remind](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/inputCtaRemind.gif)
 
 ### Reply as an Event
 
@@ -283,7 +283,7 @@ pt_event_name | Required | for e.g. `Searched`,
 pt_event_property_<property_name_1> | Optional | for e.g. `<property_value>`,
 pt_event_property_<property_name_2> | Required to capture input | fixed value - `pt_input_reply`
             
-<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/Readme_changes/screens/fiveicon.png" width="412" height="100">
+![Input_Box_CTA_No_Open](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/inputCtaNoOpen.gif)
 
 ### Reply as an Intent
 
@@ -299,7 +299,7 @@ pt_input_auto_open | Required | fixed value - `true`
 
 <br/> To capture the input, the app can get the `pt_input_reply` key from the Intent extras.
 
-<img src="https://raw.githubusercontent.com/darshanclevertap/PushTemplates/Readme_changes/screens/fiveicon.png" width="412" height="100">
+![Input_Box_CTA_With_Open](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/inputCtaWithOpen.gif)
 
 ## Cancel Notifications
 
