@@ -6,12 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import com.bumptech.glide.util.Util;
-import com.clevertap.android.sdk.CleverTapAPI;
-
-import org.json.JSONArray;
-
+import com.clevertap.android.sdk.CleverTapInstanceConfig;
 
 public class PTNotificationIntentService extends IntentService {
 
@@ -43,15 +38,15 @@ public class PTNotificationIntentService extends IntentService {
             String actionID = extras.getString(Constants.PT_ACTION_ID);
             String dl = extras.getString("dl");
             String dismissOnClick = extras.getString(Constants.PT_DISMISS_ON_CLICK);
-
+            CleverTapInstanceConfig config = extras.getParcelable("config");
             Context context = getApplicationContext();
 
             if (dismissOnClick!=null)
                 if (dismissOnClick.equalsIgnoreCase("true")){
                     if(actionID != null && actionID.contains("remind")){
-                        Utils.raiseCleverTapEvent(CleverTapAPI.getDefaultInstance(context),extras);
+                        Utils.raiseCleverTapEvent(context, config, extras);
                     }
-                    Utils.cancelNotification(context,notificationId);
+                    Utils.cancelNotification(context, notificationId);
                     return;
                 }
             Intent launchIntent;

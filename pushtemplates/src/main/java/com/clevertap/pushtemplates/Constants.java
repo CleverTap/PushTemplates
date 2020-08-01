@@ -1,11 +1,8 @@
 package com.clevertap.pushtemplates;
 
-import java.util.ArrayList;
-
 @SuppressWarnings("WeakerAccess")
 public class Constants {
     public static final String LOG_TAG = "PTLog";
-    public static final ArrayList<Integer> PT_DO_NOT_EDIT_LIST = new ArrayList<>() ;
     public static final String PT_MANUAL_CAROUSEL_CURRENT = "pt_manual_carousel_current";
     public static final String PT_IMAGE_LIST = "pt_image_list";
     public static final String PT_DEEPLINK_LIST = "pt_deeplink_list";
@@ -63,8 +60,6 @@ public class Constants {
     public static final String PT_TITLE_ALT = "pt_title_alt";
     public static final String PT_MSG_ALT = "pt_msg_alt";
     public static final String PT_PRODUCT_DISPLAY_LINEAR = "pt_product_display_linear";
-    public static final int PT_VIDEO_WIDTH = 350;
-    public static final int PT_VIDEO_HEIGHT = 210;
     public static final String WZRK_CLR = "wzrk_clr";
     public static final String PT_PRODUCT_DISPLAY_ACTION_TEXT_COLOUR = "pt_product_display_action_text_clr";
     public static final String PT_SMALL_ICON_COLOUR = "pt_small_icon_clr";

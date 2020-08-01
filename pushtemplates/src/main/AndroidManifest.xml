@@ -2,9 +2,7 @@
     package="com.clevertap.pushtemplates" >
     <application
         android:allowBackup="true"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        >
+        android:supportsRtl="true">
         <activity android:name="com.clevertap.pushtemplates.VideoActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:resizeableActivity="true"

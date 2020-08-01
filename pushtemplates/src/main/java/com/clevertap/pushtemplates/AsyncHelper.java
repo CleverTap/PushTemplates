@@ -3,7 +3,6 @@ package com.clevertap.pushtemplates;
 import android.os.Handler;
 import android.os.Looper;
 
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

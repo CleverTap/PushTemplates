@@ -12,6 +12,7 @@ This library is in public beta, for any issues, queries and concerns please open
 - [Dashboard Usage](#dashboard-usage)
 - [Template Types](#template-types)
 - [Template Keys](#template-keys)
+- [Developer Notes](#developer-notes)
 - [Sample App](#sample-app)
 - [Contributing](#contributing)
 - [License](#license)
@@ -124,10 +125,13 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
                 }
 
                 boolean processCleverTapPN = Utils.isPNFromCleverTap(extras);
-
+                //If you are using CleverTapInstanceConfig to create the CleverTap instance use the commented code
+                //CleverTapInstanceConfig config = CleverTapInstanceConfig.createInstance(getApplicationContext(),
+                //        "YOUR_ACCOUNT_ID","YOUR_ACCOUNT_TOKEN","YOUR_ACCOUNT_REGION");
                 if (processCleverTapPN) {
                     if (Utils.isForPushTemplates(extras)) {
                         TemplateRenderer.createNotification(context, extras);
+                        //TemplateRenderer.createNotification(context, extras, config);
                     } else {
                         CleverTapAPI.createNotification(context, extras);
                     }
@@ -158,7 +162,6 @@ While creating a Push Notification campaign on CleverTap, just follow the steps 
 ![KVs in JSON](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/json.png)
 
 4. Send a test push and schedule!
-
 
 # Template Types
 
@@ -525,13 +528,16 @@ This template removes all the currently displayed notifications associated with 
   ### NOTE
   * `pt_title` and `pt_msg` in all the templates support HTML elements like bold `<b>`, italics `<i>` and underline `<u>`
   
-  ### DEVELOPER NOTE
-  * This library uses local file system to download images for better performance. /data/data/<yourapp>/app_data/\*pt_dir\*. 
+# Developer Notes
+  
+[(Back to top)](#table-of-contents)
+
+  * This library uses local file system to download images for better performance. `/data/data/your_app_name/app_pt_dir`. 
   * These images are stored at a notification id level.
   * These images are deleted whenever the notification is dismissed or clicked.
-  * A silent notification channel with importance: low is created every time on an interaction with the Rating, Manual Carousel, and Product Catalog templates. This prevents the notification sound from playing when the notification is rerendered.
+  * Using images of 3 MB or lower are recommended for better performance.
+  * A silent notification channel with importance: `low` is created every time on an interaction with the Rating, Manual Carousel, and Product Catalog templates. This prevents the notification sound from playing when the notification is re-rendered.
   * The silent notification channel is deleted whenever the notification is dismissed or clicked.   
- 
  
 # Sample App
 
