@@ -210,7 +210,7 @@ Template Key | Required | Value
 ---:|:---:|:---
 pt_product_display_linear | Required | `true`
 
-![Product Display](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/productdisplay.gif)
+![Product Display](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/proddisplaylinear.gif)
 
 
 ## Five Icons Template
