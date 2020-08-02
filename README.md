@@ -232,7 +232,7 @@ This template features a live countdown timer. You can even choose to show diffe
 The Video template plays a video when the user clicks on the notification. 
 <br/> If your app does not include the Exo Player library, the library falls back to the Basic Template.
 
-![Video](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/videopn3.gif)
+![Video](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/videopn3.gif =400x300)
 
 ## Zero Bezel Template
 
