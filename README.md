@@ -304,10 +304,6 @@ pt_input_auto_open | Required | fixed value - `true`
 
 ![Input_Box_CTA_With_Open](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/inputCtaWithOpen.gif)
 
-## Cancel Notifications
-
-This template removes all the currently displayed notifications associated with your app. This template can be used to prevent the user from seeing or clicking on a wrongly sent notification.
-
 # Template Keys
 
 [(Back to top)](#table-of-contents)
