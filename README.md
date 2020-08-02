@@ -151,15 +151,15 @@ While creating a Push Notification campaign on CleverTap, just follow the steps 
 
 1. On the "WHAT" section pass any values in the "title" and "message" fields (NOTE: These will be ignored)
 
-![Basic](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/basic.png)
+![Basic](https://github.com/darshanclevertap/PushTemplates/blob/0.0.3/screens/basic.png)
 
 2. Click on "Advanced" and then click on "Add pair" to add the [Template Keys](#template-keys)
 
-![KVs](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/kv.png)
+![KVs](https://github.com/darshanclevertap/PushTemplates/blob/0.0.3/screens/kv.png)
 
 3. You can also add the above keys into one JSON object and use the `pt_json` key to fill in the values
 
-![KVs in JSON](https://github.com/darshanclevertap/PushTemplates/blob/readme-images/screens/json.png)
+![KVs in JSON](https://github.com/darshanclevertap/PushTemplates/blob/0.0.3/screens/json.png)
 
 4. Send a test push and schedule!
 
@@ -171,21 +171,21 @@ While creating a Push Notification campaign on CleverTap, just follow the steps 
 
 Basic Template is the basic push notification received on apps.
 <br/>(Expanded and unexpanded example)<br/><br/>
-![Basic with color](https://github.com/CleverTap/PushTemplates/blob/readme-images/screens/basic%20color.png)
+![Basic with color](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/basic%20color.png)
 
 
 ## Auto Carousel Template
 
 Auto carousel is an automatic revolving carousel push notification.
 <br/>(Expanded and unexpanded example)<br/><br/>
-![Auto Carousel](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/autocarouselv0.0.3.gif)
+![Auto Carousel](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/autocarouselv0.0.3.gif)
 
 
 ## Manual Carousel Template
 
 This is the manual version of the carousel. The user can navigate to the next image by clicking on the arrows.
 <br/>(Expanded and unexpanded example)<br/><br/>
-![Auto Carousel](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/manual.gif)
+![Auto Carousel](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/manual.gif)
 
 If only one image can be downloaded, this template falls back to the Basic Template
 
@@ -193,7 +193,7 @@ If only one image can be downloaded, this template falls back to the Basic Templ
 
 Rating template lets your users give you feedback, this feedback is captures as an event in CleverTap with the rating as the event property so that it can later be actionable.<br/>(Expanded and unexpanded example)<br/>
 
-![Rating](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/rating.gif)
+![Rating](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/rating.gif)
 
 ## Product Catalog Template
 
@@ -201,7 +201,7 @@ Product catalog template lets you show case different images of a product (or a 
 
 ### Vertical View (Expanded and unexpanded example)
 
-![Product Display](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/productdisplay.gif)
+![Product Display](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/productdisplay.gif)
 
 ### Linear View
 
@@ -210,7 +210,7 @@ Template Key | Required | Value
 ---:|:---:|:---
 pt_product_display_linear | Required | `true`
 
-![Product Display](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/proddisplaylinear.gif)
+![Product Display](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/proddisplaylinear.gif)
 
 
 ## Five Icons Template
@@ -218,28 +218,28 @@ pt_product_display_linear | Required | `true`
 Five icons template is a sticky push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
 <br/> If at least 3 icons are not retrieved, the library falls back to the Basic Template.
 
-<img src="https://raw.githubusercontent.com/CleverTap/PushTemplates/Readme_changes/screens/fiveicon.png" width="412" height="100">
+<img src="https://raw.githubusercontent.com/CleverTap/PushTemplates/0.0.3/screens/fiveicon.png" width="412" height="100">
 
 ## Timer Template
 
 This template features a live countdown timer. You can even choose to show different title, message, and background image after the timer expires.  
 <br/> Timer notification is only supported for Android N (7) and above. For OS versions below N, the library falls back to the Basic Template.
 
-![Timer](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/timer.gif)
+![Timer](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/timer.gif)
 
 ## Video Template
 
 The Video template plays a video when the user clicks on the notification. 
 <br/> If your app does not include the Exo Player library, the library falls back to the Basic Template.
 
-![Video](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/video.gif)
+![Video](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/videopn3.gif)
 
 ## Zero Bezel Template
 
 The Zero Bezel template ensures that the background image covers the entire available surface area of the push notification. All the text is overlayed on the image.
 <br/> The library will fallback to the Basic Template if the image can't be downloaded.
 
-![Zero Bezel](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/zerobezel.gif)
+![Zero Bezel](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/zerobezel.gif)
 
 ## Input Box Template
 
@@ -248,9 +248,10 @@ The Input Box Template lets you collect any kind of input including feedback fro
 ### With CTAs
 
 The CTA variant of the Input Box Template use action buttons on the notification to collect input from the user. 
-<br/> To set the CTAs use the Advanced Options when setting up the campaign on the dashboard.
 
-![Input_Box_CTAs](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/inputctabasicdismiss.gif)
+To set the CTAs use the Advanced Options when setting up the campaign on the dashboard.
+
+![Input_Box_CTAs](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/inputctabasicdismiss.gif)
 
 Template Key | Required | Value
 ---:|:---:|:---
@@ -259,7 +260,8 @@ pt_dismiss_on_click | Optional | Dismisses the notification without opening the 
 ### CTAs with Remind Later option
 
 This variant of the Input Box Template is particularly useful if the user wants to be reminded of the notification after sometime. Clicking on the remind later button raises an event to the user profiles, with a custom user property p2 whose value is a future time stamp. You can have a campaign running on the dashboard that will send a reminded notification at the timestamp in the event property.
-<br/> To set one of the CTAs as a Remind Later button set the action id to `remind` from the dashboard.
+
+To set one of the CTAs as a Remind Later button set the action id to `remind` from the dashboard.
 
 Template Key | Required | Value
 ---:|:---:|:---
@@ -268,12 +270,13 @@ pt_event_property_<property_name_1> | Optional | for e.g. `<property_value>`,
 pt_event_property_<property_name_2> | Required | future epoch timestamp. For e.g., `$D_1592503813`
 pt_dismiss_on_click | Optional | Dismisses the notification without opening the app
 
-![Input_Box_CTA_Remind](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/inputCtaRemind.gif)
+![Input_Box_CTA_Remind](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/inputCtaRemind.gif)
 
 ### Reply as an Event
 
 This variant raises an event capturing the user's input as an event property. The app is not opened after the user sends the reply. 
-<br/> To use this variant, use the following values for the keys.
+
+To use this variant, use the following values for the keys.
 
 Template Key | Required | Value
 ---:|:---:|:---
@@ -283,13 +286,13 @@ pt_event_name | Required | for e.g. `Searched`,
 pt_event_property_<property_name_1> | Optional | for e.g. `<property_value>`,
 pt_event_property_<property_name_2> | Required to capture input | fixed value - `pt_input_reply`
             
-![Input_Box_CTA_No_Open](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/inputCtaNoOpen.gif)
+![Input_Box_CTA_No_Open](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/inputCtaNoOpen.gif)
 
 ### Reply as an Intent
 
 This variant passes the reply to the app as an Intent. The app can then process the reply and take appropriate actions. 
 
-<br/> To use this variant, use the following values for the keys.
+To use this variant, use the following values for the keys.
 
 Template Key | Required | Value
 ---:|:---:|:---
@@ -299,7 +302,7 @@ pt_input_auto_open | Required | fixed value - `true`
 
 <br/> To capture the input, the app can get the `pt_input_reply` key from the Intent extras.
 
-![Input_Box_CTA_With_Open](https://github.com/CleverTap/PushTemplates/blob/Readme_changes/screens/inputCtaWithOpen.gif)
+![Input_Box_CTA_With_Open](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/inputCtaWithOpen.gif)
 
 ## Cancel Notifications
 
@@ -470,8 +473,8 @@ This template removes all the currently displayed notifications associated with 
   pt_msg | Required | Message
   pt_msg_summary | Optional | Message line when Notification is expanded
   pt_subtitle | Optional | Subtitle
-  pt_big_img | Optional | Required | Image
-  pt_video_url | Optional | Required | Video URL (https only)
+  pt_big_img | Required | Image
+  pt_video_url | Required | Video URL (https only)
   pt_bg | Required | Background Color in HEX
   pt_dl1 | Optional | Deep Link
   pt_title_clr | Optional | Title Color in HEX
