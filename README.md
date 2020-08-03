@@ -149,7 +149,7 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
 
 While creating a Push Notification campaign on CleverTap, just follow the steps below -
 
-1. On the "WHAT" section pass the desired values in the "title" and "message" fields (NOTE: We prioritise title and message provided in the key-value pair - as shown n step 2, over this field)
+1. On the "WHAT" section pass the desired values in the "title" and "message" fields (NOTE: We prioritise title and message provided in the key-value pair - as shown in step 2, over these fields)
 
 ![Basic](https://github.com/darshanclevertap/PushTemplates/blob/0.0.3/screens/basic.png)
 
@@ -259,7 +259,7 @@ pt_dismiss_on_click | Optional | Dismisses the notification without opening the 
 
 ### CTAs with Remind Later option
 
-This variant of the Input Box Template is particularly useful if the user wants to be reminded of the notification after sometime. Clicking on the remind later button raises an event to the user profiles, with a custom user property p2 whose value is a future time stamp. You can have a campaign running on the dashboard that will send a reminded notification at the timestamp in the event property.
+This variant of the Input Box Template is particularly useful if the user wants to be reminded of the notification after sometime. Clicking on the remind later button raises an event to the user profiles, with a custom user property p2 whose value is a future time stamp. You can have a campaign running on the dashboard that will send a reminder notification at the timestamp in the event property.
 
 To set one of the CTAs as a Remind Later button set the action id to `remind` from the dashboard.
 
