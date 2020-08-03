@@ -535,7 +535,7 @@ pt_input_auto_open | Required | fixed value - `true`
   * These images are stored at a notification id level.
   * These images are deleted whenever the notification is dismissed or clicked.
   * Using images of 3 MB or lower are recommended for better performance.
-  * A silent notification channel with importance: `low` is created every time on an interaction with the Rating, Manual Carousel, and Product Catalog templates. This prevents the notification sound from playing when the notification is re-rendered.
+  * A silent notification channel with importance: `HIGH` is created every time on an interaction with the Rating, Manual Carousel, and Product Catalog templates with a silent sound file. This prevents the notification sound from playing when the notification is re-rendered.
   * The silent notification channel is deleted whenever the notification is dismissed or clicked.   
  
 # Sample App
