@@ -1,5 +1,10 @@
 ## CHANGE LOG
 
+### Version 0.0.3 (August 3, 2020)
+* Added 5 more templates - Video, Manual Carousel, Timer, Zero Bezel & Input Templates
+* Adds support for multi instances of CleverTap
+* Performance enhancements
+
 ### Version 0.0.2 (May 21, 2020)
 * Added Duplication check
 * Added support to enable/disable logs

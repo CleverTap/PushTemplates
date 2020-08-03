@@ -15,7 +15,7 @@ ext {
     siteUrl = 'https://https://github.com/CleverTap/PushTemplates'
     gitUrl = 'https://github.com/CleverTap/PushTemplates.git'
 
-    libraryVersion = '0.0.2'
+    libraryVersion = '0.0.3'
 
     developerId = 'clevertap'
     developerName = 'CleverTap'
@@ -30,10 +30,10 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 29
-        versionCode 01
-        versionName "0.0.2"
+        versionCode 03
+        versionName "0.0.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -133,11 +133,14 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     compileOnly 'androidx.appcompat:appcompat:1.1.0'
     compileOnly 'com.google.firebase:firebase-messaging:17.3.3'
-    compileOnly 'com.clevertap.android:clevertap-android-sdk:3.8.0'
+    compileOnly 'com.clevertap.android:clevertap-android-sdk:3.8.2'
     compileOnly 'com.github.bumptech.glide:glide:4.11.0'
+    compileOnly 'com.google.android.exoplayer:exoplayer:2.10.2'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+
 }
 

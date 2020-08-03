@@ -1,2 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.clevertap.pushtemplates" />
+    package="com.clevertap.pushtemplates" >
+    <application
+        android:allowBackup="true"
+        android:supportsRtl="true">
+        <activity android:name="com.clevertap.pushtemplates.VideoActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            android:launchMode="singleInstance"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/Dialog"
+            >
+        </activity>
+    </application>
+</manifest>
+
