@@ -20,7 +20,6 @@ import android.text.Html;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.CleverTapInstanceConfig;
 
 import java.util.ArrayList;
@@ -52,7 +51,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private int pt_dot = 0;
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
-    private CleverTapAPI cleverTapAPI;
     private String pt_product_display_action;
     private String pt_product_display_action_clr;
     private String pt_product_display_linear;
@@ -97,7 +95,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             pt_product_display_action_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_COLOUR);
             pt_product_display_linear = extras.getString(Constants.PT_PRODUCT_DISPLAY_LINEAR);
             notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-            cleverTapAPI = Utils.getCTInstance(context, extras);
             channelId = extras.getString(Constants.WZRK_CHANNEL_ID, "");
             pt_big_img_alt = extras.getString(Constants.PT_BIG_IMG_ALT);
             pt_small_icon_clr = extras.getString(Constants.PT_SMALL_ICON_COLOUR);
@@ -422,7 +419,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 1);
-                cleverTapAPI.pushEvent("Rated", map);
+                Utils.raiseCleverTapEvent(context, config, Constants.PT_RATED_EVENT, map);
                 clicked1 = false;
 
                 if (deepLinkList.size() > 0) {
@@ -436,7 +433,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 2);
-                cleverTapAPI.pushEvent("Rated", map);
+                Utils.raiseCleverTapEvent(context, config, Constants.PT_RATED_EVENT, map);
                 clicked2 = false;
                 if (deepLinkList.size() > 1) {
                     pt_dl_clicked = deepLinkList.get(1);
@@ -452,7 +449,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 3);
-                cleverTapAPI.pushEvent("Rated", map);
+                Utils.raiseCleverTapEvent(context, config, Constants.PT_RATED_EVENT, map);
                 clicked3 = false;
                 if (deepLinkList.size() > 2) {
                     pt_dl_clicked = deepLinkList.get(2);
@@ -469,7 +466,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star4, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 4);
-                cleverTapAPI.pushEvent("Rated", map);
+                Utils.raiseCleverTapEvent(context, config, Constants.PT_RATED_EVENT, map);
                 clicked4 = false;
                 if (deepLinkList.size() > 3) {
                     pt_dl_clicked = deepLinkList.get(3);
@@ -487,7 +484,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star5, R.drawable.pt_star_filled);
                 map.put("Campaign", extras.getString("wzrk_id"));
                 map.put("Rating", 5);
-                cleverTapAPI.pushEvent("Rated", map);
+                Utils.raiseCleverTapEvent(context, config, Constants.PT_RATED_EVENT, map);
                 clicked5 = false;
                 if (deepLinkList.size() > 4) {
                     pt_dl_clicked = deepLinkList.get(4);
@@ -805,7 +802,9 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
     private void handleFiveCTANotification(Context context, Bundle extras) {
         String dl = null;
-        cleverTapAPI.pushNotificationClickedEvent(extras);
+
+        Utils.raiseNotificationClicked(context, extras, config);
+
         int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
         if (cta1 == extras.getBoolean("cta1")) {
             dl = deepLinkList.get(0);

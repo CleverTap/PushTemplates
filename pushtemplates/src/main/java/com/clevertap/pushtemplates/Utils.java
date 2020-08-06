@@ -501,6 +501,25 @@ public class Utils {
 
     }
 
+    static void raiseCleverTapEvent(Context context, CleverTapInstanceConfig config, String evtName, HashMap<String, Object> eProps) {
+
+        CleverTapAPI instance;
+        if (config != null) {
+            instance = CleverTapAPI.instanceWithConfig(context, config);
+        } else {
+            instance = CleverTapAPI.getDefaultInstance(context);
+        }
+
+        if (evtName != null && !evtName.isEmpty()) {
+            if (instance != null) {
+                instance.pushEvent(evtName, eProps);
+            } else {
+                PTLog.debug("CleverTap instance is NULL, not raising the event");
+            }
+        }
+
+    }
+
     static String getEventNameFromExtras(Bundle extras) {
         String eName = null;
         for (String key : extras.keySet()) {
@@ -848,16 +867,5 @@ public class Utils {
                 }
             }
         }
-    }
-
-    static CleverTapAPI getCTInstance(Context context, Bundle extras) {
-        CleverTapInstanceConfig config = extras.getParcelable("config");
-        CleverTapAPI instance;
-        if (config != null) {
-            instance = CleverTapAPI.instanceWithConfig(context, config);
-        } else {
-            instance = CleverTapAPI.getDefaultInstance(context);
-        }
-        return instance;
     }
 }

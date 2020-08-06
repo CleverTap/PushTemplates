@@ -1,5 +1,7 @@
 package com.clevertap.pushtemplates;
 
+import android.content.Context;
+
 @SuppressWarnings("WeakerAccess")
 public class Constants {
     public static final String LOG_TAG = "PTLog";
@@ -10,6 +12,7 @@ public class Constants {
     public static final String PT_FLIP_INTERVAL_TIME = "4000";
     public static final String PT_DIR = "pt_dir";
     public static final String PT_SOUND_FILE_NAME = "pt_silent_sound";
+    public static final String PT_RATED_EVENT = "Rated";
     public static boolean PT_FALLBACK = false;
     public static String PT_IMAGE_PATH_LIST = "" ;
     static final int ONE_SECOND = 1000;
