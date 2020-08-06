@@ -454,9 +454,9 @@ public class Utils {
     static void raiseCleverTapEvent(Context context, CleverTapInstanceConfig config, Bundle extras) {
 
         CleverTapAPI instance;
-        if(config != null){
-            instance = CleverTapAPI.instanceWithConfig(context,config);
-        }else{
+        if (config != null) {
+            instance = CleverTapAPI.instanceWithConfig(context, config);
+        } else {
             instance = CleverTapAPI.getDefaultInstance(context);
         }
 
@@ -468,7 +468,7 @@ public class Utils {
         if (eName != null && !eName.isEmpty()) {
             if (instance != null) {
                 instance.pushEvent(eName, eProps);
-            }else{
+            } else {
                 PTLog.debug("CleverTap instance is NULL, not raising the event");
             }
         }
@@ -478,9 +478,9 @@ public class Utils {
     static void raiseCleverTapEvent(Context context, CleverTapInstanceConfig config, Bundle extras, String key) {
 
         CleverTapAPI instance;
-        if(config != null){
-            instance = CleverTapAPI.instanceWithConfig(context,config);
-        }else{
+        if (config != null) {
+            instance = CleverTapAPI.instanceWithConfig(context, config);
+        } else {
             instance = CleverTapAPI.getDefaultInstance(context);
         }
 
@@ -494,7 +494,7 @@ public class Utils {
         if (eName != null && !eName.isEmpty()) {
             if (instance != null) {
                 instance.pushEvent(eName, eProps);
-            }else{
+            } else {
                 PTLog.debug("CleverTap instance is NULL, not raising the event");
             }
         }
@@ -629,9 +629,9 @@ public class Utils {
 
     static void raiseNotificationClicked(Context context, Bundle extras, CleverTapInstanceConfig config) {
         CleverTapAPI instance;
-        if(config != null){
-            instance = CleverTapAPI.instanceWithConfig(context,config);
-        }else{
+        if (config != null) {
+            instance = CleverTapAPI.instanceWithConfig(context, config);
+        } else {
             instance = CleverTapAPI.getDefaultInstance(context);
         }
         if (instance != null) {
@@ -642,9 +642,9 @@ public class Utils {
 
     static void raiseNotificationViewed(Context context, Bundle extras, CleverTapInstanceConfig config) {
         CleverTapAPI instance;
-        if(config != null){
-            instance = CleverTapAPI.instanceWithConfig(context,config);
-        }else{
+        if (config != null) {
+            instance = CleverTapAPI.instanceWithConfig(context, config);
+        } else {
             instance = CleverTapAPI.getDefaultInstance(context);
         }
         if (instance != null) {
@@ -848,5 +848,16 @@ public class Utils {
                 }
             }
         }
+    }
+
+    static CleverTapAPI getCTInstance(Context context, Bundle extras) {
+        CleverTapInstanceConfig config = extras.getParcelable("config");
+        CleverTapAPI instance;
+        if (config != null) {
+            instance = CleverTapAPI.instanceWithConfig(context, config);
+        } else {
+            instance = CleverTapAPI.getDefaultInstance(context);
+        }
+        return instance;
     }
 }

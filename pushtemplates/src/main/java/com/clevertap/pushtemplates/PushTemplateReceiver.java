@@ -97,7 +97,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             pt_product_display_action_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_COLOUR);
             pt_product_display_linear = extras.getString(Constants.PT_PRODUCT_DISPLAY_LINEAR);
             notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-            cleverTapAPI = CleverTapAPI.getDefaultInstance(context);
+            cleverTapAPI = Utils.getCTInstance(context, extras);
             channelId = extras.getString(Constants.WZRK_CHANNEL_ID, "");
             pt_big_img_alt = extras.getString(Constants.PT_BIG_IMG_ALT);
             pt_small_icon_clr = extras.getString(Constants.PT_SMALL_ICON_COLOUR);
@@ -582,7 +582,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     launchIntent.removeExtra(Constants.WZRK_ACTIONS);
                     launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
                     launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    Utils.raiseNotificationClicked(context, extras,config);
+                    Utils.raiseNotificationClicked(context, extras, config);
                     context.startActivity(launchIntent);
                 }
                 return;
@@ -602,21 +602,18 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             if (!isLinear) {
                 setCustomContentViewBasicKeys(contentViewSmall, context);
             }
-
             if (!bigTextList.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
-
+                setCustomContentViewText(contentViewBig, R.id.product_name, bigTextList.get(0));
             }
 
             if (!isLinear) {
                 if (!smallTextList.isEmpty()) {
-                    contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(0));
+                    setCustomContentViewText(contentViewBig,R.id.product_description, smallTextList.get(0));
                 }
             }
 
             if (!priceList.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.product_price, priceList.get(0));
-
+                setCustomContentViewText(contentViewBig,R.id.product_price, priceList.get(0));
             }
 
             if (!isLinear) {
@@ -808,7 +805,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
     private void handleFiveCTANotification(Context context, Bundle extras) {
         String dl = null;
-
+        cleverTapAPI.pushNotificationClickedEvent(extras);
         int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
         if (cta1 == extras.getBoolean("cta1")) {
             dl = deepLinkList.get(0);
@@ -901,7 +898,11 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
         if (pt_subtitle != null && !pt_subtitle.isEmpty()) {
-            contentView.setTextViewText(R.id.subtitle, pt_subtitle);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                contentView.setTextViewText(R.id.subtitle, Html.fromHtml(pt_subtitle, Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                contentView.setTextViewText(R.id.subtitle, Html.fromHtml(pt_subtitle));
+            }
         } else {
             contentView.setViewVisibility(R.id.subtitle, View.GONE);
             contentView.setViewVisibility(R.id.sep_subtitle, View.GONE);
@@ -921,8 +922,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     }
 
     private void setCustomContentViewButtonLabel(RemoteViews contentView, int resourceID, String pt_product_display_action) {
-        if (pt_product_display_action != null && !pt_product_display_action.isEmpty()) {
-            contentView.setTextViewText(resourceID, pt_product_display_action);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            contentView.setTextViewText(resourceID, Html.fromHtml(pt_product_display_action, Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            contentView.setTextViewText(resourceID, Html.fromHtml(pt_product_display_action));
         }
     }
 
@@ -1083,6 +1086,16 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             pt_dot_sep = Utils.setBitMapColour(context, pt_dot, pt_meta_clr);
         } catch (NullPointerException e) {
             PTLog.debug("NPE while setting dot sep color");
+        }
+    }
+
+    private void setCustomContentViewText(RemoteViews contentView, int resourceId, String s) {
+        if (!s.isEmpty()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                contentView.setTextViewText(resourceId, Html.fromHtml(s, Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                contentView.setTextViewText(resourceId, Html.fromHtml(s));
+            }
         }
     }
 

@@ -162,14 +162,14 @@ public class TemplateRenderer {
     }
 
     private TemplateRenderer(Context context, Bundle extras) {
-        setUp(context,extras,null);
+        setUp(context, extras, null);
     }
 
-    private TemplateRenderer(Context context, Bundle extras, CleverTapInstanceConfig config){
-        setUp(context,extras,config);
+    private TemplateRenderer(Context context, Bundle extras, CleverTapInstanceConfig config) {
+        setUp(context, extras, config);
     }
 
-    private void setUp(Context context, Bundle extras, CleverTapInstanceConfig config){
+    private void setUp(Context context, Bundle extras, CleverTapInstanceConfig config) {
         pt_id = extras.getString(Constants.PT_ID);
         String pt_json = extras.getString(Constants.PT_JSON);
         if (pt_id != null) {
@@ -224,7 +224,7 @@ public class TemplateRenderer {
         pt_subtitle = extras.getString(Constants.PT_SUBTITLE);
         pt_flip_interval = Utils.getFlipInterval(extras);
         pID = extras.getString(Constants.WZRK_PUSH_ID);
-        if(config != null){
+        if (config != null) {
             this.config = config;
         }
         setKeysFromDashboard(extras);
@@ -242,7 +242,7 @@ public class TemplateRenderer {
     @SuppressWarnings("unused")
     public static void createNotification(Context context, Bundle extras, CleverTapInstanceConfig config) {
         PTLog.verbose("Creating notification with config...");
-        TemplateRenderer templateRenderer = new TemplateRenderer(context, extras,config);
+        TemplateRenderer templateRenderer = new TemplateRenderer(context, extras, config);
         templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
     }
 
@@ -642,7 +642,7 @@ public class TemplateRenderer {
     }
 
     private void renderRatingNotification(Context context, Bundle extras, int notificationId) {
-        PTLog.debug("Rendering Rating Template Push Notification with extras - "+ extras.toString());
+        PTLog.debug("Rendering Rating Template Push Notification with extras - " + extras.toString());
         try {
             contentViewRating = new RemoteViews(context.getPackageName(), R.layout.rating);
             setCustomContentViewBasicKeys(contentViewRating, context);
@@ -742,7 +742,7 @@ public class TemplateRenderer {
 
             notificationManager.notify(notificationId, notification);
 
-            Utils.raiseNotificationViewed(context, extras,config);
+            Utils.raiseNotificationViewed(context, extras, config);
 
         } catch (Throwable t) {
             PTLog.verbose("Error creating rating notification ", t);
@@ -750,7 +750,7 @@ public class TemplateRenderer {
     }
 
     private void renderAutoCarouselNotification(Context context, Bundle extras, int notificationId) {
-        PTLog.debug("Rendering Auto Carousel Template Push Notification with extras - "+ extras.toString());
+        PTLog.debug("Rendering Auto Carousel Template Push Notification with extras - " + extras.toString());
         try {
             notificationId = setNotificationId(notificationId);
 
@@ -825,7 +825,7 @@ public class TemplateRenderer {
 
             notificationManager.notify(notificationId, notification);
 
-            Utils.raiseNotificationViewed(context, extras,config);
+            Utils.raiseNotificationViewed(context, extras, config);
         } catch (Throwable t) {
             PTLog.verbose("Error creating auto carousel notification ", t);
         }
@@ -836,7 +836,7 @@ public class TemplateRenderer {
     }
 
     private void renderManualCarouselNotification(Context context, Bundle extras, int notificationId) {
-        PTLog.debug("Rendering Manual Carousel Template Push Notification with extras - "+ extras.toString());
+        PTLog.debug("Rendering Manual Carousel Template Push Notification with extras - " + extras.toString());
         try {
             notificationId = setNotificationId(notificationId);
 
@@ -939,14 +939,14 @@ public class TemplateRenderer {
             }
             notificationManager.notify(notificationId, notification);
 
-            Utils.raiseNotificationViewed(context, extras,config);
+            Utils.raiseNotificationViewed(context, extras, config);
         } catch (Throwable t) {
             PTLog.verbose("Error creating Manual carousel notification ", t);
         }
     }
 
     private void renderBasicTemplateNotification(Context context, Bundle extras, int notificationId) {
-        PTLog.debug("Rendering Basic Template Push Notification with extras - "+ extras.toString());
+        PTLog.debug("Rendering Basic Template Push Notification with extras - " + extras.toString());
         try {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
             setCustomContentViewBasicKeys(contentViewBig, context);
@@ -1003,14 +1003,14 @@ public class TemplateRenderer {
 
             notificationManager.notify(notificationId, notification);
 
-            Utils.raiseNotificationViewed(context, extras,config);
+            Utils.raiseNotificationViewed(context, extras, config);
         } catch (Throwable t) {
             PTLog.verbose("Error creating image only notification", t);
         }
     }
 
     private void renderProductDisplayNotification(Context context, Bundle extras, int notificationId) {
-        PTLog.debug("Rendering Product Display Template Push Notification with extras - "+ extras.toString());
+        PTLog.debug("Rendering Product Display Template Push Notification with extras - " + extras.toString());
         try {
             boolean isLinear = false;
 
@@ -1027,19 +1027,18 @@ public class TemplateRenderer {
             if (!isLinear) {
                 setCustomContentViewBasicKeys(contentViewSmall, context);
             }
-
             if (!bigTextList.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
+                setCustomContentViewText(contentViewBig, R.id.product_name, bigTextList.get(0));
             }
 
             if (!isLinear) {
                 if (!smallTextList.isEmpty()) {
-                    contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(0));
+                    setCustomContentViewText(contentViewBig,R.id.product_description, smallTextList.get(0));
                 }
             }
 
             if (!priceList.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.product_price, priceList.get(0));
+                setCustomContentViewText(contentViewBig,R.id.product_price, priceList.get(0));
             }
 
             if (!isLinear) {
@@ -1212,15 +1211,25 @@ public class TemplateRenderer {
             }
             notificationManager.notify(notificationId, notification);
 
-            Utils.raiseNotificationViewed(context, extras,config);
+            Utils.raiseNotificationViewed(context, extras, config);
         } catch (Throwable t) {
             PTLog.verbose("Error creating Product Display Notification ", t);
         }
 
     }
 
+    private void setCustomContentViewText(RemoteViews contentView, int resourceId, String s) {
+        if (!s.isEmpty()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                contentView.setTextViewText(resourceId, Html.fromHtml(s, Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                contentView.setTextViewText(resourceId, Html.fromHtml(s));
+            }
+        }
+    }
+
     private void renderFiveIconNotification(Context context, Bundle extras, int notificationId) {
-        PTLog.debug("Rendering Five Icon Template Push Notification with extras - "+ extras.toString());
+        PTLog.debug("Rendering Five Icon Template Push Notification with extras - " + extras.toString());
         try {
 
             if (pt_title == null || pt_title.isEmpty()) {
@@ -1336,7 +1345,7 @@ public class TemplateRenderer {
             }
             notificationManager.notify(notificationId, notification);
 
-            Utils.raiseNotificationViewed(context, extras,config);
+            Utils.raiseNotificationViewed(context, extras, config);
         } catch (Throwable t) {
             PTLog.verbose("Error creating image only notification", t);
         }
@@ -1344,7 +1353,7 @@ public class TemplateRenderer {
     }
 
     private void renderZeroBezelNotification(Context context, Bundle extras, int notificationId) {
-        PTLog.debug("Rendering Zero Bezel Template Push Notification with extras - "+ extras.toString());
+        PTLog.debug("Rendering Zero Bezel Template Push Notification with extras - " + extras.toString());
         try {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.zero_bezel);
             setCustomContentViewBasicKeys(contentViewBig, context);
@@ -1374,6 +1383,8 @@ public class TemplateRenderer {
             setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
             setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
 
+            setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
+            setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
 
             setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
             setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
@@ -1419,7 +1430,7 @@ public class TemplateRenderer {
             } else {
                 notificationManager.notify(notificationId, notification);
 
-                Utils.raiseNotificationViewed(context, extras,config);
+                Utils.raiseNotificationViewed(context, extras, config);
             }
         } catch (Throwable t) {
             PTLog.verbose("Error creating image only notification", t);
@@ -1428,7 +1439,7 @@ public class TemplateRenderer {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void renderTimerNotification(final Context context, Bundle extras, int notificationId) {
-        PTLog.debug("Rendering Timer Template Push Notification with extras - "+ extras.toString());
+        PTLog.debug("Rendering Timer Template Push Notification with extras - " + extras.toString());
         try {
 
             contentViewTimer = new RemoteViews(context.getPackageName(), R.layout.timer);
@@ -1511,7 +1522,7 @@ public class TemplateRenderer {
 
             notificationManager.notify(notificationId, notification);
 
-            Utils.raiseNotificationViewed(context, extras,config);
+            Utils.raiseNotificationViewed(context, extras, config);
 
             timerRunner(context, extras, notificationId, timer_end);
 
@@ -1521,7 +1532,7 @@ public class TemplateRenderer {
     }
 
     private void renderInputBoxNotification(final Context context, Bundle extras, int notificationId) {
-        PTLog.debug("Rendering Input Box Template Push Notification with extras - "+ extras.toString());
+        PTLog.debug("Rendering Input Box Template Push Notification with extras - " + extras.toString());
         try {
             //Fetch Notif ID
             notificationId = setNotificationId(notificationId);
@@ -1560,7 +1571,7 @@ public class TemplateRenderer {
                 Intent replyIntent = new Intent(context, PushTemplateReceiver.class);
                 replyIntent.putExtra(Constants.PT_INPUT_FEEDBACK, pt_input_feedback);
                 replyIntent.putExtra(Constants.PT_INPUT_AUTO_OPEN, pt_input_auto_open);
-                replyIntent.putExtra("config",config);
+                replyIntent.putExtra("config", config);
 
                 PendingIntent replyPendingIntent;
                 if (deepLinkList != null) {
@@ -1589,7 +1600,7 @@ public class TemplateRenderer {
             Notification notification = notificationBuilder.build();
             notificationManager.notify(notificationId, notification);
 
-            Utils.raiseNotificationViewed(context, extras,config);
+            Utils.raiseNotificationViewed(context, extras, config);
 
         } catch (Throwable t) {
             PTLog.verbose("Error creating Input Box notification ", t);
@@ -1597,7 +1608,7 @@ public class TemplateRenderer {
     }
 
     private void renderVideoNotification(final Context context, Bundle extras, int notificationId) {
-        PTLog.debug("Rendering Video Template Push Notification with extras - "+ extras.toString());
+        PTLog.debug("Rendering Video Template Push Notification with extras - " + extras.toString());
         try {
             contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
             setCustomContentViewBasicKeys(contentViewBig, context);
@@ -1648,7 +1659,7 @@ public class TemplateRenderer {
 
             notificationManager.notify(notificationId, notification);
 
-            Utils.raiseNotificationViewed(context, extras,config);
+            Utils.raiseNotificationViewed(context, extras, config);
         } catch (Throwable t) {
             PTLog.verbose("Error creating image only notification", t);
         }
@@ -1732,7 +1743,11 @@ public class TemplateRenderer {
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
         if (pt_subtitle != null && !pt_subtitle.isEmpty()) {
-            contentView.setTextViewText(R.id.subtitle, pt_subtitle);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                contentView.setTextViewText(R.id.subtitle, Html.fromHtml(pt_subtitle, Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                contentView.setTextViewText(R.id.subtitle, Html.fromHtml(pt_subtitle));
+            }
         } else {
             contentView.setViewVisibility(R.id.subtitle, View.GONE);
             contentView.setViewVisibility(R.id.sep_subtitle, View.GONE);
@@ -1753,7 +1768,11 @@ public class TemplateRenderer {
 
     private void setCustomContentViewButtonLabel(RemoteViews contentView, int resourceID, String pt_product_display_action) {
         if (pt_product_display_action != null && !pt_product_display_action.isEmpty()) {
-            contentView.setTextViewText(resourceID, pt_product_display_action);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                contentView.setTextViewText(resourceID, Html.fromHtml(pt_product_display_action, Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                contentView.setTextViewText(resourceID, Html.fromHtml(pt_product_display_action));
+            }
         }
     }
 
