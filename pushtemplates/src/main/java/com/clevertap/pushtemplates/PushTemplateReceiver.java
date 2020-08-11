@@ -803,7 +803,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private void handleFiveCTANotification(Context context, Bundle extras) {
         String dl = null;
 
-        Utils.raiseNotificationClicked(context, extras, config);
 
         int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
         if (cta1 == extras.getBoolean("cta1")) {
@@ -825,8 +824,11 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             notificationManager.cancel(notificationId);
             context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
             return;
-
         }
+
+        extras.putString(Constants.WZRK_DL, dl);
+        Utils.raiseNotificationClicked(context, extras, config);
+
 
         Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dl));
         launchIntent.putExtras(extras);
