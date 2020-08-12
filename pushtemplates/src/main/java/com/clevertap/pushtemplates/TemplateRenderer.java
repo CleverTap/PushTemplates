@@ -120,6 +120,7 @@ public class TemplateRenderer {
     private String pt_subtitle;
     private String pID;
     private int pt_flip_interval;
+    private String pt_collapse_key;
     private CleverTapInstanceConfig config;
 
     @SuppressWarnings({"unused"})
@@ -222,6 +223,7 @@ public class TemplateRenderer {
         pt_cancel_notif_ids = Utils.getNotificationIds(context);
         actions = Utils.getActionKeys(extras);
         pt_subtitle = extras.getString(Constants.PT_SUBTITLE);
+        pt_collapse_key = extras.getString(Constants.PT_COLLAPSE_KEY);
         pt_flip_interval = Utils.getFlipInterval(extras);
         pID = extras.getString(Constants.WZRK_PUSH_ID);
         if (config != null) {
@@ -259,14 +261,14 @@ public class TemplateRenderer {
                             if (!extras.getString(Constants.WZRK_PUSH_ID).isEmpty()) {
                                 String ptID = extras.getString(Constants.WZRK_PUSH_ID);
                                 if (!dbHelper.isNotificationPresentInDB(ptID)) {
-                                    _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+                                    _createNotification(context, extras);
                                     dbHelper.savePT(ptID, Utils.bundleToJSON(extras));
                                 } else {
                                     PTLog.debug("Notification already Rendered. skipping this payload");
                                 }
                             }
                         } else {
-                            _createNotification(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+                            _createNotification(context, extras);
                         }
 
                     } catch (Throwable t) {
@@ -281,7 +283,7 @@ public class TemplateRenderer {
 
 
     @SuppressWarnings("SameParameterValue")
-    private void _createNotification(Context context, Bundle extras, int notificationId) {
+    private void _createNotification(Context context, Bundle extras) {
         if (pt_id == null) {
             PTLog.verbose("Template ID not provided. Cannot create the notification");
             return;
@@ -305,6 +307,7 @@ public class TemplateRenderer {
         }
 
         setSmallIcon(context);
+        int notificationId = setCollapseKey(extras);
 
         switch (templateType) {
             case BASIC:
@@ -1033,12 +1036,12 @@ public class TemplateRenderer {
 
             if (!isLinear) {
                 if (!smallTextList.isEmpty()) {
-                    setCustomContentViewText(contentViewBig,R.id.product_description, smallTextList.get(0));
+                    setCustomContentViewText(contentViewBig, R.id.product_description, smallTextList.get(0));
                 }
             }
 
             if (!priceList.isEmpty()) {
-                setCustomContentViewText(contentViewBig,R.id.product_price, priceList.get(0));
+                setCustomContentViewText(contentViewBig, R.id.product_price, priceList.get(0));
             }
 
             if (!isLinear) {
@@ -1806,6 +1809,30 @@ public class TemplateRenderer {
         }
     }
 
+    private int setCollapseKey(Bundle extras) {
+        int notificationId = Constants.EMPTY_NOTIFICATION_ID;
+        try {
+            Object collapse_key = extras.get(Constants.WZRK_COLLAPSE);
+            if (collapse_key != null) {
+
+                if (collapse_key instanceof Number) {
+                    notificationId = ((Number) collapse_key).intValue();
+                } else if (collapse_key instanceof String) {
+                    try {
+                        notificationId = Integer.parseInt(collapse_key.toString());
+                        PTLog.debug("Converting collapse_key: " + collapse_key + " to notificationId int: " + notificationId);
+                    } catch (NumberFormatException e) {
+                        notificationId = (collapse_key.toString().hashCode());
+                        PTLog.debug("Converting collapse_key: " + collapse_key + " to notificationId int: " + notificationId);
+                    }
+                }
+            }
+        } catch (NumberFormatException e) {
+            //no-op
+        }
+        return notificationId;
+    }
+
     private int setNotificationId(int notificationId) {
         if (notificationId == Constants.EMPTY_NOTIFICATION_ID) {
             notificationId = (int) (Math.random() * 100);
@@ -2058,6 +2085,12 @@ public class TemplateRenderer {
         }
         if (pt_subtitle == null || pt_subtitle.isEmpty()) {
             pt_subtitle = extras.getString(Constants.WZRK_SUBTITLE);
+        }
+        if (pt_small_icon_clr == null || pt_small_icon_clr.isEmpty()) {
+            pt_small_icon_clr = extras.getString(Constants.WZRK_CLR);
+        }
+        if (pt_collapse_key == null || pt_collapse_key.isEmpty()){
+            pt_collapse_key = extras.getString(Constants.WZRK_COLLAPSE);
         }
     }
 

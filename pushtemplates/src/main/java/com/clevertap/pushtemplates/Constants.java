@@ -7,12 +7,14 @@ public class Constants {
     public static final String LOG_TAG = "PTLog";
     public static final String PT_MANUAL_CAROUSEL_CURRENT = "pt_manual_carousel_current";
     public static final String PT_IMAGE_LIST = "pt_image_list";
+    public static final String PT_COLLAPSE_KEY = "pt_ck";
     public static final String PT_DEEPLINK_LIST = "pt_deeplink_list";
     public static final String PT_FLIP_INTERVAL = "pt_flip_interval";
-    public static final String PT_FLIP_INTERVAL_TIME = "4000";
     public static final String PT_DIR = "pt_dir";
     public static final String PT_SOUND_FILE_NAME = "pt_silent_sound";
-    public static final String PT_RATED_EVENT = "Rated";
+    public static final String PT_RATING_C2A_KEY = "rating_";
+    public static final String PT_5CTA_C2A_KEY = "5cta_";
+    public static final String PT_VIDEO_C2A_KEY = "video_";
     public static boolean PT_FALLBACK = false;
     public static String PT_IMAGE_PATH_LIST = "" ;
     static final int ONE_SECOND = 1000;
@@ -75,9 +77,9 @@ public class Constants {
     public static final String WZRK_BADGE_ICON = "wzrk_bi";
     public static final String WZRK_BADGE_COUNT = "wzrk_bc";
     public static final String WZRK_SUBTITLE = "wzrk_st";
-    public static final String WZRK_COLOR = "wzrk_clr";
     public static final String WZRK_SOUND = "wzrk_sound";
     public static final String WZRK_TIME_TO_LIVE = "wzrk_ttl";
+    public static final String WZRK_C2A = "wzrk_c2a";
     public static final String PT_META_CLR = "pt_meta_clr";
     public static final String NOTIF_MSG = "nm";
     public static final String NOTIF_TITLE = "nt";
@@ -109,4 +111,5 @@ public class Constants {
     public static final String PT_PRODUCT_DISPLAY_ACTION_CLR_DEFAULTS = "#FFBB33";
     public static final String PT_PRODUCT_DISPLAY_ACTION_TEXT_CLR_DEFAULT = PT_COLOUR_WHITE;
     public static final int PT_CONNECTION_TIMEOUT = 10 * ONE_SECOND;
+    public static final int PT_FLIP_INTERVAL_TIME = 4 * ONE_SECOND;
 }

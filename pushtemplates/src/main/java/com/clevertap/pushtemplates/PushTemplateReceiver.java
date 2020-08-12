@@ -417,9 +417,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             HashMap<String, Object> map = new HashMap<String, Object>();
             if (clicked1 == extras.getBoolean("click1", false)) {
                 contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
-                map.put("Campaign", extras.getString("wzrk_id"));
-                map.put("Rating", 1);
-                Utils.raiseCleverTapEvent(context, config, Constants.PT_RATED_EVENT, map);
+                extras.putString(Constants.WZRK_C2A, Constants.PT_RATING_C2A_KEY + 1);
+                Utils.raiseNotificationClicked(context, extras ,config);
                 clicked1 = false;
 
                 if (deepLinkList.size() > 0) {
@@ -431,9 +430,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             if (clicked2 == extras.getBoolean("click2", false)) {
                 contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
-                map.put("Campaign", extras.getString("wzrk_id"));
-                map.put("Rating", 2);
-                Utils.raiseCleverTapEvent(context, config, Constants.PT_RATED_EVENT, map);
+                extras.putString(Constants.WZRK_C2A, Constants.PT_RATING_C2A_KEY + 2);
+                Utils.raiseNotificationClicked(context, extras ,config);
                 clicked2 = false;
                 if (deepLinkList.size() > 1) {
                     pt_dl_clicked = deepLinkList.get(1);
@@ -447,9 +445,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_filled);
-                map.put("Campaign", extras.getString("wzrk_id"));
-                map.put("Rating", 3);
-                Utils.raiseCleverTapEvent(context, config, Constants.PT_RATED_EVENT, map);
+                extras.putString(Constants.WZRK_C2A, Constants.PT_RATING_C2A_KEY + 3);
+                Utils.raiseNotificationClicked(context, extras ,config);
                 clicked3 = false;
                 if (deepLinkList.size() > 2) {
                     pt_dl_clicked = deepLinkList.get(2);
@@ -464,9 +461,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star4, R.drawable.pt_star_filled);
-                map.put("Campaign", extras.getString("wzrk_id"));
-                map.put("Rating", 4);
-                Utils.raiseCleverTapEvent(context, config, Constants.PT_RATED_EVENT, map);
+                extras.putString(Constants.WZRK_C2A, Constants.PT_RATING_C2A_KEY + 4);
+                Utils.raiseNotificationClicked(context, extras ,config);
                 clicked4 = false;
                 if (deepLinkList.size() > 3) {
                     pt_dl_clicked = deepLinkList.get(3);
@@ -482,9 +478,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star4, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star5, R.drawable.pt_star_filled);
-                map.put("Campaign", extras.getString("wzrk_id"));
-                map.put("Rating", 5);
-                Utils.raiseCleverTapEvent(context, config, Constants.PT_RATED_EVENT, map);
+                extras.putString(Constants.WZRK_C2A, Constants.PT_RATING_C2A_KEY + 5);
+                Utils.raiseNotificationClicked(context, extras ,config);
                 clicked5 = false;
                 if (deepLinkList.size() > 4) {
                     pt_dl_clicked = deepLinkList.get(4);
@@ -826,6 +821,12 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             return;
         }
 
+        for (int i = 0; i < deepLinkList.size(); i++){
+            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + i + "_" + deepLinkList.get(i));
+            Utils.raiseNotificationClicked(context, extras ,config);
+        }
+
+
         extras.putString(Constants.WZRK_DL, dl);
         Utils.raiseNotificationClicked(context, extras, config);
 
@@ -1072,6 +1073,9 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         }
         if (pt_subtitle == null || pt_subtitle.isEmpty()) {
             pt_subtitle = extras.getString(Constants.WZRK_SUBTITLE);
+        }
+        if (pt_small_icon_clr == null || pt_small_icon_clr.isEmpty()) {
+            pt_small_icon_clr = extras.getString(Constants.WZRK_CLR);
         }
     }
 

@@ -773,10 +773,17 @@ public class Utils {
     }
 
     public static int getFlipInterval(Bundle extras) {
-        String interval = extras.getString(Constants.PT_FLIP_INTERVAL, Constants.PT_FLIP_INTERVAL_TIME);
-        int t = Integer.parseInt(interval);
-        return Math.max(t, Integer.parseInt(Constants.PT_FLIP_INTERVAL_TIME));
-
+        String interval = extras.getString(Constants.PT_FLIP_INTERVAL);
+        try {
+            int t = 0;
+            if (interval != null) {
+                t = Integer.parseInt(interval);
+                return Math.max(t, Constants.PT_FLIP_INTERVAL_TIME);
+            }
+        } catch (Exception e){
+            PTLog.debug("Flip Interval couldn't be converted to number: " + interval + " - Defaulting to base value: "  + Constants.PT_FLIP_INTERVAL_TIME);
+        }
+        return Constants.PT_FLIP_INTERVAL_TIME;
     }
 
     public static void saveBitmapToInternalStorage(Context context, Bitmap bitmapImage, String fileName) {

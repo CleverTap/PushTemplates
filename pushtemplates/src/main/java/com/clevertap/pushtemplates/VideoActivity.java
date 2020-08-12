@@ -109,6 +109,7 @@ public class VideoActivity extends Activity {
                         launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
                     }
                     launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+                    launchIntent.putExtra(Constants.WZRK_C2A, Constants.PT_VIDEO_C2A_KEY + "app_open");
                     launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
                     launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.sendBroadcast(launchIntent);
