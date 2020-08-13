@@ -191,7 +191,7 @@ If only one image can be downloaded, this template falls back to the Basic Templ
 
 ## Rating Template
 
-Rating template lets your users give you feedback, this feedback is captures as an event in CleverTap with the rating as the event property so that it can later be actionable.<br/>(Expanded and unexpanded example)<br/>
+Rating template lets your users give you feedback, this feedback is captured in the event Notification Clicked with in the property "wzrk_c2a".<br/>(Expanded and unexpanded example)<br/>
 
 ![Rating](https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/rating.gif)
 
@@ -216,7 +216,7 @@ pt_product_display_linear | Required | `true`
 ## Five Icons Template
 
 Five icons template is a sticky push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
-<br/> If at least 3 icons are not retrieved, the library falls back to the Basic Template.
+<br/> If at least 3 icons are not retrieved, the library doesn't render any notification. The bifurcation of each CTA is captured in the event Notification Clicked with in the property "wzrk_c2a".
 
 <img src="https://raw.githubusercontent.com/CleverTap/PushTemplates/0.0.3/screens/fiveicon.png" width="412" height="100">
 
@@ -229,8 +229,8 @@ This template features a live countdown timer. You can even choose to show diffe
 
 ## Video Template
 
-The Video template plays a video when the user clicks on the notification. 
-<br/> If your app does not include the Exo Player library, the library falls back to the Basic Template.
+The Video template plays a video when the user clicks on the notification. The app open action is captured in the event Notification Clicked with in the property "wzrk_c2a".
+<br/> If your app does not include the Exo Player library, the library falls back to the Basic Template. 
 
 <img src="https://github.com/CleverTap/PushTemplates/blob/0.0.3/screens/videopn3.gif" alt="Video" width="450" height="800"/>
 
