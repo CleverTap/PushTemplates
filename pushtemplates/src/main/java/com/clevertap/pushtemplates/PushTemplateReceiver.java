@@ -802,30 +802,32 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
         if (cta1 == extras.getBoolean("cta1")) {
             dl = deepLinkList.get(0);
+            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + 1 + "_" + dl);
         }
         if (cta2 == extras.getBoolean("cta2")) {
             dl = deepLinkList.get(1);
+            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + 2 + "_" + dl);
         }
         if (cta3 == extras.getBoolean("cta3")) {
             dl = deepLinkList.get(2);
+            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + 3 + "_" + dl);
         }
         if (cta4 == extras.getBoolean("cta4")) {
             dl = deepLinkList.get(3);
+            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + 4 + "_" + dl);
         }
         if (cta5 == extras.getBoolean("cta5")) {
             dl = deepLinkList.get(4);
+            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + 5 + "_" + dl);
         }
+
+        Utils.raiseNotificationClicked(context, extras ,config);
+
         if (close == extras.getBoolean("close")) {
             notificationManager.cancel(notificationId);
             context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
             return;
         }
-
-        for (int i = 0; i < deepLinkList.size(); i++){
-            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + i + "_" + deepLinkList.get(i));
-            Utils.raiseNotificationClicked(context, extras ,config);
-        }
-
 
         extras.putString(Constants.WZRK_DL, dl);
         Utils.raiseNotificationClicked(context, extras, config);

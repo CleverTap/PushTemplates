@@ -120,7 +120,7 @@ public class TemplateRenderer {
     private String pt_subtitle;
     private String pID;
     private int pt_flip_interval;
-    private String pt_collapse_key;
+    private Object pt_collapse_key;
     private CleverTapInstanceConfig config;
 
     @SuppressWarnings({"unused"})
@@ -223,7 +223,7 @@ public class TemplateRenderer {
         pt_cancel_notif_ids = Utils.getNotificationIds(context);
         actions = Utils.getActionKeys(extras);
         pt_subtitle = extras.getString(Constants.PT_SUBTITLE);
-        pt_collapse_key = extras.getString(Constants.PT_COLLAPSE_KEY);
+        pt_collapse_key = extras.get(Constants.PT_COLLAPSE_KEY);
         pt_flip_interval = Utils.getFlipInterval(extras);
         pID = extras.getString(Constants.WZRK_PUSH_ID);
         if (config != null) {
@@ -238,18 +238,18 @@ public class TemplateRenderer {
     public static void createNotification(Context context, Bundle extras) {
         PTLog.verbose("Creating notification...");
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras);
-        templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+        templateRenderer.dupeCheck(context, extras);
     }
 
     @SuppressWarnings("unused")
     public static void createNotification(Context context, Bundle extras, CleverTapInstanceConfig config) {
         PTLog.verbose("Creating notification with config...");
         TemplateRenderer templateRenderer = new TemplateRenderer(context, extras, config);
-        templateRenderer.dupeCheck(context, extras, Constants.EMPTY_NOTIFICATION_ID);
+        templateRenderer.dupeCheck(context, extras);
     }
 
     @SuppressWarnings("SameParameterValue")
-    private synchronized void dupeCheck(final Context context, final Bundle extras, int id) {
+    private synchronized void dupeCheck(final Context context, final Bundle extras) {
         try {
             asyncHelper.postAsyncSafely("TemplateRenderer#_createNotification", new Runnable() {
                 @SuppressWarnings("ConstantConditions")
@@ -307,7 +307,7 @@ public class TemplateRenderer {
         }
 
         setSmallIcon(context);
-        int notificationId = setCollapseKey(extras);
+        int notificationId = setCollapseKey(pt_collapse_key);
 
         switch (templateType) {
             case BASIC:
@@ -1809,10 +1809,9 @@ public class TemplateRenderer {
         }
     }
 
-    private int setCollapseKey(Bundle extras) {
+    private int setCollapseKey(Object collapse_key) {
         int notificationId = Constants.EMPTY_NOTIFICATION_ID;
         try {
-            Object collapse_key = extras.get(Constants.WZRK_COLLAPSE);
             if (collapse_key != null) {
 
                 if (collapse_key instanceof Number) {
@@ -2089,8 +2088,8 @@ public class TemplateRenderer {
         if (pt_small_icon_clr == null || pt_small_icon_clr.isEmpty()) {
             pt_small_icon_clr = extras.getString(Constants.WZRK_CLR);
         }
-        if (pt_collapse_key == null || pt_collapse_key.isEmpty()){
-            pt_collapse_key = extras.getString(Constants.WZRK_COLLAPSE);
+        if (pt_collapse_key == null ){
+            pt_collapse_key = extras.get(Constants.WZRK_COLLAPSE);
         }
     }
 
