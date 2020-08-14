@@ -820,27 +820,27 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             dl = deepLinkList.get(4);
             extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + 5 + "_" + dl);
         }
-
-        Utils.raiseNotificationClicked(context, extras ,config);
+        extras.putString(Constants.WZRK_DL, dl);
 
         if (close == extras.getBoolean("close")) {
+            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + "close");
             notificationManager.cancel(notificationId);
             context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-            return;
         }
 
-        extras.putString(Constants.WZRK_DL, dl);
         Utils.raiseNotificationClicked(context, extras, config);
 
 
-        Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dl));
-        launchIntent.putExtras(extras);
-        launchIntent.putExtra(Constants.WZRK_DL, dl);
-        launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-        launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
-        launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(launchIntent);
-        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+        if(dl != null) {
+            Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dl));
+            launchIntent.putExtras(extras);
+            launchIntent.putExtra(Constants.WZRK_DL, dl);
+            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+            launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(launchIntent);
+            context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+        }
     }
 
     private PendingIntent setPendingIntent(Context context, int notificationId, Bundle extras, Intent launchIntent, String dl) {

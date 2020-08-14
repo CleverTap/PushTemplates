@@ -55,7 +55,8 @@ public class TemplateRenderer {
         Class className = null;
         try {
             className = Class.forName("com.google.android.exoplayer2.ExoPlayerFactory");
-            //className = Class.forName("com.google.android.exoplayer2.source.hls.HlsMediaSource");
+            className = Class.forName("com.google.android.exoplayer2.source.hls.HlsMediaSource");
+            className = Class.forName("com.google.android.exoplayer2.source.dash.DashMediaSource");
             className = Class.forName("com.google.android.exoplayer2.ui.PlayerView");
             Logger.d("ExoPlayer is present");
             exoPlayerPresent = true;
