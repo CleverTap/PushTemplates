@@ -1,6 +1,6 @@
 ## CHANGE LOG
 
-### Version 0.0.4 (August 18, 2020)
+### Version 0.0.4 (August 19, 2020)
 * Removed `Rated` event. 
 * The library will now never raise extra events apart from CleverTap System Events and events given to the library by KV pairs.
 * CTAs on Video, Rating and 5 CTA Template can now be tracked in the event Notification Clicked with in the property `wzrk_c2a`.
