@@ -178,14 +178,14 @@ Basic Template is the basic push notification received on apps.
 
 Auto carousel is an automatic revolving carousel push notification.
 <br/>(Expanded and unexpanded example)<br/><br/>
-![Auto Carousel](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/autocarouselv0.0.3.gif)
+<img src="https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/autocarouselv0.0.3.gif" alt="Auto-Carousel" width="450" height="800"/>
 
 
 ## Manual Carousel Template
 
 This is the manual version of the carousel. The user can navigate to the next image by clicking on the arrows.
 <br/>(Expanded and unexpanded example)<br/><br/>
-![Auto Carousel](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/manual.gif)
+<img src="https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/manual.gif" alt="Manual" width="450" height="800"/>
 
 If only one image can be downloaded, this template falls back to the Basic Template
 
