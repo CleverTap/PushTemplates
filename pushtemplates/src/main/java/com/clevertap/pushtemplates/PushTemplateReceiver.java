@@ -20,7 +20,6 @@ import android.text.Html;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.CleverTapInstanceConfig;
 
 import java.util.ArrayList;
@@ -52,7 +51,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private int pt_dot = 0;
     private boolean requiresChannelId;
     private NotificationManager notificationManager;
-    private CleverTapAPI cleverTapAPI;
     private String pt_product_display_action;
     private String pt_product_display_action_clr;
     private String pt_product_display_linear;
@@ -97,7 +95,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             pt_product_display_action_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_COLOUR);
             pt_product_display_linear = extras.getString(Constants.PT_PRODUCT_DISPLAY_LINEAR);
             notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-            cleverTapAPI = CleverTapAPI.getDefaultInstance(context);
             channelId = extras.getString(Constants.WZRK_CHANNEL_ID, "");
             pt_big_img_alt = extras.getString(Constants.PT_BIG_IMG_ALT);
             pt_small_icon_clr = extras.getString(Constants.PT_SMALL_ICON_COLOUR);
@@ -420,9 +417,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             HashMap<String, Object> map = new HashMap<String, Object>();
             if (clicked1 == extras.getBoolean("click1", false)) {
                 contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
-                map.put("Campaign", extras.getString("wzrk_id"));
-                map.put("Rating", 1);
-                cleverTapAPI.pushEvent("Rated", map);
+                extras.putString(Constants.WZRK_C2A, Constants.PT_RATING_C2A_KEY + 1);
+                Utils.raiseNotificationClicked(context, extras ,config);
                 clicked1 = false;
 
                 if (deepLinkList.size() > 0) {
@@ -434,9 +430,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             if (clicked2 == extras.getBoolean("click2", false)) {
                 contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
-                map.put("Campaign", extras.getString("wzrk_id"));
-                map.put("Rating", 2);
-                cleverTapAPI.pushEvent("Rated", map);
+                extras.putString(Constants.WZRK_C2A, Constants.PT_RATING_C2A_KEY + 2);
+                Utils.raiseNotificationClicked(context, extras ,config);
                 clicked2 = false;
                 if (deepLinkList.size() > 1) {
                     pt_dl_clicked = deepLinkList.get(1);
@@ -450,9 +445,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_filled);
-                map.put("Campaign", extras.getString("wzrk_id"));
-                map.put("Rating", 3);
-                cleverTapAPI.pushEvent("Rated", map);
+                extras.putString(Constants.WZRK_C2A, Constants.PT_RATING_C2A_KEY + 3);
+                Utils.raiseNotificationClicked(context, extras ,config);
                 clicked3 = false;
                 if (deepLinkList.size() > 2) {
                     pt_dl_clicked = deepLinkList.get(2);
@@ -467,9 +461,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star4, R.drawable.pt_star_filled);
-                map.put("Campaign", extras.getString("wzrk_id"));
-                map.put("Rating", 4);
-                cleverTapAPI.pushEvent("Rated", map);
+                extras.putString(Constants.WZRK_C2A, Constants.PT_RATING_C2A_KEY + 4);
+                Utils.raiseNotificationClicked(context, extras ,config);
                 clicked4 = false;
                 if (deepLinkList.size() > 3) {
                     pt_dl_clicked = deepLinkList.get(3);
@@ -485,9 +478,8 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star4, R.drawable.pt_star_filled);
                 contentViewRating.setImageViewResource(R.id.star5, R.drawable.pt_star_filled);
-                map.put("Campaign", extras.getString("wzrk_id"));
-                map.put("Rating", 5);
-                cleverTapAPI.pushEvent("Rated", map);
+                extras.putString(Constants.WZRK_C2A, Constants.PT_RATING_C2A_KEY + 5);
+                Utils.raiseNotificationClicked(context, extras ,config);
                 clicked5 = false;
                 if (deepLinkList.size() > 4) {
                     pt_dl_clicked = deepLinkList.get(4);
@@ -582,7 +574,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                     launchIntent.removeExtra(Constants.WZRK_ACTIONS);
                     launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
                     launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    Utils.raiseNotificationClicked(context, extras,config);
+                    Utils.raiseNotificationClicked(context, extras, config);
                     context.startActivity(launchIntent);
                 }
                 return;
@@ -602,21 +594,18 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             if (!isLinear) {
                 setCustomContentViewBasicKeys(contentViewSmall, context);
             }
-
             if (!bigTextList.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(0));
-
+                setCustomContentViewText(contentViewBig, R.id.product_name, bigTextList.get(0));
             }
 
             if (!isLinear) {
                 if (!smallTextList.isEmpty()) {
-                    contentViewBig.setTextViewText(R.id.product_description, smallTextList.get(0));
+                    setCustomContentViewText(contentViewBig,R.id.product_description, smallTextList.get(0));
                 }
             }
 
             if (!priceList.isEmpty()) {
-                contentViewBig.setTextViewText(R.id.product_price, priceList.get(0));
-
+                setCustomContentViewText(contentViewBig,R.id.product_price, priceList.get(0));
             }
 
             if (!isLinear) {
@@ -809,37 +798,49 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     private void handleFiveCTANotification(Context context, Bundle extras) {
         String dl = null;
 
+
         int notificationId = extras.getInt(Constants.PT_NOTIF_ID);
         if (cta1 == extras.getBoolean("cta1")) {
             dl = deepLinkList.get(0);
+            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + 1 + "_" + dl);
         }
         if (cta2 == extras.getBoolean("cta2")) {
             dl = deepLinkList.get(1);
+            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + 2 + "_" + dl);
         }
         if (cta3 == extras.getBoolean("cta3")) {
             dl = deepLinkList.get(2);
+            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + 3 + "_" + dl);
         }
         if (cta4 == extras.getBoolean("cta4")) {
             dl = deepLinkList.get(3);
+            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + 4 + "_" + dl);
         }
         if (cta5 == extras.getBoolean("cta5")) {
             dl = deepLinkList.get(4);
+            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + 5 + "_" + dl);
         }
+        extras.putString(Constants.WZRK_DL, dl);
+
         if (close == extras.getBoolean("close")) {
+            extras.putString(Constants.WZRK_C2A, Constants.PT_5CTA_C2A_KEY + "close");
             notificationManager.cancel(notificationId);
             context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-            return;
-
         }
 
-        Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dl));
-        launchIntent.putExtras(extras);
-        launchIntent.putExtra(Constants.WZRK_DL, dl);
-        launchIntent.removeExtra(Constants.WZRK_ACTIONS);
-        launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
-        launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(launchIntent);
-        context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+        Utils.raiseNotificationClicked(context, extras, config);
+
+
+        if(dl != null) {
+            Intent launchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dl));
+            launchIntent.putExtras(extras);
+            launchIntent.putExtra(Constants.WZRK_DL, dl);
+            launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+            launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(launchIntent);
+            context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+        }
     }
 
     private PendingIntent setPendingIntent(Context context, int notificationId, Bundle extras, Intent launchIntent, String dl) {
@@ -901,7 +902,11 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         contentView.setTextViewText(R.id.app_name, Utils.getApplicationName(context));
         contentView.setTextViewText(R.id.timestamp, Utils.getTimeStamp(context));
         if (pt_subtitle != null && !pt_subtitle.isEmpty()) {
-            contentView.setTextViewText(R.id.subtitle, pt_subtitle);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                contentView.setTextViewText(R.id.subtitle, Html.fromHtml(pt_subtitle, Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                contentView.setTextViewText(R.id.subtitle, Html.fromHtml(pt_subtitle));
+            }
         } else {
             contentView.setViewVisibility(R.id.subtitle, View.GONE);
             contentView.setViewVisibility(R.id.sep_subtitle, View.GONE);
@@ -921,8 +926,10 @@ public class PushTemplateReceiver extends BroadcastReceiver {
     }
 
     private void setCustomContentViewButtonLabel(RemoteViews contentView, int resourceID, String pt_product_display_action) {
-        if (pt_product_display_action != null && !pt_product_display_action.isEmpty()) {
-            contentView.setTextViewText(resourceID, pt_product_display_action);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            contentView.setTextViewText(resourceID, Html.fromHtml(pt_product_display_action, Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            contentView.setTextViewText(resourceID, Html.fromHtml(pt_product_display_action));
         }
     }
 
@@ -1069,6 +1076,9 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         if (pt_subtitle == null || pt_subtitle.isEmpty()) {
             pt_subtitle = extras.getString(Constants.WZRK_SUBTITLE);
         }
+        if (pt_small_icon_clr == null || pt_small_icon_clr.isEmpty()) {
+            pt_small_icon_clr = extras.getString(Constants.WZRK_CLR);
+        }
     }
 
     private void setToast(Context context, String message) {
@@ -1083,6 +1093,16 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             pt_dot_sep = Utils.setBitMapColour(context, pt_dot, pt_meta_clr);
         } catch (NullPointerException e) {
             PTLog.debug("NPE while setting dot sep color");
+        }
+    }
+
+    private void setCustomContentViewText(RemoteViews contentView, int resourceId, String s) {
+        if (!s.isEmpty()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                contentView.setTextViewText(resourceId, Html.fromHtml(s, Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                contentView.setTextViewText(resourceId, Html.fromHtml(s));
+            }
         }
     }
 

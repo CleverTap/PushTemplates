@@ -454,9 +454,9 @@ public class Utils {
     static void raiseCleverTapEvent(Context context, CleverTapInstanceConfig config, Bundle extras) {
 
         CleverTapAPI instance;
-        if(config != null){
-            instance = CleverTapAPI.instanceWithConfig(context,config);
-        }else{
+        if (config != null) {
+            instance = CleverTapAPI.instanceWithConfig(context, config);
+        } else {
             instance = CleverTapAPI.getDefaultInstance(context);
         }
 
@@ -468,7 +468,7 @@ public class Utils {
         if (eName != null && !eName.isEmpty()) {
             if (instance != null) {
                 instance.pushEvent(eName, eProps);
-            }else{
+            } else {
                 PTLog.debug("CleverTap instance is NULL, not raising the event");
             }
         }
@@ -478,9 +478,9 @@ public class Utils {
     static void raiseCleverTapEvent(Context context, CleverTapInstanceConfig config, Bundle extras, String key) {
 
         CleverTapAPI instance;
-        if(config != null){
-            instance = CleverTapAPI.instanceWithConfig(context,config);
-        }else{
+        if (config != null) {
+            instance = CleverTapAPI.instanceWithConfig(context, config);
+        } else {
             instance = CleverTapAPI.getDefaultInstance(context);
         }
 
@@ -494,7 +494,26 @@ public class Utils {
         if (eName != null && !eName.isEmpty()) {
             if (instance != null) {
                 instance.pushEvent(eName, eProps);
-            }else{
+            } else {
+                PTLog.debug("CleverTap instance is NULL, not raising the event");
+            }
+        }
+
+    }
+
+    static void raiseCleverTapEvent(Context context, CleverTapInstanceConfig config, String evtName, HashMap<String, Object> eProps) {
+
+        CleverTapAPI instance;
+        if (config != null) {
+            instance = CleverTapAPI.instanceWithConfig(context, config);
+        } else {
+            instance = CleverTapAPI.getDefaultInstance(context);
+        }
+
+        if (evtName != null && !evtName.isEmpty()) {
+            if (instance != null) {
+                instance.pushEvent(evtName, eProps);
+            } else {
                 PTLog.debug("CleverTap instance is NULL, not raising the event");
             }
         }
@@ -629,9 +648,9 @@ public class Utils {
 
     static void raiseNotificationClicked(Context context, Bundle extras, CleverTapInstanceConfig config) {
         CleverTapAPI instance;
-        if(config != null){
-            instance = CleverTapAPI.instanceWithConfig(context,config);
-        }else{
+        if (config != null) {
+            instance = CleverTapAPI.instanceWithConfig(context, config);
+        } else {
             instance = CleverTapAPI.getDefaultInstance(context);
         }
         if (instance != null) {
@@ -642,9 +661,9 @@ public class Utils {
 
     static void raiseNotificationViewed(Context context, Bundle extras, CleverTapInstanceConfig config) {
         CleverTapAPI instance;
-        if(config != null){
-            instance = CleverTapAPI.instanceWithConfig(context,config);
-        }else{
+        if (config != null) {
+            instance = CleverTapAPI.instanceWithConfig(context, config);
+        } else {
             instance = CleverTapAPI.getDefaultInstance(context);
         }
         if (instance != null) {
@@ -754,10 +773,17 @@ public class Utils {
     }
 
     public static int getFlipInterval(Bundle extras) {
-        String interval = extras.getString(Constants.PT_FLIP_INTERVAL, Constants.PT_FLIP_INTERVAL_TIME);
-        int t = Integer.parseInt(interval);
-        return Math.max(t, Integer.parseInt(Constants.PT_FLIP_INTERVAL_TIME));
-
+        String interval = extras.getString(Constants.PT_FLIP_INTERVAL);
+        try {
+            int t = 0;
+            if (interval != null) {
+                t = Integer.parseInt(interval);
+                return Math.max(t, Constants.PT_FLIP_INTERVAL_TIME);
+            }
+        } catch (Exception e){
+            PTLog.debug("Flip Interval couldn't be converted to number: " + interval + " - Defaulting to base value: "  + Constants.PT_FLIP_INTERVAL_TIME);
+        }
+        return Constants.PT_FLIP_INTERVAL_TIME;
     }
 
     public static void saveBitmapToInternalStorage(Context context, Bitmap bitmapImage, String fileName) {

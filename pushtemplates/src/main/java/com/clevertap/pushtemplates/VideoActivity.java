@@ -20,11 +20,14 @@ import android.widget.ImageView;
 
 import androidx.core.content.ContextCompat;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.dash.DashMediaSource;
+import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -35,18 +38,17 @@ import com.google.android.exoplayer2.util.Util;
 import java.util.ArrayList;
 
 public class VideoActivity extends Activity {
-    Bundle extras;
+    private Bundle extras;
     private SimpleExoPlayer player;
-    PlayerView playerView;
+    private PlayerView playerView;
     private int currentWindow = 0;
-    FixedAspectRatioFrameLayout aspectRatioFrameLayout;
-    FrameLayout fullscreenButton;
+    private FixedAspectRatioFrameLayout aspectRatioFrameLayout;
     private long playbackPosition = 0;
-    ImageButton openAppButton, closeVideoButton;
-    ImageView fullscreenIcon;
-    int portraitWidth;
+    private ImageButton openAppButton, closeVideoButton;
+    private ImageView fullscreenIcon;
+    private int portraitWidth;
 
-    boolean fullscreen = false;
+    private boolean fullscreen = false;
     private ArrayList<String> deepLinkList;
     private Context context;
 
@@ -69,7 +71,7 @@ public class VideoActivity extends Activity {
 
         openAppButton = findViewById(R.id.pt_open_app_btn);
         closeVideoButton = findViewById(R.id.pt_video_close);
-        fullscreenButton = findViewById(R.id.pt_video_fullscreen_btn);
+        FrameLayout fullscreenButton = findViewById(R.id.pt_video_fullscreen_btn);
         fullscreenIcon = findViewById(R.id.pt_video_fullscreen_icon);
 
         if (orientation == 1){
@@ -109,6 +111,7 @@ public class VideoActivity extends Activity {
                         launchIntent.putExtra(Constants.WZRK_DL, deepLinkList.get(0));
                     }
                     launchIntent.removeExtra(Constants.WZRK_ACTIONS);
+                    launchIntent.putExtra(Constants.WZRK_C2A, Constants.PT_VIDEO_C2A_KEY + "app_open");
                     launchIntent.putExtra(Constants.WZRK_FROM_KEY, Constants.WZRK_FROM);
                     launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.sendBroadcast(launchIntent);
@@ -201,21 +204,34 @@ public class VideoActivity extends Activity {
         player = ExoPlayerFactory.newSimpleInstance(VideoActivity.this);
 
         Uri uri = Uri.parse(url);
-        MediaSource mediaSource = buildMediaSource(uri);
-
-        player.seekTo(currentWindow, playbackPosition);
-        player.prepare(mediaSource, false, false);
+        try {
+            MediaSource mediaSource = buildMediaSource(uri, Util.inferContentType(uri));
+            player.seekTo(currentWindow, playbackPosition);
+            player.prepare(mediaSource, false, false);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
-    private MediaSource buildMediaSource(Uri uri) {
-        DataSource.Factory dataSourceFactory =
-                new DefaultDataSourceFactory(VideoActivity.this, Util.getUserAgent(this, this.getApplication().getPackageName()));
-        ProgressiveMediaSource.Factory mediaSourceFactory =
-                new ProgressiveMediaSource.Factory(dataSourceFactory);
-
-        MediaSource mediaSource1 = mediaSourceFactory.createMediaSource(uri);
-
-        return new ConcatenatingMediaSource(mediaSource1);
+    private MediaSource buildMediaSource(Uri uri, int type) {
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(VideoActivity.this,
+                Util.getUserAgent(this, this.getApplication().getPackageName()));
+        switch (type){
+            case C.TYPE_DASH:
+                return new DashMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(uri);
+            case C.TYPE_HLS:
+                return new HlsMediaSource.Factory(dataSourceFactory).
+                        createMediaSource(uri);
+            case C.TYPE_OTHER:
+                return new ProgressiveMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(uri);
+            case C.TYPE_SS:
+                return new SsMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(uri);
+            default:
+                throw new IllegalStateException("Unsupported type: " + type);
+        }
     }
 
     private void releasePlayer() {
