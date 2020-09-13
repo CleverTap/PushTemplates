@@ -17,17 +17,15 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingTop="8dp">
-
-        <ImageView
-            android:id="@+id/big_image"
+        <ViewFlipper
+            android:id="@+id/carousel_image"
             android:layout_width="match_parent"
             android:layout_height="140dp"
             android:layout_marginLeft="-8dp"
             android:layout_marginRight="-8dp"
             android:layout_weight="4.5"
-            android:inAnimation="@anim/slide_in_left"
-            android:outAnimation="@anim/slide_out_right"
-            android:scaleType="centerCrop" />
+            android:inAnimation="@anim/fade_in"
+            android:outAnimation="@anim/fade_out" />
 
         <LinearLayout
             android:id="@+id/buy_price"

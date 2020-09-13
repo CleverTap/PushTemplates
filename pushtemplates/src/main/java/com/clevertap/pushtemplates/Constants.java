@@ -94,6 +94,9 @@ public class Constants {
     public static final String PT_IMAGE_1 = "img1";
     public static final String PT_IMAGE_2 = "img2";
     public static final String PT_IMAGE_3 = "img3";
+    public static final String PT_CURRENT_POSITION = "pt_current_position";
+    public static final String PT_TOTAL_COUNT = "pt_total_count";
+    public static final String PT_IMAGE_AVAILABILITY_ARRAY = "pt_image_availability_array";
     public static final String PT_BUY_NOW = "buynow";
     public static final String TEXT_ONLY = "text_only";
     public static final String PT_TYPE = "pt_type";

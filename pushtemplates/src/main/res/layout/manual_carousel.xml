@@ -4,29 +4,62 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <include layout="@layout/content_view_small"
-        android:id="@+id/rel_lyt"/>
+    <include
+        android:id="@+id/rel_lyt"
+        layout="@layout/content_view_small" />
 
     <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/rel_lyt">
 
-        <ImageView
-            android:id="@+id/carousel_image"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"/>
+            android:orientation="horizontal">
+
+            <ViewFlipper
+                android:id="@+id/carousel_image_left"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="6"
+                android:inAnimation="@anim/fade_in"
+                android:outAnimation="@anim/fade_out" />
+
+            <ViewFlipper
+                android:id="@+id/carousel_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:inAnimation="@anim/fade_in"
+                android:outAnimation="@anim/fade_out" />
+
+            <ViewFlipper
+                android:id="@+id/carousel_image_right"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="6"
+                android:inAnimation="@anim/fade_in"
+                android:outAnimation="@anim/fade_out" />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/leftArrowPos0"
-            android:background="@drawable/btn_ripple_background"
-            style="@style/ManualCarouselArrowRev" />
+            style="@style/ManualCarouselArrowRev"
+            android:background="@drawable/btn_ripple_background" />
 
         <ImageView
             android:id="@+id/rightArrowPos0"
-            android:background="@drawable/btn_ripple_background"
-            style="@style/ManualCarouselArrowFwd" />
-
+            style="@style/ManualCarouselArrowFwd"
+            android:background="@drawable/btn_ripple_background" />
     </RelativeLayout>
+
+
 </RelativeLayout>

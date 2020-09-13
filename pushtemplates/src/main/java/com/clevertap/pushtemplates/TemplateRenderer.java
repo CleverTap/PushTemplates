@@ -22,6 +22,7 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.text.Html;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RemoteViews;
 
 import com.clevertap.android.sdk.CleverTapInstanceConfig;
@@ -871,19 +872,27 @@ public class TemplateRenderer {
             contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos0, View.VISIBLE);
 
             int imageCounter = 0;
+            boolean isFirstImageOk = false;
             String dl = null;
-            int currentPosition = imageList.size() - 1;
-            for (int index = imageList.size() - 1; index >= 0; index--) {
-                Utils.loadImageURLIntoRemoteView(R.id.carousel_image, imageList.get(index), contentViewManualCarousel, context, pID);
+            int currentPosition = 0;
+            ImageView IV = new ImageView(context);
+            IV.setId(R.id.flipper_img);
+            IV.setScaleType(ImageView.ScaleType.FIT_END);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                IV.setClipToOutline(true);
+            }
+
+            for (int index = 0; index < imageList.size(); index++) {
+                RemoteViews nrv = new RemoteViews(context.getPackageName(), R.layout.image_view_rounded);
+                Utils.loadImageURLIntoRemoteView(IV.getId(), imageList.get(index), nrv, context);
                 if (!Utils.getFallback()) {
-                    if (deepLinkList != null && deepLinkList.size() == 1) {
-                        dl = deepLinkList.get(0);
-                    } else if (deepLinkList != null && deepLinkList.size() > index) {
-                        dl = deepLinkList.get(index);
-                    } else if (deepLinkList != null && deepLinkList.size() < index) {
-                        dl = deepLinkList.get(0);
+                    if (!isFirstImageOk) {
+                        currentPosition = index;
+                        isFirstImageOk = true;
                     }
-                    currentPosition = index;
+                    contentViewManualCarousel.addView(R.id.carousel_image, nrv);
+                    contentViewManualCarousel.addView(R.id.carousel_image_right, nrv);
+                    contentViewManualCarousel.addView(R.id.carousel_image_left, nrv);
                     imageCounter++;
                 } else {
                     if (deepLinkList != null && deepLinkList.size() == imageList.size()) {
@@ -893,6 +902,8 @@ public class TemplateRenderer {
                     PTLog.debug("Skipping Image in Manual Carousel.");
                 }
             }
+            contentViewManualCarousel.setDisplayedChild(R.id.carousel_image_right, 1);
+            contentViewManualCarousel.setDisplayedChild(R.id.carousel_image_left, imageList.size() - 1);
 
             extras.putInt(Constants.PT_MANUAL_CAROUSEL_CURRENT, currentPosition);
             extras.putStringArrayList(Constants.PT_IMAGE_LIST, imageList);
@@ -1066,39 +1077,95 @@ public class TemplateRenderer {
 
             notificationId = setNotificationId(notificationId);
 
+            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
+
+            if (!isLinear) {
+                setCustomContentViewSmallIcon(contentViewSmall);
+                setCustomContentViewDotSep(contentViewSmall);
+            }
+
+            int imageCounter = 0;
+            boolean isFirstImageOk = false;
+
+            ImageView IV = new ImageView(context);
+            IV.setId(R.id.fimg);
+            IV.setScaleType(ImageView.ScaleType.FIT_END);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                IV.setClipToOutline(true);
+            }
+
+            ArrayList<Integer> smallImageLayoutIds = new ArrayList<>();
+            smallImageLayoutIds.add(R.id.small_image1);
+            smallImageLayoutIds.add(R.id.small_image2);
+            smallImageLayoutIds.add(R.id.small_image3);
+
+            ArrayList<Integer> imageAvailability = new ArrayList<>();
+
+            if (isLinear) {
+                ArrayList<Integer> smallCollapsedImageLayoutIds = new ArrayList<>();
+                smallCollapsedImageLayoutIds.add(R.id.small_image1_collapsed);
+                smallCollapsedImageLayoutIds.add(R.id.small_image2_collapsed);
+                smallCollapsedImageLayoutIds.add(R.id.small_image3_collapsed);
+                for (int index = 0; index < imageList.size(); index++) {
+                    Utils.loadImageURLIntoRemoteView(smallCollapsedImageLayoutIds.get(index), imageList.get(index), contentViewSmall);
+                    Utils.loadImageURLIntoRemoteView(smallImageLayoutIds.get(index), imageList.get(index), contentViewBig);
+                    RemoteViews nrv = new RemoteViews(context.getPackageName(), R.layout.image_view);
+                    Utils.loadImageURLIntoRemoteView(IV.getId(), imageList.get(index), nrv);
+                    if (Utils.getFallback()) {
+                        contentViewBig.setViewVisibility(smallImageLayoutIds.get(index), View.GONE);
+                        contentViewSmall.setViewVisibility(smallCollapsedImageLayoutIds.get(index), View.GONE);
+                    } else {
+                        if (!isFirstImageOk) {
+                            isFirstImageOk = true;
+                        }
+                        imageCounter++;
+                        imageAvailability.add(index);
+                        contentViewBig.addView(R.id.carousel_image, nrv);
+                    }
+                }
+            } else {
+                for (int index = 0; index < imageList.size(); index++) {
+                    Utils.loadImageURLIntoRemoteView(smallImageLayoutIds.get(index), imageList.get(index), contentViewBig);
+                    RemoteViews nrv = new RemoteViews(context.getPackageName(), R.layout.image_view);
+                    Utils.loadImageURLIntoRemoteView(IV.getId(), imageList.get(index), nrv);
+                    if (Utils.getFallback()) {
+                        contentViewBig.setViewVisibility(smallImageLayoutIds.get(index), View.GONE);
+                    } else {
+                        if (!isFirstImageOk) {
+                            isFirstImageOk = true;
+                        }
+                        imageCounter++;
+                        imageAvailability.add(index);
+                        contentViewBig.addView(R.id.carousel_image, nrv);
+                    }
+                }
+            }
+            extras.putInt(Constants.PT_TOTAL_COUNT, imageCounter);
+            extras.putIntegerArrayList(Constants.PT_IMAGE_AVAILABILITY_ARRAY, imageAvailability);
             int requestCode1 = new Random().nextInt();
             int requestCode2 = new Random().nextInt();
             int requestCode3 = new Random().nextInt();
 
             Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
-            notificationIntent1.putExtra(Constants.PT_IMAGE_1, true);
+            notificationIntent1.putExtra(Constants.PT_CURRENT_POSITION, 0);
             notificationIntent1.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent1.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(0));
-            notificationIntent1.putExtra(Constants.PT_REQUEST_CODE_1, requestCode1);
-            notificationIntent1.putExtra(Constants.PT_REQUEST_CODE_2, requestCode2);
-            notificationIntent1.putExtra(Constants.PT_REQUEST_CODE_3, requestCode3);
             notificationIntent1.putExtras(extras);
             PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, requestCode1, notificationIntent1, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image1, contentIntent1);
 
             Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
-            notificationIntent2.putExtra(Constants.PT_IMAGE_2, true);
+            notificationIntent2.putExtra(Constants.PT_CURRENT_POSITION, 1);
             notificationIntent2.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent2.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(1));
-            notificationIntent2.putExtra(Constants.PT_REQUEST_CODE_1, requestCode1);
-            notificationIntent2.putExtra(Constants.PT_REQUEST_CODE_2, requestCode2);
-            notificationIntent2.putExtra(Constants.PT_REQUEST_CODE_3, requestCode3);
             notificationIntent2.putExtras(extras);
             PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, requestCode2, notificationIntent2, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image2, contentIntent2);
 
             Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
-            notificationIntent3.putExtra(Constants.PT_IMAGE_3, true);
+            notificationIntent3.putExtra(Constants.PT_CURRENT_POSITION, 2);
             notificationIntent3.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent3.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(2));
-            notificationIntent3.putExtra(Constants.PT_REQUEST_CODE_1, requestCode1);
-            notificationIntent3.putExtra(Constants.PT_REQUEST_CODE_2, requestCode2);
-            notificationIntent3.putExtra(Constants.PT_REQUEST_CODE_3, requestCode3);
             notificationIntent3.putExtras(extras);
             PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, requestCode3, notificationIntent3, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image3, contentIntent3);
@@ -1107,9 +1174,6 @@ public class TemplateRenderer {
             notificationIntent4.putExtra(Constants.PT_IMAGE_1, true);
             notificationIntent4.putExtra(Constants.PT_NOTIF_ID, notificationId);
             notificationIntent4.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(0));
-            notificationIntent4.putExtra(Constants.PT_REQUEST_CODE_1, requestCode1);
-            notificationIntent4.putExtra(Constants.PT_REQUEST_CODE_2, requestCode2);
-            notificationIntent4.putExtra(Constants.PT_REQUEST_CODE_3, requestCode3);
             notificationIntent4.putExtra(Constants.PT_BUY_NOW, true);
             notificationIntent4.putExtra("config", config);
             notificationIntent4.putExtras(extras);
@@ -1150,69 +1214,15 @@ public class TemplateRenderer {
 
             Notification notification = notificationBuilder.build();
 
-            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
-
-            if (!isLinear) {
-                setCustomContentViewSmallIcon(contentViewSmall);
-                setCustomContentViewDotSep(contentViewSmall);
-            }
-
-            int imageCounter = 0;
-            int imageOKIndex = 0;
-            boolean isFirstImageOK = true;
-            ArrayList<Integer> smallImageLayoutIds = new ArrayList<>();
-            smallImageLayoutIds.add(R.id.small_image1);
-            smallImageLayoutIds.add(R.id.small_image2);
-            smallImageLayoutIds.add(R.id.small_image3);
-
-            if (isLinear) {
-                ArrayList<Integer> smallCollapsedImageLayoutIds = new ArrayList<>();
-                smallCollapsedImageLayoutIds.add(R.id.small_image1_collapsed);
-                smallCollapsedImageLayoutIds.add(R.id.small_image2_collapsed);
-                smallCollapsedImageLayoutIds.add(R.id.small_image3_collapsed);
-                for (int index = 0; index < imageList.size(); index++) {
-                    Utils.loadImageURLIntoRemoteView(smallCollapsedImageLayoutIds.get(index), imageList.get(index), contentViewSmall, context, pID);
-                    contentViewBig.setImageViewBitmap(smallImageLayoutIds.get(index), Utils.loadImageFromStorage(imageList.get(index), pID));
-                    if (Utils.getFallback()) {
-                        contentViewBig.setViewVisibility(smallImageLayoutIds.get(index), View.GONE);
-                        contentViewSmall.setViewVisibility(smallCollapsedImageLayoutIds.get(index), View.GONE);
-                        imageCounter++;
-                        if (index == 0) {
-                            isFirstImageOK = false;
-                        }
-                    } else {
-                        imageOKIndex = index;
-                    }
-                }
-            } else {
-                for (int index = 0; index < imageList.size(); index++) {
-                    Utils.loadImageURLIntoRemoteView(smallImageLayoutIds.get(index), imageList.get(index), contentViewBig, context, pID);
-                    if (Utils.getFallback()) {
-                        contentViewBig.setViewVisibility(smallImageLayoutIds.get(index), View.GONE);
-                        imageCounter++;
-                        if (index == 0) {
-                            isFirstImageOK = false;
-                        }
-                    } else {
-                        imageOKIndex = index;
-                    }
-                }
-            }
-
             setCustomContentViewDotSep(contentViewBig);
 
             setCustomContentViewSmallIcon(contentViewBig);
 
-            if (isFirstImageOK) {
-                setCustomContentViewBigImage(contentViewBig, imageList.get(0), false);
-            } else {
-                setCustomContentViewBigImage(contentViewBig, imageList.get(imageOKIndex), false);
-            }
-
-            if (imageCounter >= 2) {
+            if (imageCounter <= 1) {
                 PTLog.debug("2 or more images are not retrievable, not displaying the notification.");
                 return;
             }
+
             notificationManager.notify(notificationId, notification);
 
             Utils.raiseNotificationViewed(context, extras, config);

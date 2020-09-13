@@ -17,8 +17,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
@@ -28,12 +32,15 @@ import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.widget.ImageView;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
@@ -334,6 +341,47 @@ public class Utils {
         Bitmap image = getBitmapFromURL(imageUrl);
         setFallback(false);
         if (image != null) {
+            remoteViews.setImageViewBitmap(imageViewID, image);
+        } else {
+            PTLog.debug("Image was not perfect. URL:" + imageUrl + " hiding image view");
+            setFallback(true);
+        }
+
+    }
+    public static Bitmap getRoundedCornerImage(int imageViedID, Bitmap bitmap) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        final float roundPx = 30;
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
+
+    }
+
+    static void loadImageURLIntoRemoteView(int imageViewID, String imageUrl,
+                                           RemoteViews remoteViews, Context context) {
+        Bitmap image = getBitmapFromURL(imageUrl);
+        setFallback(false);
+        if (image != null) {
+//            RoundedBitmapDrawable dr =
+//                    RoundedBitmapDrawableFactory.create(context.getResources(), image);
+//            PTLog.verbose(dr.getCornerRadius() + "Before");
+//            dr.setCornerRadius(1000);
+//            dr.setCircular(true);
+//            PTLog.verbose(dr.getCornerRadius() + "After");
             remoteViews.setImageViewBitmap(imageViewID, image);
         } else {
             PTLog.debug("Image was not perfect. URL:" + imageUrl + " hiding image view");

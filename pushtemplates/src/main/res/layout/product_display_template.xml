@@ -47,13 +47,13 @@
         android:layout_marginTop="8dp"
         android:weightSum="1">
 
-        <ImageView
-            android:id="@+id/big_image"
+        <ViewFlipper
+            android:id="@+id/carousel_image"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            android:inAnimation="@anim/slide_in_left"
-            android:outAnimation="@anim/slide_out_right" />
+            android:inAnimation="@anim/fade_in"
+            android:outAnimation="@anim/fade_out" />
 
         <LinearLayout
             android:layout_width="0dp"
