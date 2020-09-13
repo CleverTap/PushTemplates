@@ -262,6 +262,16 @@ public class Utils {
         return dlList;
     }
 
+    static ArrayList<String> getCustomCTAListFromExtras(Bundle extras) {
+        ArrayList<String> ctaList = new ArrayList<>();
+        for (String key : extras.keySet()) {
+            if (key.contains("pt_custom_cta")) {
+                ctaList.add(extras.getString(key));
+            }
+        }
+        return ctaList;
+    }
+
     static ArrayList<String> getBigTextFromExtras(Bundle extras) {
         ArrayList<String> btList = new ArrayList<>();
         for (String key : extras.keySet()) {
@@ -348,40 +358,12 @@ public class Utils {
         }
 
     }
-    public static Bitmap getRoundedCornerImage(int imageViedID, Bitmap bitmap) {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        final float roundPx = 30;
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        return output;
-
-    }
 
     static void loadImageURLIntoRemoteView(int imageViewID, String imageUrl,
                                            RemoteViews remoteViews, Context context) {
         Bitmap image = getBitmapFromURL(imageUrl);
         setFallback(false);
         if (image != null) {
-//            RoundedBitmapDrawable dr =
-//                    RoundedBitmapDrawableFactory.create(context.getResources(), image);
-//            PTLog.verbose(dr.getCornerRadius() + "Before");
-//            dr.setCornerRadius(1000);
-//            dr.setCircular(true);
-//            PTLog.verbose(dr.getCornerRadius() + "After");
             remoteViews.setImageViewBitmap(imageViewID, image);
         } else {
             PTLog.debug("Image was not perfect. URL:" + imageUrl + " hiding image view");
@@ -393,20 +375,6 @@ public class Utils {
     static void loadImageRidIntoRemoteView(int imageViewID, int resourceID,
                                            RemoteViews remoteViews) {
         remoteViews.setImageViewResource(imageViewID, resourceID);
-    }
-
-    static void loadImageURLIntoRemoteView(int imageViewID, String imageUrl,
-                                           RemoteViews remoteViews, Context context, String pId) {
-        Bitmap image = getBitmapFromURL(imageUrl);
-        setFallback(false);
-        if (image != null) {
-            remoteViews.setImageViewBitmap(imageViewID, image);
-            saveBitmapToInternalStorage(context, image, getImageFileNameFromURL(imageUrl) + "_" + pId);
-        } else {
-            PTLog.debug("Image was not perfect. URL:" + imageUrl + " hiding image view");
-            setFallback(true);
-        }
-
     }
 
     static NotificationTarget buildNotificationTarget(Context context, int imageResource,
@@ -828,8 +796,8 @@ public class Utils {
                 t = Integer.parseInt(interval);
                 return Math.max(t, Constants.PT_FLIP_INTERVAL_TIME);
             }
-        } catch (Exception e){
-            PTLog.debug("Flip Interval couldn't be converted to number: " + interval + " - Defaulting to base value: "  + Constants.PT_FLIP_INTERVAL_TIME);
+        } catch (Exception e) {
+            PTLog.debug("Flip Interval couldn't be converted to number: " + interval + " - Defaulting to base value: " + Constants.PT_FLIP_INTERVAL_TIME);
         }
         return Constants.PT_FLIP_INTERVAL_TIME;
     }
@@ -922,5 +890,31 @@ public class Utils {
                 }
             }
         }
+    }
+
+
+    public static Bundle jsonStringToBundle(String jsonString) {
+        try {
+            JSONObject jsonObject = toJsonObject(jsonString);
+            return jsonToBundle(jsonObject);
+        } catch (JSONException ignored) {
+
+        }
+        return null;
+    }
+
+    public static JSONObject toJsonObject(String jsonString) throws JSONException {
+        return new JSONObject(jsonString);
+    }
+
+    public static Bundle jsonToBundle(JSONObject jsonObject) throws JSONException {
+        Bundle bundle = new Bundle();
+        Iterator iter = jsonObject.keys();
+        while (iter.hasNext()) {
+            String key = (String) iter.next();
+            String value = jsonObject.getString(key);
+            bundle.putString(key, value);
+        }
+        return bundle;
     }
 }

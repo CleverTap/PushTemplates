@@ -22,7 +22,6 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.text.Html;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RemoteViews;
 
 import com.clevertap.android.sdk.CleverTapInstanceConfig;
@@ -803,10 +802,10 @@ public class TemplateRenderer {
 
             int imageCounter = 0;
             for (int index = 0; index < imageList.size(); index++) {
-                RemoteViews nrv = new RemoteViews(context.getPackageName(), R.layout.image_view);
-                Utils.loadImageURLIntoRemoteView(R.id.fimg, imageList.get(index), nrv);
+                RemoteViews tempRemoteView = new RemoteViews(context.getPackageName(), R.layout.image_view);
+                Utils.loadImageURLIntoRemoteView(R.id.fimg, imageList.get(index), tempRemoteView);
                 if (!Utils.getFallback()) {
-                    contentViewCarousel.addView(R.id.view_flipper, nrv);
+                    contentViewCarousel.addView(R.id.view_flipper, tempRemoteView);
                     imageCounter++;
                 } else {
                     PTLog.debug("Skipping Image in Auto Carousel.");
@@ -827,6 +826,7 @@ public class TemplateRenderer {
                         + imageCounter + ", not displaying the notification.");
                 return;
             }
+            setCustomCTA(context, extras, contentViewCarousel);
 
             notificationManager.notify(notificationId, notification);
 
@@ -875,24 +875,18 @@ public class TemplateRenderer {
             boolean isFirstImageOk = false;
             String dl = null;
             int currentPosition = 0;
-            ImageView IV = new ImageView(context);
-            IV.setId(R.id.flipper_img);
-            IV.setScaleType(ImageView.ScaleType.FIT_END);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                IV.setClipToOutline(true);
-            }
 
             for (int index = 0; index < imageList.size(); index++) {
-                RemoteViews nrv = new RemoteViews(context.getPackageName(), R.layout.image_view_rounded);
-                Utils.loadImageURLIntoRemoteView(IV.getId(), imageList.get(index), nrv, context);
+                RemoteViews tempRemoteView = new RemoteViews(context.getPackageName(), R.layout.image_view_rounded);
+                Utils.loadImageURLIntoRemoteView(R.id.flipper_img, imageList.get(index), tempRemoteView, context);
                 if (!Utils.getFallback()) {
                     if (!isFirstImageOk) {
                         currentPosition = index;
                         isFirstImageOk = true;
                     }
-                    contentViewManualCarousel.addView(R.id.carousel_image, nrv);
-                    contentViewManualCarousel.addView(R.id.carousel_image_right, nrv);
-                    contentViewManualCarousel.addView(R.id.carousel_image_left, nrv);
+                    contentViewManualCarousel.addView(R.id.carousel_image, tempRemoteView);
+                    contentViewManualCarousel.addView(R.id.carousel_image_right, tempRemoteView);
+                    contentViewManualCarousel.addView(R.id.carousel_image_left, tempRemoteView);
                     imageCounter++;
                 } else {
                     if (deepLinkList != null && deepLinkList.size() == imageList.size()) {
@@ -952,6 +946,7 @@ public class TemplateRenderer {
                 PTLog.debug("Need at least 2 images to display Manual Carousel, found - " + imageCounter + ", not displaying the notification.");
                 return;
             }
+            setCustomCTA(context, extras, contentViewManualCarousel);
             notificationManager.notify(notificationId, notification);
 
             Utils.raiseNotificationViewed(context, extras, config);
@@ -1015,6 +1010,8 @@ public class TemplateRenderer {
 
             setCustomContentViewLargeIcon(contentViewBig, pt_large_icon);
             setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
+
+            setCustomCTA(context, extras, contentViewBig);
 
             notificationManager.notify(notificationId, notification);
 
@@ -1087,13 +1084,6 @@ public class TemplateRenderer {
             int imageCounter = 0;
             boolean isFirstImageOk = false;
 
-            ImageView IV = new ImageView(context);
-            IV.setId(R.id.fimg);
-            IV.setScaleType(ImageView.ScaleType.FIT_END);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                IV.setClipToOutline(true);
-            }
-
             ArrayList<Integer> smallImageLayoutIds = new ArrayList<>();
             smallImageLayoutIds.add(R.id.small_image1);
             smallImageLayoutIds.add(R.id.small_image2);
@@ -1109,8 +1099,8 @@ public class TemplateRenderer {
                 for (int index = 0; index < imageList.size(); index++) {
                     Utils.loadImageURLIntoRemoteView(smallCollapsedImageLayoutIds.get(index), imageList.get(index), contentViewSmall);
                     Utils.loadImageURLIntoRemoteView(smallImageLayoutIds.get(index), imageList.get(index), contentViewBig);
-                    RemoteViews nrv = new RemoteViews(context.getPackageName(), R.layout.image_view);
-                    Utils.loadImageURLIntoRemoteView(IV.getId(), imageList.get(index), nrv);
+                    RemoteViews tempRemoteView = new RemoteViews(context.getPackageName(), R.layout.image_view);
+                    Utils.loadImageURLIntoRemoteView(R.id.fimg, imageList.get(index), tempRemoteView);
                     if (Utils.getFallback()) {
                         contentViewBig.setViewVisibility(smallImageLayoutIds.get(index), View.GONE);
                         contentViewSmall.setViewVisibility(smallCollapsedImageLayoutIds.get(index), View.GONE);
@@ -1120,14 +1110,14 @@ public class TemplateRenderer {
                         }
                         imageCounter++;
                         imageAvailability.add(index);
-                        contentViewBig.addView(R.id.carousel_image, nrv);
+                        contentViewBig.addView(R.id.carousel_image, tempRemoteView);
                     }
                 }
             } else {
                 for (int index = 0; index < imageList.size(); index++) {
                     Utils.loadImageURLIntoRemoteView(smallImageLayoutIds.get(index), imageList.get(index), contentViewBig);
-                    RemoteViews nrv = new RemoteViews(context.getPackageName(), R.layout.image_view);
-                    Utils.loadImageURLIntoRemoteView(IV.getId(), imageList.get(index), nrv);
+                    RemoteViews tempRemoteView = new RemoteViews(context.getPackageName(), R.layout.image_view);
+                    Utils.loadImageURLIntoRemoteView(R.id.fimg, imageList.get(index), tempRemoteView);
                     if (Utils.getFallback()) {
                         contentViewBig.setViewVisibility(smallImageLayoutIds.get(index), View.GONE);
                     } else {
@@ -1136,7 +1126,7 @@ public class TemplateRenderer {
                         }
                         imageCounter++;
                         imageAvailability.add(index);
-                        contentViewBig.addView(R.id.carousel_image, nrv);
+                        contentViewBig.addView(R.id.carousel_image, tempRemoteView);
                     }
                 }
             }
@@ -1533,7 +1523,7 @@ public class TemplateRenderer {
 
             setCustomContentViewDotSep(contentViewTimer);
             setCustomContentViewDotSep(contentViewTimerCollapsed);
-
+            setCustomCTA(context, extras, contentViewTimer);
             notificationManager.notify(notificationId, notification);
 
             Utils.raiseNotificationViewed(context, extras, config);
@@ -2099,7 +2089,7 @@ public class TemplateRenderer {
         if (pt_small_icon_clr == null || pt_small_icon_clr.isEmpty()) {
             pt_small_icon_clr = extras.getString(Constants.WZRK_CLR);
         }
-        if (pt_collapse_key == null ){
+        if (pt_collapse_key == null) {
             pt_collapse_key = extras.get(Constants.WZRK_COLLAPSE);
         }
     }
@@ -2109,6 +2099,46 @@ public class TemplateRenderer {
         intent.putExtra(Constants.PT_DISMISS_INTENT, true);
         return PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(),
                 intent, PendingIntent.FLAG_CANCEL_CURRENT);
+    }
+
+    private void setCustomCTA(Context context, Bundle extras, RemoteViews contentView) {
+        ArrayList<String> customCTAList = Utils.getCustomCTAListFromExtras(extras);
+        if (customCTAList.size() != 0) {
+            boolean isCustomCTASet = false;
+            RemoteViews tempRemoteView = new RemoteViews(context.getPackageName(), R.layout.pt_custom_cta);
+            ArrayList<Integer> customCTAIds = new ArrayList<>();
+            customCTAIds.add(R.id.pt_custom_cta1);
+            customCTAIds.add(R.id.pt_custom_cta2);
+            customCTAIds.add(R.id.pt_custom_cta3);
+
+            for (int index = 0; index < customCTAIds.size(); index++) {
+                try {
+                    JSONObject cta = Utils.toJsonObject(customCTAList.get(index));
+                    String bgClr = cta.getString(Constants.PT_CUSTOM_CTA_BG_CLR);
+                    String textClr = cta.getString(Constants.PT_CUSTOM_CTA_TEXT_CLR);
+                    String text = cta.getString(Constants.PT_CUSTOM_CTA_TEXT);
+                    String dl = cta.getString(Constants.PT_CUSTOM_CTA_DL);
+
+                    setCustomContentViewText(tempRemoteView, customCTAIds.get(index), text);
+                    tempRemoteView.setInt(customCTAIds.get(index), "setTextColor", Utils.getColour(textClr, "black"));
+                    tempRemoteView.setInt(customCTAIds.get(index), "setBackgroundColor", Utils.getColour(bgClr, "white"));
+
+                    Intent buttonIntent = new Intent(context, PushTemplateReceiver.class);
+                    buttonIntent.putExtras(extras);
+                    PendingIntent contentRightPos0Intent = setPendingIntent(context, extras.getInt(Constants.PT_NOTIF_ID), extras, buttonIntent, dl);
+                    tempRemoteView.setOnClickPendingIntent(customCTAIds.get(index), contentRightPos0Intent);
+                    isCustomCTASet = true;
+
+                } catch (JSONException e) {
+                    tempRemoteView.setViewVisibility(customCTAIds.get(index), View.GONE);
+                    PTLog.debug("Unable to add Custom CTA with payload: " + customCTAList.get(index), e);
+                }
+            }
+            if (isCustomCTASet) {
+                contentView.addView(R.id.content_view_big, tempRemoteView);
+            }
+        }
+
     }
 
 }
