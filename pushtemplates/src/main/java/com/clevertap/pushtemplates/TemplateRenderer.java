@@ -875,6 +875,7 @@ public class TemplateRenderer {
             boolean isFirstImageOk = false;
             String dl = null;
             int currentPosition = 0;
+            ArrayList<String> tempImageList = new ArrayList<>();
 
             for (int index = 0; index < imageList.size(); index++) {
                 RemoteViews tempRemoteView = new RemoteViews(context.getPackageName(), R.layout.image_view_rounded);
@@ -888,11 +889,11 @@ public class TemplateRenderer {
                     contentViewManualCarousel.addView(R.id.carousel_image_right, tempRemoteView);
                     contentViewManualCarousel.addView(R.id.carousel_image_left, tempRemoteView);
                     imageCounter++;
+                    tempImageList.add(imageList.get(index));
                 } else {
                     if (deepLinkList != null && deepLinkList.size() == imageList.size()) {
                         deepLinkList.remove(index);
                     }
-                    imageList.remove(index);
                     PTLog.debug("Skipping Image in Manual Carousel.");
                 }
             }
@@ -900,7 +901,7 @@ public class TemplateRenderer {
             contentViewManualCarousel.setDisplayedChild(R.id.carousel_image_left, imageList.size() - 1);
 
             extras.putInt(Constants.PT_MANUAL_CAROUSEL_CURRENT, currentPosition);
-            extras.putStringArrayList(Constants.PT_IMAGE_LIST, imageList);
+            extras.putStringArrayList(Constants.PT_IMAGE_LIST, tempImageList);
             extras.putStringArrayList(Constants.PT_DEEPLINK_LIST, deepLinkList);
 
             Intent rightArrowPos0Intent = new Intent(context, PushTemplateReceiver.class);
@@ -1088,50 +1089,46 @@ public class TemplateRenderer {
             smallImageLayoutIds.add(R.id.small_image1);
             smallImageLayoutIds.add(R.id.small_image2);
             smallImageLayoutIds.add(R.id.small_image3);
+            ArrayList<Integer> smallCollapsedImageLayoutIds = new ArrayList<>();
+            smallCollapsedImageLayoutIds.add(R.id.small_image1_collapsed);
+            smallCollapsedImageLayoutIds.add(R.id.small_image2_collapsed);
+            smallCollapsedImageLayoutIds.add(R.id.small_image3_collapsed);
+            ArrayList<String> tempImageList = new ArrayList<>();
 
-            ArrayList<Integer> imageAvailability = new ArrayList<>();
-
-            if (isLinear) {
-                ArrayList<Integer> smallCollapsedImageLayoutIds = new ArrayList<>();
-                smallCollapsedImageLayoutIds.add(R.id.small_image1_collapsed);
-                smallCollapsedImageLayoutIds.add(R.id.small_image2_collapsed);
-                smallCollapsedImageLayoutIds.add(R.id.small_image3_collapsed);
-                for (int index = 0; index < imageList.size(); index++) {
-                    Utils.loadImageURLIntoRemoteView(smallCollapsedImageLayoutIds.get(index), imageList.get(index), contentViewSmall);
-                    Utils.loadImageURLIntoRemoteView(smallImageLayoutIds.get(index), imageList.get(index), contentViewBig);
-                    RemoteViews tempRemoteView = new RemoteViews(context.getPackageName(), R.layout.image_view);
-                    Utils.loadImageURLIntoRemoteView(R.id.fimg, imageList.get(index), tempRemoteView);
-                    if (Utils.getFallback()) {
-                        contentViewBig.setViewVisibility(smallImageLayoutIds.get(index), View.GONE);
-                        contentViewSmall.setViewVisibility(smallCollapsedImageLayoutIds.get(index), View.GONE);
-                    } else {
-                        if (!isFirstImageOk) {
-                            isFirstImageOk = true;
-                        }
-                        imageCounter++;
-                        imageAvailability.add(index);
-                        contentViewBig.addView(R.id.carousel_image, tempRemoteView);
+            for (int index = 0; index < imageList.size(); index++) {
+                if (isLinear) {
+                    Utils.loadImageURLIntoRemoteView(smallCollapsedImageLayoutIds.get(imageCounter), imageList.get(index), contentViewSmall);
+                    contentViewSmall.setViewVisibility(smallCollapsedImageLayoutIds.get(imageCounter), View.VISIBLE);
+                    if (!Utils.getFallback()) {
+                        contentViewSmall.setViewVisibility(smallCollapsedImageLayoutIds.get(imageCounter), View.VISIBLE);
                     }
                 }
-            } else {
-                for (int index = 0; index < imageList.size(); index++) {
-                    Utils.loadImageURLIntoRemoteView(smallImageLayoutIds.get(index), imageList.get(index), contentViewBig);
-                    RemoteViews tempRemoteView = new RemoteViews(context.getPackageName(), R.layout.image_view);
-                    Utils.loadImageURLIntoRemoteView(R.id.fimg, imageList.get(index), tempRemoteView);
-                    if (Utils.getFallback()) {
-                        contentViewBig.setViewVisibility(smallImageLayoutIds.get(index), View.GONE);
-                    } else {
-                        if (!isFirstImageOk) {
-                            isFirstImageOk = true;
-                        }
-                        imageCounter++;
-                        imageAvailability.add(index);
-                        contentViewBig.addView(R.id.carousel_image, tempRemoteView);
+                Utils.loadImageURLIntoRemoteView(smallImageLayoutIds.get(imageCounter), imageList.get(index), contentViewBig);
+                RemoteViews tempRemoteView = new RemoteViews(context.getPackageName(), R.layout.image_view);
+                Utils.loadImageURLIntoRemoteView(R.id.fimg, imageList.get(index), tempRemoteView);
+                if (!Utils.getFallback()) {
+                    if (!isFirstImageOk) {
+                        isFirstImageOk = true;
                     }
+                    contentViewBig.setViewVisibility(smallImageLayoutIds.get(imageCounter), View.VISIBLE);
+                    contentViewBig.addView(R.id.carousel_image, tempRemoteView);
+                    imageCounter++;
+                    tempImageList.add(imageList.get(index));
+                } else {
+                    deepLinkList.remove(index);
+                    bigTextList.remove(index);
+                    smallTextList.remove(index);
+                    priceList.remove(index);
                 }
             }
-            extras.putInt(Constants.PT_TOTAL_COUNT, imageCounter);
-            extras.putIntegerArrayList(Constants.PT_IMAGE_AVAILABILITY_ARRAY, imageAvailability);
+
+            extras.putStringArrayList(Constants.PT_IMAGE_LIST,tempImageList);
+            extras.putStringArrayList(Constants.PT_DEEPLINK_LIST,deepLinkList);
+            extras.putStringArrayList(Constants.PT_BIGTEXT_LIST,bigTextList);
+            extras.putStringArrayList(Constants.PT_SMALLTEXT_LIST,smallTextList);
+            extras.putStringArrayList(Constants.PT_PRICE_LIST,priceList);
+
+
             int requestCode1 = new Random().nextInt();
             int requestCode2 = new Random().nextInt();
             int requestCode3 = new Random().nextInt();
@@ -1144,22 +1141,25 @@ public class TemplateRenderer {
             PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, requestCode1, notificationIntent1, 0);
             contentViewBig.setOnClickPendingIntent(R.id.small_image1, contentIntent1);
 
-            Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
-            notificationIntent2.putExtra(Constants.PT_CURRENT_POSITION, 1);
-            notificationIntent2.putExtra(Constants.PT_NOTIF_ID, notificationId);
-            notificationIntent2.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(1));
-            notificationIntent2.putExtras(extras);
-            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, requestCode2, notificationIntent2, 0);
-            contentViewBig.setOnClickPendingIntent(R.id.small_image2, contentIntent2);
+            if (deepLinkList.size() >= 2) {
+                Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
+                notificationIntent2.putExtra(Constants.PT_CURRENT_POSITION, 1);
+                notificationIntent2.putExtra(Constants.PT_NOTIF_ID, notificationId);
+                notificationIntent2.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(1));
+                notificationIntent2.putExtras(extras);
+                PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, requestCode2, notificationIntent2, 0);
+                contentViewBig.setOnClickPendingIntent(R.id.small_image2, contentIntent2);
+            }
 
-            Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
-            notificationIntent3.putExtra(Constants.PT_CURRENT_POSITION, 2);
-            notificationIntent3.putExtra(Constants.PT_NOTIF_ID, notificationId);
-            notificationIntent3.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(2));
-            notificationIntent3.putExtras(extras);
-            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, requestCode3, notificationIntent3, 0);
-            contentViewBig.setOnClickPendingIntent(R.id.small_image3, contentIntent3);
-
+            if (deepLinkList.size() >= 3) {
+                Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
+                notificationIntent3.putExtra(Constants.PT_CURRENT_POSITION, 2);
+                notificationIntent3.putExtra(Constants.PT_NOTIF_ID, notificationId);
+                notificationIntent3.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(2));
+                notificationIntent3.putExtras(extras);
+                PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, requestCode3, notificationIntent3, 0);
+                contentViewBig.setOnClickPendingIntent(R.id.small_image3, contentIntent3);
+            }
             Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
             notificationIntent4.putExtra(Constants.PT_IMAGE_1, true);
             notificationIntent4.putExtra(Constants.PT_NOTIF_ID, notificationId);
@@ -1174,14 +1174,16 @@ public class TemplateRenderer {
                 Intent notificationSmallIntent1 = new Intent(context, PTPushNotificationReceiver.class);
                 PendingIntent contentSmallIntent1 = setPendingIntent(context, notificationId, extras, notificationSmallIntent1, deepLinkList.get(0));
                 contentViewSmall.setOnClickPendingIntent(R.id.small_image1_collapsed, contentSmallIntent1);
-
-                Intent notificationSmallIntent2 = new Intent(context, PTPushNotificationReceiver.class);
-                PendingIntent contentSmallIntent2 = setPendingIntent(context, notificationId, extras, notificationSmallIntent2, deepLinkList.get(1));
-                contentViewSmall.setOnClickPendingIntent(R.id.small_image2_collapsed, contentSmallIntent2);
-
-                Intent notificationSmallIntent3 = new Intent(context, PTPushNotificationReceiver.class);
-                PendingIntent contentSmallIntent3 = setPendingIntent(context, notificationId, extras, notificationSmallIntent3, deepLinkList.get(2));
-                contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentSmallIntent3);
+                if (deepLinkList.size() >= 2) {
+                    Intent notificationSmallIntent2 = new Intent(context, PTPushNotificationReceiver.class);
+                    PendingIntent contentSmallIntent2 = setPendingIntent(context, notificationId, extras, notificationSmallIntent2, deepLinkList.get(1));
+                    contentViewSmall.setOnClickPendingIntent(R.id.small_image2_collapsed, contentSmallIntent2);
+                }
+                if (deepLinkList.size() >= 3) {
+                    Intent notificationSmallIntent3 = new Intent(context, PTPushNotificationReceiver.class);
+                    PendingIntent contentSmallIntent3 = setPendingIntent(context, notificationId, extras, notificationSmallIntent3, deepLinkList.get(2));
+                    contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentSmallIntent3);
+                }
             }
 
             Intent dismissIntent = new Intent(context, PushTemplateReceiver.class);

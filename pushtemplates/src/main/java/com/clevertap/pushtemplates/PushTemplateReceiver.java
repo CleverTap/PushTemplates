@@ -556,20 +556,13 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             }
 
             int currentPosition = extras.getInt(Constants.PT_CURRENT_POSITION);
-            ArrayList<Integer> imageAvailability = extras.getIntegerArrayList(Constants.PT_IMAGE_AVAILABILITY_ARRAY);
 
-            if (extras.getInt(Constants.PT_TOTAL_COUNT) == 3) {
-                contentViewBig.setDisplayedChild(R.id.carousel_image, currentPosition);
-            } else {
-                if (imageAvailability != null) {
-                    for (int index = 0; index < imageAvailability.size(); index++) {
-                        if (currentPosition == imageAvailability.get(index)) {
-                            contentViewBig.setDisplayedChild(R.id.carousel_image, index);
-                        }
-                    }
-                }
-            }
-
+            contentViewBig.setDisplayedChild(R.id.carousel_image, currentPosition);
+            imageList = extras.getStringArrayList(Constants.PT_IMAGE_LIST);
+            deepLinkList = extras.getStringArrayList(Constants.PT_DEEPLINK_LIST);
+            bigTextList = extras.getStringArrayList(Constants.PT_BIGTEXT_LIST);
+            smallTextList = extras.getStringArrayList(Constants.PT_SMALLTEXT_LIST);
+            priceList = extras.getStringArrayList(Constants.PT_PRICE_LIST);
 
             String dl = deepLinkList.get(currentPosition);
             contentViewBig.setTextViewText(R.id.product_name, bigTextList.get(currentPosition));

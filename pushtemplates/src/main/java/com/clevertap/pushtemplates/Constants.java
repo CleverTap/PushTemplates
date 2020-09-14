@@ -19,6 +19,9 @@ public class Constants {
     public static final String PT_CUSTOM_CTA_TEXT_CLR = "pt_custom_cta_text_clr";
     public static final String PT_CUSTOM_CTA_TEXT = "pt_custom_cta_text";
     public static final String PT_CUSTOM_CTA_DL = "pt_custom_cta_dl";
+    public static final String PT_PRICE_LIST = "pt_price_list";
+    public static final String PT_SMALLTEXT_LIST = "pt_small_text_list";
+    public static final String PT_BIGTEXT_LIST = "pt_big_text_list";
     public static boolean PT_FALLBACK = false;
     public static String PT_IMAGE_PATH_LIST = "";
     static final int ONE_SECOND = 1000;
