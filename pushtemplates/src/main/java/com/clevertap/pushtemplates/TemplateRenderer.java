@@ -897,6 +897,11 @@ public class TemplateRenderer {
                     PTLog.debug("Skipping Image in Manual Carousel.");
                 }
             }
+            if(extras.getString(Constants.PT_MANUAL_CAROUSEL_TYPE) != null && extras.getString(Constants.PT_MANUAL_CAROUSEL_TYPE).equalsIgnoreCase(Constants.PT_MANUAL_CAROUSEL_FILMSTRIP)){
+                contentViewManualCarousel.setViewVisibility(R.id.carousel_image_right,View.GONE);
+                contentViewManualCarousel.setViewVisibility(R.id.carousel_image_left,View.GONE);
+            }
+
             contentViewManualCarousel.setDisplayedChild(R.id.carousel_image_right, 1);
             contentViewManualCarousel.setDisplayedChild(R.id.carousel_image_left, imageList.size() - 1);
 

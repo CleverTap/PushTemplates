@@ -22,6 +22,8 @@ public class Constants {
     public static final String PT_PRICE_LIST = "pt_price_list";
     public static final String PT_SMALLTEXT_LIST = "pt_small_text_list";
     public static final String PT_BIGTEXT_LIST = "pt_big_text_list";
+    public static final String PT_MANUAL_CAROUSEL_TYPE = "pt_manual_carousel_type";
+    public static final String PT_MANUAL_CAROUSEL_FILMSTRIP = "filmstrip";
     public static boolean PT_FALLBACK = false;
     public static String PT_IMAGE_PATH_LIST = "";
     static final int ONE_SECOND = 1000;
