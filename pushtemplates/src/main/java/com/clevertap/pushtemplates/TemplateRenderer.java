@@ -826,7 +826,6 @@ public class TemplateRenderer {
                         + imageCounter + ", not displaying the notification.");
                 return;
             }
-            setCustomCTA(context, extras, contentViewCarousel);
 
             notificationManager.notify(notificationId, notification);
 
@@ -897,13 +896,13 @@ public class TemplateRenderer {
                     PTLog.debug("Skipping Image in Manual Carousel.");
                 }
             }
-            if(extras.getString(Constants.PT_MANUAL_CAROUSEL_TYPE) != null && extras.getString(Constants.PT_MANUAL_CAROUSEL_TYPE).equalsIgnoreCase(Constants.PT_MANUAL_CAROUSEL_FILMSTRIP)){
+            if(extras.getString(Constants.PT_MANUAL_CAROUSEL_TYPE) != null && !extras.getString(Constants.PT_MANUAL_CAROUSEL_TYPE).equalsIgnoreCase(Constants.PT_MANUAL_CAROUSEL_FILMSTRIP)){
                 contentViewManualCarousel.setViewVisibility(R.id.carousel_image_right,View.GONE);
                 contentViewManualCarousel.setViewVisibility(R.id.carousel_image_left,View.GONE);
             }
 
             contentViewManualCarousel.setDisplayedChild(R.id.carousel_image_right, 1);
-            contentViewManualCarousel.setDisplayedChild(R.id.carousel_image_left, imageList.size() - 1);
+            contentViewManualCarousel.setDisplayedChild(R.id.carousel_image_left, tempImageList.size() - 1);
 
             extras.putInt(Constants.PT_MANUAL_CAROUSEL_CURRENT, currentPosition);
             extras.putStringArrayList(Constants.PT_IMAGE_LIST, tempImageList);
@@ -952,7 +951,6 @@ public class TemplateRenderer {
                 PTLog.debug("Need at least 2 images to display Manual Carousel, found - " + imageCounter + ", not displaying the notification.");
                 return;
             }
-            setCustomCTA(context, extras, contentViewManualCarousel);
             notificationManager.notify(notificationId, notification);
 
             Utils.raiseNotificationViewed(context, extras, config);
@@ -1016,8 +1014,6 @@ public class TemplateRenderer {
 
             setCustomContentViewLargeIcon(contentViewBig, pt_large_icon);
             setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
-
-            setCustomCTA(context, extras, contentViewBig);
 
             notificationManager.notify(notificationId, notification);
 
@@ -1530,7 +1526,6 @@ public class TemplateRenderer {
 
             setCustomContentViewDotSep(contentViewTimer);
             setCustomContentViewDotSep(contentViewTimerCollapsed);
-            setCustomCTA(context, extras, contentViewTimer);
             notificationManager.notify(notificationId, notification);
 
             Utils.raiseNotificationViewed(context, extras, config);
@@ -1798,19 +1793,6 @@ public class TemplateRenderer {
             Utils.loadImageURLIntoRemoteView(R.id.big_image, pt_big_img, contentView);
             if (Utils.getFallback()) {
                 contentView.setViewVisibility(R.id.big_image, View.GONE);
-            }
-        } else {
-            contentView.setViewVisibility(R.id.big_image, View.GONE);
-        }
-    }
-
-    private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img, boolean hideBigImageView) {
-        if (pt_big_img != null && !pt_big_img.isEmpty()) {
-            Utils.loadImageURLIntoRemoteView(R.id.big_image, pt_big_img, contentView);
-            if (Utils.getFallback()) {
-                if (hideBigImageView) {
-                    contentView.setViewVisibility(R.id.big_image, View.GONE);
-                }
             }
         } else {
             contentView.setViewVisibility(R.id.big_image, View.GONE);

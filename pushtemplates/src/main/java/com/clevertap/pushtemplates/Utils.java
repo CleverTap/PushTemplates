@@ -1,7 +1,6 @@
 package com.clevertap.pushtemplates;
 
 import android.annotation.SuppressLint;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
@@ -17,12 +16,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
@@ -32,18 +27,13 @@ import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
-import android.widget.ImageView;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.NotificationTarget;
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.CleverTapInstanceConfig;
 
@@ -54,9 +44,6 @@ import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -302,45 +289,6 @@ public class Utils {
         return stList;
     }
 
-    static void loadIntoGlide(Context context,
-                              int imageResource,
-                              String imageURL,
-                              RemoteViews remoteViews,
-                              Notification notification,
-                              int notificationId) {
-        Glide
-                .with(context.getApplicationContext())
-                .asBitmap()
-                .load(imageURL)
-                .centerCrop()
-                .into(buildNotificationTarget(context, imageResource, remoteViews, notification,
-                        notificationId));
-    }
-
-    static void loadIntoGlide(Context context, int imageResource, int identifier,
-                              RemoteViews remoteViews, Notification notification,
-                              int notificationId) {
-        Glide
-                .with(context.getApplicationContext())
-                .asBitmap()
-                .load(identifier)
-                .centerCrop()
-                .into(buildNotificationTarget(context, imageResource, remoteViews, notification,
-                        notificationId));
-    }
-
-    static void loadIntoGlide(Context context, int imageResource, Bitmap image,
-                              RemoteViews remoteViews, Notification notification,
-                              int notificationId) {
-        Glide
-                .with(context.getApplicationContext())
-                .asBitmap()
-                .load(image)
-                .centerCrop()
-                .into(buildNotificationTarget(context, imageResource, remoteViews, notification,
-                        notificationId));
-    }
-
     static void loadImageBitmapIntoRemoteView(int imageViewID, Bitmap image,
                                               RemoteViews remoteViews) {
         remoteViews.setImageViewBitmap(imageViewID, image);
@@ -377,18 +325,6 @@ public class Utils {
     static void loadImageRidIntoRemoteView(int imageViewID, int resourceID,
                                            RemoteViews remoteViews) {
         remoteViews.setImageViewResource(imageViewID, resourceID);
-    }
-
-    static NotificationTarget buildNotificationTarget(Context context, int imageResource,
-                                                      RemoteViews remoteViews,
-                                                      Notification notification,
-                                                      int notificationId) {
-        return new NotificationTarget(
-                context,
-                imageResource,
-                remoteViews,
-                notification,
-                notificationId);
     }
 
     static String getTimeStamp(Context context) {
@@ -802,54 +738,6 @@ public class Utils {
             PTLog.debug("Flip Interval couldn't be converted to number: " + interval + " - Defaulting to base value: " + Constants.PT_FLIP_INTERVAL_TIME);
         }
         return Constants.PT_FLIP_INTERVAL_TIME;
-    }
-
-    public static void saveBitmapToInternalStorage(Context context, Bitmap bitmapImage, String fileName) {
-        boolean fileSaved = false;
-        ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
-        // path to /data/data/yourapp/app_data/imageDir
-        File directory = cw.getDir(Constants.PT_DIR, Context.MODE_PRIVATE);
-        // Create imageDir
-        File mypath = new File(directory, fileName + ".jpg");
-
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(mypath);
-            // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fileSaved = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        if (fileSaved)
-            addImagePathToList(directory.getAbsolutePath());
-    }
-
-    public static Bitmap loadImageFromStorage(String url, String pId) {
-        Bitmap b = null;
-        File f = null;
-
-        try {
-            if (pId != null) {
-                f = new File(getImagePathFromList(), getImageFileNameFromURL(url) + "_" + pId + ".jpg");
-            } else {
-                f = new File(getImagePathFromList(), getImageFileNameFromURL(url) + "_null.jpg");
-            }
-            b = BitmapFactory.decodeStream(new FileInputStream(f));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return b;
-    }
-
-    static void addImagePathToList(String path) {
-        Constants.PT_IMAGE_PATH_LIST = path;
     }
 
     static String getImagePathFromList() {

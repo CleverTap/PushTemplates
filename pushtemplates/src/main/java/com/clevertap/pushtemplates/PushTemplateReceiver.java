@@ -472,11 +472,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                         .setAutoCancel(true);
 
                 Notification notification = notificationBuilder.build();
-                setCustomContentViewSmallIcon(context, contentViewSmall, notification, notificationId);
-                setCustomContentViewSmallIcon(context, contentViewRating, notification, notificationId);
-
-                setCustomContentViewDotSep(context, contentViewSmall, notification, notificationId);
-                setCustomContentViewDotSep(context, contentViewRating, notification, notificationId);
 
                 notificationManager.notify(notificationId, notification);
 
@@ -690,26 +685,12 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 .setAutoCancel(true);
     }
 
-    private void setCustomContentViewLargeIcon(RemoteViews contentView, String pt_large_icon, Context context, Notification notification, int notificationId) {
-        if (pt_large_icon != null && !pt_large_icon.isEmpty()) {
-            Utils.loadIntoGlide(context, R.id.large_icon, pt_large_icon, contentView, notification, notificationId);
-        } else {
-            contentView.setViewVisibility(R.id.large_icon, View.GONE);
-        }
-    }
 
     private NotificationCompat.Builder setBuilderWithChannelIDCheck(boolean requiresChannelId, String channelId, Context context) {
         if (requiresChannelId) {
             return new NotificationCompat.Builder(context, channelId);
         } else {
             return new NotificationCompat.Builder(context);
-        }
-    }
-
-    private void setCustomContentViewDotSep(Context context, RemoteViews contentView, Notification notification, int notificationId) {
-        if (pt_dot_sep != null) {
-            Utils.loadIntoGlide(context, R.id.sep, pt_dot_sep, contentView, notification, notificationId);
-            Utils.loadIntoGlide(context, R.id.sep_subtitle, pt_dot_sep, contentView, notification, notificationId);
         }
     }
 
@@ -733,21 +714,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             setDotSep(context);
         }
     }
-
-    private void setCustomContentViewButtonColour(RemoteViews contentView, int resourceID, String pt_product_display_action_clr) {
-        if (pt_product_display_action_clr != null && !pt_product_display_action_clr.isEmpty()) {
-            contentView.setInt(resourceID, "setBackgroundColor", Utils.getColour(pt_product_display_action_clr, Constants.PT_PRODUCT_DISPLAY_ACTION_TEXT_CLR_DEFAULT));
-        }
-    }
-
-    private void setCustomContentViewButtonLabel(RemoteViews contentView, int resourceID, String pt_product_display_action) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            contentView.setTextViewText(resourceID, Html.fromHtml(pt_product_display_action, Html.FROM_HTML_MODE_LEGACY));
-        } else {
-            contentView.setTextViewText(resourceID, Html.fromHtml(pt_product_display_action));
-        }
-    }
-
 
     private void setCustomContentViewMessageSummary(RemoteViews contentView, String pt_msg_summary) {
         if (pt_msg_summary != null && !pt_msg_summary.isEmpty()) {
@@ -831,14 +797,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
     }
 
-    private void setCustomContentViewSmallIcon(Context context, RemoteViews contentView, Notification notification, int notificationId) {
-        if (pt_small_icon != null) {
-            Utils.loadIntoGlide(context, R.id.small_icon, pt_small_icon, contentView, notification, notificationId);
-        } else {
-            Utils.loadIntoGlide(context, R.id.small_icon, smallIcon, contentView, notification, notificationId);
-        }
-    }
-
     private void setSmallIcon(Context context) {
         Bundle metaData;
         try {
@@ -858,12 +816,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             PTLog.debug("NPE while setting small icon color");
         }
 
-    }
-
-    private void setCustomContentViewButtonText(RemoteViews contentView, int resourceID, String pt_product_display_action_text_clr) {
-        if (pt_product_display_action_text_clr != null && !pt_product_display_action_text_clr.isEmpty()) {
-            contentView.setTextColor(resourceID, Utils.getColour(pt_product_display_action_text_clr, Constants.PT_PRODUCT_DISPLAY_ACTION_TEXT_CLR_DEFAULT));
-        }
     }
 
     private void setKeysFromDashboard(Bundle extras) {
@@ -908,16 +860,6 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             pt_dot_sep = Utils.setBitMapColour(context, pt_dot, pt_meta_clr);
         } catch (NullPointerException e) {
             PTLog.debug("NPE while setting dot sep color");
-        }
-    }
-
-    private void setCustomContentViewText(RemoteViews contentView, int resourceId, String s) {
-        if (!s.isEmpty()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                contentView.setTextViewText(resourceId, Html.fromHtml(s, Html.FROM_HTML_MODE_LEGACY));
-            } else {
-                contentView.setTextViewText(resourceId, Html.fromHtml(s));
-            }
         }
     }
 
