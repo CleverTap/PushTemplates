@@ -453,6 +453,10 @@ public class TemplateRenderer {
             PTLog.verbose("Message is missing or empty. Not showing notification");
             result = false;
         }
+        if (deepLinkList == null || deepLinkList.size() == 0) {
+            PTLog.verbose("Deeplink is missing or empty. Not showing notification");
+            result = false;
+        }
         if (pt_big_img == null || pt_big_img.isEmpty()) {
             PTLog.verbose("Display Image is missing or empty. Not showing notification");
             result = false;
@@ -896,9 +900,9 @@ public class TemplateRenderer {
                     PTLog.debug("Skipping Image in Manual Carousel.");
                 }
             }
-            if(extras.getString(Constants.PT_MANUAL_CAROUSEL_TYPE) != null && !extras.getString(Constants.PT_MANUAL_CAROUSEL_TYPE).equalsIgnoreCase(Constants.PT_MANUAL_CAROUSEL_FILMSTRIP)){
-                contentViewManualCarousel.setViewVisibility(R.id.carousel_image_right,View.GONE);
-                contentViewManualCarousel.setViewVisibility(R.id.carousel_image_left,View.GONE);
+            if (extras.getString(Constants.PT_MANUAL_CAROUSEL_TYPE) != null && !extras.getString(Constants.PT_MANUAL_CAROUSEL_TYPE).equalsIgnoreCase(Constants.PT_MANUAL_CAROUSEL_FILMSTRIP)) {
+                contentViewManualCarousel.setViewVisibility(R.id.carousel_image_right, View.GONE);
+                contentViewManualCarousel.setViewVisibility(R.id.carousel_image_left, View.GONE);
             }
 
             contentViewManualCarousel.setDisplayedChild(R.id.carousel_image_right, 1);
@@ -1123,11 +1127,11 @@ public class TemplateRenderer {
                 }
             }
 
-            extras.putStringArrayList(Constants.PT_IMAGE_LIST,tempImageList);
-            extras.putStringArrayList(Constants.PT_DEEPLINK_LIST,deepLinkList);
-            extras.putStringArrayList(Constants.PT_BIGTEXT_LIST,bigTextList);
-            extras.putStringArrayList(Constants.PT_SMALLTEXT_LIST,smallTextList);
-            extras.putStringArrayList(Constants.PT_PRICE_LIST,priceList);
+            extras.putStringArrayList(Constants.PT_IMAGE_LIST, tempImageList);
+            extras.putStringArrayList(Constants.PT_DEEPLINK_LIST, deepLinkList);
+            extras.putStringArrayList(Constants.PT_BIGTEXT_LIST, bigTextList);
+            extras.putStringArrayList(Constants.PT_SMALLTEXT_LIST, smallTextList);
+            extras.putStringArrayList(Constants.PT_PRICE_LIST, priceList);
 
 
             int requestCode1 = new Random().nextInt();
