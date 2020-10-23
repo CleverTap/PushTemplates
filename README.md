@@ -340,6 +340,7 @@ pt_input_auto_open | Required | fixed value - `true`
   pt_dl1 | Required | Deep Link (Max one) 
   pt_img1 | Required | Image One
   pt_img2 | Required | Image Two
+  pt_img3 | Required | Image Three
   pt_img`n` | Optional | Image `N`
   pt_bg | Required | Background Color in HEX
   pt_ico | Optional | Large Icon
@@ -362,6 +363,7 @@ pt_input_auto_open | Required | fixed value - `true`
   pt_dl`n` | Optional | Deep Link for the nth image 
   pt_img1 | Required | Image One
   pt_img2 | Required | Image Two
+  pt_img3 | Required | Image Three
   pt_img`n` | Optional | Image `N`
   pt_bg | Required | Background Color in HEX
   pt_ico | Optional | Large Icon
@@ -538,7 +540,7 @@ pt_input_auto_open | Required | fixed value - `true`
   * These images are deleted whenever the notification is dismissed or clicked.
   * Using images of 3 MB or lower are recommended for better performance.
   * A silent notification channel with importance: `HIGH` is created every time on an interaction with the Rating, Manual Carousel, and Product Catalog templates with a silent sound file. This prevents the notification sound from playing when the notification is re-rendered.
-  * The silent notification channel is deleted whenever the notification is dismissed or clicked.   
+  * The silent notification channel is deleted whenever the notification is dismissed or clicked.
  
 # Sample App
 
