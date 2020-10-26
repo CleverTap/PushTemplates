@@ -13,9 +13,6 @@
             android:theme="@style/Dialog"
             >
         </activity>
-        <meta-data
-            android:name="CLEVERTAP_INAPP_EXCLUDE"
-            android:value="VideoActivity" />
     </application>
 </manifest>
 
