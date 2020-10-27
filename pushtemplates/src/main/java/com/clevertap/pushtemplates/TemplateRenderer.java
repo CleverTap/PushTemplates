@@ -122,6 +122,7 @@ public class TemplateRenderer {
     private String pID;
     private int pt_flip_interval;
     private Object pt_collapse_key;
+    private String pt_manual_carousel_type;
     private CleverTapInstanceConfig config;
 
     @SuppressWarnings({"unused"})
@@ -227,6 +228,7 @@ public class TemplateRenderer {
         pt_collapse_key = extras.get(Constants.PT_COLLAPSE_KEY);
         pt_flip_interval = Utils.getFlipInterval(extras);
         pID = extras.getString(Constants.WZRK_PUSH_ID);
+        pt_manual_carousel_type = extras.getString(Constants.PT_MANUAL_CAROUSEL_TYPE);
         if (config != null) {
             this.config = config;
         }
@@ -900,7 +902,7 @@ public class TemplateRenderer {
                     PTLog.debug("Skipping Image in Manual Carousel.");
                 }
             }
-            if (extras.getString(Constants.PT_MANUAL_CAROUSEL_TYPE) != null && !extras.getString(Constants.PT_MANUAL_CAROUSEL_TYPE).equalsIgnoreCase(Constants.PT_MANUAL_CAROUSEL_FILMSTRIP)) {
+            if (pt_manual_carousel_type == null || !pt_manual_carousel_type.equalsIgnoreCase(Constants.PT_MANUAL_CAROUSEL_FILMSTRIP)) {
                 contentViewManualCarousel.setViewVisibility(R.id.carousel_image_right, View.GONE);
                 contentViewManualCarousel.setViewVisibility(R.id.carousel_image_left, View.GONE);
             }
