@@ -17,9 +17,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
 import androidx.core.content.ContextCompat;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -29,12 +27,10 @@ import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
 import java.util.ArrayList;
 
 public class VideoActivity extends Activity {
@@ -176,21 +172,8 @@ public class VideoActivity extends Activity {
     private void prepareMedia() {
         aspectRatioFrameLayout = findViewById(R.id.video_layout);
         aspectRatioFrameLayout.setVisibility(View.VISIBLE);
-
-        playerView = new PlayerView(context);
-
-        PlayerControlView playerControlView = new PlayerControlView(context);
-        playerControlView.setId(R.layout.exo_player_control_view);
-        playerControlView.show();
-
-        playerView.setUseController(true);
-        playerView.setControllerAutoShow(false);
-        playerView.setShowBuffering(PlayerView.SHOW_BUFFERING_ALWAYS);
-
+        playerView = findViewById(R.id.pt_player_view);
         initializePlayer(extras.getString(Constants.PT_VIDEO_URL));
-
-        aspectRatioFrameLayout.addView(playerView);
-
     }
 
     private void playMedia() {
