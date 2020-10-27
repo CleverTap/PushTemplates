@@ -36,7 +36,7 @@ import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-@SuppressWarnings("FieldCanBeLocal")
+@SuppressWarnings({"FieldCanBeLocal", "rawtypes"})
 public class TemplateRenderer {
 
     private static boolean hasVideoPlayerSupport;

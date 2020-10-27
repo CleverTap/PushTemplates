@@ -26,10 +26,8 @@ This library is in public beta, for any issues, queries and concerns please open
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.4'
-implementation 'com.clevertap.android:clevertap-android-sdk:3.8.2'
-implementation 'com.github.bumptech.glide:glide:4.11.0'
-implementation 'com.google.android.exoplayer:exoplayer:2.10.2' // required only if you plan on using the Video Template
+implementation 'com.clevertap.android:push-templates:0.0.5'
+implementation 'com.clevertap.android:clevertap-android-sdk:4.0.0'
 ```
 
 2. Add the Services to your `AndroidManifest.xml`
@@ -72,10 +70,8 @@ implementation 'com.google.android.exoplayer:exoplayer:2.10.2' // required only 
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.4'
-implementation 'com.clevertap.android:clevertap-android-sdk:3.8.2'
-implementation 'com.github.bumptech.glide:glide:4.11.0'
-implementation 'com.google.android.exoplayer:exoplayer:2.10.2' // required only if you plan on using the Video Template
+implementation 'com.clevertap.android:push-templates:0.0.5'
+implementation 'com.clevertap.android:clevertap-android-sdk:4.0.0'
 ```
 2. Add the Service to your `AndroidManifest.xml`
 
@@ -141,6 +137,10 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
             PTLog.verbose("Error parsing FCM payload", throwable);
         }
     }
+    @Override
+    public void onNewToken(@NonNull final String s) {
+        //no-op
+    }
 }
 ```
 # Dashboard Usage
@@ -151,15 +151,15 @@ While creating a Push Notification campaign on CleverTap, just follow the steps 
 
 1. On the "WHAT" section pass the desired values in the "title" and "message" fields (NOTE: We prioritise title and message provided in the key-value pair - as shown in step 2, over these fields)
 
-![Basic](https://github.com/darshanclevertap/PushTemplates/blob/0.0.4/screens/basic.png)
+![Basic](https://github.com/darshanclevertap/PushTemplates/blob/master/screens/basic.png)
 
 2. Click on "Advanced" and then click on "Add pair" to add the [Template Keys](#template-keys)
 
-![KVs](https://github.com/darshanclevertap/PushTemplates/blob/0.0.4/screens/kv.png)
+![KVs](https://github.com/darshanclevertap/PushTemplates/blob/master/screens/kv.png)
 
 3. You can also add the above keys into one JSON object and use the `pt_json` key to fill in the values
 
-![KVs in JSON](https://github.com/darshanclevertap/PushTemplates/blob/0.0.4/screens/json.png)
+![KVs in JSON](https://github.com/darshanclevertap/PushTemplates/blob/master/screens/json.png)
 
 4. Send a test push and schedule!
 
