@@ -170,24 +170,43 @@ While creating a Push Notification campaign on CleverTap, just follow the steps 
 ## Basic Template
 
 Basic Template is the basic push notification received on apps.
-<br/>(Expanded and unexpanded example)<br/><br/>
+
+(Expanded and unexpanded example)
+
 ![Basic with color](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/basic%20color.png)
 
 
 ## Auto Carousel Template
 
 Auto carousel is an automatic revolving carousel push notification.
-<br/>(Expanded and unexpanded example)<br/><br/>
+
+(Expanded and unexpanded example)
+
 <img src="https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/autocarouselv0.0.3.gif" alt="Auto-Carousel" width="450" height="800"/>
 
 
 ## Manual Carousel Template
 
 This is the manual version of the carousel. The user can navigate to the next image by clicking on the arrows.
-<br/>(Expanded and unexpanded example)<br/><br/>
+
+(Expanded and unexpanded example)
+
 <img src="https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/manual.gif" alt="Manual" width="450" height="800"/>
 
 If only one image can be downloaded, this template falls back to the Basic Template
+
+### Filmstrip Variant
+
+The manual carousel has an extra variant called `filmstrip`. This can be used by adding the following key-value -
+
+Template Key | Required | Value
+---:|:---:|:---
+pt_manual_carousel_type | Optional | `filmstrip`
+
+
+(Expanded and unexpanded example)
+
+
 
 ## Rating Template
 
@@ -199,16 +218,19 @@ Rating template lets your users give you feedback, this feedback is captured in 
 
 Product catalog template lets you show case different images of a product (or a product catalog) before the user can decide to click on the "BUY NOW" option which can take them directly to the product via deep links. This template has two variants. 
 
-### Vertical View (Expanded and unexpanded example)
+### Vertical View 
+
+(Expanded and unexpanded example)
 
 ![Product Display](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/productdisplay.gif)
 
 ### Linear View
 
 Use the following keys to enable linear view variant of this template.
+
 Template Key | Required | Value
 ---:|:---:|:---
-pt_product_display_linear | Required | `true`
+pt_product_display_linear | Optional | `true`
 
 ![Product Display](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/proddisplaylinear.gif)
 
@@ -216,14 +238,16 @@ pt_product_display_linear | Required | `true`
 ## Five Icons Template
 
 Five icons template is a sticky push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
-<br/> If at least 3 icons are not retrieved, the library doesn't render any notification. The bifurcation of each CTA is captured in the event Notification Clicked with in the property `wzrk_c2a`.
+
+If at least 3 icons are not retrieved, the library doesn't render any notification. The bifurcation of each CTA is captured in the event Notification Clicked with in the property `wzrk_c2a`.
 
 <img src="https://raw.githubusercontent.com/CleverTap/PushTemplates/0.0.4/screens/fiveicon.png" width="412" height="100">
 
 ## Timer Template
 
 This template features a live countdown timer. You can even choose to show different title, message, and background image after the timer expires.  
-<br/> Timer notification is only supported for Android N (7) and above. For OS versions below N, the library falls back to the Basic Template.
+
+Timer notification is only supported for Android N (7) and above. For OS versions below N, the library falls back to the Basic Template.
 
 ![Timer](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/timer.gif)
 
@@ -232,14 +256,16 @@ This template features a live countdown timer. You can even choose to show diffe
 The Video template plays a video when the user clicks on the notification. The app open action is captured in the event Notification Clicked with in the property `wzrk_c2a`.
 The following formats are supported - `.mp4`,`.m3u8`, and `.mpd`
 The video url should start with `https` or else it will not be supported.
-<br/> If your app does not include the Exo Player library, the library falls back to the Basic Template. 
+
+If your app does not include the Exo Player library, the library falls back to the Basic Template. 
 
 <img src="https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/videopn3.gif" alt="Video" width="450" height="800"/>
 
 ## Zero Bezel Template
 
 The Zero Bezel template ensures that the background image covers the entire available surface area of the push notification. All the text is overlayed on the image.
-<br/> The library will fallback to the Basic Template if the image can't be downloaded.
+
+The library will fallback to the Basic Template if the image can't be downloaded.
 
 ![Zero Bezel](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/zerobezel.gif)
 
@@ -371,6 +397,7 @@ pt_input_auto_open | Required | fixed value - `true`
   pt_msg_clr | Optional | Message Color in HEX
   pt_small_icon_clr | Optional | Small Icon Color in HEX
   pt_json | Optional | Above keys in JSON format
+  pt_manual_carousel_type | Optional | `filmstrip`
   
 ### Rating Template
 
@@ -541,6 +568,13 @@ pt_input_auto_open | Required | fixed value - `true`
   * Using images of 3 MB or lower are recommended for better performance.
   * A silent notification channel with importance: `HIGH` is created every time on an interaction with the Rating, Manual Carousel, and Product Catalog templates with a silent sound file. This prevents the notification sound from playing when the notification is re-rendered.
   * The silent notification channel is deleted whenever the notification is dismissed or clicked.
+  * To ensure that InApps are not shown on the Video, add the following to your `AndroidManifest.xml`
+  
+  ```xml
+    <meta-data
+        android:name="CLEVERTAP_INAPP_EXCLUDE"
+        android:value="PTVideoActivity" /> 
+  ```
  
 # Sample App
 

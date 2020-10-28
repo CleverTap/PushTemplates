@@ -33,7 +33,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import java.util.ArrayList;
 
-public class VideoActivity extends Activity {
+public class PTVideoActivity extends Activity {
     private Bundle extras;
     private SimpleExoPlayer player;
     private PlayerView playerView;
@@ -54,7 +54,7 @@ public class VideoActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.video);
-        context = VideoActivity.this;
+        context = PTVideoActivity.this;
         extras = getIntent().getExtras();
         deepLinkList = Utils.getDeepLinkListFromExtras(extras);
 
@@ -77,7 +77,7 @@ public class VideoActivity extends Activity {
         } else if (orientation == 2){
             //ORIENTATION_LANDSCAPE
             fullscreen = true;
-            fullscreenIcon.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.pt_video_fullscreen_close));
+            fullscreenIcon.setImageDrawable(ContextCompat.getDrawable(PTVideoActivity.this, R.drawable.pt_video_fullscreen_close));
             ViewGroup.LayoutParams params1 = openAppButton.getLayoutParams();
             ViewGroup.LayoutParams params2 = closeVideoButton.getLayoutParams();
             params1.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
@@ -131,7 +131,7 @@ public class VideoActivity extends Activity {
             @Override
             public void onClick(View view) {
                 if (fullscreen) {
-                    fullscreenIcon.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.pt_video_fullscreen_open));
+                    fullscreenIcon.setImageDrawable(ContextCompat.getDrawable(PTVideoActivity.this, R.drawable.pt_video_fullscreen_open));
                     ViewGroup.LayoutParams params1 = openAppButton.getLayoutParams();
                     ViewGroup.LayoutParams params2 = closeVideoButton.getLayoutParams();
                     params1.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
@@ -147,7 +147,7 @@ public class VideoActivity extends Activity {
                     fullscreen = false;
                 } else {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-                    fullscreenIcon.setImageDrawable(ContextCompat.getDrawable(VideoActivity.this, R.drawable.pt_video_fullscreen_close));
+                    fullscreenIcon.setImageDrawable(ContextCompat.getDrawable(PTVideoActivity.this, R.drawable.pt_video_fullscreen_close));
                     ViewGroup.LayoutParams params1 = openAppButton.getLayoutParams();
                     ViewGroup.LayoutParams params2 = closeVideoButton.getLayoutParams();
                     params1.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
@@ -184,7 +184,7 @@ public class VideoActivity extends Activity {
     }
 
     private void initializePlayer(String url) {
-        player = ExoPlayerFactory.newSimpleInstance(VideoActivity.this);
+        player = ExoPlayerFactory.newSimpleInstance(PTVideoActivity.this);
 
         Uri uri = Uri.parse(url);
         try {
@@ -197,7 +197,7 @@ public class VideoActivity extends Activity {
     }
 
     private MediaSource buildMediaSource(Uri uri, int type) {
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(VideoActivity.this,
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(PTVideoActivity.this,
                 Util.getUserAgent(this, this.getApplication().getPackageName()));
         switch (type){
             case C.TYPE_DASH:

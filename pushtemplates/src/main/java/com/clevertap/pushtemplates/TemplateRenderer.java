@@ -1645,7 +1645,7 @@ public class TemplateRenderer {
 
             notificationId = setNotificationId(notificationId);
 
-            Intent launchIntent = new Intent(context, VideoActivity.class);
+            Intent launchIntent = new Intent(context, PTVideoActivity.class);
             launchIntent.putExtras(extras);
             PendingIntent pIntent = null;
             if (pt_video_url != null) {

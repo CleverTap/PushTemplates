@@ -3,10 +3,8 @@
     <application
         android:allowBackup="true"
         android:supportsRtl="true">
-        <activity android:name="com.clevertap.pushtemplates.VideoActivity"
+        <activity android:name="com.clevertap.pushtemplates.PTVideoActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:resizeableActivity="true"
-            android:supportsPictureInPicture="true"
             android:launchMode="singleInstance"
             android:excludeFromRecents="true"
             android:taskAffinity=""
