@@ -26,10 +26,8 @@ This library is in public beta, for any issues, queries and concerns please open
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.4'
-implementation 'com.clevertap.android:clevertap-android-sdk:3.8.2'
-implementation 'com.github.bumptech.glide:glide:4.11.0'
-implementation 'com.google.android.exoplayer:exoplayer:2.10.2' // required only if you plan on using the Video Template
+implementation 'com.clevertap.android:push-templates:0.0.5'
+implementation 'com.clevertap.android:clevertap-android-sdk:4.0.0'
 ```
 
 2. Add the Services to your `AndroidManifest.xml`
@@ -72,10 +70,8 @@ implementation 'com.google.android.exoplayer:exoplayer:2.10.2' // required only 
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.4'
-implementation 'com.clevertap.android:clevertap-android-sdk:3.8.2'
-implementation 'com.github.bumptech.glide:glide:4.11.0'
-implementation 'com.google.android.exoplayer:exoplayer:2.10.2' // required only if you plan on using the Video Template
+implementation 'com.clevertap.android:push-templates:0.0.5'
+implementation 'com.clevertap.android:clevertap-android-sdk:4.0.0'
 ```
 2. Add the Service to your `AndroidManifest.xml`
 
@@ -120,15 +116,16 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
             context = getApplicationContext();
             if (remoteMessage.getData().size() > 0) {
                 Bundle extras = new Bundle();
+
                 for (Map.Entry<String, String> entry : remoteMessage.getData().entrySet()) {
                     extras.putString(entry.getKey(), entry.getValue());
                 }
-
-                boolean processCleverTapPN = Utils.isPNFromCleverTap(extras);
+                
+                NotificationInfo info = CleverTapAPI.getNotificationInfo(extras);
                 //If you are using CleverTapInstanceConfig to create the CleverTap instance use the commented code
                 //CleverTapInstanceConfig config = CleverTapInstanceConfig.createInstance(getApplicationContext(),
                 //        "YOUR_ACCOUNT_ID","YOUR_ACCOUNT_TOKEN","YOUR_ACCOUNT_REGION");
-                if (processCleverTapPN) {
+                if (info.fromCleverTap) {
                     if (Utils.isForPushTemplates(extras)) {
                         TemplateRenderer.createNotification(context, extras);
                         //TemplateRenderer.createNotification(context, extras, config);
@@ -141,6 +138,10 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
             PTLog.verbose("Error parsing FCM payload", throwable);
         }
     }
+    @Override
+    public void onNewToken(@NonNull final String s) {
+        //no-op
+    }
 }
 ```
 # Dashboard Usage
@@ -151,15 +152,15 @@ While creating a Push Notification campaign on CleverTap, just follow the steps 
 
 1. On the "WHAT" section pass the desired values in the "title" and "message" fields (NOTE: We prioritise title and message provided in the key-value pair - as shown in step 2, over these fields)
 
-![Basic](https://github.com/darshanclevertap/PushTemplates/blob/0.0.4/screens/basic.png)
+![Basic](https://github.com/darshanclevertap/PushTemplates/blob/master/screens/basic.png)
 
 2. Click on "Advanced" and then click on "Add pair" to add the [Template Keys](#template-keys)
 
-![KVs](https://github.com/darshanclevertap/PushTemplates/blob/0.0.4/screens/kv.png)
+![KVs](https://github.com/darshanclevertap/PushTemplates/blob/master/screens/kv.png)
 
 3. You can also add the above keys into one JSON object and use the `pt_json` key to fill in the values
 
-![KVs in JSON](https://github.com/darshanclevertap/PushTemplates/blob/0.0.4/screens/json.png)
+![KVs in JSON](https://github.com/darshanclevertap/PushTemplates/blob/master/screens/json.png)
 
 4. Send a test push and schedule!
 
@@ -170,78 +171,104 @@ While creating a Push Notification campaign on CleverTap, just follow the steps 
 ## Basic Template
 
 Basic Template is the basic push notification received on apps.
-<br/>(Expanded and unexpanded example)<br/><br/>
-![Basic with color](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/basic%20color.png)
+
+(Expanded and unexpanded example)
+
+![Basic with color](https://github.com/CleverTap/PushTemplates/blob/master/screens/basic%20color.png)
 
 
 ## Auto Carousel Template
 
 Auto carousel is an automatic revolving carousel push notification.
-<br/>(Expanded and unexpanded example)<br/><br/>
-<img src="https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/autocarouselv0.0.3.gif" alt="Auto-Carousel" width="450" height="800"/>
+
+(Expanded and unexpanded example)
+
+<img src="https://github.com/CleverTap/PushTemplates/blob/master/screens/autocarouselv0.0.3.gif" alt="Auto-Carousel" width="450" height="800"/>
 
 
 ## Manual Carousel Template
 
 This is the manual version of the carousel. The user can navigate to the next image by clicking on the arrows.
-<br/>(Expanded and unexpanded example)<br/><br/>
-<img src="https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/manual.gif" alt="Manual" width="450" height="800"/>
+
+(Expanded and unexpanded example)
+
+<img src="https://github.com/CleverTap/PushTemplates/blob/master/screens/manual.gif" alt="Manual" width="450" height="800"/>
 
 If only one image can be downloaded, this template falls back to the Basic Template
+
+### Filmstrip Variant
+
+The manual carousel has an extra variant called `filmstrip`. This can be used by adding the following key-value -
+
+Template Key | Required | Value
+---:|:---:|:---
+pt_manual_carousel_type | Optional | `filmstrip`
+
+
+(Expanded and unexpanded example)
+
+g src="https://github.com/CleverTap/PushTemplates/blob/master/screens/filmstrip.gif" alt="Manual" width="450" height="800"/>
 
 ## Rating Template
 
 Rating template lets your users give you feedback, this feedback is captured in the event Notification Clicked with in the property `wzrk_c2a`.<br/>(Expanded and unexpanded example)<br/>
 
-![Rating](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/rating.gif)
+![Rating](https://github.com/CleverTap/PushTemplates/blob/master/screens/rating.gif)
 
 ## Product Catalog Template
 
 Product catalog template lets you show case different images of a product (or a product catalog) before the user can decide to click on the "BUY NOW" option which can take them directly to the product via deep links. This template has two variants. 
 
-### Vertical View (Expanded and unexpanded example)
+### Vertical View 
 
-![Product Display](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/productdisplay.gif)
+(Expanded and unexpanded example)
+
+![Product Display](https://github.com/CleverTap/PushTemplates/blob/master/screens/productdisplay.gif)
 
 ### Linear View
 
 Use the following keys to enable linear view variant of this template.
+
 Template Key | Required | Value
 ---:|:---:|:---
-pt_product_display_linear | Required | `true`
+pt_product_display_linear | Optional | `true`
 
-![Product Display](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/proddisplaylinear.gif)
+![Product Display](https://github.com/CleverTap/PushTemplates/blob/master/screens/proddisplaylinear.gif)
 
 
 ## Five Icons Template
 
 Five icons template is a sticky push notification with no text, just 5 icons and a close button which can help your users go directly to the functionality of their choice with a button's click.
-<br/> If at least 3 icons are not retrieved, the library doesn't render any notification. The bifurcation of each CTA is captured in the event Notification Clicked with in the property `wzrk_c2a`.
 
-<img src="https://raw.githubusercontent.com/CleverTap/PushTemplates/0.0.4/screens/fiveicon.png" width="412" height="100">
+If at least 3 icons are not retrieved, the library doesn't render any notification. The bifurcation of each CTA is captured in the event Notification Clicked with in the property `wzrk_c2a`.
+
+<img src="https://raw.githubusercontent.com/CleverTap/PushTemplates/master/screens/fiveicon.png" width="412" height="100">
 
 ## Timer Template
 
 This template features a live countdown timer. You can even choose to show different title, message, and background image after the timer expires.  
-<br/> Timer notification is only supported for Android N (7) and above. For OS versions below N, the library falls back to the Basic Template.
 
-![Timer](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/timer.gif)
+Timer notification is only supported for Android N (7) and above. For OS versions below N, the library falls back to the Basic Template.
+
+![Timer](https://github.com/CleverTap/PushTemplates/blob/master/screens/timer.gif)
 
 ## Video Template
 
 The Video template plays a video when the user clicks on the notification. The app open action is captured in the event Notification Clicked with in the property `wzrk_c2a`.
 The following formats are supported - `.mp4`,`.m3u8`, and `.mpd`
 The video url should start with `https` or else it will not be supported.
-<br/> If your app does not include the Exo Player library, the library falls back to the Basic Template. 
 
-<img src="https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/videopn3.gif" alt="Video" width="450" height="800"/>
+If your app does not include the Exo Player library, the library falls back to the Basic Template. 
+
+<img src="https://github.com/CleverTap/PushTemplates/blob/master/screens/videopn3.gif" alt="Video" width="450" height="800"/>
 
 ## Zero Bezel Template
 
 The Zero Bezel template ensures that the background image covers the entire available surface area of the push notification. All the text is overlayed on the image.
-<br/> The library will fallback to the Basic Template if the image can't be downloaded.
 
-![Zero Bezel](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/zerobezel.gif)
+The library will fallback to the Basic Template if the image can't be downloaded.
+
+![Zero Bezel](https://github.com/CleverTap/PushTemplates/blob/master/screens/zerobezel.gif)
 
 ## Input Box Template
 
@@ -253,7 +280,7 @@ The CTA variant of the Input Box Template use action buttons on the notification
 
 To set the CTAs use the Advanced Options when setting up the campaign on the dashboard.
 
-![Input_Box_CTAs](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/inputctabasicdismiss.gif)
+![Input_Box_CTAs](https://github.com/CleverTap/PushTemplates/blob/master/screens/inputctabasicdismiss.gif)
 
 Template Key | Required | Value
 ---:|:---:|:---
@@ -272,7 +299,7 @@ pt_event_property_<property_name_1> | Optional | for e.g. `<property_value>`,
 pt_event_property_<property_name_2> | Required | future epoch timestamp. For e.g., `$D_1592503813`
 pt_dismiss_on_click | Optional | Dismisses the notification without opening the app
 
-![Input_Box_CTA_Remind](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/inputCtaRemind.gif)
+![Input_Box_CTA_Remind](https://github.com/CleverTap/PushTemplates/blob/master/screens/inputCtaRemind.gif)
 
 ### Reply as an Event
 
@@ -288,7 +315,7 @@ pt_event_name | Required | for e.g. `Searched`,
 pt_event_property_<property_name_1> | Optional | for e.g. `<property_value>`,
 pt_event_property_<property_name_2> | Required to capture input | fixed value - `pt_input_reply`
             
-![Input_Box_CTA_No_Open](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/inputCtaNoOpen.gif)
+![Input_Box_CTA_No_Open](https://github.com/CleverTap/PushTemplates/blob/master/screens/inputCtaNoOpen.gif)
 
 ### Reply as an Intent
 
@@ -304,7 +331,7 @@ pt_input_auto_open | Required | fixed value - `true`
 
 <br/> To capture the input, the app can get the `pt_input_reply` key from the Intent extras.
 
-![Input_Box_CTA_With_Open](https://github.com/CleverTap/PushTemplates/blob/0.0.4/screens/inputCtaWithOpen.gif)
+![Input_Box_CTA_With_Open](https://github.com/CleverTap/PushTemplates/blob/master/screens/inputCtaWithOpen.gif)
 
 # Template Keys
 
@@ -371,6 +398,7 @@ pt_input_auto_open | Required | fixed value - `true`
   pt_msg_clr | Optional | Message Color in HEX
   pt_small_icon_clr | Optional | Small Icon Color in HEX
   pt_json | Optional | Above keys in JSON format
+  pt_manual_carousel_type | Optional | `filmstrip`
   
 ### Rating Template
 
@@ -535,12 +563,16 @@ pt_input_auto_open | Required | fixed value - `true`
   
 [(Back to top)](#table-of-contents)
 
-  * This library uses local file system to download images for better performance. `/data/data/your_app_name/app_pt_dir`. 
-  * These images are stored at a notification id level.
-  * These images are deleted whenever the notification is dismissed or clicked.
   * Using images of 3 MB or lower are recommended for better performance.
   * A silent notification channel with importance: `HIGH` is created every time on an interaction with the Rating, Manual Carousel, and Product Catalog templates with a silent sound file. This prevents the notification sound from playing when the notification is re-rendered.
   * The silent notification channel is deleted whenever the notification is dismissed or clicked.
+  * To ensure that InApps are not shown on the Video, add the following to your `AndroidManifest.xml`
+  
+  ```xml
+    <meta-data
+        android:name="CLEVERTAP_INAPP_EXCLUDE"
+        android:value="PTVideoActivity" /> 
+  ```
  
 # Sample App
 

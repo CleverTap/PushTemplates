@@ -1,5 +1,10 @@
 ## CHANGE LOG
 
+### Version 0.0.5 (October 29, 2020)
+* Added support for [CleverTap Android SDK v4.0.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTV4CHANGES.md)
+* Added `filmstrip` type to Manual Carousel Template. See [README](https://github.com/CleverTap/PushTemplates/blob/master/README.md) for details.
+* ExoPlayer is now an `implementation` dependency for PushTemplates SDK 
+
 ### Version 0.0.4 (August 19, 2020)
 * Removed `Rated` event. 
 * The library will now never raise extra events apart from CleverTap System Events and events given to the library by KV pairs.

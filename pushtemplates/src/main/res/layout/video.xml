@@ -1,4 +1,5 @@
-<com.clevertap.pushtemplates.FixedAspectRatioFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.clevertap.pushtemplates.FixedAspectRatioFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/video_layout"
     android:layout_width="match_parent"
@@ -11,4 +12,13 @@
     android:visibility="visible"
     app:aspectRatioHeight="9"
     app:aspectRatioWidth="16">
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/pt_player_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:use_controller="true"
+        app:auto_show="false"
+        app:show_buffering="always"
+        app:controller_layout_id="@layout/pt_exo_player_control_view" />
 </com.clevertap.pushtemplates.FixedAspectRatioFrameLayout>

@@ -3,7 +3,10 @@ package com.clevertap.pushtemplates;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import com.clevertap.android.sdk.CleverTapAPI;
+import com.clevertap.android.sdk.pushnotification.NotificationInfo;
+import com.clevertap.android.sdk.pushnotification.PushConstants.PushType;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -14,7 +17,7 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
     Context context;
 
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
+    public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         try {
             PTLog.debug("Inside Push Templates");
             context = getApplicationContext();
@@ -24,9 +27,9 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
                     extras.putString(entry.getKey(), entry.getValue());
                 }
 
-                boolean processCleverTapPN = Utils.isPNFromCleverTap(extras);
+                NotificationInfo info = CleverTapAPI.getNotificationInfo(extras);
 
-                if (processCleverTapPN) {
+                if (info.fromCleverTap) {
                     if (Utils.isForPushTemplates(extras)) {
                         TemplateRenderer.createNotification(context, extras);
                     } else {
@@ -37,5 +40,10 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
         } catch (Throwable throwable) {
             PTLog.verbose("Error parsing FCM payload", throwable);
         }
+    }
+
+    @Override
+    public void onNewToken(@NonNull final String s) {
+        //no-op
     }
 }
