@@ -207,7 +207,7 @@ pt_manual_carousel_type | Optional | `filmstrip`
 
 (Expanded and unexpanded example)
 
-g src="https://github.com/CleverTap/PushTemplates/blob/master/screens/filmstrip.gif" alt="Manual" width="450" height="800"/>
+<img src="https://github.com/CleverTap/PushTemplates/blob/master/screens/filmstrip.gif" alt="Filmstrip" width="450" height="800"/>
 
 ## Rating Template
 
