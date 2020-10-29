@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import com.clevertap.android.sdk.CleverTapAPI;
+import com.clevertap.android.sdk.pushnotification.NotificationInfo;
+import com.clevertap.android.sdk.pushnotification.PushConstants.PushType;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -25,9 +27,9 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
                     extras.putString(entry.getKey(), entry.getValue());
                 }
 
-                boolean processCleverTapPN = Utils.isPNFromCleverTap(extras);
+                NotificationInfo info = CleverTapAPI.getNotificationInfo(extras);
 
-                if (processCleverTapPN) {
+                if (info.fromCleverTap) {
                     if (Utils.isForPushTemplates(extras)) {
                         TemplateRenderer.createNotification(context, extras);
                     } else {
@@ -42,6 +44,6 @@ public class PushTemplateMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(@NonNull final String s) {
-
+        //no-op
     }
 }
