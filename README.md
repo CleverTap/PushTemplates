@@ -26,8 +26,8 @@ This library is in public beta, for any issues, queries and concerns please open
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.5'
-implementation 'com.clevertap.android:clevertap-android-sdk:4.0.0'
+implementation 'com.clevertap.android:push-templates:0.0.6'
+implementation 'com.clevertap.android:clevertap-android-sdk:4.0.2'
 ```
 
 2. Add the Services to your `AndroidManifest.xml`
@@ -70,8 +70,8 @@ implementation 'com.clevertap.android:clevertap-android-sdk:4.0.0'
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.5'
-implementation 'com.clevertap.android:clevertap-android-sdk:4.0.0'
+implementation 'com.clevertap.android:push-templates:0.0.6'
+implementation 'com.clevertap.android:clevertap-android-sdk:4.0.2'
 ```
 2. Add the Service to your `AndroidManifest.xml`
 
@@ -252,7 +252,7 @@ Timer notification is only supported for Android N (7) and above. For OS version
 
 ![Timer](https://github.com/CleverTap/PushTemplates/blob/master/screens/timer.gif)
 
-## Video Template
+## Video Template (only available till v0.0.5)
 
 The Video template plays a video when the user clicks on the notification. The app open action is captured in the event Notification Clicked with in the property `wzrk_c2a`.
 The following formats are supported - `.mp4`,`.m3u8`, and `.mpd`
@@ -492,7 +492,7 @@ pt_input_auto_open | Required | fixed value - `true`
   pt_small_icon_clr | Optional | Small Icon Color in HEX
   pt_json | Optional | Above keys in JSON format
   
-### Video Template
+### Video Template (only available till v0.0.5)
  
  Video Template Keys | Required | Description 
   ---:|:---:|:--- 

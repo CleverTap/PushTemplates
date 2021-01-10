@@ -25,7 +25,6 @@ import android.view.View;
 import android.widget.RemoteViews;
 
 import com.clevertap.android.sdk.CleverTapInstanceConfig;
-import com.clevertap.android.sdk.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,38 +37,6 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 @SuppressWarnings({"FieldCanBeLocal", "rawtypes"})
 public class TemplateRenderer {
-
-    private static boolean hasVideoPlayerSupport;
-
-    static {
-        hasVideoPlayerSupport = checkForExoPlayer();
-    }
-
-    /**
-     * Method to check whether app has ExoPlayer dependencies
-     *
-     * @return boolean - true/false depending on app's availability of ExoPlayer dependencies
-     */
-    private static boolean checkForExoPlayer() {
-        boolean exoPlayerPresent = false;
-        Class className = null;
-        try {
-            className = Class.forName("com.google.android.exoplayer2.ExoPlayerFactory");
-            className = Class.forName("com.google.android.exoplayer2.source.hls.HlsMediaSource");
-            className = Class.forName("com.google.android.exoplayer2.source.dash.DashMediaSource");
-            className = Class.forName("com.google.android.exoplayer2.ui.PlayerView");
-            Logger.d("ExoPlayer is present");
-            exoPlayerPresent = true;
-        } catch (Throwable t) {
-            PTLog.debug("ExoPlayer library files are missing!!!");
-            PTLog.debug("Please add ExoPlayer dependencies to render Push notifications playing video. For more information checkout Push Templates documentation.");
-            if (className != null)
-                Logger.d("ExoPlayer classes not found " + className.getName());
-            else
-                Logger.d("ExoPlayer classes not found");
-        }
-        return exoPlayerPresent;
-    }
 
     private static int debugLevel = TemplateRenderer.LogLevel.INFO.intValue();
     private String pt_id;
@@ -104,7 +71,6 @@ public class TemplateRenderer {
     private String pt_input_feedback;
     private String pt_input_auto_open;
     private String pt_dismiss_on_click;
-    private String pt_video_url;
     private int pt_timer_end;
     private String pt_title_alt;
     private String pt_msg_alt;
@@ -211,7 +177,6 @@ public class TemplateRenderer {
         pt_input_auto_open = extras.getString(Constants.PT_INPUT_AUTO_OPEN);
         pt_dismiss_on_click = extras.getString(Constants.PT_DISMISS_ON_CLICK);
         pt_chrono_title_clr = extras.getString(Constants.PT_CHRONO_TITLE_COLOUR);
-        pt_video_url = extras.getString(Constants.PT_VIDEO_URL);
         pt_product_display_action = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION);
         pt_product_display_action_clr = extras.getString(Constants.PT_PRODUCT_DISPLAY_ACTION_COLOUR);
         pt_timer_end = Utils.getTimerEnd(extras);
@@ -356,15 +321,6 @@ public class TemplateRenderer {
                 if (hasAllInputBoxKeys())
                     renderInputBoxNotification(context, extras, notificationId);
                 break;
-            case VIDEO:
-                if (!hasVideoPlayerSupport) {
-                    PTLog.debug("ExoPlayer libraries not found, reverting to basic template");
-                    if (hasAllBasicNotifKeys()) {
-                        renderBasicTemplateNotification(context, extras, notificationId);
-                    }
-                } else if (hasAllVideoKeys())
-                    renderVideoNotification(context, extras, notificationId);
-                break;
             case CANCEL:
                 renderCancelNotification();
                 break;
@@ -399,33 +355,6 @@ public class TemplateRenderer {
         } catch (NullPointerException e) {
             PTLog.debug("NPE while setting dot sep color");
         }
-    }
-
-    private boolean hasAllVideoKeys() {
-        boolean result = true;
-        if (pt_title == null || pt_title.isEmpty()) {
-            PTLog.verbose("Title is missing or empty. Not showing notification");
-            result = false;
-        }
-        if (pt_msg == null || pt_msg.isEmpty()) {
-            PTLog.verbose("Message is missing or empty. Not showing notification");
-            result = false;
-        }
-
-        if (pt_big_img == null || pt_big_img.isEmpty()) {
-            PTLog.verbose("Display Image is missing or empty. Not showing notification");
-            result = false;
-        }
-
-        if (pt_video_url == null || pt_video_url.isEmpty()) {
-            PTLog.verbose("Video URL is missing or empty. Not showing notification");
-            result = false;
-        }
-        if (pt_bg == null || pt_bg.isEmpty()) {
-            PTLog.verbose("Background colour is missing or empty. Not showing notification");
-            result = false;
-        }
-        return result;
     }
 
     private boolean hasAllBasicNotifKeys() {
@@ -1616,64 +1545,6 @@ public class TemplateRenderer {
 
         } catch (Throwable t) {
             PTLog.verbose("Error creating Input Box notification ", t);
-        }
-    }
-
-    private void renderVideoNotification(final Context context, Bundle extras, int notificationId) {
-        PTLog.debug("Rendering Video Template Push Notification with extras - " + extras.toString());
-        try {
-            contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
-            setCustomContentViewBasicKeys(contentViewBig, context);
-
-            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
-            setCustomContentViewBasicKeys(contentViewSmall, context);
-
-            setCustomContentViewTitle(contentViewBig, pt_title);
-            setCustomContentViewTitle(contentViewSmall, pt_title);
-
-            setCustomContentViewMessage(contentViewBig, pt_msg);
-            setCustomContentViewMessage(contentViewSmall, pt_msg);
-
-            setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
-            setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
-
-            setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
-            setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
-
-            setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
-            setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
-
-            notificationId = setNotificationId(notificationId);
-
-            Intent launchIntent = new Intent(context, PTVideoActivity.class);
-            launchIntent.putExtras(extras);
-            PendingIntent pIntent = null;
-            if (pt_video_url != null) {
-                pIntent = PendingIntent.getActivity(context, 0, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            }
-
-            NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId, channelId, context);
-
-            setNotificationBuilderBasics(notificationBuilder, contentViewSmall, contentViewBig, pt_title, pIntent);
-
-            Notification notification = notificationBuilder.build();
-
-            setCustomContentViewBigImage(contentViewBig, pt_big_img);
-
-            setCustomContentViewLargeIcon(contentViewBig, pt_large_icon);
-            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
-
-            setCustomContentViewSmallIcon(contentViewBig);
-            setCustomContentViewSmallIcon(contentViewSmall);
-
-            setCustomContentViewDotSep(contentViewBig);
-            setCustomContentViewDotSep(contentViewSmall);
-
-            notificationManager.notify(notificationId, notification);
-
-            Utils.raiseNotificationViewed(context, extras, config);
-        } catch (Throwable t) {
-            PTLog.verbose("Error creating image only notification", t);
         }
     }
 

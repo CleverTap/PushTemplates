@@ -70,10 +70,5 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Input Box Push" />
-        <Button
-            android:id="@+id/videobutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Video Notification" />
     </LinearLayout>
 </ScrollView>
