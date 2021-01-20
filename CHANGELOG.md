@@ -1,8 +1,9 @@
 ## CHANGE LOG
 
-### Version 0.0.6 (January 15, 2021)
+### Version 0.0.6 (January 20, 2021)
 * Supports CleverTap Android SDK v4.0.2
-* Removes support for Video Push Notifications
+* Removes support for Video Push Notifications.
+
 Video Push Notifications required an `implementation` dependency of Exoplayer by the app.
 Based on feedback, not all developers were comfortable with adding the Exoplayer dependency.
 This version removes Video Push Notifications and we will re-introduce them as a separate module soon.
