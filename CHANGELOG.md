@@ -1,5 +1,13 @@
 ## CHANGE LOG
 
+### Version 0.0.6 (January 15, 2021)
+* Supports CleverTap Android SDK v4.0.2
+* Removes support for Video Push Notifications
+Video Push Notifications required an `implementation` dependency of Exoplayer by the app.
+Based on feedback, not all developers were comfortable with adding the Exoplayer dependency.
+This version removes Video Push Notifications and we will re-introduce them as a separate module soon.
+Video Push notifications can still be used with `v0.0.5` of the Push Templates SDK.
+
 ### Version 0.0.5 (October 29, 2020)
 * Added support for [CleverTap Android SDK v4.0.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTV4CHANGES.md)
 * Added `filmstrip` type to Manual Carousel Template. See [README](https://github.com/CleverTap/PushTemplates/blob/master/README.md) for details.

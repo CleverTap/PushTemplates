@@ -26,8 +26,8 @@ This library is in public beta, for any issues, queries and concerns please open
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.5'
-implementation 'com.clevertap.android:clevertap-android-sdk:4.0.0'
+implementation 'com.clevertap.android:push-templates:0.0.6'
+implementation 'com.clevertap.android:clevertap-android-sdk:4.0.2'
 ```
 
 2. Add the Services to your `AndroidManifest.xml`
@@ -70,8 +70,8 @@ implementation 'com.clevertap.android:clevertap-android-sdk:4.0.0'
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.5'
-implementation 'com.clevertap.android:clevertap-android-sdk:4.0.0'
+implementation 'com.clevertap.android:push-templates:0.0.6'
+implementation 'com.clevertap.android:clevertap-android-sdk:4.0.2'
 ```
 2. Add the Service to your `AndroidManifest.xml`
 
@@ -252,7 +252,7 @@ Timer notification is only supported for Android N (7) and above. For OS version
 
 ![Timer](https://github.com/CleverTap/PushTemplates/blob/master/screens/timer.gif)
 
-## Video Template
+## Video Template (only available till v0.0.5)
 
 The Video template plays a video when the user clicks on the notification. The app open action is captured in the event Notification Clicked with in the property `wzrk_c2a`.
 The following formats are supported - `.mp4`,`.m3u8`, and `.mpd`
@@ -442,6 +442,9 @@ pt_input_auto_open | Required | fixed value - `true`
  pt_dl1 | Required  | Deep Link for first image
  pt_dl2 | Required  | Deep Link for second image
  pt_dl3 | Required  | Deep Link for third image
+ pt_price1 | Required  | Price for first image
+ pt_price2 | Required  | Price for second image
+ pt_price3 | Required  | Price for third image
  pt_bg | Required  | Background Color in HEX
  pt_product_display_action | Required  | Action Button Label Text
  pt_product_display_linear | Optional  | Linear Layout Template ("true"/"false")
@@ -481,7 +484,7 @@ pt_input_auto_open | Required | fixed value - `true`
   pt_msg_alt | Optional | Message to show after timer expires
   pt_msg_summary | Optional | Message line when Notification is expanded
   pt_subtitle | Optional | Subtitle
-  pt_dl1 | Optional | Deep Link
+  pt_dl1 | Required | Deep Link
   pt_big_img | Optional | Image
   pt_big_img_alt | Optional | Image to show when timer expires
   pt_bg | Required | Background Color in HEX
@@ -492,7 +495,7 @@ pt_input_auto_open | Required | fixed value - `true`
   pt_small_icon_clr | Optional | Small Icon Color in HEX
   pt_json | Optional | Above keys in JSON format
   
-### Video Template
+### Video Template (only available till v0.0.5)
  
  Video Template Keys | Required | Description 
   ---:|:---:|:--- 
@@ -504,7 +507,7 @@ pt_input_auto_open | Required | fixed value - `true`
   pt_big_img | Required | Image
   pt_video_url | Required | Video URL (https only)
   pt_bg | Required | Background Color in HEX
-  pt_dl1 | Optional | Deep Link
+  pt_dl1 | Required | Deep Link
   pt_title_clr | Optional | Title Color in HEX
   pt_msg_clr | Optional | Message Color in HEX
   pt_small_icon_clr | Optional | Small Icon Color in HEX
@@ -544,10 +547,10 @@ pt_input_auto_open | Required | fixed value - `true`
   pt_event_property_<property_name_1> | Optional | Value for event property <property_name_1>  
   pt_event_property_<property_name_2> | Optional | Value for event property <property_name_2>
   pt_event_property_<property_name_n> | Optional | Value for event property <property_name_n>
-  pt_input_label | Optional | Label text to be shown on the input
+  pt_input_label | Required | Label text to be shown on the input
   pt_input_auto_open | Optional | Auto open the app after feedback
-  pt_input_feedback | Optional | Feedback 
-  pt_dl1 | Optional | Deep Link
+  pt_input_feedback | Required | Feedback 
+  pt_dl1 | Required | Deep Link
   pt_title_clr | Optional | Title Color in HEX
   pt_msg_clr | Optional | Message Color in HEX
   pt_small_icon_clr | Optional | Small Icon Color in HEX

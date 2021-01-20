@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
             sendRatingPush, sendProductDisplayNotification,
             sendLinearProductDisplayNotification,
             sendCTANotification, sendZeroBezel, sendTimerNotification,
-            sendInputBoxNotification,sendVideoNotification;
+            sendInputBoxNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,12 +110,6 @@ public class MainActivity extends AppCompatActivity {
         sendInputBoxNotification.setOnClickListener(v -> {
             if (cleverTapAPI != null) {
                 cleverTapAPI.pushEvent("Send Input Box Notification");
-            }
-        });
-        sendVideoNotification = findViewById(R.id.videobutton);
-        sendVideoNotification.setOnClickListener(v -> {
-            if (cleverTapAPI != null) {
-                cleverTapAPI.pushEvent("Send Video Notification");
             }
         });
     }

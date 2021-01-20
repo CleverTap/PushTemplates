@@ -2,15 +2,6 @@
     package="com.clevertap.pushtemplates" >
     <application
         android:allowBackup="true"
-        android:supportsRtl="true">
-        <activity android:name="com.clevertap.pushtemplates.PTVideoActivity"
-            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:launchMode="singleInstance"
-            android:excludeFromRecents="true"
-            android:taskAffinity=""
-            android:theme="@style/Dialog"
-            >
-        </activity>
-    </application>
+        android:supportsRtl="true"></application>
 </manifest>
 
