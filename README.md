@@ -26,7 +26,7 @@ This library is in public beta, for any issues, queries and concerns please open
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.6'
+implementation 'com.clevertap.android:push-templates:0.0.7'
 implementation 'com.clevertap.android:clevertap-android-sdk:4.0.2'
 ```
 
@@ -70,7 +70,7 @@ implementation 'com.clevertap.android:clevertap-android-sdk:4.0.2'
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.6'
+implementation 'com.clevertap.android:push-templates:0.0.7'
 implementation 'com.clevertap.android:clevertap-android-sdk:4.0.2'
 ```
 2. Add the Service to your `AndroidManifest.xml`
