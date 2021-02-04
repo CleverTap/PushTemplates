@@ -1,5 +1,8 @@
 ## CHANGE LOG
 
+### Version 0.0.7 (February 4, 2021)
+* Fixes deeplinks in Manual Carousel Template 
+
 ### Version 0.0.6 (January 20, 2021)
 * Supports CleverTap Android SDK v4.0.2
 * Removes support for Video Push Notifications.

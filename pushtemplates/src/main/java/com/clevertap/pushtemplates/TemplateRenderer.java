@@ -807,7 +807,7 @@ public class TemplateRenderer {
 
             int imageCounter = 0;
             boolean isFirstImageOk = false;
-            String dl = null;
+            String dl = deepLinkList.get(0);
             int currentPosition = 0;
             ArrayList<String> tempImageList = new ArrayList<>();
 

@@ -206,6 +206,23 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             extras.putInt(Constants.PT_MANUAL_CAROUSEL_CURRENT, newPosition);
             extras.remove(Constants.PT_RIGHT_SWIPE);
+            extras.putString(Constants.WZRK_DL,dl);
+
+            Intent rightArrowPos0Intent = new Intent(context, PushTemplateReceiver.class);
+            rightArrowPos0Intent.putExtra(Constants.PT_RIGHT_SWIPE, true);
+            rightArrowPos0Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, currPosition);
+            rightArrowPos0Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            rightArrowPos0Intent.putExtras(extras);
+            PendingIntent contentRightPos0Intent = setPendingIntent(context, notificationId, extras, rightArrowPos0Intent, dl);
+            contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos0, contentRightPos0Intent);
+
+            Intent leftArrowPos0Intent = new Intent(context, PushTemplateReceiver.class);
+            leftArrowPos0Intent.putExtra(Constants.PT_RIGHT_SWIPE, false);
+            leftArrowPos0Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, currPosition);
+            leftArrowPos0Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            leftArrowPos0Intent.putExtras(extras);
+            PendingIntent contentLeftPos0Intent = setPendingIntent(context, notificationId, extras, leftArrowPos0Intent, dl);
+            contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos0, contentLeftPos0Intent);
 
 
             Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
