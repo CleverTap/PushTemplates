@@ -338,6 +338,7 @@ public class TemplateRenderer {
             case ZERO_BEZEL:
                 if (hasAllZeroBezelNotifKeys())
                     renderZeroBezelNotification(context, extras, notificationId);
+                break;
             case TIMER:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     if (hasAllTimerKeys()) {
