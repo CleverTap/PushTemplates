@@ -12,18 +12,16 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.RemoteInput;
-
 import android.text.Html;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.RemoteInput;
+
 import com.clevertap.android.sdk.CleverTapInstanceConfig;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -295,6 +293,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 if (requiresChannelId) {
                     repliedNotification = new NotificationCompat.Builder(context, Constants.PT_SILENT_CHANNEL_ID);
                 } else {
+                    //noinspection deprecation
                     repliedNotification = new NotificationCompat.Builder(context);
                 }
                 setSmallIcon(context);
@@ -359,6 +358,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 config = extras.getParcelable("config");
                 notificationManager.cancel(notificationId);
                 Intent launchIntent;
+                //noinspection rawtypes
                 Class clazz = null;
                 try {
                     clazz = Class.forName("com.clevertap.pushtemplates.PTNotificationIntentService");
@@ -414,7 +414,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             String pt_dl_clicked = deepLinkList.get(0);
 
-            HashMap<String, Object> map = new HashMap<String, Object>();
+//            HashMap<String, Object> map = new HashMap<>();
             if (clicked1 == extras.getBoolean("click1", false)) {
                 contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_filled);
                 extras.putString(Constants.WZRK_C2A, Constants.PT_RATING_C2A_KEY + 1);
@@ -496,6 +496,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
             if (requiresChannelId) {
                 notificationBuilder = new NotificationCompat.Builder(context, Constants.PT_SILENT_CHANNEL_ID);
             } else {
+                //noinspection deprecation
                 notificationBuilder = new NotificationCompat.Builder(context);
             }
             Intent dismissIntent = new Intent(context, PushTemplateReceiver.class);
@@ -552,6 +553,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
                 notificationManager.cancel(notificationId);
                 Intent launchIntent;
 
+                //noinspection rawtypes
                 Class clazz = null;
                 try {
                     clazz = Class.forName("com.clevertap.pushtemplates.PTNotificationIntentService");
@@ -883,10 +885,11 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         }
     }
 
-    private NotificationCompat.Builder setBuilderWithChannelIDCheck(boolean requiresChannelId, String channelId, Context context) {
+    private NotificationCompat.Builder setBuilderWithChannelIDCheck(boolean requiresChannelId, @SuppressWarnings("SameParameterValue") String channelId, Context context) {
         if (requiresChannelId) {
             return new NotificationCompat.Builder(context, channelId);
         } else {
+            //noinspection deprecation
             return new NotificationCompat.Builder(context);
         }
     }

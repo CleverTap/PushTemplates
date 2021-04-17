@@ -3,15 +3,12 @@ package com.clevertap.templateapp;
 import android.app.NotificationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.pushtemplates.TemplateRenderer;
-
-import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,111 +33,78 @@ public class MainActivity extends AppCompatActivity {
         }
 
         sendBasicPush = findViewById(R.id.basicPush);
-        sendBasicPush.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cleverTapAPI != null) {
-                    cleverTapAPI.pushEvent("Send Basic Push");
-                }
+        sendBasicPush.setOnClickListener(v -> {
+            if (cleverTapAPI != null) {
+                cleverTapAPI.pushEvent("Send Basic Push");
             }
         });
 
         sendCarouselPush = findViewById(R.id.carouselPush);
-        sendCarouselPush.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cleverTapAPI != null) {
-                    cleverTapAPI.pushEvent("Send Carousel Push");
-                }
+        sendCarouselPush.setOnClickListener(v -> {
+            if (cleverTapAPI != null) {
+                cleverTapAPI.pushEvent("Send Carousel Push");
             }
         });
 
         sendManualCarouselPush = findViewById(R.id.manualCarouselPush);
-        sendManualCarouselPush.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cleverTapAPI != null) {
-                    cleverTapAPI.pushEvent("Send Manual Carousel Push");
-                }
+        sendManualCarouselPush.setOnClickListener(v -> {
+            if (cleverTapAPI != null) {
+                cleverTapAPI.pushEvent("Send Manual Carousel Push");
             }
         });
 
         sendRatingPush = findViewById(R.id.ratingPush);
-        sendRatingPush.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cleverTapAPI != null) {
-                    cleverTapAPI.pushEvent("Send Rating Push");
-                }
+        sendRatingPush.setOnClickListener(v -> {
+            if (cleverTapAPI != null) {
+                cleverTapAPI.pushEvent("Send Rating Push");
             }
         });
 
         sendProductDisplayNotification = findViewById(R.id.productDisplay);
-        sendProductDisplayNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cleverTapAPI != null) {
-                    cleverTapAPI.pushEvent("Send Product Display Notification");
-                }
+        sendProductDisplayNotification.setOnClickListener(v -> {
+            if (cleverTapAPI != null) {
+                cleverTapAPI.pushEvent("Send Product Display Notification");
             }
         });
 
         sendLinearProductDisplayNotification = findViewById(R.id.linearProductDisplay);
-        sendLinearProductDisplayNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cleverTapAPI != null) {
-                    cleverTapAPI.pushEvent("Send Linear Product Display Push");
-                }
+        sendLinearProductDisplayNotification.setOnClickListener(v -> {
+            if (cleverTapAPI != null) {
+                cleverTapAPI.pushEvent("Send Linear Product Display Push");
             }
         });
 
         sendCTANotification = findViewById(R.id.cta);
-        sendCTANotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cleverTapAPI != null) {
-                    cleverTapAPI.pushEvent("Send CTA Notification");
-                }
+        sendCTANotification.setOnClickListener(v -> {
+            if (cleverTapAPI != null) {
+                cleverTapAPI.pushEvent("Send CTA Notification");
             }
         });
 
         sendZeroBezel = findViewById(R.id.zero_bezel);
-        sendZeroBezel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cleverTapAPI != null) {
-                    cleverTapAPI.pushEvent("Send Zero Bezel Notification");
-                }
+        sendZeroBezel.setOnClickListener(v -> {
+            if (cleverTapAPI != null) {
+                cleverTapAPI.pushEvent("Send Zero Bezel Notification");
             }
         });
 
         sendTimerNotification = findViewById(R.id.timer);
-        sendTimerNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cleverTapAPI != null) {
-                    cleverTapAPI.pushEvent("Send Timer Notification");
-                }
+        sendTimerNotification.setOnClickListener(v -> {
+            if (cleverTapAPI != null) {
+                cleverTapAPI.pushEvent("Send Timer Notification");
             }
         });
 
         sendInputBoxNotification = findViewById(R.id.inputBox);
-        sendInputBoxNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cleverTapAPI != null) {
-                    cleverTapAPI.pushEvent("Send Input Box Notification");
-                }
+        sendInputBoxNotification.setOnClickListener(v -> {
+            if (cleverTapAPI != null) {
+                cleverTapAPI.pushEvent("Send Input Box Notification");
             }
         });
         sendVideoNotification = findViewById(R.id.videobutton);
-        sendVideoNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cleverTapAPI != null) {
-                    cleverTapAPI.pushEvent("Send Video Notification");
-                }
+        sendVideoNotification.setOnClickListener(v -> {
+            if (cleverTapAPI != null) {
+                cleverTapAPI.pushEvent("Send Video Notification");
             }
         });
     }
