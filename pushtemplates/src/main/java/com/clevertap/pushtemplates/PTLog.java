@@ -4,12 +4,13 @@ import android.util.Log;
 
 final class PTLog {
 
-    private int debugLevel;
+    private final int debugLevel;
 
     PTLog(int level){
         this.debugLevel = level;
     }
 
+    @SuppressWarnings("unused")
     private int getDebugLevel() {
         return debugLevel;
     }
@@ -25,6 +26,7 @@ final class PTLog {
         }
     }
 
+    @SuppressWarnings("unused")
     static void info(String message){
         if (getStaticDebugLevel() >= TemplateRenderer.LogLevel.INFO.intValue()){
             Log.i(Constants.LOG_TAG,message);
@@ -37,12 +39,14 @@ final class PTLog {
         }
     }
 
+    @SuppressWarnings("unused")
     static void debug(String message, Throwable t){
         if (getStaticDebugLevel() >= TemplateRenderer.LogLevel.INFO.intValue()){
             Log.d(Constants.LOG_TAG,message,t);
         }
     }
 
+    @SuppressWarnings("unused")
     static void info(String message, Throwable t){
         if (getStaticDebugLevel() >= TemplateRenderer.LogLevel.INFO.intValue()){
             Log.i(Constants.LOG_TAG,message,t);

@@ -39,7 +39,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 @SuppressWarnings("FieldCanBeLocal")
 public class TemplateRenderer {
 
-    private static boolean hasVideoPlayerSupport;
+    private static final boolean hasVideoPlayerSupport;
 
     static {
         hasVideoPlayerSupport = checkForExoPlayer();
@@ -52,6 +52,7 @@ public class TemplateRenderer {
      */
     private static boolean checkForExoPlayer() {
         boolean exoPlayerPresent = false;
+        //noinspection rawtypes
         Class className = null;
         try {
             className = Class.forName("com.google.android.exoplayer2.ExoPlayerFactory");
@@ -1740,6 +1741,7 @@ public class TemplateRenderer {
         if (requiresChannelId) {
             return new NotificationCompat.Builder(context, channelId);
         } else {
+            //noinspection deprecation
             return new NotificationCompat.Builder(context);
         }
     }
@@ -1798,7 +1800,7 @@ public class TemplateRenderer {
         }
     }
 
-    private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img, boolean hideBigImageView) {
+    private void setCustomContentViewBigImage(RemoteViews contentView, String pt_big_img, @SuppressWarnings("SameParameterValue") boolean hideBigImageView) {
         if (pt_big_img != null && !pt_big_img.isEmpty()) {
             Utils.loadImageURLIntoRemoteView(R.id.big_image, pt_big_img, contentView);
             if (Utils.getFallback()) {
@@ -1921,6 +1923,7 @@ public class TemplateRenderer {
 
     private void setActionButtons(Context context, Bundle extras, int notificationId, NotificationCompat.Builder nb) {
 
+        //noinspection rawtypes
         Class clazz = null;
         try {
             clazz = Class.forName("com.clevertap.pushtemplates.PTNotificationIntentService");
@@ -1980,7 +1983,7 @@ public class TemplateRenderer {
                         actionLaunchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     }
 
-                    PendingIntent actionIntent = null;
+                    PendingIntent actionIntent;
                     int requestCode = ((int) System.currentTimeMillis()) + i;
                     if (sendToPTIntentService) {
                         actionIntent = PendingIntent.getService(context, requestCode,

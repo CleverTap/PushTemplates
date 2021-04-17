@@ -6,7 +6,7 @@ import android.content.Intent;
 import com.clevertap.android.sdk.CTPushNotificationReceiver;
 
 public class PTPushNotificationReceiver extends CTPushNotificationReceiver {
-    private AsyncHelper asyncHelper = AsyncHelper.getInstance();;
+    private final AsyncHelper asyncHelper = AsyncHelper.getInstance();
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
