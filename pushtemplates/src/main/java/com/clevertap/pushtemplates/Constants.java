@@ -1,7 +1,5 @@
 package com.clevertap.pushtemplates;
 
-import android.content.Context;
-
 @SuppressWarnings("WeakerAccess")
 public class Constants {
     public static final String LOG_TAG = "PTLog";
