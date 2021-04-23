@@ -663,7 +663,7 @@ public class Utils {
     static void createSilentNotificationChannel(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager == null) return;
-        NotificationChannel notificationChannel = null;
+        NotificationChannel notificationChannel;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             if (notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID) == null || (notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID) != null && !isNotificationChannelEnabled(notificationManager.getNotificationChannel(Constants.PT_SILENT_CHANNEL_ID)))) {
                 Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/" + Constants.PT_SOUND_FILE_NAME);
@@ -691,7 +691,7 @@ public class Utils {
     }
 
     static boolean isNotificationChannelEnabled(NotificationChannel channel) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && channel != null) {
             return channel.getImportance() != NotificationManager.IMPORTANCE_NONE;
         }
         return false;
