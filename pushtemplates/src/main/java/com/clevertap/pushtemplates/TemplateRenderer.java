@@ -1567,7 +1567,7 @@ public class TemplateRenderer {
         notificationBuilder.setSmallIcon(smallIcon)
                 .setCustomContentView(contentViewSmall)
                 .setCustomBigContentView(contentViewBig)
-                .setContentTitle(pt_title)
+                .setContentTitle(Html.fromHtml(pt_title))
                 .setContentIntent(pIntent)
                 .setVibrate(new long[]{0L})
                 .setWhen(System.currentTimeMillis())

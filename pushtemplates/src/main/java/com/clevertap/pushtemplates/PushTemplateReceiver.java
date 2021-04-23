@@ -695,7 +695,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
         notificationBuilder.setSmallIcon(smallIcon)
                 .setCustomContentView(contentViewSmall)
                 .setCustomBigContentView(contentViewBig)
-                .setContentTitle(pt_title)
+                .setContentTitle(Html.fromHtml(pt_title))
                 .setDeleteIntent(dIntent)
                 .setContentIntent(pIntent).setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
                 .setWhen(System.currentTimeMillis())
