@@ -597,7 +597,7 @@ public class PushTemplateReceiver extends BroadcastReceiver {
 
             NotificationCompat.Builder notificationBuilder = setBuilderWithChannelIDCheck(requiresChannelId, Constants.PT_SILENT_CHANNEL_ID, context);
 
-            if (deepLinkList != null) {
+            if (deepLinkList != null && !deepLinkList.isEmpty()) {
                 pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
             } else {
                 pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);

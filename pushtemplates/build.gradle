@@ -131,13 +131,13 @@ bintray {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    compileOnly 'com.google.firebase:firebase-messaging:21.0.1'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    compileOnly 'com.google.firebase:firebase-messaging:21.1.0'
     compileOnly 'com.clevertap.android:clevertap-android-sdk:4.0.2'
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    testImplementation 'junit:junit:4.13.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
 }
 

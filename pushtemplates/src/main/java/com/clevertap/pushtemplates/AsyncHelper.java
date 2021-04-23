@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 class AsyncHelper {
 
     private long EXECUTOR_THREAD_ID = 0;
-    private ExecutorService es;
+    private final ExecutorService es;
 
     private static AsyncHelper asyncHelperInstance = null;
 

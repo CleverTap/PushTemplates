@@ -8,12 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 
 public class DBHelper extends SQLiteOpenHelper {
-    private static int DATABASE_VERSION = 1;
-    private static String DATABASE_NAME = "pushtemplates.db";
-    private static String TABLE_PT = "pushtemplates";
-    private static String TABLE_PT_COLUMN_ID = "id";
-    private static String TABLE_PT_COLUMN_PTID = "pt_id";
-    private static String TABLE_PT_COLUMN_PTEXTRAS = "pt_json";
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "pushtemplates.db";
+    private static final String TABLE_PT = "pushtemplates";
+    private static final String TABLE_PT_COLUMN_ID = "id";
+    private static final String TABLE_PT_COLUMN_PTID = "pt_id";
+    private static final String TABLE_PT_COLUMN_PTEXTRAS = "pt_json";
 
     DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
