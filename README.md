@@ -26,8 +26,8 @@ This library is in public beta, for any issues, queries and concerns please open
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.7'
-implementation 'com.clevertap.android:clevertap-android-sdk:4.0.2'
+implementation 'com.clevertap.android:push-templates:0.0.8'
+implementation 'com.clevertap.android:clevertap-android-sdk:4.1.0'
 ```
 
 2. Add the Services to your `AndroidManifest.xml`
@@ -70,8 +70,8 @@ implementation 'com.clevertap.android:clevertap-android-sdk:4.0.2'
 1. Add the dependencies to the `build.gradle`
 
 ```groovy
-implementation 'com.clevertap.android:push-templates:0.0.7'
-implementation 'com.clevertap.android:clevertap-android-sdk:4.0.2'
+implementation 'com.clevertap.android:push-templates:0.0.8'
+implementation 'com.clevertap.android:clevertap-android-sdk:4.1.0'
 ```
 2. Add the Service to your `AndroidManifest.xml`
 
@@ -569,6 +569,7 @@ pt_input_auto_open | Required | fixed value - `true`
   * Using images of 3 MB or lower are recommended for better performance.
   * A silent notification channel with importance: `HIGH` is created every time on an interaction with the Rating, Manual Carousel, and Product Catalog templates with a silent sound file. This prevents the notification sound from playing when the notification is re-rendered.
   * The silent notification channel is deleted whenever the notification is dismissed or clicked.
+  * For Android 11, please use images which are less than 100kb else notifications will not be rendered as advertised.
   * To ensure that InApps are not shown on the Video, add the following to your `AndroidManifest.xml`
   
   ```xml

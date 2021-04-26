@@ -1,5 +1,12 @@
 ## CHANGE LOG
 
+### Version 0.0.8 (April 27, 2021)
+* Making deep-links truly optional. Fixes #43 & #46
+* Fixes #45 where `break` statement was missing
+* Adds support for Android 11 and [CleverTap Android SDK v4.1.0](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTCORECHANGELOG.md)
+* Fixes a rare NPE when silent notification channel was being created
+* Removes support for JCenter
+
 ### Version 0.0.7 (February 4, 2021)
 * Fixes deeplinks in Manual Carousel Template 
 
