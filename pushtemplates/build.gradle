@@ -1,11 +1,9 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 ext {
-    bintrayRepo = 'Maven'
-    bintrayName = 'PushTemplates'
-    org = 'clevertap'
+    Repo = 'Maven'
 
     publishedGroupId = 'com.clevertap.android'
     libraryName = 'PushTemplates'
@@ -15,11 +13,7 @@ ext {
     siteUrl = 'https://https://github.com/CleverTap/PushTemplates'
     gitUrl = 'https://github.com/CleverTap/PushTemplates.git'
 
-    libraryVersion = '0.0.7'
-
-    developerId = 'clevertap'
-    developerName = 'CleverTap'
-    developerEmail = 'support@clevertap.com'
+    libraryVersion = '0.0.8'
 
     licenseName = 'MIT License'
     licenseUrl = 'https://opensource.org/licenses/MIT'
@@ -32,8 +26,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 07
-        versionName "0.0.7"
+        versionCode 8
+        versionName "0.0.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -44,45 +38,23 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-}
 
-version = libraryVersion
-group = publishedGroupId
-
-install {
-    repositories.mavenInstaller {
-        pom.project {
-            packaging 'aar'
-            groupId publishedGroupId
-            artifactId artifact
-
-            name libraryName
-            description libraryDescription
-            url siteUrl
-
-            licenses {
-                license {
-                    name licenseName
-                    url licenseUrl
-                }
-            }
-            developers {
-                developer {
-                    id developerId
-                    name developerName
-                    email developerEmail
-                }
-            }
-            scm {
-                connection gitUrl
-                developerConnection gitUrl
-                url siteUrl
+    libraryVariants.all { variant ->
+        variant.outputs.all {
+            if (variant.getName().toLowerCase().contains('release')) {
+                outputFileName = "${artifact}-${libraryVersion}.aar"
+            } else if (variant.getName().toLowerCase().contains('debug')) {
+                outputFileName = "${artifact}-${variant.name}-${libraryVersion}.aar"
             }
         }
     }
 }
 
+version = libraryVersion
+group = publishedGroupId
+
 task sourcesJar(type: Jar) {
+    baseName "$artifact"
     classifier = 'sources'
     from android.sourceSets.main.java.srcDirs
 }
@@ -103,27 +75,88 @@ artifacts {
 }
 
 Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+if (project.rootProject.file('local.properties').exists()) {
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    properties.each { name, value ->
+        ext[name] = value
+    }
+}else{
+    ext["signing.keyId"] = System.getenv('SIGNING_KEY_ID')
+    ext["signing.password"] = System.getenv('SIGNING_PASSWORD')
+    ext["signing.secretKeyRingFile"] = System.getenv('SIGNING_SECRET_KEY_RING_FILE')
+    ext["ossrhUsername"] = System.getenv('OSSRH_USERNAME')
+    ext["ossrhPassword"] = System.getenv('OSSRH_PASSWORD')
+    ext["sonatypeStagingProfileId"] = System.getenv('SONATYPE_STAGING_PROFILE_ID')
+}
 
-bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
+publishing {
+    publications {
+        release(MavenPublication) {
+            // The coordinates of the library, being set from variables that
+            // we'll set up later
+            groupId publishedGroupId
+            artifactId artifact
+            version version
 
-    configurations = ['archives']
-    pkg {
-        repo = bintrayRepo
-        name = bintrayName
-        userOrg = org
-        desc = libraryDescription
-        websiteUrl = siteUrl
-        vcsUrl = gitUrl
-        licenses = allLicenses
-        dryRun = false
-        publish = true
-        override = false
-        publicDownloadNumbers = true
-        version {
-            desc = libraryDescription
+            // Two artifacts, the `aar` (or `jar`) and the sources
+            if (project.plugins.findPlugin("com.android.library")) {
+                artifact("$buildDir/outputs/aar/${artifact}-${libraryVersion}.aar")
+            } else {
+                artifact("$buildDir/libs/${project.getName()}-${version}.jar")
+            }
+            artifact sourcesJar
+
+            // Mostly self-explanatory metadata
+            pom {
+                name = artifact
+                description = libraryDescription
+                url = siteUrl
+                licenses {
+                    license {
+                        name = licenseName
+                        url = licenseUrl
+                    }
+                }
+                developers {
+                    developer {
+                        id = developerId
+                        name = developerName
+                        email = developerEmail
+                    }
+                    // Add all other devs here...
+                }
+                // Version control info - if you're using GitHub, follow the format as seen here
+                scm {
+                    connection = 'scm:git:github.com/CleverTap/clevertap-android-sdk.git'
+                    developerConnection = 'scm:git:ssh:github.com/CleverTap/clevertap-android-sdk.git'
+                    url = 'https://github.com/CleverTap/clevertap-android-sdk/tree/master'
+                }
+                // A slightly hacky fix so that your POM will include any transitive dependencies
+                // that your library builds upon
+                withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+
+                    project.configurations.implementation.allDependencies.each {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        dependencyNode.appendNode('version', it.version)
+                    }
+                }
+            }
+        }
+    }
+    // The repository to publish to, Sonatype/MavenCentral
+    repositories {
+        maven {
+            // This is an arbitrary name, you may also use "mavencentral" or
+            // any other name that's descriptive for you
+            name = Repo
+            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username ossrhUsername
+                password ossrhPassword
+            }
         }
     }
 }
@@ -131,13 +164,13 @@ bintray {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    compileOnly 'com.google.firebase:firebase-messaging:21.0.1'
-    compileOnly 'com.clevertap.android:clevertap-android-sdk:4.0.2'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    compileOnly 'com.google.firebase:firebase-messaging:21.1.0'
+    compileOnly 'com.clevertap.android:clevertap-android-sdk:4.1.0'
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    testImplementation 'junit:junit:4.13.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
 }
 

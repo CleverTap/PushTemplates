@@ -4,7 +4,7 @@ import android.util.Log;
 
 final class PTLog {
 
-    private int debugLevel;
+    private final int debugLevel;
 
     PTLog(int level){
         this.debugLevel = level;

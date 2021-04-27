@@ -305,6 +305,7 @@ public class TemplateRenderer {
             case ZERO_BEZEL:
                 if (hasAllZeroBezelNotifKeys())
                     renderZeroBezelNotification(context, extras, notificationId);
+                break;
             case TIMER:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     if (hasAllTimerKeys()) {
@@ -1566,7 +1567,7 @@ public class TemplateRenderer {
         notificationBuilder.setSmallIcon(smallIcon)
                 .setCustomContentView(contentViewSmall)
                 .setCustomBigContentView(contentViewBig)
-                .setContentTitle(pt_title)
+                .setContentTitle(Html.fromHtml(pt_title))
                 .setContentIntent(pIntent)
                 .setVibrate(new long[]{0L})
                 .setWhen(System.currentTimeMillis())
