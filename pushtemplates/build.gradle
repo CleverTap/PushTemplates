@@ -20,6 +20,16 @@ ext {
     allLicenses = ["MIT"]
 }
 
+ext["signing.keyId"] = ''
+ext["signing.password"] = ''
+ext["signing.secretKeyRingFile"] = ''
+ext["ossrhUsername"] = ''
+ext["ossrhPassword"] = ''
+ext["sonatypeStagingProfileId"] = ''
+ext["developerId"] = ''
+ext["developerName"] = ''
+ext["developerEmail"] = ''
+
 android {
     compileSdkVersion 30
 
@@ -161,9 +171,12 @@ publishing {
     }
 }
 
+signing {
+    sign publishing.publications
+}
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
     implementation 'androidx.appcompat:appcompat:1.2.0'
     compileOnly 'com.google.firebase:firebase-messaging:21.1.0'
     compileOnly 'com.clevertap.android:clevertap-android-sdk:4.1.0'
