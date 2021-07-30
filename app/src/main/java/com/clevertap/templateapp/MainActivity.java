@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.pushtemplates.TemplateRenderer;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         sendBasicPush.setOnClickListener(v -> {
             if (cleverTapAPI != null) {
                 cleverTapAPI.pushEvent("Send Basic Push");
+                cleverTapAPI.pushChargedEvent(new HashMap<>(),new ArrayList<>());
             }
         });
 
