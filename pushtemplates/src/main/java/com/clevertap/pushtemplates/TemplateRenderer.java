@@ -15,6 +15,7 @@ import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationCompat.Builder;
 import androidx.core.app.RemoteInput;
 
 import android.os.Handler;
@@ -26,6 +27,7 @@ import android.widget.RemoteViews;
 
 import com.clevertap.android.sdk.CleverTapInstanceConfig;
 
+import com.clevertap.android.sdk.pushnotification.INotificationRenderer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,7 +38,7 @@ import java.util.Random;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 @SuppressWarnings({"FieldCanBeLocal", "rawtypes"})
-public class TemplateRenderer {
+public class TemplateRenderer implements INotificationRenderer{
 
     private static int debugLevel = TemplateRenderer.LogLevel.INFO.intValue();
     private String pt_id;
@@ -130,12 +132,707 @@ public class TemplateRenderer {
         return debugLevel;
     }
 
-    private TemplateRenderer(Context context, Bundle extras) {
+    TemplateRenderer(Context context, Bundle extras) {
         setUp(context, extras, null);
     }
 
     private TemplateRenderer(Context context, Bundle extras, CleverTapInstanceConfig config) {
         setUp(context, extras, config);
+    }
+
+    @Override
+    public String getMessage(final Bundle extras) {
+        return pt_msg;// TODO: Check if set properly before caller calls this
+    }
+
+    @Override
+    public String getTitle(final Bundle extras, Context context) {
+        return pt_title;// TODO: Check if set properly before caller calls this
+    }
+
+    @Override
+    public Builder renderNotification(final Bundle extras, final Context context, final Builder nb,
+            final CleverTapInstanceConfig config,
+            final int notificationId) {
+
+        if (pt_id == null) {
+            PTLog.verbose("Template ID not provided. Cannot create the notification");
+            return null;
+        }
+
+        switch (templateType) {
+            case BASIC:
+                if (hasAllBasicNotifKeys())
+                    return renderBasicTemplateNotification(context, extras, notificationId,nb);
+                break;
+            case AUTO_CAROUSEL:
+                if (hasAllCarouselNotifKeys())
+                    return renderAutoCarouselNotification(context, extras, notificationId,nb);
+                break;
+            case MANUAL_CAROUSEL:
+                if (hasAllManualCarouselNotifKeys())
+                    return renderManualCarouselNotification(context, extras, notificationId,nb);
+                break;
+            case RATING:
+                if (hasAllRatingNotifKeys())
+                    return renderRatingNotification(context, extras, notificationId,nb);
+                break;
+            case FIVE_ICONS:
+                if (hasAll5IconNotifKeys())
+                    return renderFiveIconNotification(context, extras, notificationId,nb);
+                break;
+            case PRODUCT_DISPLAY:
+                if (hasAllProdDispNotifKeys())
+                    return renderProductDisplayNotification(context, extras, notificationId,nb);
+                break;
+            case ZERO_BEZEL:
+                if (hasAllZeroBezelNotifKeys())
+                    return renderZeroBezelNotification(context, extras, notificationId,nb);
+                break;
+            case TIMER: // TODO PENDING : design issue
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    if (hasAllTimerKeys()) {
+                        renderTimerNotification(context, extras, notificationId,nb);
+                    }
+                } else {
+                    PTLog.debug("Push Templates SDK supports Timer Notifications only on or above Android Nougat, reverting to basic template");
+                    if (hasAllBasicNotifKeys()) {
+                        return renderBasicTemplateNotification(context, extras, notificationId,nb);
+                    }
+                }
+                break;
+            case INPUT_BOX:
+                if (hasAllInputBoxKeys())
+                    return renderInputBoxNotification(context, extras, notificationId,nb);
+                break;
+            case CANCEL:// TODO: PENDING, diff use case not fitting into design, design issue
+                renderCancelNotification();
+                break;
+        }
+
+        return null;
+    }
+
+    private Builder renderZeroBezelNotification(final Context context, final Bundle extras, final int notificationId,
+            Builder nb) {
+        PTLog.debug("Rendering Zero Bezel Template Push Notification with extras - " + extras.toString());
+        try {
+            contentViewBig = new RemoteViews(context.getPackageName(), R.layout.zero_bezel);
+            setCustomContentViewBasicKeys(contentViewBig, context);
+
+            boolean textOnlySmallView = pt_small_view != null && pt_small_view.equals(Constants.TEXT_ONLY);
+
+            if (textOnlySmallView) {
+                contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.cv_small_text_only);
+            } else {
+                contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.cv_small_zero_bezel);
+            }
+            setCustomContentViewBasicKeys(contentViewSmall, context);
+
+            setCustomContentViewTitle(contentViewBig, pt_title);
+            setCustomContentViewTitle(contentViewSmall, pt_title);
+
+            setCustomContentViewMessage(contentViewBig, pt_msg);
+
+            if (textOnlySmallView) {
+                contentViewSmall.setViewVisibility(R.id.msg, View.GONE);
+            } else {
+                setCustomContentViewMessage(contentViewSmall, pt_msg);
+            }
+
+            setCustomContentViewMessageSummary(contentViewBig, pt_msg_summary);
+
+            setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
+            setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
+
+            setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
+            setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
+
+            setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
+            setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
+
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
+
+            PendingIntent pIntent;
+
+            if (deepLinkList != null) {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
+            } else {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
+            }
+
+            nb = setNotificationBuilderBasics(nb, contentViewSmall, contentViewBig, pt_title, pIntent);
+
+            setCustomContentViewBigImage(contentViewBig, pt_big_img);
+
+            if (!textOnlySmallView) {
+                setCustomContentViewBigImage(contentViewSmall, pt_big_img);
+            }
+
+            if (textOnlySmallView) {
+                setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
+            }
+
+            setCustomContentViewSmallIcon(contentViewBig);
+            setCustomContentViewSmallIcon(contentViewSmall);
+
+            setCustomContentViewDotSep(contentViewBig);
+            setCustomContentViewDotSep(contentViewSmall);
+
+
+            if (Utils.getFallback()) {
+                PTLog.debug("Image not fetched, falling back to Basic Template");
+                return renderBasicTemplateNotification(context, extras, notificationId,nb);// will overwrite set values on nb
+            }
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating image only notification", t);
+        }
+        return nb;
+    }
+
+    private Builder renderProductDisplayNotification(final Context context, final Bundle extras,
+            final int notificationId, Builder nb) {
+        PTLog.debug("Rendering Product Display Template Push Notification with extras - " + extras.toString());
+        try {
+            boolean isLinear = false;
+
+            if (pt_product_display_linear == null || pt_product_display_linear.isEmpty()) {
+                contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_template);
+                contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            } else {
+                isLinear = true;
+                contentViewBig = new RemoteViews(context.getPackageName(), R.layout.product_display_linear_expanded);
+                contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.product_display_linear_collapsed);
+            }
+
+            setCustomContentViewBasicKeys(contentViewBig, context);
+            if (!isLinear) {
+                setCustomContentViewBasicKeys(contentViewSmall, context);
+            }
+            if (!bigTextList.isEmpty()) {
+                setCustomContentViewText(contentViewBig, R.id.product_name, bigTextList.get(0));
+            }
+
+            if (!isLinear) {
+                if (!smallTextList.isEmpty()) {
+                    setCustomContentViewText(contentViewBig, R.id.product_description, smallTextList.get(0));
+                }
+            }
+
+            if (!priceList.isEmpty()) {
+                setCustomContentViewText(contentViewBig, R.id.product_price, priceList.get(0));
+            }
+
+            if (!isLinear) {
+                setCustomContentViewTitle(contentViewBig, pt_title);
+                setCustomContentViewTitle(contentViewSmall, pt_title);
+                setCustomContentViewMessage(contentViewBig, pt_msg);
+                setCustomContentViewElementColour(contentViewBig, R.id.product_description, pt_msg_clr);
+                setCustomContentViewElementColour(contentViewBig, R.id.product_name, pt_title_clr);
+                setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
+            }
+
+            setCustomContentViewMessage(contentViewSmall, pt_msg);
+            setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
+
+            setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
+            setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
+
+            setCustomContentViewButtonLabel(contentViewBig, R.id.product_action, pt_product_display_action);
+            setCustomContentViewButtonColour(contentViewBig, R.id.product_action, pt_product_display_action_clr);
+            setCustomContentViewButtonText(contentViewBig, R.id.product_action, pt_product_display_action_text_clr);
+
+            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
+
+            if (!isLinear) {
+                setCustomContentViewSmallIcon(contentViewSmall);
+                setCustomContentViewDotSep(contentViewSmall);
+            }
+
+            int imageCounter = 0;
+            boolean isFirstImageOk = false;
+
+            ArrayList<Integer> smallImageLayoutIds = new ArrayList<>();
+            smallImageLayoutIds.add(R.id.small_image1);
+            smallImageLayoutIds.add(R.id.small_image2);
+            smallImageLayoutIds.add(R.id.small_image3);
+            ArrayList<Integer> smallCollapsedImageLayoutIds = new ArrayList<>();
+            smallCollapsedImageLayoutIds.add(R.id.small_image1_collapsed);
+            smallCollapsedImageLayoutIds.add(R.id.small_image2_collapsed);
+            smallCollapsedImageLayoutIds.add(R.id.small_image3_collapsed);
+            ArrayList<String> tempImageList = new ArrayList<>();
+
+            for (int index = 0; index < imageList.size(); index++) {
+                if (isLinear) {
+                    Utils.loadImageURLIntoRemoteView(smallCollapsedImageLayoutIds.get(imageCounter), imageList.get(index), contentViewSmall);
+                    contentViewSmall.setViewVisibility(smallCollapsedImageLayoutIds.get(imageCounter), View.VISIBLE);
+                    if (!Utils.getFallback()) {
+                        contentViewSmall.setViewVisibility(smallCollapsedImageLayoutIds.get(imageCounter), View.VISIBLE);
+                    }
+                }
+                Utils.loadImageURLIntoRemoteView(smallImageLayoutIds.get(imageCounter), imageList.get(index), contentViewBig);
+                RemoteViews tempRemoteView = new RemoteViews(context.getPackageName(), R.layout.image_view);
+                Utils.loadImageURLIntoRemoteView(R.id.fimg, imageList.get(index), tempRemoteView);
+                if (!Utils.getFallback()) {
+                    if (!isFirstImageOk) {
+                        isFirstImageOk = true;
+                    }
+                    contentViewBig.setViewVisibility(smallImageLayoutIds.get(imageCounter), View.VISIBLE);
+                    contentViewBig.addView(R.id.carousel_image, tempRemoteView);
+                    imageCounter++;
+                    tempImageList.add(imageList.get(index));
+                } else {
+                    deepLinkList.remove(index);
+                    bigTextList.remove(index);
+                    smallTextList.remove(index);
+                    priceList.remove(index);
+                }
+            }
+
+            extras.putStringArrayList(Constants.PT_IMAGE_LIST, tempImageList);
+            extras.putStringArrayList(Constants.PT_DEEPLINK_LIST, deepLinkList);
+            extras.putStringArrayList(Constants.PT_BIGTEXT_LIST, bigTextList);
+            extras.putStringArrayList(Constants.PT_SMALLTEXT_LIST, smallTextList);
+            extras.putStringArrayList(Constants.PT_PRICE_LIST, priceList);
+
+
+            int requestCode1 = new Random().nextInt();
+            int requestCode2 = new Random().nextInt();
+            int requestCode3 = new Random().nextInt();
+
+            Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent1.putExtra(Constants.PT_CURRENT_POSITION, 0);
+            notificationIntent1.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent1.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(0));
+            notificationIntent1.putExtras(extras);
+            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, requestCode1, notificationIntent1, 0);
+            contentViewBig.setOnClickPendingIntent(R.id.small_image1, contentIntent1);
+
+            if (deepLinkList.size() >= 2) {
+                Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
+                notificationIntent2.putExtra(Constants.PT_CURRENT_POSITION, 1);
+                notificationIntent2.putExtra(Constants.PT_NOTIF_ID, notificationId);
+                notificationIntent2.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(1));
+                notificationIntent2.putExtras(extras);
+                PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, requestCode2, notificationIntent2, 0);
+                contentViewBig.setOnClickPendingIntent(R.id.small_image2, contentIntent2);
+            }
+
+            if (deepLinkList.size() >= 3) {
+                Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
+                notificationIntent3.putExtra(Constants.PT_CURRENT_POSITION, 2);
+                notificationIntent3.putExtra(Constants.PT_NOTIF_ID, notificationId);
+                notificationIntent3.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(2));
+                notificationIntent3.putExtras(extras);
+                PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, requestCode3, notificationIntent3, 0);
+                contentViewBig.setOnClickPendingIntent(R.id.small_image3, contentIntent3);
+            }
+            Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent4.putExtra(Constants.PT_IMAGE_1, true);
+            notificationIntent4.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent4.putExtra(Constants.PT_BUY_NOW_DL, deepLinkList.get(0));
+            notificationIntent4.putExtra(Constants.PT_BUY_NOW, true);
+            notificationIntent4.putExtra("config", config);
+            notificationIntent4.putExtras(extras);
+            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
+            contentViewBig.setOnClickPendingIntent(R.id.product_action, contentIntent4);
+
+            if (isLinear) {
+                Intent notificationSmallIntent1 = new Intent(context, PTPushNotificationReceiver.class);
+                PendingIntent contentSmallIntent1 = setPendingIntent(context, notificationId, extras, notificationSmallIntent1, deepLinkList.get(0));
+                contentViewSmall.setOnClickPendingIntent(R.id.small_image1_collapsed, contentSmallIntent1);
+                if (deepLinkList.size() >= 2) {
+                    Intent notificationSmallIntent2 = new Intent(context, PTPushNotificationReceiver.class);
+                    PendingIntent contentSmallIntent2 = setPendingIntent(context, notificationId, extras, notificationSmallIntent2, deepLinkList.get(1));
+                    contentViewSmall.setOnClickPendingIntent(R.id.small_image2_collapsed, contentSmallIntent2);
+                }
+                if (deepLinkList.size() >= 3) {
+                    Intent notificationSmallIntent3 = new Intent(context, PTPushNotificationReceiver.class);
+                    PendingIntent contentSmallIntent3 = setPendingIntent(context, notificationId, extras, notificationSmallIntent3, deepLinkList.get(2));
+                    contentViewSmall.setOnClickPendingIntent(R.id.small_image3_collapsed, contentSmallIntent3);
+                }
+            }
+
+            Intent dismissIntent = new Intent(context, PushTemplateReceiver.class);
+            PendingIntent dIntent;
+            dIntent = setDismissIntent(context, extras, dismissIntent);
+
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
+
+            PendingIntent pIntent;
+
+            if (deepLinkList != null) {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
+            } else {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
+            }
+
+            nb = setNotificationBuilderBasics(nb, contentViewSmall, contentViewBig, pt_title, pIntent, dIntent);
+
+            setCustomContentViewDotSep(contentViewBig);
+
+            setCustomContentViewSmallIcon(contentViewBig);
+
+            if (imageCounter <= 1) {
+                PTLog.debug("2 or more images are not retrievable, not displaying the notification.");
+                return null;
+            }
+
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating Product Display Notification ", t);
+        }
+        return nb;
+    }
+
+    private Builder renderFiveIconNotification(final Context context, final Bundle extras, final int notificationId,
+            Builder nb) {
+
+        PTLog.debug("Rendering Five Icon Template Push Notification with extras - " + extras.toString());
+        try {
+
+            if (pt_title == null || pt_title.isEmpty()) {
+                pt_title = Utils.getApplicationName(context);
+            }
+            contentFiveCTAs = new RemoteViews(context.getPackageName(), R.layout.five_cta);
+
+            setCustomContentViewExpandedBackgroundColour(contentFiveCTAs, pt_bg);
+
+            int reqCode1 = new Random().nextInt();
+            int reqCode2 = new Random().nextInt();
+            int reqCode3 = new Random().nextInt();
+            int reqCode4 = new Random().nextInt();
+            int reqCode5 = new Random().nextInt();
+            int reqCode6 = new Random().nextInt();
+
+            Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent1.putExtra("cta1", true);
+            notificationIntent1.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent1.putExtras(extras);
+            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, reqCode1, notificationIntent1, 0);
+            contentFiveCTAs.setOnClickPendingIntent(R.id.cta1, contentIntent1);
+
+            Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent2.putExtra("cta2", true);
+            notificationIntent2.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent2.putExtras(extras);
+            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, reqCode2, notificationIntent2, 0);
+            contentFiveCTAs.setOnClickPendingIntent(R.id.cta2, contentIntent2);
+
+            Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent3.putExtra("cta3", true);
+            notificationIntent3.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent3.putExtras(extras);
+            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, reqCode3, notificationIntent3, 0);
+            contentFiveCTAs.setOnClickPendingIntent(R.id.cta3, contentIntent3);
+
+            Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent4.putExtra("cta4", true);
+            notificationIntent4.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent4.putExtras(extras);
+            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, reqCode4, notificationIntent4, 0);
+            contentFiveCTAs.setOnClickPendingIntent(R.id.cta4, contentIntent4);
+
+            Intent notificationIntent5 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent5.putExtra("cta5", true);
+            notificationIntent5.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent5.putExtras(extras);
+            PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, reqCode5, notificationIntent5, 0);
+            contentFiveCTAs.setOnClickPendingIntent(R.id.cta5, contentIntent5);
+
+            Intent notificationIntent6 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent6.putExtra("close", true);
+            notificationIntent6.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent6.putExtras(extras);
+            PendingIntent contentIntent6 = PendingIntent.getBroadcast(context, reqCode6, notificationIntent6, 0);
+            contentFiveCTAs.setOnClickPendingIntent(R.id.close, contentIntent6);
+
+
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
+
+            PendingIntent pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
+
+            nb = setNotificationBuilderBasics(nb, contentFiveCTAs, contentFiveCTAs, pt_title, pIntent);
+
+            nb.setOngoing(true);
+
+            int imageCounter = 0;
+            for (int imageKey = 0; imageKey < imageList.size(); imageKey++) {
+                if (imageKey == 0) {
+                    Utils.loadImageURLIntoRemoteView(R.id.cta1, imageList.get(imageKey), contentFiveCTAs);
+                    if (Utils.getFallback()) {
+                        contentFiveCTAs.setViewVisibility(R.id.cta1, View.GONE);
+                        imageCounter++;
+                    }
+                } else if (imageKey == 1) {
+                    Utils.loadImageURLIntoRemoteView(R.id.cta2, imageList.get(imageKey), contentFiveCTAs);
+                    if (Utils.getFallback()) {
+                        imageCounter++;
+                        contentFiveCTAs.setViewVisibility(R.id.cta2, View.GONE);
+                    }
+                } else if (imageKey == 2) {
+                    Utils.loadImageURLIntoRemoteView(R.id.cta3, imageList.get(imageKey), contentFiveCTAs);
+                    if (Utils.getFallback()) {
+                        imageCounter++;
+                        contentFiveCTAs.setViewVisibility(R.id.cta3, View.GONE);
+                    }
+                } else if (imageKey == 3) {
+                    Utils.loadImageURLIntoRemoteView(R.id.cta4, imageList.get(imageKey), contentFiveCTAs);
+                    if (Utils.getFallback()) {
+                        imageCounter++;
+                        contentFiveCTAs.setViewVisibility(R.id.cta4, View.GONE);
+                    }
+                } else if (imageKey == 4) {
+                    Utils.loadImageURLIntoRemoteView(R.id.cta5, imageList.get(imageKey), contentFiveCTAs);
+                    if (Utils.getFallback()) {
+                        imageCounter++;
+                        contentFiveCTAs.setViewVisibility(R.id.cta5, View.GONE);
+                    }
+                }
+
+            }
+            Utils.loadImageRidIntoRemoteView(R.id.close, R.drawable.pt_close, contentFiveCTAs);
+
+            if (imageCounter > 2) {
+                PTLog.debug("More than 2 images were not retrieved in 5CTA Notification, not displaying Notification.");
+                return null;
+            }
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating image only notification", t);
+        }
+
+        return nb;
+    }
+
+    private Builder renderRatingNotification(final Context context, final Bundle extras, final int notificationId,
+             Builder nb) {
+        PTLog.debug("Rendering Rating Template Push Notification with extras - " + extras.toString());
+        try {
+            contentViewRating = new RemoteViews(context.getPackageName(), R.layout.rating);
+            setCustomContentViewBasicKeys(contentViewRating, context);
+
+            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+
+            setCustomContentViewBasicKeys(contentViewSmall, context);
+
+            setCustomContentViewTitle(contentViewRating, pt_title);
+            setCustomContentViewTitle(contentViewSmall, pt_title);
+
+            setCustomContentViewMessage(contentViewRating, pt_msg);
+            setCustomContentViewMessage(contentViewSmall, pt_msg);
+
+            setCustomContentViewMessageSummary(contentViewRating, pt_msg_summary);
+
+            setCustomContentViewTitleColour(contentViewRating, pt_title_clr);
+            setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
+
+            setCustomContentViewMessageColour(contentViewRating, pt_msg_clr);
+            setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
+
+            setCustomContentViewExpandedBackgroundColour(contentViewRating, pt_bg);
+            setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
+
+            //Set the rating stars
+            contentViewRating.setImageViewResource(R.id.star1, R.drawable.pt_star_outline);
+            contentViewRating.setImageViewResource(R.id.star2, R.drawable.pt_star_outline);
+            contentViewRating.setImageViewResource(R.id.star3, R.drawable.pt_star_outline);
+            contentViewRating.setImageViewResource(R.id.star4, R.drawable.pt_star_outline);
+            contentViewRating.setImageViewResource(R.id.star5, R.drawable.pt_star_outline);
+
+            //Set Pending Intents for each star to listen to click
+
+            Intent notificationIntent1 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent1.putExtra("click1", true);
+            notificationIntent1.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent1.putExtra("config", config);
+            notificationIntent1.putExtras(extras);
+            PendingIntent contentIntent1 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent1, 0);
+            contentViewRating.setOnClickPendingIntent(R.id.star1, contentIntent1);
+
+            Intent notificationIntent2 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent2.putExtra("click2", true);
+            notificationIntent2.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent2.putExtra("config", config);
+            notificationIntent2.putExtras(extras);
+            PendingIntent contentIntent2 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent2, 0);
+            contentViewRating.setOnClickPendingIntent(R.id.star2, contentIntent2);
+
+            Intent notificationIntent3 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent3.putExtra("click3", true);
+            notificationIntent3.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent3.putExtra("config", config);
+            notificationIntent3.putExtras(extras);
+            PendingIntent contentIntent3 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent3, 0);
+            contentViewRating.setOnClickPendingIntent(R.id.star3, contentIntent3);
+
+            Intent notificationIntent4 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent4.putExtra("click4", true);
+            notificationIntent4.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent4.putExtra("config", config);
+            notificationIntent4.putExtras(extras);
+            PendingIntent contentIntent4 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent4, 0);
+            contentViewRating.setOnClickPendingIntent(R.id.star4, contentIntent4);
+
+            Intent notificationIntent5 = new Intent(context, PushTemplateReceiver.class);
+            notificationIntent5.putExtra("click5", true);
+            notificationIntent5.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            notificationIntent5.putExtra("config", config);
+            notificationIntent5.putExtras(extras);
+            PendingIntent contentIntent5 = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent5, 0);
+            contentViewRating.setOnClickPendingIntent(R.id.star5, contentIntent5);
+
+            Intent launchIntent = new Intent(context, PushTemplateReceiver.class);
+
+            PendingIntent pIntent = setPendingIntent(context, notificationId, extras, launchIntent, pt_rating_default_dl);
+
+            nb = setNotificationBuilderBasics(nb, contentViewSmall, contentViewRating, pt_title, pIntent);
+
+            setCustomContentViewBigImage(contentViewRating, pt_big_img);
+
+            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
+            setCustomContentViewLargeIcon(contentViewRating, pt_large_icon);
+
+            setCustomContentViewSmallIcon(contentViewRating);
+            setCustomContentViewSmallIcon(contentViewSmall);
+
+            setCustomContentViewDotSep(contentViewRating);
+            setCustomContentViewDotSep(contentViewSmall);
+
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating rating notification ", t);
+        }
+        return nb;
+    }
+
+    private Builder renderManualCarouselNotification(final Context context, final Bundle extras,
+            final int notificationId, Builder nb) {
+
+        PTLog.debug("Rendering Manual Carousel Template Push Notification with extras - " + extras.toString());
+        try {
+
+            contentViewManualCarousel = new RemoteViews(context.getPackageName(), R.layout.manual_carousel);
+            setCustomContentViewBasicKeys(contentViewManualCarousel, context);
+
+            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+            setCustomContentViewBasicKeys(contentViewSmall, context);
+
+            setCustomContentViewTitle(contentViewManualCarousel, pt_title);
+            setCustomContentViewTitle(contentViewSmall, pt_title);
+
+            setCustomContentViewMessage(contentViewManualCarousel, pt_msg);
+            setCustomContentViewMessage(contentViewSmall, pt_msg);
+
+            setCustomContentViewExpandedBackgroundColour(contentViewManualCarousel, pt_bg);
+            setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
+
+            setCustomContentViewTitleColour(contentViewManualCarousel, pt_title_clr);
+            setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
+
+            setCustomContentViewMessageColour(contentViewManualCarousel, pt_msg_clr);
+            setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
+
+            setCustomContentViewMessageSummary(contentViewManualCarousel, pt_msg_summary);
+
+            contentViewManualCarousel.setViewVisibility(R.id.leftArrowPos0, View.VISIBLE);
+            contentViewManualCarousel.setViewVisibility(R.id.rightArrowPos0, View.VISIBLE);
+
+            int imageCounter = 0;
+            boolean isFirstImageOk = false;
+            String dl = deepLinkList.get(0);
+            int currentPosition = 0;
+            ArrayList<String> tempImageList = new ArrayList<>();
+
+            for (int index = 0; index < imageList.size(); index++) {
+                RemoteViews tempRemoteView = new RemoteViews(context.getPackageName(), R.layout.image_view_rounded);
+                Utils.loadImageURLIntoRemoteView(R.id.flipper_img, imageList.get(index), tempRemoteView, context);
+                if (!Utils.getFallback()) {
+                    if (!isFirstImageOk) {
+                        currentPosition = index;
+                        isFirstImageOk = true;
+                    }
+                    contentViewManualCarousel.addView(R.id.carousel_image, tempRemoteView);
+                    contentViewManualCarousel.addView(R.id.carousel_image_right, tempRemoteView);
+                    contentViewManualCarousel.addView(R.id.carousel_image_left, tempRemoteView);
+                    imageCounter++;
+                    tempImageList.add(imageList.get(index));
+                } else {
+                    if (deepLinkList != null && deepLinkList.size() == imageList.size()) {
+                        deepLinkList.remove(index);
+                    }
+                    PTLog.debug("Skipping Image in Manual Carousel.");
+                }
+            }
+            if (pt_manual_carousel_type == null || !pt_manual_carousel_type.equalsIgnoreCase(Constants.PT_MANUAL_CAROUSEL_FILMSTRIP)) {
+                contentViewManualCarousel.setViewVisibility(R.id.carousel_image_right, View.GONE);
+                contentViewManualCarousel.setViewVisibility(R.id.carousel_image_left, View.GONE);
+            }
+
+            contentViewManualCarousel.setDisplayedChild(R.id.carousel_image_right, 1);
+            contentViewManualCarousel.setDisplayedChild(R.id.carousel_image_left, tempImageList.size() - 1);
+
+            extras.putInt(Constants.PT_MANUAL_CAROUSEL_CURRENT, currentPosition);
+            extras.putStringArrayList(Constants.PT_IMAGE_LIST, tempImageList);
+            extras.putStringArrayList(Constants.PT_DEEPLINK_LIST, deepLinkList);
+
+            Intent rightArrowPos0Intent = new Intent(context, PushTemplateReceiver.class);
+            rightArrowPos0Intent.putExtra(Constants.PT_RIGHT_SWIPE, true);
+            rightArrowPos0Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 0);
+            rightArrowPos0Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            rightArrowPos0Intent.putExtras(extras);
+            PendingIntent contentRightPos0Intent = setPendingIntent(context, notificationId, extras, rightArrowPos0Intent, dl);
+            contentViewManualCarousel.setOnClickPendingIntent(R.id.rightArrowPos0, contentRightPos0Intent);
+
+            Intent leftArrowPos0Intent = new Intent(context, PushTemplateReceiver.class);
+            leftArrowPos0Intent.putExtra(Constants.PT_RIGHT_SWIPE, false);
+            leftArrowPos0Intent.putExtra(Constants.PT_MANUAL_CAROUSEL_FROM, 0);
+            leftArrowPos0Intent.putExtra(Constants.PT_NOTIF_ID, notificationId);
+            leftArrowPos0Intent.putExtras(extras);
+            PendingIntent contentLeftPos0Intent = setPendingIntent(context, notificationId, extras, leftArrowPos0Intent, dl);
+            contentViewManualCarousel.setOnClickPendingIntent(R.id.leftArrowPos0, contentLeftPos0Intent);
+
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
+
+            PendingIntent pIntent = setPendingIntent(context, notificationId, extras, launchIntent, dl);
+
+
+            Intent dismissIntent = new Intent(context, PushTemplateReceiver.class);
+            PendingIntent dIntent;
+            dIntent = setDismissIntent(context, extras, dismissIntent);
+
+            nb = setNotificationBuilderBasics(nb, contentViewSmall, contentViewManualCarousel, pt_title, pIntent, dIntent);
+
+            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
+            setCustomContentViewLargeIcon(contentViewManualCarousel, pt_large_icon);
+
+            setCustomContentViewSmallIcon(contentViewManualCarousel);
+            setCustomContentViewSmallIcon(contentViewSmall);
+
+            setCustomContentViewDotSep(contentViewManualCarousel);
+            setCustomContentViewDotSep(contentViewSmall);
+
+            if (imageCounter < 2) {
+                PTLog.debug("Need at least 2 images to display Manual Carousel, found - " + imageCounter + ", not displaying the notification.");
+                return null;
+            }
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating Manual carousel notification ", t);
+        }
+
+        return nb;
+    }
+
+    @Override
+    public void setSmallIcon(final int smallIcon, final Context context) {
+        this.smallIcon = smallIcon;
+        try {
+            pt_small_icon = Utils.setBitMapColour(context, smallIcon, pt_small_icon_clr);
+        } catch (NullPointerException e) {
+            PTLog.debug("NPE while setting small icon color");
+        }
+    }
+
+    @Override
+    public Object getCollapseKey(final Bundle extras) {
+        return pt_collapse_key;// TODO: Check if set properly before caller calls this
     }
 
     private void setUp(Context context, Bundle extras, CleverTapInstanceConfig config) {
@@ -689,6 +1386,83 @@ public class TemplateRenderer {
         }
     }
 
+    private Builder renderAutoCarouselNotification(Context context, Bundle extras, int notificationId,Builder nb) {
+        PTLog.debug("Rendering Auto Carousel Template Push Notification with extras - " + extras.toString());
+        try {
+
+            contentViewCarousel = new RemoteViews(context.getPackageName(), R.layout.auto_carousel);
+            setCustomContentViewBasicKeys(contentViewCarousel, context);
+
+            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+
+            setCustomContentViewBasicKeys(contentViewSmall, context);
+
+            setCustomContentViewTitle(contentViewCarousel, pt_title);
+            setCustomContentViewTitle(contentViewSmall, pt_title);
+
+            setCustomContentViewMessage(contentViewCarousel, pt_msg);
+            setCustomContentViewMessage(contentViewSmall, pt_msg);
+
+            setCustomContentViewExpandedBackgroundColour(contentViewCarousel, pt_bg);
+            setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
+
+            setCustomContentViewTitleColour(contentViewCarousel, pt_title_clr);
+            setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
+
+            setCustomContentViewMessageColour(contentViewCarousel, pt_msg_clr);
+            setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
+
+            setCustomContentViewMessageSummary(contentViewCarousel, pt_msg_summary);
+
+            setCustomContentViewViewFlipperInterval(contentViewCarousel, pt_flip_interval);
+
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
+
+            PendingIntent pIntent;
+
+            if (deepLinkList != null) {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
+            } else {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
+            }
+
+            nb = setNotificationBuilderBasics(nb, contentViewSmall, contentViewCarousel, pt_title,
+                    pIntent);
+
+            int imageCounter = 0;
+            for (int index = 0; index < imageList.size(); index++) {
+                RemoteViews tempRemoteView = new RemoteViews(context.getPackageName(), R.layout.image_view);
+                Utils.loadImageURLIntoRemoteView(R.id.fimg, imageList.get(index), tempRemoteView);
+                if (!Utils.getFallback()) {
+                    contentViewCarousel.addView(R.id.view_flipper, tempRemoteView);
+                    imageCounter++;
+                } else {
+                    PTLog.debug("Skipping Image in Auto Carousel.");
+                }
+            }
+
+            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
+            setCustomContentViewLargeIcon(contentViewCarousel, pt_large_icon);
+
+            setCustomContentViewSmallIcon(contentViewCarousel);
+            setCustomContentViewSmallIcon(contentViewSmall);
+
+            setCustomContentViewDotSep(contentViewCarousel);
+            setCustomContentViewDotSep(contentViewSmall);
+
+            if (imageCounter < 2) {
+                PTLog.debug("Need at least 2 images to display Auto Carousel, found - "
+                        + imageCounter + ", not displaying the notification.");
+                return null;
+            }
+
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating auto carousel notification ", t);
+        }
+
+        return nb;
+    }
+
     private void renderAutoCarouselNotification(Context context, Bundle extras, int notificationId) {
         PTLog.debug("Rendering Auto Carousel Template Push Notification with extras - " + extras.toString());
         try {
@@ -893,6 +1667,63 @@ public class TemplateRenderer {
         } catch (Throwable t) {
             PTLog.verbose("Error creating Manual carousel notification ", t);
         }
+    }
+
+    private Builder renderBasicTemplateNotification(Context context, Bundle extras, int notificationId, Builder nb) {
+        PTLog.debug("Rendering Basic Template Push Notification with extras - " + extras.toString());
+        try {
+            contentViewBig = new RemoteViews(context.getPackageName(), R.layout.image_only_big);
+            setCustomContentViewBasicKeys(contentViewBig, context);
+
+            contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.content_view_small);
+
+            setCustomContentViewBasicKeys(contentViewSmall, context);
+
+            setCustomContentViewTitle(contentViewBig, pt_title);
+            setCustomContentViewTitle(contentViewSmall, pt_title);
+
+            setCustomContentViewMessage(contentViewBig, pt_msg);
+            setCustomContentViewMessage(contentViewSmall, pt_msg);
+
+            setCustomContentViewExpandedBackgroundColour(contentViewBig, pt_bg);
+            setCustomContentViewCollapsedBackgroundColour(contentViewSmall, pt_bg);
+
+            setCustomContentViewTitleColour(contentViewBig, pt_title_clr);
+            setCustomContentViewTitleColour(contentViewSmall, pt_title_clr);
+
+            setCustomContentViewMessageColour(contentViewBig, pt_msg_clr);
+            setCustomContentViewMessageColour(contentViewSmall, pt_msg_clr);
+
+            setCustomContentViewMessageSummary(contentViewBig, pt_msg_summary);
+
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
+
+            PendingIntent pIntent;
+
+            if (deepLinkList != null && deepLinkList.size() > 0) {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
+            } else {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
+            }
+
+            nb = setNotificationBuilderBasics(nb, contentViewSmall, contentViewBig, pt_title, pIntent);
+
+            setCustomContentViewSmallIcon(contentViewBig);
+            setCustomContentViewSmallIcon(contentViewSmall);
+
+            setCustomContentViewDotSep(contentViewBig);
+            setCustomContentViewDotSep(contentViewSmall);
+
+            setCustomContentViewBigImage(contentViewBig, pt_big_img);
+
+            setCustomContentViewLargeIcon(contentViewBig, pt_large_icon);
+            setCustomContentViewLargeIcon(contentViewSmall, pt_large_icon);
+
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating image only notification", t);
+        }
+
+        return nb;
     }
 
     private void renderBasicTemplateNotification(Context context, Bundle extras, int notificationId) {
@@ -1473,6 +2304,92 @@ public class TemplateRenderer {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    // TODO: Design issue
+    private Builder renderTimerNotification(final Context context, Bundle extras, int notificationId,Builder nb) {
+        PTLog.debug("Rendering Timer Template Push Notification with extras - " + extras.toString());
+        try {
+
+            contentViewTimer = new RemoteViews(context.getPackageName(), R.layout.timer);
+            contentViewTimerCollapsed = new RemoteViews(context.getPackageName(), R.layout.timer_collapsed);
+
+            int timer_end;
+
+            if (pt_timer_threshold != -1 && pt_timer_threshold >= Constants.PT_TIMER_MIN_THRESHOLD) {
+                timer_end = (pt_timer_threshold * Constants.ONE_SECOND) + Constants.ONE_SECOND;
+            } else if (pt_timer_end >= Constants.PT_TIMER_MIN_THRESHOLD) {
+                timer_end = (pt_timer_end * Constants.ONE_SECOND) + Constants.ONE_SECOND;
+            } else {
+                PTLog.debug("Not rendering notification Timer End value lesser than threshold (10 seconds) from current time: " + Constants.PT_TIMER_END);
+                return null;
+            }
+
+            setCustomContentViewBasicKeys(contentViewTimer, context);
+            setCustomContentViewBasicKeys(contentViewTimerCollapsed, context);
+
+            setCustomContentViewTitle(contentViewTimer, pt_title);
+            setCustomContentViewTitle(contentViewTimerCollapsed, pt_title);
+
+            setCustomContentViewMessage(contentViewTimer, pt_msg);
+            setCustomContentViewMessage(contentViewTimerCollapsed, pt_msg);
+
+            setCustomContentViewExpandedBackgroundColour(contentViewTimer, pt_bg);
+            setCustomContentViewCollapsedBackgroundColour(contentViewTimerCollapsed, pt_bg);
+
+            setCustomContentViewChronometerBackgroundColour(contentViewTimer, pt_bg);
+            setCustomContentViewChronometerBackgroundColour(contentViewTimerCollapsed, pt_bg);
+
+            setCustomContentViewTitleColour(contentViewTimer, pt_title_clr);
+            setCustomContentViewTitleColour(contentViewTimerCollapsed, pt_title_clr);
+
+            setCustomContentViewChronometerTitleColour(contentViewTimer, pt_chrono_title_clr, pt_title_clr);
+            setCustomContentViewChronometerTitleColour(contentViewTimerCollapsed, pt_chrono_title_clr, pt_title_clr);
+
+            setCustomContentViewMessageColour(contentViewTimer, pt_msg_clr);
+            setCustomContentViewMessageColour(contentViewTimerCollapsed, pt_msg_clr);
+
+            setCustomContentViewMessageSummary(contentViewTimer, pt_msg_summary);
+
+            contentViewTimer.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (timer_end), null, true);
+
+            contentViewTimer.setChronometerCountDown(R.id.chronometer, true);
+
+
+            contentViewTimerCollapsed.setChronometer(R.id.chronometer, SystemClock.elapsedRealtime() + (timer_end), null, true);
+
+            contentViewTimerCollapsed.setChronometerCountDown(R.id.chronometer, true);
+
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
+
+            PendingIntent pIntent;
+
+            if (deepLinkList != null) {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
+            } else {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
+            }
+
+            nb = setNotificationBuilderBasics(nb, contentViewTimerCollapsed, contentViewTimer, pt_title, pIntent);
+
+            nb.setTimeoutAfter(timer_end);
+
+            setCustomContentViewBigImage(contentViewTimer, pt_big_img);
+
+            setCustomContentViewSmallIcon(contentViewTimer);
+            setCustomContentViewSmallIcon(contentViewTimerCollapsed);
+
+            setCustomContentViewDotSep(contentViewTimer);
+            setCustomContentViewDotSep(contentViewTimerCollapsed);
+
+            timerRunner(context, extras, notificationId, timer_end);
+
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating Timer notification ", t);
+        }
+
+        return nb;
+    }
+
     private void renderInputBoxNotification(final Context context, Bundle extras, int notificationId) {
         PTLog.debug("Rendering Input Box Template Push Notification with extras - " + extras.toString());
         try {
@@ -1549,6 +2466,75 @@ public class TemplateRenderer {
         }
     }
 
+    private Builder renderInputBoxNotification(final Context context, Bundle extras, int notificationId, Builder nb) {
+        PTLog.debug("Rendering Input Box Template Push Notification with extras - " + extras.toString());
+        try {
+
+            //Set launchIntent to receiver
+            Intent launchIntent = new Intent(context, PTPushNotificationReceiver.class);
+
+            PendingIntent pIntent;
+
+            if (deepLinkList != null && deepLinkList.size() > 0) {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, deepLinkList.get(0));
+            } else {
+                pIntent = setPendingIntent(context, notificationId, extras, launchIntent, null);
+            }
+
+            nb.setSmallIcon(smallIcon)
+                    .setContentTitle(pt_title)
+                    .setContentText(pt_msg)
+                    .setContentIntent(pIntent)
+                    .setVibrate(new long[]{0L})
+                    .setWhen(System.currentTimeMillis())
+                    .setAutoCancel(true);
+
+            // Assign big picture notification
+            nb = setStandardViewBigImageStyle(pt_big_img, extras, context, nb);
+
+            if (pt_input_label != null && !pt_input_label.isEmpty()) {
+                //Initialise RemoteInput
+                RemoteInput remoteInput = new RemoteInput.Builder(Constants.PT_INPUT_KEY)
+                        .setLabel(pt_input_label)
+                        .build();
+
+                //Set launchIntent to receiver
+                Intent replyIntent = new Intent(context, PushTemplateReceiver.class);
+                replyIntent.putExtra(Constants.PT_INPUT_FEEDBACK, pt_input_feedback);
+                replyIntent.putExtra(Constants.PT_INPUT_AUTO_OPEN, pt_input_auto_open);
+                replyIntent.putExtra("config", config);
+
+                PendingIntent replyPendingIntent;
+                if (deepLinkList != null) {
+                    replyPendingIntent = setPendingIntent(context, notificationId, extras, replyIntent, deepLinkList.get(0));
+                } else {
+                    replyPendingIntent = setPendingIntent(context, notificationId, extras, replyIntent, null);
+                }
+
+                //Notification Action with RemoteInput instance added.
+                NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(
+                        android.R.drawable.sym_action_chat, pt_input_label, replyPendingIntent)
+                        .addRemoteInput(remoteInput)
+                        .setAllowGeneratedReplies(true)
+                        .build();
+
+
+                //Notification.Action instance added to Notification Builder.
+                nb.addAction(replyAction);
+            }
+            if (pt_dismiss_on_click != null)
+                if (!pt_dismiss_on_click.isEmpty())
+                    extras.putString(Constants.PT_DISMISS_ON_CLICK, pt_dismiss_on_click);
+
+            setActionButtons(context, extras, notificationId, nb);
+
+        } catch (Throwable t) {
+            PTLog.verbose("Error creating Input Box notification ", t);
+        }
+
+        return nb;
+    }
+
     private PendingIntent setPendingIntent(Context context, int notificationId, Bundle extras, Intent launchIntent, String dl) {
         launchIntent.putExtras(extras);
         launchIntent.putExtra(Constants.PT_NOTIF_ID, notificationId);
@@ -1563,8 +2549,8 @@ public class TemplateRenderer {
                 launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    private void setNotificationBuilderBasics(NotificationCompat.Builder notificationBuilder, RemoteViews contentViewSmall, RemoteViews contentViewBig, String pt_title, PendingIntent pIntent) {
-        notificationBuilder.setSmallIcon(smallIcon)
+    private Builder setNotificationBuilderBasics(NotificationCompat.Builder notificationBuilder, RemoteViews contentViewSmall, RemoteViews contentViewBig, String pt_title, PendingIntent pIntent) {
+        return notificationBuilder.setSmallIcon(smallIcon)
                 .setCustomContentView(contentViewSmall)
                 .setCustomBigContentView(contentViewBig)
                 .setContentTitle(Html.fromHtml(pt_title))
@@ -1574,7 +2560,7 @@ public class TemplateRenderer {
                 .setAutoCancel(true);
     }
 
-    private void setStandardViewBigImageStyle(String pt_big_img, Bundle extras, Context context, NotificationCompat.Builder notificationBuilder) {
+    private Builder setStandardViewBigImageStyle(String pt_big_img, Bundle extras, Context context, NotificationCompat.Builder notificationBuilder) {
         NotificationCompat.Style bigPictureStyle;
         if (pt_big_img != null && pt_big_img.startsWith("http")) {
             try {
@@ -1604,6 +2590,7 @@ public class TemplateRenderer {
         }
 
         notificationBuilder.setStyle(bigPictureStyle);
+        return notificationBuilder;
 
     }
 
@@ -1917,8 +2904,8 @@ public class TemplateRenderer {
         }
     }
 
-    private void setNotificationBuilderBasics(NotificationCompat.Builder notificationBuilder, RemoteViews contentViewSmall, RemoteViews contentViewBig, String pt_title, PendingIntent pIntent, PendingIntent dIntent) {
-        notificationBuilder.setSmallIcon(smallIcon)
+    private Builder setNotificationBuilderBasics(NotificationCompat.Builder notificationBuilder, RemoteViews contentViewSmall, RemoteViews contentViewBig, String pt_title, PendingIntent pIntent, PendingIntent dIntent) {
+        return notificationBuilder.setSmallIcon(smallIcon)
                 .setCustomContentView(contentViewSmall)
                 .setCustomBigContentView(contentViewBig)
                 .setContentTitle(pt_title)
