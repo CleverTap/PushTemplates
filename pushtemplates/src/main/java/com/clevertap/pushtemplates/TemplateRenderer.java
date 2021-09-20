@@ -25,9 +25,12 @@ import android.text.Html;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import com.clevertap.android.sdk.CleverTapAPI;
 import com.clevertap.android.sdk.CleverTapInstanceConfig;
 
 import com.clevertap.android.sdk.pushnotification.INotificationRenderer;
+import com.clevertap.android.sdk.pushnotification.PushNotificationUtil;
+import java.util.Objects;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -189,10 +192,10 @@ public class TemplateRenderer implements INotificationRenderer{
                 if (hasAllZeroBezelNotifKeys())
                     return renderZeroBezelNotification(context, extras, notificationId,nb);
                 break;
-            case TIMER: // TODO PENDING : design issue
+            case TIMER:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     if (hasAllTimerKeys()) {
-                        renderTimerNotification(context, extras, notificationId,nb);
+                        return renderTimerNotification(context, extras, notificationId,nb);
                     }
                 } else {
                     PTLog.debug("Push Templates SDK supports Timer Notifications only on or above Android Nougat, reverting to basic template");
@@ -205,12 +208,26 @@ public class TemplateRenderer implements INotificationRenderer{
                 if (hasAllInputBoxKeys())
                     return renderInputBoxNotification(context, extras, notificationId,nb);
                 break;
-            case CANCEL:// TODO: PENDING, diff use case not fitting into design, design issue
-                renderCancelNotification();
+            case CANCEL:
+                renderCancelNotification(context);
                 break;
         }
 
         return null;
+    }
+
+    private void renderCancelNotification(final Context context) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        if (pt_cancel_notif_id != null && !pt_cancel_notif_id.isEmpty()) {
+            int notificationId = Integer.parseInt(pt_cancel_notif_id);
+            notificationManager.cancel(notificationId);
+        } else {
+            if (pt_cancel_notif_ids.size() > 0) {
+                for (int i = 0; i <= pt_cancel_notif_ids.size(); i++) {
+                    notificationManager.cancel(pt_cancel_notif_ids.get(i));
+                }
+            }
+        }
     }
 
     private Builder renderZeroBezelNotification(final Context context, final Bundle extras, final int notificationId,
@@ -2305,7 +2322,6 @@ public class TemplateRenderer implements INotificationRenderer{
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    // TODO: Design issue
     private Builder renderTimerNotification(final Context context, Bundle extras, int notificationId,Builder nb) {
         PTLog.debug("Rendering Timer Template Push Notification with extras - " + extras.toString());
         try {
@@ -2381,6 +2397,7 @@ public class TemplateRenderer implements INotificationRenderer{
             setCustomContentViewDotSep(contentViewTimer);
             setCustomContentViewDotSep(contentViewTimerCollapsed);
 
+            // it's ok to run Timer before notifying notification using nb since we have min 10 secs which is enough.
             timerRunner(context, extras, notificationId, timer_end);
 
         } catch (Throwable t) {
@@ -2870,7 +2887,7 @@ public class TemplateRenderer implements INotificationRenderer{
             pt_msg = pt_msg_alt;
         }
 
-        handler.postDelayed(new Runnable() {
+        /*handler.postDelayed(new Runnable() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void run() {
@@ -2883,6 +2900,27 @@ public class TemplateRenderer implements INotificationRenderer{
                             }
                         }
                     });
+                }
+            }
+        }, delay - 100);*/
+        handler.postDelayed(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void run() {
+                if (Utils.isNotificationInTray(context, notificationId) && hasAllBasicNotifKeys()) {
+                    Context applicationContext = context.getApplicationContext();
+                    Bundle basicTemplateBundle = (Bundle) extras.clone();
+                    basicTemplateBundle.putString(Constants.WZRK_PUSH_ID,null);// skip dupe check
+                    basicTemplateBundle.putString(Constants.PT_ID,"pt_basic");// set to basic
+                    // force random id generation
+                    basicTemplateBundle.putString(Constants.PT_COLLAPSE_KEY,null);
+                    basicTemplateBundle.putString(Constants.WZRK_COLLAPSE,null);
+
+
+                    INotificationRenderer templateRenderer = new TemplateRenderer(applicationContext, basicTemplateBundle);
+                    CleverTapAPI cleverTapAPI = CleverTapAPI
+                            .getGlobalInstance(applicationContext PushNotificationUtil.getAccountIdFromNotificationBundle(basicTemplateBundle));
+                    Objects.requireNonNull(cleverTapAPI).renderPushNotification(templateRenderer,applicationContext,basicTemplateBundle);
                 }
             }
         }, delay - 100);
