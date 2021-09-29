@@ -525,7 +525,7 @@ pt_input_auto_open | Required | fixed value - `true`
   pt_subtitle | Optional | Subtitle
   pt_big_img | Required | Image
   pt_small_view | Optional | Select text-only small view layout (`text_only`)
-  pt_dl1 | Optional | Deep Link
+  pt_dl1 | Required | Deep Link
   pt_title_clr | Optional | Title Color in HEX
   pt_msg_clr | Optional | Message Color in HEX
   pt_small_icon_clr | Optional | Small Icon Color in HEX
