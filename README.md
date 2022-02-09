@@ -1,10 +1,11 @@
-[ ![Download](https://api.bintray.com/packages/clevertap/Maven/PushTemplates/images/download.svg) ](https://bintray.com/clevertap/Maven/PushTemplates/_latestVersion)
+# NOTE
+The library is now a part of the [CleverTap Android SDK](https://github.com/CleverTap/clevertap-android-sdk) Github repo.
+
+[Please checkout the integration steps here for the stable release v1.0.0 and above.](https://github.com/CleverTap/clevertap-android-sdk/blob/master/docs/CTPUSHTEMPLATES.md)
+
 # Push Templates by CleverTap
 
 Push Templates SDK helps you engage with your users using fancy push notification templates built specifically to work with [CleverTap](https://www.clevertap.com).
-
-## NOTE
-This library is in public beta, for any issues, queries and concerns please open a new issue [here](https://github.com/CleverTap/PushTemplates/issues)
 
 # Table of contents
 
