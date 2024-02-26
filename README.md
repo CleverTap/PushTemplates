@@ -35,7 +35,8 @@ implementation 'com.clevertap.android:clevertap-android-sdk:4.1.0'
 
 ```xml
 <service
-    android:name="com.clevertap.pushtemplates.PushTemplateMessagingService">
+    android:name="com.clevertap.pushtemplates.PushTemplateMessagingService"
+    android:exported="false">
     <intent-filter>
         <action android:name="com.google.firebase.MESSAGING_EVENT"/>
     </intent-filter>
